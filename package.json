@@ -1,0 +1,32 @@
+{
+  "name": "twd",
+  "version": "0.1.0",
+  "description": "Test While Developing (TWD) - in-browser testing",
+  "main": "./dist/twd.umd.js",
+  "module": "./dist/twd.es.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/twd.es.js",
+      "require": "./dist/twd.umd.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "vite build",
+    "dev": "vite"
+  },
+  "peerDependencies": {
+    "react": ">=17.0.0",
+    "react-dom": ">=17.0.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.1.12",
+    "@types/react-dom": "^19.1.9",
+    "@vitejs/plugin-react": "^5.0.2",
+    "typescript": "^5.9.2",
+    "vite": "^7.1.4"
+  }
+}
