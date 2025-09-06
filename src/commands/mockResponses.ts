@@ -94,3 +94,54 @@ window.fetch = async (input: RequestInfo, init?: RequestInit) => {
 
   return originalFetch(input, init);
 };
+
+/*
+// --- Patch XMLHttpRequest once ---
+const OriginalXHR = window.XMLHttpRequest;
+
+class MockXHR extends OriginalXHR {
+  private _method = "";
+  private _url = "";
+  private _body: any;
+
+  open(method: string, url: string, async?: boolean, user?: string | null, password?: string | null) {
+    this._method = method.toUpperCase();
+    this._url = url;
+    super.open(method, url, async ?? true, user ?? null, password ?? null);
+  }
+
+  send(body?: Document | BodyInit | null) {
+    this._body = body;
+
+    const rule = rules.find(
+      (r) =>
+        r.method === this._method &&
+        (typeof r.url === "string" ? r.url === this._url : r.url.test(this._url))
+    );
+
+    if (rule) {
+      log(`🛡️ ${rule.alias} → ${this._method} ${this._url}`);
+      rule.executed = true;
+      rule.request = body;
+
+      // Simulate async response
+      setTimeout(() => {
+        (this as any).status = rule.status || 200;
+        (this as any).responseText = JSON.stringify(rule.response);
+        (this as any).readyState = 4;
+
+        // Fire readystatechange and load events
+        this.dispatchEvent(new Event("readystatechange"));
+        this.dispatchEvent(new Event("load"));
+      }, 0);
+      return;
+    }
+
+    // No rule → real request
+    super.send(body ?? null);
+  }
+}
+
+// Replace global XHR
+(window as any).XMLHttpRequest = MockXHR;
+*/
