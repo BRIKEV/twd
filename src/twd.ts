@@ -1,5 +1,5 @@
 import { waitForElement } from "./utils/wait";
-import { register } from "./twdRegistry";
+import { popSuite, pushSuite, register } from "./twdRegistry";
 import { runAssertion } from "./asserts";
 import { log } from "./utils/log";
 import { mockRequest, Options, Rule, waitFor } from "./commands/mockResponses";
@@ -25,8 +25,12 @@ export const beforeEach = (fn: typeof beforeEachFn) => {
  * @example
  * describe("My group", () => { ... });
  */
-export const describe = (_: string, fn: () => void) => {
+export const describe = (name: string, fn: () => void) => {
+  console.log(`📦 describe("${name}")`);
+  
+  pushSuite(name);
   fn(); // for now, just run immediately
+  popSuite();
 };
 
 /**

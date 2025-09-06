@@ -7,10 +7,29 @@ export interface TestCase {
   only?: boolean;
   skip?: boolean;
   logs?: string[];
+  suite: string[];
 }
 
 export const tests: TestCase[] = [];
 
+let currentSuite: string[] = [];
+
 export const register = (name: string, fn: TestFn, opts: { only?: boolean; skip?: boolean } = {}) => {
-  tests.push({ name, fn, status: "idle", logs: [], ...opts });
+  tests.push({
+    name,
+    fn,
+    status: "idle",
+    logs: [],
+    suite: [...currentSuite],
+    ...opts
+  });
 };
+
+export const pushSuite = (name: string) => {
+  currentSuite.push(name);
+};
+
+export const popSuite = () => {
+  currentSuite.pop();
+};
+

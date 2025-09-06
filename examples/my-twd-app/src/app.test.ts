@@ -19,10 +19,12 @@ describe("App interactions", () => {
     btn.click();
     console.log("Ran only test");
   });
-  it("checks text content", async () => {
-    const input = await twd.get("input#simple-input");
-    const value = input.type('hola');
-    console.log(`Input value: ${value.value}`);
+  describe("Nested describe", () => {
+    it("checks text content", async () => {
+      const input = await twd.get("input#simple-input");
+      const value = input.type('hola');
+      console.log(`Input value: ${value.value}`);
+    });
   });
 
   it("fetches a joke", async () => {
