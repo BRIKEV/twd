@@ -9,6 +9,8 @@ const Contact: React.FC = () => {
     e.preventDefault();
     setStatus('loading');
     try {
+      console.log(`Submitting: ${email}, ${message}`);
+      
       const response = await fetch('http://localhost:3001/contact', {
         method: 'POST',
         headers: {

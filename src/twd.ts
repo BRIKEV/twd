@@ -1,8 +1,8 @@
-import { waitForElement } from "utils/wait";
+import { waitForElement } from "./utils/wait";
 import { register } from "./twdRegistry";
-import { runAssertion } from "asserts";
-import { log } from "utils/log";
-import { mockRequest, waitFor } from "requests/mockResponses";
+import { runAssertion } from "./asserts";
+import { log } from "./utils/log";
+import { mockRequest, Rule, waitFor } from "./requests/mockResponses";
 import type { AnyAssertion, ArgsFor, TWDElemAPI } from "./twd-types";
 
 /**
@@ -108,15 +108,17 @@ interface TWDAPI {
   /**
    * Wait for a mocked request to be made.
    * @param alias The alias of the mock rule to wait for
+   * @return The matched rule (with body if applicable)
    * 
    * Example:
    * 
    * ```ts
-   * await twd.waitFor("aliasId");
+   * const rule = await twd.waitFor("aliasId");
+   * console.log(rule.body);
    * 
    * ```
    */
-  waitFor: (alias: string) => Promise<void>;
+  waitFor: (alias: string) => Promise<Rule>;
 }
 
 /**

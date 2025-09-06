@@ -1,4 +1,4 @@
-import { tests } from "twdRegistry";
+import { tests } from "../twdRegistry";
 
 export const log = (msg: string) => {
   // find the currently "running" test

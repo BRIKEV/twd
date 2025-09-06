@@ -1,12 +1,12 @@
 import { log } from "../utils/log";
 
-// twd-intercept.ts
-type Rule = {
+export type Rule = {
   method: string;
   url: string | RegExp;
   response: unknown;
   alias?: string;
-  executed?: boolean; // mark when fetch hits this rule
+  executed?: boolean;
+  body?: unknown;
 };
 
 const rules: Rule[] = [];
@@ -29,6 +29,7 @@ export const mockRequest = (alias: string, method: string, url: string | RegExp,
 /**
  * Wait for a mocked request to be made.
  * @param alias The alias of the mock rule to wait for
+ * @returns The matched rule (with body if applicable)
  */
 export const waitFor = async (alias: string) => {
   // Find the rule that matches the alias and was executed
@@ -40,6 +41,7 @@ export const waitFor = async (alias: string) => {
 
   // Yield one tick so React can render
   await new Promise((r) => setTimeout(r, 0));
+  return rule;
 };
 
 
@@ -59,6 +61,7 @@ window.fetch = async (input: RequestInfo, init?: RequestInit) => {
   if (rule) {
     log(`🛡️ ${rule.alias} → ${method} ${url}`);
     rule.executed = true; // <-- mark it executed
+    rule.body = init?.body; // <-- capture body if present
 
     return new Response(JSON.stringify(rule.response), {
       status: 200,
