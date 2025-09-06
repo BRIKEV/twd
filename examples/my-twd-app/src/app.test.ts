@@ -56,8 +56,8 @@ describe("App interactions", () => {
     const messageInput = await twd.get("textarea#message");
     messageInput.type("Hello, this is a test message.");
     const submitBtn = await twd.get("button[type='submit']");
-    // submitBtn.click();
-    // const rule = await twd.waitFor("contactSubmit");
-    // console.log(`Submitted body: ${rule.body}`);
+    submitBtn.click();
+    const rule = await twd.waitFor("contactSubmit");
+    console.log(`Submitted body: ${rule.body}`);
   });
 });

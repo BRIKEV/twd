@@ -2,8 +2,9 @@ import { waitForElement } from "./utils/wait";
 import { register } from "./twdRegistry";
 import { runAssertion } from "./asserts";
 import { log } from "./utils/log";
-import { mockRequest, Rule, waitFor } from "./requests/mockResponses";
+import { mockRequest, Rule, waitFor } from "./commands/mockResponses";
 import type { AnyAssertion, ArgsFor, TWDElemAPI } from "./twd-types";
+import { simulateType } from "./commands/type";
 
 /**
  * Stores the function to run before each test.
@@ -138,9 +139,7 @@ export const twd: TWDAPI = {
       },
       type: (text: string) => {
         log(`⌨️ type("${text}") into ${selector}`);
-        (el as HTMLInputElement).value = text;
-        el.dispatchEvent(new Event("input", { bubbles: true }));
-        return el as HTMLInputElement;
+        return simulateType(el as HTMLInputElement, text);
       },
       should: (name: AnyAssertion, ...args: ArgsFor<AnyAssertion>) => {
         runAssertion(el, name, ...args);

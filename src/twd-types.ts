@@ -129,7 +129,7 @@ export interface TWDElemAPI {
    * ```
    * 
    */
-  type: (text: string) => HTMLInputElement;
+  type: (text: string) => HTMLInputElement | HTMLTextAreaElement;
   /**
    * Gets the text content of the element.
    * @returns The text content.
