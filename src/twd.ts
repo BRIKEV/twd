@@ -2,7 +2,7 @@ import { waitForElement } from "./utils/wait";
 import { register } from "./twdRegistry";
 import { runAssertion } from "./asserts";
 import { log } from "./utils/log";
-import { mockRequest, Rule, waitFor } from "./commands/mockResponses";
+import { mockRequest, Options, Rule, waitFor } from "./commands/mockResponses";
 import type { AnyAssertion, ArgsFor, TWDElemAPI } from "./twd-types";
 import { simulateType } from "./commands/type";
 
@@ -68,8 +68,7 @@ interface TWDAPI {
    * @param selector CSS selector
    * @returns {Promise<TWDElemAPI>} The TWD API for the element
    * 
-   * Example:
-   * 
+   * @example
    * ```ts
    * const btn = await twd.get("button");
    * 
@@ -81,8 +80,7 @@ interface TWDAPI {
    * Simulates visiting a URL (SPA navigation).
    * @param url The URL to visit
    *
-   * Example:
-   * 
+   * @example
    * ```ts
    * twd.visit("/contact");
    * 
@@ -91,28 +89,33 @@ interface TWDAPI {
   visit: (url: string) => void;
   /**
    * Mock a network request.
-   * @param alias Identifier for the mock rule. Useful for waitFor().
-   * @param method HTTP method (GET, POST, etc.)
-   * @param url URL or pattern to match
-   * @param response Mocked response data
-   * 
-   * Example:
-   * 
+   *
+   * @param alias Identifier for the mock rule. Useful for `waitFor()`.
+   * @param options Options to configure the mock:
+   *  - `method`: HTTP method ("GET", "POST", …)
+   *  - `url`: URL string or RegExp to match
+   *  - `response`: Body of the mocked response
+   *  - `status`: (optional) HTTP status code (default: 200)
+   *  - `headers`: (optional) Response headers
+   *
+   * @example
    * ```ts
-   * twd.mockRequest("aliasId", "GET", "https://your.api/endpoint", {
-   *   value: "Mocked response!",
+   * mockRequest("getUser", {
+   *   method: "GET",
+   *   url: /\/api\/user\/\d+/,
+   *   response: { id: 1, name: "Kevin" },
+   *   status: 200,
+   *   headers: { "x-mock": "true" }
    * });
-   * 
    * ```
    */
-  mockRequest: (alias: string, method: string, url: string | RegExp, response: unknown) => void;
+  mockRequest: (alias: string, options: Options) => void;
   /**
    * Wait for a mocked request to be made.
    * @param alias The alias of the mock rule to wait for
    * @return The matched rule (with body if applicable)
    * 
-   * Example:
-   * 
+   * @example
    * ```ts
    * const rule = await twd.waitFor("aliasId");
    * console.log(rule.body);

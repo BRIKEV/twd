@@ -26,8 +26,12 @@ describe("App interactions", () => {
   });
 
   it("fetches a joke", async () => {
-    twd.mockRequest("joke", "GET", "https://api.chucknorris.io/jokes/random", {
-      value: "Mocked joke!",
+    twd.mockRequest("joke", {
+      method: "GET",
+      url: "https://api.chucknorris.io/jokes/random",
+      response: {
+        value: "Mocked joke!",
+      },
     });
     let btn = await twd.get("button[data-twd='joke-button']");
     btn.click();
@@ -37,8 +41,12 @@ describe("App interactions", () => {
     // console.log(`Joke text: ${jokeText.el.textContent}`);
     jokeText.should("have.text", "Mocked joke!");
     // overwrite mid-test
-    twd.mockRequest("joke", "GET", "https://api.chucknorris.io/jokes/random", {
-      value: "Mocked second joke!",
+    twd.mockRequest("joke", {
+      method: "GET",
+      url: "https://api.chucknorris.io/jokes/random",
+      response: {
+        value: "Mocked second joke!",
+      },
     });
     btn = await twd.get("button[data-twd='joke-button']");
     btn.click();
@@ -50,7 +58,11 @@ describe("App interactions", () => {
 
   it("visit contact page", async () => {
     twd.visit("/contact");
-    twd.mockRequest("contactSubmit", "POST", 'http://localhost:3001/contact', { success: true });
+    twd.mockRequest("contactSubmit", {
+      method: "POST",
+      url: 'http://localhost:3001/contact',
+      response: { success: true },
+    });
     const emailInput = await twd.get("input#email");
     emailInput.type("test@example.com");
     const messageInput = await twd.get("textarea#message");
@@ -58,6 +70,6 @@ describe("App interactions", () => {
     const submitBtn = await twd.get("button[type='submit']");
     submitBtn.click();
     const rule = await twd.waitFor("contactSubmit");
-    console.log(`Submitted body: ${rule.body}`);
+    console.log(`Submitted body: ${rule.request}`);
   });
 });

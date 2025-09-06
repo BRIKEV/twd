@@ -92,7 +92,7 @@ export type ShouldFn = {
 /**
  * The main API returned by `twd.get()`.
  *
- * Example:
+ * @example
  * ```ts
  * const btn = await twd.get("button");
  * btn.should("have.text", "Clicked").click();
@@ -107,7 +107,7 @@ export interface TWDElemAPI {
    * Simulates a user click on the element.
    * Returns the same API so you can chain more actions.
    *
-   * Example:
+   * @example
    * ```ts
    * const button = await twd.get("button");
    * button.click();
@@ -121,7 +121,7 @@ export interface TWDElemAPI {
    * @param text The text to type.
    * @returns The input element.
    * 
-   * Example:
+   * @example
    * ```ts
    * const email = await twd.get("input#email");
    * email.type("test@example.com");
@@ -134,7 +134,7 @@ export interface TWDElemAPI {
    * Gets the text content of the element.
    * @returns The text content.
    * 
-   * Example:
+   * @example
    * ```ts
    * const para = await twd.get("p");
    * const content = para.text();
@@ -150,7 +150,7 @@ export interface TWDElemAPI {
    * @param args Arguments for the assertion.
    * @returns The same API for chaining.
    * 
-   * Example:
+   * @example
    * ```ts
    * const btn = await twd.get("button");
    * btn.should("have.text", "Click me").should("not.be.disabled");

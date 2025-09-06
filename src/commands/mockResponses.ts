@@ -6,21 +6,46 @@ export type Rule = {
   response: unknown;
   alias?: string;
   executed?: boolean;
-  body?: unknown;
+  request?: unknown;
+  status?: number;
+  headers?: Record<string, string>;
 };
 
 const rules: Rule[] = [];
 
+export interface Options {
+  method: string;
+  url: string | RegExp;
+  response: unknown;
+  status?: number;
+  headers?: Record<string, string>;
+}
+
 /**
  * Mock a network request.
- * @param alias Identifier for the mock rule. Useful for waitFor().
- * @param method HTTP method (GET, POST, etc.)
- * @param url URL or pattern to match
- * @param response Mocked response data
+ *
+ * @param alias Identifier for the mock rule. Useful for `waitFor()`.
+ * @param options Options to configure the mock:
+ *  - `method`: HTTP method ("GET", "POST", …)
+ *  - `url`: URL string or RegExp to match
+ *  - `response`: Body of the mocked response
+ *  - `status`: (optional) HTTP status code (default: 200)
+ *  - `headers`: (optional) Response headers
+ *
+ * @example
+ * ```ts
+ * mockRequest("getUser", {
+ *   method: "GET",
+ *   url: /\/api\/user\/\d+/,
+ *   response: { id: 1, name: "Kevin" },
+ *   status: 200,
+ *   headers: { "x-mock": "true" }
+ * });
+ * ```
  */
-export const mockRequest = (alias: string, method: string, url: string | RegExp, response: unknown) => {
+export const mockRequest = (alias: string, options: Options) => {
   const idx = rules.findIndex((r) => r.alias === alias);
-  const rule = { alias, method: method.toUpperCase(), url, response, executed: false };
+  const rule = { alias, ...options, executed: false };
 
   if (idx !== -1) rules[idx] = rule;
   else rules.push(rule);
@@ -44,8 +69,6 @@ export const waitFor = async (alias: string) => {
   return rule;
 };
 
-
-
 // Patch fetch once
 const originalFetch = window.fetch;
 window.fetch = async (input: RequestInfo, init?: RequestInit) => {
@@ -61,11 +84,11 @@ window.fetch = async (input: RequestInfo, init?: RequestInit) => {
   if (rule) {
     log(`🛡️ ${rule.alias} → ${method} ${url}`);
     rule.executed = true; // <-- mark it executed
-    rule.body = init?.body; // <-- capture body if present
+    rule.request = init?.body; // <-- capture body if present
 
     return new Response(JSON.stringify(rule.response), {
-      status: 200,
-      headers: { "Content-Type": "application/json" },
+      status: rule.status || 200,
+      headers: rule.headers || { "Content-Type": "application/json" },
     });
   }
 
