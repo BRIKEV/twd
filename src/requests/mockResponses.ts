@@ -1,4 +1,4 @@
-import { log } from "./twd";
+import { log } from "../utils/log";
 
 // twd-intercept.ts
 type Rule = {
@@ -12,7 +12,7 @@ type Rule = {
 const rules: Rule[] = [];
 
 // Define or overwrite a mock
-export const intercept = (alias: string, method: string, url: string | RegExp, response: unknown) => {
+export const mockRequest = (alias: string, method: string, url: string | RegExp, response: unknown) => {
   const idx = rules.findIndex((r) => r.alias === alias);
   const rule = { alias, method: method.toUpperCase(), url, response, executed: false };
 

@@ -1,4 +1,9 @@
-import { register, tests } from "./twdRegistry";
+import { waitForElement } from "utils/wait";
+import { register } from "./twdRegistry";
+import { runAssertion } from "asserts";
+import { log } from "utils/log";
+import { mockRequest, waitFor } from "requests/mockResponses";
+import { AnyAssertion, ArgsFor } from "asserts/assertion-types";
 
 let beforeEachFn: (() => void | Promise<void>) | null = null;
 
@@ -28,36 +33,53 @@ export const itSkip = (name: string, _fn: () => Promise<void> | void) => {
   register(name, async () => {}, { skip: true });
 };
 
-export const log = (msg: string) => {
-  // find the currently "running" test
-  const current = tests.find(t => t.status === "running");
-  if (current) {
-    current.logs?.push(msg);
-  }
+type ShouldFn = {
+  (name: "have.text", expected: string): TWDAPI;
+  (name: "contain.text", expected: string): TWDAPI;
+  (name: "be.empty"): TWDAPI;
+
+  (name: "have.attr", attr: string, value: string): TWDAPI;
+  (name: "have.value", value: string): TWDAPI;
+
+  (name: "be.disabled"): TWDAPI;
+  (name: "be.enabled"): TWDAPI;
+  (name: "be.checked"): TWDAPI;
+  (name: "not.be.checked"): TWDAPI;
+  (name: "be.selected"): TWDAPI;
+  (name: "be.focused"): TWDAPI;
+
+  (name: "be.visible"): TWDAPI;
+  (name: "not.be.visible"): TWDAPI;
+
+  (name: "have.class", className: string): TWDAPI;
+  (name: "not.have.class", className: string): TWDAPI;
 };
 
-const waitFor = (fn: () => HTMLElement | null, timeout = 2000, interval = 50) => {
-  return new Promise<HTMLElement>((resolve, reject) => {
-    const start = Date.now();
-
-    const check = () => {
-      const el = fn();
-      if (el) return resolve(el);
-      if (Date.now() - start > timeout) return reject(new Error("Timeout waiting for element"));
-      setTimeout(check, interval);
-    };
-
-    check();
-  });
-};
+export interface TWDAPI {
+  el: Element;
+  /**
+   * Simulates a user click on the element.
+   * Returns the same API so you can chain more actions.
+   *
+   * Example:
+   * ```ts
+   * const btn = await twd.get("button");
+   * btn.click().should("have.text", "Clicked");
+   * ```
+   */
+  click: () => void;
+  type: (text: string) => HTMLInputElement;
+  text: () => string;
+  should: ShouldFn;
+}
 
 // Mini Cypress-style helpers
 export const twd = {
   get: async (selector: string) => {
     log(`🔎 get("${selector}")`);
-    const el = await waitFor(() => document.querySelector(selector));
+    const el = await waitForElement(() => document.querySelector(selector));
 
-    return {
+    const api: TWDAPI = {
       el,
       click: () => {
         log(`🖱️ click(${selector})`);
@@ -69,16 +91,23 @@ export const twd = {
         el.dispatchEvent(new Event("input", { bubbles: true }));
         return el as HTMLInputElement;
       },
+      should: (name: AnyAssertion, ...args: ArgsFor<AnyAssertion>) => {
+        runAssertion(el, name, ...args);
+        return api;
+      },
       text: () => {
         const content = el.textContent || "";
         log(`📄 text(${selector}) → "${content}"`);
         return content;
       },
     };
+    return api;
   },
   visit: (url: string) => {
     log(`🌍 visit("${url}")`);
     window.history.pushState({}, "", url);
     window.dispatchEvent(new PopStateEvent("popstate"));
-  }
+  },
+  mockRequest,
+  waitFor,
 };
