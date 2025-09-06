@@ -11,7 +11,13 @@ type Rule = {
 
 const rules: Rule[] = [];
 
-// Define or overwrite a mock
+/**
+ * Mock a network request.
+ * @param alias Identifier for the mock rule. Useful for waitFor().
+ * @param method HTTP method (GET, POST, etc.)
+ * @param url URL or pattern to match
+ * @param response Mocked response data
+ */
 export const mockRequest = (alias: string, method: string, url: string | RegExp, response: unknown) => {
   const idx = rules.findIndex((r) => r.alias === alias);
   const rule = { alias, method: method.toUpperCase(), url, response, executed: false };
@@ -20,8 +26,10 @@ export const mockRequest = (alias: string, method: string, url: string | RegExp,
   else rules.push(rule);
 };
 
-// Wait for a request by alias
-// Wait for a request by URL
+/**
+ * Wait for a mocked request to be made.
+ * @param alias The alias of the mock rule to wait for
+ */
 export const waitFor = async (alias: string) => {
   // Find the rule that matches the alias and was executed
   const rule = rules.find((r) => r.alias === alias && r.executed);

@@ -3,18 +3,36 @@ import { register } from "./twdRegistry";
 import { runAssertion } from "asserts";
 import { log } from "utils/log";
 import { mockRequest, waitFor } from "requests/mockResponses";
-import { AnyAssertion, ArgsFor } from "asserts/assertion-types";
+import type { AnyAssertion, ArgsFor, TWDElemAPI } from "./twd-types";
 
+/**
+ * Stores the function to run before each test.
+ */
 let beforeEachFn: (() => void | Promise<void>) | null = null;
 
+/**
+ * Registers a function to run before each test.
+ * @example
+ * beforeEach(() => { ... });
+ */
 export const beforeEach = (fn: typeof beforeEachFn) => {
   beforeEachFn = fn;
 };
 
+/**
+ * Groups related tests together.
+ * @example
+ * describe("My group", () => { ... });
+ */
 export const describe = (_: string, fn: () => void) => {
   fn(); // for now, just run immediately
 };
 
+/**
+ * Defines a test case.
+ * @example
+ * it("does something", async () => { ... });
+ */
 export const it = (name: string, fn: () => Promise<void> | void) => {
   register(name, async () => {
     if (beforeEachFn) await beforeEachFn();
@@ -22,6 +40,11 @@ export const it = (name: string, fn: () => Promise<void> | void) => {
   });
 };
 
+/**
+ * Defines an exclusive test case (only this runs).
+ * @example
+ * itOnly("runs only this", async () => { ... });
+ */
 export const itOnly = (name: string, fn: () => Promise<void> | void) => {
   register(name, async () => {
     if (beforeEachFn) await beforeEachFn();
@@ -29,57 +52,83 @@ export const itOnly = (name: string, fn: () => Promise<void> | void) => {
   }, { only: true });
 };
 
+/**
+ * Skips a test case.
+ * @example
+ * itSkip("skipped test", () => { ... });
+ */
 export const itSkip = (name: string, _fn: () => Promise<void> | void) => {
   register(name, async () => {}, { skip: true });
 };
 
-type ShouldFn = {
-  (name: "have.text", expected: string): TWDAPI;
-  (name: "contain.text", expected: string): TWDAPI;
-  (name: "be.empty"): TWDAPI;
-
-  (name: "have.attr", attr: string, value: string): TWDAPI;
-  (name: "have.value", value: string): TWDAPI;
-
-  (name: "be.disabled"): TWDAPI;
-  (name: "be.enabled"): TWDAPI;
-  (name: "be.checked"): TWDAPI;
-  (name: "not.be.checked"): TWDAPI;
-  (name: "be.selected"): TWDAPI;
-  (name: "be.focused"): TWDAPI;
-
-  (name: "be.visible"): TWDAPI;
-  (name: "not.be.visible"): TWDAPI;
-
-  (name: "have.class", className: string): TWDAPI;
-  (name: "not.have.class", className: string): TWDAPI;
-};
-
-export interface TWDAPI {
-  el: Element;
+interface TWDAPI {
   /**
-   * Simulates a user click on the element.
-   * Returns the same API so you can chain more actions.
-   *
+   * Finds an element by selector and returns the TWD API for it.
+   * @param selector CSS selector
+   * @returns {Promise<TWDElemAPI>} The TWD API for the element
+   * 
    * Example:
+   * 
    * ```ts
    * const btn = await twd.get("button");
-   * btn.click().should("have.text", "Clicked");
+   * 
+   * ```
+   * 
+   */
+  get: (selector: string) => Promise<TWDElemAPI>;
+  /**
+   * Simulates visiting a URL (SPA navigation).
+   * @param url The URL to visit
+   *
+   * Example:
+   * 
+   * ```ts
+   * twd.visit("/contact");
+   * 
    * ```
    */
-  click: () => void;
-  type: (text: string) => HTMLInputElement;
-  text: () => string;
-  should: ShouldFn;
+  visit: (url: string) => void;
+  /**
+   * Mock a network request.
+   * @param alias Identifier for the mock rule. Useful for waitFor().
+   * @param method HTTP method (GET, POST, etc.)
+   * @param url URL or pattern to match
+   * @param response Mocked response data
+   * 
+   * Example:
+   * 
+   * ```ts
+   * twd.mockRequest("aliasId", "GET", "https://your.api/endpoint", {
+   *   value: "Mocked response!",
+   * });
+   * 
+   * ```
+   */
+  mockRequest: (alias: string, method: string, url: string | RegExp, response: unknown) => void;
+  /**
+   * Wait for a mocked request to be made.
+   * @param alias The alias of the mock rule to wait for
+   * 
+   * Example:
+   * 
+   * ```ts
+   * await twd.waitFor("aliasId");
+   * 
+   * ```
+   */
+  waitFor: (alias: string) => Promise<void>;
 }
 
-// Mini Cypress-style helpers
-export const twd = {
-  get: async (selector: string) => {
+/**
+ * Mini Cypress-style helpers for DOM testing.
+ * @namespace twd
+ */
+export const twd: TWDAPI = {
+  get: async (selector: string): Promise<TWDElemAPI> => {
     log(`🔎 get("${selector}")`);
     const el = await waitForElement(() => document.querySelector(selector));
 
-    const api: TWDAPI = {
+    const api: TWDElemAPI = {
       el,
       click: () => {
         log(`🖱️ click(${selector})`);

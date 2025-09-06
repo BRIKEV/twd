@@ -1,4 +1,4 @@
-import { AnyAssertion, AssertionName } from "./assertion-types";
+import { AnyAssertion, AssertionName } from "twd-types";
 
 export const runAssertion = (
   el: Element,

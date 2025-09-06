@@ -12,6 +12,7 @@ const Jokes: React.FC = () => {
       const data = await response.json();
       setJoke(data.value);
     } catch (error) {
+      console.log(error);
       setJoke('Failed to fetch joke.');
     } finally {
       setLoading(false);

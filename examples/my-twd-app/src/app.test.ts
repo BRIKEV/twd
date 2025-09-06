@@ -1,6 +1,4 @@
 import { describe, it, itOnly, itSkip, beforeEach, twd } from "../../../src/twd";
-import { intercept, waitFor } from "../../../src/twd-intercept";
-import { expect } from "chai";
 
 beforeEach(() => {
   console.log("Reset state before each test");
@@ -28,26 +26,26 @@ describe("App interactions", () => {
   });
 
   it("fetches a joke", async () => {
-    intercept("joke", "GET", "https://api.chucknorris.io/jokes/random", {
+    twd.mockRequest("joke", "GET", "https://api.chucknorris.io/jokes/random", {
       value: "Mocked joke!",
     });
     let btn = await twd.get("button[data-twd='joke-button']");
     btn.click();
     // Wait for the mock fetch to fire
-    await waitFor("joke");
+    await twd.waitFor("joke");
     let jokeText = await twd.get("p[data-twd='joke-text']");
     // console.log(`Joke text: ${jokeText.el.textContent}`);
-    expect(jokeText.el.textContent).to.equal("Mocked joke!");
+    jokeText.should("have.text", "Mocked joke!");
     // overwrite mid-test
-    intercept("joke", "GET", "https://api.chucknorris.io/jokes/random", {
+    twd.mockRequest("joke", "GET", "https://api.chucknorris.io/jokes/random", {
       value: "Mocked second joke!",
     });
     btn = await twd.get("button[data-twd='joke-button']");
     btn.click();
-    await waitFor("joke");
+    await twd.waitFor("joke");
     jokeText = await twd.get("p[data-twd='joke-text']");
     // console.log(`Joke text: ${jokeText.el.textContent}`);
-    expect(jokeText.el.textContent).to.equal("Mocked second joke!");
+    jokeText.should('be.disabled');
   });
 
   it("visit contact page", async () => {
