@@ -1,0 +1,46 @@
+.tract-container {
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 1rem;
+  font-family: sans-serif;
+}
+
+.tract-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.tract-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  gap: 1.5rem;
+  background: #f9f9f9;
+  border-radius: 8px;
+  padding: 1rem;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+}
+
+.tract-demo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  font-size: 1.1rem;
+}
+
+.tract-code {
+  background: #222;
+  color: #fff;
+  border-radius: 6px;
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  overflow-x: auto;
+}
+
+@media (max-width: 600px) {
+  .tract-row {
+    grid-template-columns: 1fr;
+  }
+}
