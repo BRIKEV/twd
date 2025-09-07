@@ -2,7 +2,7 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
 import { TWDSidebar } from '../../../src'
-import './loadTests' // Importa los archivos de test para que se registren
+import './loadTests' // Import test files
 import router from './routes.ts'
 import { RouterProvider } from 'react-router'
 

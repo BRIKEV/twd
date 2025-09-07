@@ -1,5 +1,5 @@
-// Esto importa automáticamente todos los archivos que terminen en .test.ts
-const modules = import.meta.glob("./*.test.ts", { eager: true });
+// This automatically imports all files ending with .twd-test.ts
+const modules = import.meta.glob("./*.twd-test.ts", { eager: true });
 
-// No necesitas exportar nada, el simple hecho de importarlo en App.tsx
-// hará que los test files se ejecuten y registren sus tests.
+// You don't need to export anything; simply importing this in App.tsx
+// will cause the test files to execute and register their tests.
