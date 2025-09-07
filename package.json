@@ -1,6 +1,6 @@
 {
   "name": "twd-js",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Test While Developing (TWD) - in-browser testing",
   "main": "./dist/twd.umd.js",
   "module": "./dist/twd.es.js",
@@ -30,6 +30,7 @@
     "@types/react-dom": "^19.1.9",
     "@vitejs/plugin-react": "^5.0.2",
     "@vitest/coverage-v8": "^3.2.4",
+    "conventional-changelog": "^7.1.1",
     "jsdom": "^26.1.0",
     "typescript": "^5.9.2",
     "vite": "^7.1.4",

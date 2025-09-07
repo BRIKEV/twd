@@ -1,3 +1,9 @@
+## 0.1.1 (2025-09-07)
+
+* fix: missing ts types ([28276ab](https://github.com/BRIKEV/twd/commit/28276ab))
+* fix: add new packge name ([178de35](https://github.com/BRIKEV/twd/commit/178de35))
+* chore: add script for generating conventional changelog ([80b9e6d](https://github.com/BRIKEV/twd/commit/80b9e6d))
+
 ## 0.1.0 (2025-09-07)
 
 * Docs/add examples (#13) ([d9e372b](https://github.com/BRIKEV/twd/commit/d9e372b)), closes [#13](https://github.com/BRIKEV/twd/issues/13)
