@@ -26,8 +26,6 @@ export const beforeEach = (fn: typeof beforeEachFn) => {
  * describe("My group", () => { ... });
  */
 export const describe = (name: string, fn: () => void) => {
-  console.log(`📦 describe("${name}")`);
-  
   pushSuite(name);
   fn(); // for now, just run immediately
   popSuite();
