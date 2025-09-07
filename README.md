@@ -1,6 +1,7 @@
 # twd
 
 [![CI](https://github.com/BRIKEV/twd/actions/workflows/ci.yml/badge.svg)](https://github.com/BRIKEV/twd/actions/workflows/ci.yml)
+[![npm version](https://img.shields.io/npm/v/twd-js.svg)](https://www.npmjs.com/package/twd-js)
 [![license](https://img.shields.io/github/license/brikev/twd.svg)](./LICENSE)
 
 > ⚠️ This is a **beta release** – expect frequent updates and possible breaking changes.
@@ -15,13 +16,13 @@ You can install TWD via npm:
 
 ```bash
 # with npm
-npm install twd
+npm install twd-js
 
 # with yarn
-yarn add twd
+yarn add twd-js
 
 # with pnpm
-pnpm add twd
+pnpm add twd-js
 ```
 
 ## How to use
@@ -32,7 +33,7 @@ Add the our React Sidebar component to your application:
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
-import { TWDSidebar } from '../../../src'
+import { TWDSidebar } from 'twd-js'
 import router from './routes.ts'
 import { RouterProvider } from 'react-router'
 
@@ -44,11 +45,11 @@ createRoot(document.getElementById('root')!).render(
 )
 ```
 
-Then, create test files with the `.test.ts` or any extension you want. For example:
+Then, create test files with the `twd.test.ts` or any extension you want. For example:
 
-```tsx
-// src/app.twd-test.ts
-import { describe, it, twd } from "../../../src/twd";
+```ts
+// src/app.twd.test.ts
+import { describe, it, twd } from "twd-js";
 
 beforeEach(() => {
   console.log("Reset state before each test");
@@ -56,8 +57,13 @@ beforeEach(() => {
 
 describe("App interactions", () => {
   it("clicks the button", async () => {
+    twd.visit("/"); // Visit the root URL
     const btn = await twd.get("button");
     btn.click();
+    const message = await twd.get("#message");
+    // have.text
+    const haveText = await twd.get("#message");
+    haveText.should("have.text", "Hello");
   });
 });
 ```
@@ -66,8 +72,8 @@ After you create your test you need to load them in your application. You can do
 
 ```ts
 // src/loadTests.ts
-import "./app.twd-test";
-import "./another-test-file.twd-test";
+import "./app.twd.test";
+import "./another-test-file.twd.test";
 // Import other test files here
 ```
 
@@ -89,4 +95,4 @@ import './loadTests' // Import test files
 
 Finally, run your application and open the TWD sidebar to see and run your tests.
 
-
+You can check the [examples](https://github.com/BRIKEV/twd/tree/main/examples) directory for more usage scenarios.
