@@ -8,7 +8,8 @@
   "exports": {
     ".": {
       "import": "./dist/twd.es.js",
-      "require": "./dist/twd.umd.js"
+      "require": "./dist/twd.umd.js",
+      "types": "./dist/index.d.ts"
     }
   },
   "files": [
