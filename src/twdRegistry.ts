@@ -25,6 +25,11 @@ export const register = (name: string, fn: TestFn, opts: { only?: boolean; skip?
   });
 };
 
+export const clearTests = () => {
+  tests.length = 0;
+  currentSuite = [];
+};
+
 export const pushSuite = (name: string) => {
   currentSuite.push(name);
 };

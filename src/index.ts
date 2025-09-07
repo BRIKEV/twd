@@ -1,2 +1,2 @@
 export * from './twd';
-export { TWDSidebar } from './TWDSidebar';
+export { TWDSidebar } from './ui/TWDSidebar';
