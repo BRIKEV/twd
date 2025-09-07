@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { TestCase, tests } from "./twdRegistry";
+import { TestCase, tests } from "../twdRegistry";
 
 type Group = {
   name: string;
