@@ -1,5 +1,18 @@
 import { AnyAssertion, AssertionName } from "../twd-types";
 
+function isVisible(el: HTMLElement): boolean {
+  if (!el.isConnected) return false;
+  let current: HTMLElement | null = el;
+  while (current) {
+    const style = getComputedStyle(current);
+    if (style.display === "none" || style.visibility === "hidden" || style.visibility === "collapse") {
+      return false;
+    }
+    current = current.parentElement;
+  }
+  return true;
+}
+
 export const runAssertion = (
   el: Element,
   name: AnyAssertion,
@@ -40,11 +53,7 @@ export const runAssertion = (
 
       // Visibility
       case "be.visible": {
-        const style = getComputedStyle(el as HTMLElement);
-        return (
-          (el as HTMLElement).offsetParent !== null &&
-          style.display !== "none"
-        );
+        return isVisible(el as HTMLElement);
       }
 
       // Classes
