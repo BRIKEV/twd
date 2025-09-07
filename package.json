@@ -1,5 +1,5 @@
 {
-  "name": "twd",
+  "name": "twd-js",
   "version": "0.1.0",
   "description": "Test While Developing (TWD) - in-browser testing",
   "main": "./dist/twd.umd.js",
