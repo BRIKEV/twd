@@ -33,6 +33,7 @@
     "jsdom": "^26.1.0",
     "typescript": "^5.9.2",
     "vite": "^7.1.4",
+    "vite-plugin-dts": "^4.5.4",
     "vitest": "^3.2.4"
   }
 }

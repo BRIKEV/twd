@@ -71,6 +71,7 @@ export const waitFor = async (alias: string) => {
 
 // Patch fetch once
 const originalFetch = window.fetch;
+// @ts-expect-error: TypeScript type mismatch for window.fetch override is intentional
 window.fetch = async (input: RequestInfo, init?: RequestInit) => {
   const method = init?.method?.toUpperCase() || "GET";
   const url = typeof input === "string" ? input : input.toString();
