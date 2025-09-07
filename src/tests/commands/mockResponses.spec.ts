@@ -28,4 +28,10 @@ describe('mockRequest', () => {
     expect(executedRule).toBeDefined();
     expect(executedRule?.request).toBeUndefined(); // No body for GET request
   });
+
+  it('should throw an error if waitFor is called with an unknown alias', async () => {
+    await expect(waitFor('unknownAlias')).rejects.toThrow(
+      'No intercept rule found for unknownAlias'
+    );
+  });
 });
