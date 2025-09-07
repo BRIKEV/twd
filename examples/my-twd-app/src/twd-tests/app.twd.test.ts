@@ -1,4 +1,4 @@
-import { describe, it, itOnly, itSkip, beforeEach, twd } from "../../../src/twd";
+import { describe, it, itOnly, itSkip, beforeEach, twd } from "../../../../src/twd";
 
 beforeEach(() => {
   console.log("Reset state before each test");
