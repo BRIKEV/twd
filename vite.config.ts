@@ -23,5 +23,10 @@ export default defineConfig({
   test: {
     environment: 'jsdom',
     exclude: ['node_modules', 'dist', 'examples'],
+    coverage: {
+      reporter: ['text', 'json', 'html'],
+      include: ['src/**'],
+      exclude: ['src/tests/**', 'examples/**', 'dist/**'],
+    },
   },
 });
