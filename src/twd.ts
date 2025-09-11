@@ -5,6 +5,7 @@ import { log } from "./utils/log";
 import { mockRequest, Options, Rule, waitFor } from "./commands/mockResponses";
 import type { AnyAssertion, ArgsFor, TWDElemAPI } from "./twd-types";
 import { simulateType } from "./commands/type";
+import urlCommand, { type URLCommandAPI } from "./commands/url";
 
 /**
  * Stores the function to run before each test.
@@ -125,6 +126,17 @@ interface TWDAPI {
    * ```
    */
   waitFor: (alias: string) => Promise<Rule>;
+  /**
+   * URL-related assertions.
+   *
+   * @example
+   * ```ts
+   * twd.url().should("eq", "http://localhost:3000/contact");
+   * twd.url().should("contain.url", "/contact");
+   * 
+   * ```
+   */
+  url: () => URLCommandAPI; 
 }
 
 /**
@@ -164,6 +176,7 @@ export const twd: TWDAPI = {
     window.history.pushState({}, "", url);
     window.dispatchEvent(new PopStateEvent("popstate"));
   },
+  url: urlCommand,
   mockRequest,
   waitFor,
 };

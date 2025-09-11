@@ -73,16 +73,25 @@ export type ArgsFor<A extends AnyAssertion> =
  */
 export type ShouldFn = {
   (name: "have.text", expected: string): TWDElemAPI;
+  (name: "not.have.text", expected: string): TWDElemAPI;
   (name: "contain.text", expected: string): TWDElemAPI;
+  (name: "not.contain.text", expected: string): TWDElemAPI;
   (name: "be.empty"): TWDElemAPI;
+  (name: "not.be.empty"): TWDElemAPI;
   (name: "have.attr", attr: string, value: string): TWDElemAPI;
+  (name: "not.have.attr", attr: string, value: string): TWDElemAPI;
   (name: "have.value", value: string): TWDElemAPI;
+  (name: "not.have.value", value: string): TWDElemAPI;
   (name: "be.disabled"): TWDElemAPI;
+  (name: "not.be.disabled"): TWDElemAPI;
   (name: "be.enabled"): TWDElemAPI;
+  (name: "not.be.enabled"): TWDElemAPI;
   (name: "be.checked"): TWDElemAPI;
   (name: "not.be.checked"): TWDElemAPI;
   (name: "be.selected"): TWDElemAPI;
+  (name: "not.be.selected"): TWDElemAPI;
   (name: "be.focused"): TWDElemAPI;
+  (name: "not.be.focused"): TWDElemAPI;
   (name: "be.visible"): TWDElemAPI;
   (name: "not.be.visible"): TWDElemAPI;
   (name: "have.class", className: string): TWDElemAPI;
@@ -146,7 +155,7 @@ export interface TWDElemAPI {
   text: () => string;
   /**
    * Asserts something about the element.
-   * @param anyAssertion The assertion to run.
+   * @param name The name of the assertion.
    * @param args Arguments for the assertion.
    * @returns The same API for chaining.
    * 

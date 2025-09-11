@@ -19,7 +19,7 @@ export const TWDSidebar = () => {
       setRefresh((n) => n + 1);
     };
     console.error = (...args) => {
-      test.logs?.push("❌ " + args.map(String).join(" "));
+      test.logs?.push(args.map(String).join(" "));
       originalError(...args);
       setRefresh((n) => n + 1);
     };
