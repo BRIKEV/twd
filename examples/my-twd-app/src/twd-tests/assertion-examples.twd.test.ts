@@ -52,4 +52,8 @@ it("assertion examples", async () => {
   // be.selected
   const beSelected = await twd.get("#be-selected option[value='two']");
   beSelected.should("be.selected");
+
+  // contain.url
+  await twd.url().should("eq", "http://localhost:3000/assertions");
+  await twd.url().should("contain.url", "/assertions");
 });
