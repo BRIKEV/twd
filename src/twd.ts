@@ -133,33 +133,34 @@ interface TWDAPI {
  */
 export const twd: TWDAPI = {
   get: async (selector: string): Promise<TWDElemAPI> => {
-    log(`🔎 get("${selector}")`);
+    log(`Searching get("${selector}")`);
     const el = await waitForElement(() => document.querySelector(selector));
 
     const api: TWDElemAPI = {
       el,
       click: () => {
-        log(`🖱️ click(${selector})`);
+        log(`click(${selector})`);
         el.click();
       },
       type: (text: string) => {
-        log(`⌨️ type("${text}") into ${selector}`);
+        log(`type("${text}") into ${selector}`);
         return simulateType(el as HTMLInputElement, text);
       },
       should: (name: AnyAssertion, ...args: ArgsFor<AnyAssertion>) => {
-        runAssertion(el, name, ...args);
+        const message = runAssertion(el, name, ...args);
+        log(message);
         return api;
       },
       text: () => {
         const content = el.textContent || "";
-        log(`📄 text(${selector}) → "${content}"`);
+        log(`text(${selector}) → "${content}"`);
         return content;
       },
     };
     return api;
   },
   visit: (url: string) => {
-    log(`🌍 visit("${url}")`);
+    log(`visit("${url}")`);
     window.history.pushState({}, "", url);
     window.dispatchEvent(new PopStateEvent("popstate"));
   },

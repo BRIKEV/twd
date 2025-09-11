@@ -1,4 +1,5 @@
 import { TestCase } from "../twdRegistry";
+import Play from "./Icons/Play";
 
 interface TestListItemProps {
   node: TestCase;
@@ -7,57 +8,98 @@ interface TestListItemProps {
   runTest: (i: number) => void;
 }
 
+const statusStyles = (node: TestCase) => {
+  switch (node.status) {
+    case "pass":
+      return {
+        item: {
+          background: "#dcfce7",
+        },
+        container: {
+          borderLeft: "3px solid #00c951",
+        },
+      };
+    case "fail":
+      return {
+        item: {
+          background: "#fee2e2",
+        },
+        container: {
+          borderLeft: "3px solid #fb2c36",
+        },
+      };
+    case "skip":
+      return {
+        item: {
+          background: "#f3f4f6",
+        },
+      };
+    case "running":
+      return {
+        item: {
+          background: "#fef9c3",
+        },
+      };
+    default:
+      return {
+        item: {
+          background: "transparent",
+        },
+      };
+  }
+}
+
 export const TestListItem = ({ node, depth, idx, runTest }: TestListItemProps) => {
+  const styles = statusStyles(node);
   return (
-        <li key={node.name} style={{ marginBottom: "4px", marginLeft: depth * 6 }}>
+        <li key={node.name} style={{ marginBottom: "4px", marginLeft: depth * 6, ...styles.container }}>
           <div
             style={{
               display: "flex",
-              alignItems: "center",
+              alignItems: "left",
               justifyContent: "space-between",
               padding: "4px 6px",
               borderRadius: "4px",
-              background:
-                node.status === "pass"
-                  ? "#dcfce7"
-                  : node.status === "fail"
-                  ? "#fee2e2"
-                  : node.status === "skip"
-                  ? "#f3f4f6"
-                  : node.status === "running"
-                  ? "#fef9c3"
-                  : "transparent",
+              ...styles.item,
             }}
           >
-            <span>
+            <span style={{ fontWeight: "500", color: "#374151", maxWidth: "220px" }}>
               {node.name}{" "}
               {node.only && <span style={{ color: "#2563eb" }}>(only)</span>}
               {node.skip && <span style={{ color: "#6b7280" }}>(skipped)</span>}
             </span>
             <button
               onClick={() => runTest(idx)}
+              aria-label={`Run ${node.name} test`}
               style={{
                 background: "transparent",
                 border: "1px solid #d1d5db",
                 borderRadius: "4px",
-                padding: "2px 6px",
+                padding: "0",
                 cursor: "pointer",
+                verticalAlign: "middle",
                 fontSize: "12px",
+                width: "24px",
+                height: "24px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
               }}
             >
-              ▶
+              <Play />
             </button>
           </div>
           {node.logs && node.logs.length > 0 && (
             <ul
               style={{
                 borderRadius: "4px",
-                maxHeight: "160px",
+                maxHeight: "260px",
                 overflowY: "auto",
                 padding: 0,
                 background: "#f3f4f6",
                 listStyle: "none",
                 marginTop: "4px",
+                textAlign: "left",
               }}
             >
               {node.logs.map((log, idx) => (

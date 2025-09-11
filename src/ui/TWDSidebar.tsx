@@ -14,7 +14,7 @@ export const TWDSidebar = () => {
     const originalError = console.error;
 
     console.log = (...args) => {
-      test.logs?.push("📝 " + args.map(String).join(" "));
+      test.logs?.push(args.map(String).join(" "));
       originalLog(...args);
       setRefresh((n) => n + 1);
     };
@@ -63,6 +63,7 @@ export const TWDSidebar = () => {
         left: 0,
         bottom: 0,
         width: "280px",
+        textAlign: "left",
         background: "#f9fafb",
         borderRight: "1px solid #e5e7eb",
         padding: "8px",
@@ -71,8 +72,16 @@ export const TWDSidebar = () => {
         boxShadow: "2px 0 6px rgba(0,0,0,0.1)",
       }}
     >
-      <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "8px" }}>
-        <strong>TWD Tests</strong>
+      <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "14px", alignItems: "center" }}>
+        <strong
+          style={{
+            fontSize: "18px",
+            fontWeight: "bold",
+            color: "#374151",
+          }}
+        >
+          TWD Tests
+        </strong>
         <button
           style={{
             background: "transparent",
@@ -98,7 +107,7 @@ export const TWDSidebar = () => {
           cursor: "pointer",
         }}
       >
-        ▶ Run All
+        Run All
       </button>
 
       <TestList tests={tests} runTest={runTest} />

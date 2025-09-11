@@ -2,6 +2,8 @@ import { useState } from "react";
 import groupTests, { Group } from "./groupTests";
 import { TestCase } from "../twdRegistry";
 import { TestListItem } from "./TestListItem";
+import ChevronDown from "./Icons/ChevronDown";
+import ChevronRight from "./Icons/ChevronRight";
 
 interface TestListProps {
   runTest: (i: number) => Promise<void>;
@@ -27,10 +29,13 @@ export const TestList = ({ runTest, tests }: TestListProps) => {
             cursor: "pointer",
             color: "#374151",
             marginBottom: "4px",
+            display: "flex",
+            alignItems: "center",
+            gap: "4px",
           }}
           onClick={() => setCollapsed((c) => ({ ...c, [node.name]: !c[node.name] }))}
         >
-          {node.name} {isCollapsed ? "▶" : "▼"}
+          {node.name} {isCollapsed ? <ChevronRight /> : <ChevronDown />}
         </div>
         {!isCollapsed && (
           <ul style={{ listStyle: "none", padding: 0 }}>

@@ -7,9 +7,9 @@
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
+      "types": "./dist/index.d.ts",
       "import": "./dist/twd.es.js",
-      "require": "./dist/twd.umd.js",
-      "types": "./dist/index.d.ts"
+      "require": "./dist/twd.umd.js"
     }
   },
   "files": [
