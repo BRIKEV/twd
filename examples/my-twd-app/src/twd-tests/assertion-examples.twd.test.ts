@@ -54,6 +54,6 @@ it("assertion examples", async () => {
   beSelected.should("be.selected");
 
   // contain.url
-  await twd.url().should("eq", "http://localhost:3000/assertions");
+  await twd.url().should("eq", "http://localhost:5173/assertions");
   await twd.url().should("contain.url", "/assertions");
 });

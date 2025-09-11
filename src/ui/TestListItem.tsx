@@ -1,4 +1,5 @@
 import { TestCase } from "../twdRegistry";
+import Loader from "./Icons/Loader";
 import Play from "./Icons/Play";
 
 interface TestListItemProps {
@@ -47,7 +48,16 @@ const statusStyles = (node: TestCase) => {
         },
       };
   }
-}
+};
+
+const assertStyles = (text: string) => {
+  if (text.startsWith("Assertion passed")) {
+    return { color: "#0d542b", fontWeight: "700" };
+  } else if (text.startsWith("Test failed")) {
+    return { color: "#fb2c36", fontWeight: "700" };
+  }
+  return {};
+};
 
 export const TestListItem = ({ node, depth, idx, runTest }: TestListItemProps) => {
   const styles = statusStyles(node);
@@ -65,6 +75,7 @@ export const TestListItem = ({ node, depth, idx, runTest }: TestListItemProps) =
           >
             <span style={{ fontWeight: "500", color: "#374151", maxWidth: "220px" }}>
               {node.name}{" "}
+              {node.status}
               {node.only && <span style={{ color: "#2563eb" }}>(only)</span>}
               {node.skip && <span style={{ color: "#6b7280" }}>(skipped)</span>}
             </span>
@@ -85,8 +96,9 @@ export const TestListItem = ({ node, depth, idx, runTest }: TestListItemProps) =
                 alignItems: "center",
                 justifyContent: "center",
               }}
+              disabled={node.status === "running"}
             >
-              <Play />
+              {node.status === "running" ? <Loader /> : <Play />}
             </button>
           </div>
           {node.logs && node.logs.length > 0 && (
@@ -109,6 +121,7 @@ export const TestListItem = ({ node, depth, idx, runTest }: TestListItemProps) =
                     fontSize: "12px",
                     padding: "4px 6px",
                     borderBottom: "1px solid #d1d5db",
+                    ...assertStyles(log),
                   }}
                 >
                   {log}
