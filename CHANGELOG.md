@@ -1,3 +1,9 @@
+## <small>0.1.2 (2025-09-11)</small>
+
+* chore: update version ([e8599da](https://github.com/BRIKEV/twd/commit/e8599da))
+* Feat/improve assertion messages (#14) ([a2a36a2](https://github.com/BRIKEV/twd/commit/a2a36a2)), closes [#14](https://github.com/BRIKEV/twd/issues/14)
+* Feat/url command (#15) ([7542950](https://github.com/BRIKEV/twd/commit/7542950)), closes [#15](https://github.com/BRIKEV/twd/issues/15)
+
 ## 0.1.1 (2025-09-07)
 
 * fix: missing ts types ([28276ab](https://github.com/BRIKEV/twd/commit/28276ab))

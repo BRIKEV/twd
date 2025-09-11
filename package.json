@@ -19,7 +19,7 @@
     "build": "vite build",
     "test": "vitest",
     "test:ci": "vitest --run --coverage",
-    "conventional-changelog": "conventional-changelog -i CHANGELOG.md -s -r 0",
+    "conventional-changelog": "conventional-changelog -i CHANGELOG.md",
     "dev": "vite"
   },
   "peerDependencies": {
