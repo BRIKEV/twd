@@ -72,8 +72,16 @@ export const TWDSidebar = () => {
         boxShadow: "2px 0 6px rgba(0,0,0,0.1)",
       }}
     >
-      <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "8px" }}>
-        <strong>TWD Tests</strong>
+      <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "14px", alignItems: "center" }}>
+        <strong
+          style={{
+            fontSize: "18px",
+            fontWeight: "bold",
+            color: "#374151",
+          }}
+        >
+          TWD Tests
+        </strong>
         <button
           style={{
             background: "transparent",

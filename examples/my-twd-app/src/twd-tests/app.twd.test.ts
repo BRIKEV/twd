@@ -14,7 +14,7 @@ describe("App interactions", () => {
     throw new Error("Should not run");
   });
 
-  itOnly("only this one runs if present", async () => {
+  itOnly("only this one runs if present and long text to check the layout", async () => {
     const btn = await twd.get("button");
     btn.click();
     console.log("Ran only test");

@@ -63,7 +63,7 @@ export const TestListItem = ({ node, depth, idx, runTest }: TestListItemProps) =
               ...styles.item,
             }}
           >
-            <span>
+            <span style={{ fontWeight: "500", color: "#374151", maxWidth: "220px" }}>
               {node.name}{" "}
               {node.only && <span style={{ color: "#2563eb" }}>(only)</span>}
               {node.skip && <span style={{ color: "#6b7280" }}>(skipped)</span>}
@@ -75,11 +75,15 @@ export const TestListItem = ({ node, depth, idx, runTest }: TestListItemProps) =
                 background: "transparent",
                 border: "1px solid #d1d5db",
                 borderRadius: "4px",
-                padding: "6px",
+                padding: "0",
                 cursor: "pointer",
                 verticalAlign: "middle",
                 fontSize: "12px",
                 width: "24px",
+                height: "24px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
               }}
             >
               <Play />
