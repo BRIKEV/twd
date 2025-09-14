@@ -75,7 +75,6 @@ export const TestListItem = ({ node, depth, idx, runTest }: TestListItemProps) =
           >
             <span style={{ fontWeight: "500", color: "#374151", maxWidth: "220px" }}>
               {node.name}{" "}
-              {node.status}
               {node.only && <span style={{ color: "#2563eb" }}>(only)</span>}
               {node.skip && <span style={{ color: "#6b7280" }}>(skipped)</span>}
             </span>

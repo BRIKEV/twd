@@ -2,7 +2,7 @@ import { waitForElement } from "./utils/wait";
 import { popSuite, pushSuite, register } from "./twdRegistry";
 import { runAssertion } from "./asserts";
 import { log } from "./utils/log";
-import { mockRequest, Options, Rule, waitFor } from "./commands/mockResponses";
+import { mockRequest, Options, Rule, waitForRequest, initRequestMocking, clearRequestMockRules, getRequestMockRules } from "./commands/mockBridge";
 import type { AnyAssertion, ArgsFor, TWDElemAPI } from "./twd-types";
 import { simulateType } from "./commands/type";
 import urlCommand, { type URLCommandAPI } from "./commands/url";
@@ -125,7 +125,7 @@ interface TWDAPI {
    * 
    * ```
    */
-  waitFor: (alias: string) => Promise<Rule>;
+  waitForRequest: (alias: string) => Promise<Rule>;
   /**
    * URL-related assertions.
    *
@@ -136,7 +136,38 @@ interface TWDAPI {
    * 
    * ```
    */
-  url: () => URLCommandAPI; 
+  url: () => URLCommandAPI;
+  /**
+   * Initializes request mocking (registers the service worker).
+   * Must be called before using `twd.mockRequest()`.
+   *
+   * @example
+   * ```ts
+   * await twd.initRequestMocking();
+   * 
+   * ```
+   */
+  initRequestMocking: () => Promise<void>;
+  /**
+   * Clears all request mock rules.
+   *
+   * @example
+   * ```ts
+   * twd.clearRequestMockRules();
+   * 
+   * ```
+   */
+  clearRequestMockRules: () => void;
+  /**
+   * Gets all current request mock rules.
+   *
+   * @example
+   * ```ts
+   * const rules = twd.getRequestMockRules();
+   * console.log(rules);
+   * ```
+   */
+  getRequestMockRules: () => Rule[];
 }
 
 /**
@@ -178,5 +209,8 @@ export const twd: TWDAPI = {
   },
   url: urlCommand,
   mockRequest,
-  waitFor,
+  waitForRequest,
+  initRequestMocking,
+  clearRequestMockRules,
+  getRequestMockRules,
 };

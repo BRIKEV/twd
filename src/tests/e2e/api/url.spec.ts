@@ -73,4 +73,10 @@ describe('twd url command', () => {
     const urlCmd = await twd.url();
     expect(() => urlCmd.should('contain.url', '/about')).toThrowError('Assertion failed: Expected URL to contain /about, but got http://localhost:3000/home');
   });
+
+  it('should fail invalid assertion name', async () => {
+    const urlCmd = await twd.url();
+    // @ts-expect-error
+    expect(() => urlCmd.should('invalid.assertion', 'http://localhost:3000/home')).toThrowError('Unknown assertion: invalid.assertion');
+  });
 });
