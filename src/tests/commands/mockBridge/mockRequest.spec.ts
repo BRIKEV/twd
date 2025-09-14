@@ -33,6 +33,13 @@ describe('mockBridge mock request methods', () => {
       response: mockResponse,
       headers: { 'Content-Type': 'application/json' },
     });
+    await mockRequest(alias, {
+      url: mockUrl,
+      status: 200,
+      method: 'GET',
+      response: mockResponse,
+      headers: { 'Content-Type': 'application/json' },
+    });
 
     expect(postMessageMock).toHaveBeenCalledWith({
       type: 'ADD_RULE',
