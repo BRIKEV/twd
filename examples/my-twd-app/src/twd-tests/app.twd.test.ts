@@ -28,7 +28,8 @@ describe("App interactions", () => {
   });
 
   it("fetches a joke", async () => {
-    twd.mockRequest("joke", {
+    await twd.initRequestMocking();
+    await twd.mockRequest("joke", {
       method: "GET",
       url: "https://api.chucknorris.io/jokes/random",
       response: {
@@ -38,12 +39,12 @@ describe("App interactions", () => {
     let btn = await twd.get("button[data-twd='joke-button']");
     btn.click();
     // Wait for the mock fetch to fire
-    await twd.waitFor("joke");
+    await twd.waitForRequest("joke");
     let jokeText = await twd.get("p[data-twd='joke-text']");
     // console.log(`Joke text: ${jokeText.el.textContent}`);
     jokeText.should("have.text", "Mocked joke!");
     // overwrite mid-test
-    twd.mockRequest("joke", {
+    await twd.mockRequest("joke", {
       method: "GET",
       url: "https://api.chucknorris.io/jokes/random",
       response: {
@@ -52,10 +53,11 @@ describe("App interactions", () => {
     });
     btn = await twd.get("button[data-twd='joke-button']");
     btn.click();
-    await twd.waitFor("joke");
+    await twd.waitForRequest("joke");
     jokeText = await twd.get("p[data-twd='joke-text']");
+    jokeText.should("have.text", "Mocked second joke!");
     // console.log(`Joke text: ${jokeText.el.textContent}`);
-    jokeText.should('be.disabled');
+    // jokeText.should('be.disabled');
   });
 
   it("visit contact page", async () => {
@@ -71,7 +73,7 @@ describe("App interactions", () => {
     messageInput.type("Hello, this is a test message.");
     const submitBtn = await twd.get("button[type='submit']");
     submitBtn.click();
-    const rule = await twd.waitFor("contactSubmit");
+    const rule = await twd.waitForRequest("contactSubmit");
     console.log(`Submitted body: ${rule.request}`);
   });
 });
