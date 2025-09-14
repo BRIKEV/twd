@@ -83,7 +83,7 @@ window.fetch = async (input: RequestInfo, init?: RequestInit) => {
   );
 
   if (rule) {
-    log(`🛡️ ${rule.alias} → ${method} ${url}`);
+    log(`${rule.alias} → ${method} ${url}`);
     rule.executed = true; // <-- mark it executed
     rule.request = init?.body; // <-- capture body if present
 
