@@ -23,7 +23,7 @@
     "dist"
   ],
   "scripts": {
-    "build": "vite build && vite build -c vite.sw.config.js",
+    "build": "vite build && vite build -c vite.sw.config.js && cp src/cli/installsw.js dist/cli.js",
     "test": "vitest",
     "test:ci": "vitest --run --coverage",
     "conventional-changelog": "conventional-changelog -i CHANGELOG.md",
