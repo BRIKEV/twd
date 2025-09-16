@@ -44,5 +44,19 @@
     "vite": "^7.1.4",
     "vite-plugin-dts": "^4.5.4",
     "vitest": "^3.2.4"
-  }
+  },
+  "keywords": [
+    "testing",
+    "twd-js",
+    "twd",
+    "tdd",
+    "bdd",
+    "test",
+    "development",
+    "react",
+    "javascript",
+    "typescript",
+    "vite",
+    "vitest"
+  ]
 }
