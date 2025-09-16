@@ -5,6 +5,13 @@
   "main": "./dist/twd.umd.js",
   "module": "./dist/twd.es.js",
   "types": "./dist/index.d.ts",
+  "bin": {
+    "twd-js": "./dist/cli.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:BRIKEV/twd.git"
+  },
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
@@ -16,7 +23,7 @@
     "dist"
   ],
   "scripts": {
-    "build": "vite build",
+    "build": "vite build && vite build -c vite.sw.config.js && cp src/cli/installsw.js dist/cli.js",
     "test": "vitest",
     "test:ci": "vitest --run --coverage",
     "conventional-changelog": "conventional-changelog -i CHANGELOG.md",
@@ -37,5 +44,19 @@
     "vite": "^7.1.4",
     "vite-plugin-dts": "^4.5.4",
     "vitest": "^3.2.4"
-  }
+  },
+  "keywords": [
+    "testing",
+    "twd-js",
+    "twd",
+    "tdd",
+    "bdd",
+    "test",
+    "development",
+    "react",
+    "javascript",
+    "typescript",
+    "vite",
+    "vitest"
+  ]
 }
