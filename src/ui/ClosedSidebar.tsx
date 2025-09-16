@@ -20,7 +20,7 @@ export const ClosedSidebar = ({ setOpen }: ClosedSidebarProps) => {
       }}
       onClick={() => setOpen(true)}
     >
-      ▶ TWD
+      TWD
     </div>
   );
 };
