@@ -6,7 +6,7 @@
   "module": "./dist/twd.es.js",
   "types": "./dist/index.d.ts",
   "bin": {
-    "twd": "./dist/cli.js"
+    "twd-js": "./dist/cli.js"
   },
   "repository": {
     "type": "git",
