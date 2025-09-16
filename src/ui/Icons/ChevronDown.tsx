@@ -10,6 +10,7 @@ const ChevronDown = () => (
     strokeLinecap="round"
     strokeLinejoin="round"
     className="lucide lucide-chevron-down-icon lucide-chevron-down"
+    data-testid="chevron-down-icon"
   >
     <path d="m6 9 6 6 6-6" />
   </svg>

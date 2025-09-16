@@ -1,6 +1,4 @@
 /// <reference types="vitest" />
-
-
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import dts from 'vite-plugin-dts';
@@ -33,6 +31,7 @@ export default defineConfig({
   test: {
     environment: 'jsdom',
     exclude: ['node_modules', 'dist', 'examples'],
+    setupFiles: 'src/tests/setup.ts',
     coverage: {
       reporter: ['text', 'json', 'html'],
       include: ['src/**'],
