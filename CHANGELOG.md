@@ -1,4 +1,12 @@
-## <small>0.1.2 (2025-09-11)</small>
+## 0.2.0 (2025-09-18)
+
+* Feat/add cli command (#19) ([b70110f](github.com/BRIKEV/twd/commits/b70110f)), closes [#19](github.com/BRIKEV/twd/issues/19)
+* Feat/add UI tests (#20) ([491df53](github.com/BRIKEV/twd/commits/491df53)), closes [#20](github.com/BRIKEV/twd/issues/20)
+* Feat/improve networkintercept (#17) ([b39b723](github.com/BRIKEV/twd/commits/b39b723)), closes [#17](github.com/BRIKEV/twd/issues/17)
+* Feat/url command (#15) ([7542950](github.com/BRIKEV/twd/commits/7542950)), closes [#15](github.com/BRIKEV/twd/issues/15)
+
+
+## 0.1.2 (2025-09-11)
 
 * chore: update version ([e8599da](https://github.com/BRIKEV/twd/commit/e8599da))
 * Feat/improve assertion messages (#14) ([a2a36a2](https://github.com/BRIKEV/twd/commit/a2a36a2)), closes [#14](https://github.com/BRIKEV/twd/issues/14)
