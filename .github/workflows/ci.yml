@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [20.x, 22.x, 24.x]
+        node-version: [24.x]
     steps:
       - name: Checkout repo
         uses: actions/checkout@v5
@@ -40,7 +40,7 @@ jobs:
       # Leer coverage-summary.json y extraer lineas
       - id: coverage
         run: |
-          coverage=$(node -pe "JSON.parse(require('fs').readFileSync('coverage/coverage-summary.json')).total.lines.pct")
+          coverage=$(node -pe "JSON.parse(require('fs').readFileSync('coverage/coverage-final.json')).total.lines.pct")
           echo "coverage=$coverage" >> $GITHUB_ENV
 
       # Crear badge dinámico con shields.io
