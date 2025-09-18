@@ -1,25 +1,15 @@
-// mock-sw.js
+import { findRule } from './utils/findRule.js';
+import { notifyClients } from './utils/notifyClients.js';
 
 // Storage for rules inside the SW
 let rules = [];
-
-/**
- * Match a request against rules
- */
-const findRule = (method, url) => {
-  return rules.find(
-    (r) =>
-      r.method === method &&
-      (typeof r.url === "string" ? r.url === url : new RegExp(r.url).test(url))
-  );
-};
 
 // Intercept fetches
 self.addEventListener("fetch", (event) => {
   const { method } = event.request;
   const url = event.request.url;
 
-  const rule = findRule(method, url);
+  const rule = findRule(method, url, rules);
 
   if (rule) {
     console.log("Mock hit:", rule.alias, method, url);
@@ -34,13 +24,7 @@ self.addEventListener("fetch", (event) => {
 
         // Mark executed and notify page
         self.clients.matchAll().then((clients) => {
-          clients.forEach((client) =>
-            client.postMessage({
-              type: "EXECUTED",
-              alias: rule.alias,
-              request: body,
-            })
-          );
+          notifyClients(clients, rule, body);
         });
 
         return new Response(JSON.stringify(rule.response), {

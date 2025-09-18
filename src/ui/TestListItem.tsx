@@ -9,7 +9,7 @@ interface TestListItemProps {
   runTest: (i: number) => void;
 }
 
-const statusStyles = (node: TestCase) => {
+export const statusStyles = (node: TestCase) => {
   switch (node.status) {
     case "pass":
       return {
@@ -50,7 +50,7 @@ const statusStyles = (node: TestCase) => {
   }
 };
 
-const assertStyles = (text: string) => {
+export const assertStyles = (text: string) => {
   if (text.startsWith("Assertion passed")) {
     return { color: "#0d542b", fontWeight: "700" };
   } else if (text.startsWith("Test failed")) {
@@ -62,7 +62,7 @@ const assertStyles = (text: string) => {
 export const TestListItem = ({ node, depth, idx, runTest }: TestListItemProps) => {
   const styles = statusStyles(node);
   return (
-        <li key={node.name} style={{ marginBottom: "4px", marginLeft: depth * 6, ...styles.container }}>
+        <li key={node.name} style={{ marginBottom: "4px", marginLeft: depth * 6, ...styles.container }} data-testid={`test-list-item-${idx}`}>
           <div
             style={{
               display: "flex",
@@ -75,8 +75,12 @@ export const TestListItem = ({ node, depth, idx, runTest }: TestListItemProps) =
           >
             <span style={{ fontWeight: "500", color: "#374151", maxWidth: "220px" }}>
               {node.name}{" "}
-              {node.only && <span style={{ color: "#2563eb" }}>(only)</span>}
-              {node.skip && <span style={{ color: "#6b7280" }}>(skipped)</span>}
+              {node.only && (
+                <span style={{ color: "#2563eb" }} data-testid={`only-indicator-${idx}`}> (only)</span>
+              )}
+              {node.skip && (
+                <span style={{ color: "#6b7280" }} data-testid={`skip-indicator-${idx}`}> (skipped)</span>
+              )}
             </span>
             <button
               onClick={() => runTest(idx)}
@@ -96,6 +100,7 @@ export const TestListItem = ({ node, depth, idx, runTest }: TestListItemProps) =
                 justifyContent: "center",
               }}
               disabled={node.status === "running"}
+              data-testid={`run-test-button-${idx}`}
             >
               {node.status === "running" ? <Loader /> : <Play />}
             </button>

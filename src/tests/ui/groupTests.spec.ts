@@ -1,9 +1,13 @@
-import { describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it } from 'vitest';
 import * as twd from '../../';
-import { tests } from '../../twdRegistry';
+import { tests, clearTests } from '../../twdRegistry';
 import groupTests from "../../ui/groupTests";
 
 describe('groupTests function', () => {
+  beforeEach(() => {
+    clearTests();
+  });
+
   it('should group tests by their describe blocks', () => {
     twd.describe('Group 1', () => {
       twd.it('Test 1.1', () => {});
