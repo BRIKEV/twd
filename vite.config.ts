@@ -33,7 +33,7 @@ export default defineConfig({
     exclude: ['node_modules', 'dist', 'examples'],
     setupFiles: 'src/tests/setup.ts',
     coverage: {
-      reporter: ['text', 'json', 'html'],
+      reporter: ['text', 'json', 'html', 'lcov'],
       include: ['src/**'],
       exclude: ['src/tests/**', 'examples/**', 'dist/**'],
     },
