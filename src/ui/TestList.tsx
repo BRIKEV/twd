@@ -34,6 +34,10 @@ export const TestList = ({ runTest, tests }: TestListProps) => {
             gap: "4px",
           }}
           onClick={() => setCollapsed((c) => ({ ...c, [node.name]: !c[node.name] }))}
+          data-testid={`test-group-${node.name}`}
+          tabIndex={0}
+          role="button"
+          aria-expanded={!isCollapsed}
         >
           {node.name} {isCollapsed ? <ChevronRight /> : <ChevronDown />}
         </div>
