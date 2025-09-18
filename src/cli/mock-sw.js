@@ -1,5 +1,5 @@
-import { findRule } from '../../utils/findRule.js';
-import { notifyClients } from '../../utils/notifyClients.js';
+import { findRule } from './utils/findRule.js';
+import { notifyClients } from './utils/notifyClients.js';
 
 // Storage for rules inside the SW
 let rules = [];
