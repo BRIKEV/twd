@@ -112,7 +112,8 @@ pnpm add twd-js
 
 ## Mock Service Worker (API Mocking)
 
-TWD provides a CLI to easily set up a mock service worker for API/request mocking in your app.
+
+TWD provides a CLI to easily set up a mock service worker for API/request mocking in your app. You do **not** need to manually register the service worker in your app—TWD handles this automatically when you use `twd.initRequestMocking()` in your tests.
 
 ### Install the mock service worker
 
@@ -127,14 +128,27 @@ npx twd-mock init <public-dir> [--save]
 
 This will copy `mock-sw.js` to your public directory.
 
-### Register the service worker in your app
 
-Add this snippet to your app's entry point (e.g., `main.tsx`):
+### How to use request mocking in your tests
 
-```js
-if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register("/mock-sw.js?v=1");
-}
+Just call `await twd.initRequestMocking()` at the start of your test, then use `twd.mockRequest` to define your mocks. Example:
+
+```ts
+it("fetches a message", async () => {
+  await twd.initRequestMocking();
+  await twd.mockRequest("message", {
+    method: "GET",
+    url: "https://api.example.com/message",
+    response: {
+      value: "Mocked message!",
+    },
+  });
+  const btn = await twd.get("button[data-twd='message-button']");
+  btn.click();
+  await twd.waitForRequest("message");
+  const messageText = await twd.get("p[data-twd='message-text']");
+  messageText.should("have.text", "Mocked message!");
+});
 ```
 
 ---
