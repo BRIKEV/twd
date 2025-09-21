@@ -3,7 +3,6 @@ import { waitForRequest, mockRequest, clearRequestMockRules, getRequestMockRules
 
 describe('waitForRequest', () => {
   beforeEach(() => {
-    clearRequestMockRules();
     // Ensure navigator.serviceWorker exists
     if (!('serviceWorker' in navigator)) {
       Object.defineProperty(navigator, 'serviceWorker', {
@@ -20,6 +19,7 @@ describe('waitForRequest', () => {
       configurable: true,
       get: () => ({ postMessage: postMessageMock }),
     });
+    clearRequestMockRules();
   });
 
   it('resolves when the rule is executed', async () => {
@@ -46,12 +46,17 @@ describe('waitForRequest', () => {
       const rules = getRequestMockRules();
       rules[0].executed = true;
       rules[0].request = { delayed: true };
-  // Simulate waiter callback (directly resolve the promise by marking executed)
-  // The waitFor promise will resolve on next tick after executed is set
+      // Simulate waiter callback (directly resolve the promise by marking executed)
+      // The waitFor promise will resolve on next tick after executed is set
     }, 50);
     const result = await rulePromise;
     expect(result.alias).toBe(alias);
     expect(result.executed).toBe(true);
     expect(result.request).toEqual({ delayed: true });
+  });
+
+  it('throws if the rule is not found or not executed', async () => {
+    const alias = 'nonExistentAlias';
+    await expect(waitForRequest(alias)).rejects.toThrow('Rule not found or not executed');
   });
 });
