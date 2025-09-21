@@ -44,4 +44,8 @@ self.addEventListener("message", (event) => {
     rules.push(rule);
     console.log("Rule added:", rule);
   }
+  if (type === "CLEAR_RULES") {
+    rules = [];
+    console.log("All rules cleared");
+  }
 });

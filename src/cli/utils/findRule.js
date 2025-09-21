@@ -3,8 +3,10 @@
 
 export function findRule(method, url, rules) {
   return rules.find(
-    (r) =>
-      r.method === method &&
-      (typeof r.url === 'string' ? r.url === url : new RegExp(r.url).test(url))
-  );
+    (r) => {
+      const isMethodMatch = r.method.toLowerCase() === method.toLowerCase();
+      const isUrlMatch = typeof url === 'string'
+        ? r.url === url || r.url.includes(url) : new RegExp(url).test(r.url);
+      return isMethodMatch && isUrlMatch;
+  });
 }

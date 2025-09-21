@@ -1,7 +1,11 @@
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi, beforeEach } from 'vitest';
 import { clearRequestMockRules, getRequestMockRules, mockRequest } from '../../../commands/mockBridge';
 
 describe('mockBridge mock request methods', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
   it('should send mock rules to the service worker', async () => {
     const mockUrl = 'https://api.example.com/data';
     const alias = 'getData';
@@ -41,7 +45,7 @@ describe('mockBridge mock request methods', () => {
       headers: { 'Content-Type': 'application/json' },
     });
 
-    expect(postMessageMock).toHaveBeenCalledWith({
+    expect(postMessageMock).toHaveBeenNthCalledWith(1, {
       type: 'ADD_RULE',
       rule: expect.objectContaining({
         alias,
@@ -54,17 +58,19 @@ describe('mockBridge mock request methods', () => {
       }),
     });
 
-    // Restore original controller
-    Object.defineProperty(navigator.serviceWorker, 'controller', {
-      configurable: true,
-      get: () => originalController,
-    });
-
     expect(getRequestMockRules().length).toBe(1);
     expect(getRequestMockRules()[0].alias).toBe(alias);
 
     // clear rules
     clearRequestMockRules();
     expect(getRequestMockRules().length).toBe(0);
+    expect(postMessageMock).toHaveBeenCalledTimes(3);
+    expect(postMessageMock).toHaveBeenNthCalledWith(3, { type: "CLEAR_RULES" });
+
+    // Restore original controller
+    Object.defineProperty(navigator.serviceWorker, 'controller', {
+      configurable: true,
+      get: () => originalController,
+    });
   });
 });

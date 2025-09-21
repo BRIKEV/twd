@@ -19,7 +19,6 @@ export interface Options {
 }
 
 const rules: Rule[] = [];
-const waiters: Record<string, (rule: Rule) => void> = {};
 const SW_DELAY = 100;
 
 /**
@@ -36,10 +35,6 @@ export const initRequestMocking = async () => {
         if (rule) {
           rule.executed = true;
           rule.request = request;
-          if (waiters[alias]) {
-            waiters[alias](rule);
-            delete waiters[alias];
-          }
         }
       }
     });
@@ -94,9 +89,7 @@ export const waitForRequest = async (alias: string): Promise<Rule> => {
   await sleep(SW_DELAY);
   const rule = rules.find((r) => r.alias === alias && r.executed);
   if (rule) return Promise.resolve(rule);
-  return new Promise((resolve) => {
-    waiters[alias] = resolve;
-  });
+  throw new Error("Rule not found or not executed");
 };
 
 /**
@@ -109,5 +102,9 @@ export const getRequestMockRules = () => rules;
  * Clear all request mock rules.
  */
 export const clearRequestMockRules = () => {
+  // Also tell the SW
+  navigator.serviceWorker.controller?.postMessage({
+    type: "CLEAR_RULES",
+  });
   rules.length = 0;
 };

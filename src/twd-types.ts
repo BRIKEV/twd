@@ -140,20 +140,6 @@ export interface TWDElemAPI {
    */
   type: (text: string) => HTMLInputElement | HTMLTextAreaElement;
   /**
-   * Gets the text content of the element.
-   * @returns The text content.
-   * 
-   * @example
-   * ```ts
-   * const para = await twd.get("p");
-   * const content = para.text();
-   * console.log(content);
-   * 
-   * ```
-   * 
-   */
-  text: () => string;
-  /**
    * Asserts something about the element.
    * @param name The name of the assertion.
    * @param args Arguments for the assertion.

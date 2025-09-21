@@ -194,11 +194,6 @@ export const twd: TWDAPI = {
         log(message);
         return api;
       },
-      text: () => {
-        const content = el.textContent || "";
-        log(`text(${selector}) → "${content}"`);
-        return content;
-      },
     };
     return api;
   },
