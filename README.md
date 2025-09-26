@@ -89,6 +89,14 @@ pnpm add twd-js
      ```ts
      // src/loadTests.ts
      const modules = import.meta.glob("./**/*.twd.test.ts", { eager: true });
+     // Initialize request mocking once
+     twd.initRequestMocking()
+      .then(() => {
+        console.log("Request mocking initialized");
+      })
+      .catch((err) => {
+        console.error("Error initializing request mocking:", err);
+      });
      // No need to export anything
      ```
 
@@ -135,7 +143,6 @@ Just call `await twd.initRequestMocking()` at the start of your test, then use `
 
 ```ts
 it("fetches a message", async () => {
-  await twd.initRequestMocking();
   await twd.mockRequest("message", {
     method: "GET",
     url: "https://api.example.com/message",
