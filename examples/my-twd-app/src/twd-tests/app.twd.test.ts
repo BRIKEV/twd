@@ -28,7 +28,6 @@ describe("App interactions", () => {
   });
 
   it("fetches a joke", async () => {
-    await twd.initRequestMocking();
     await twd.mockRequest("joke", {
       method: "GET",
       url: "https://api.chucknorris.io/jokes/random",
@@ -58,6 +57,7 @@ describe("App interactions", () => {
     jokeText.should("have.text", "Mocked second joke!");
     // console.log(`Joke text: ${jokeText.el.textContent}`);
     // jokeText.should('be.disabled');
+    twd.clearRequestMockRules();
   });
 
   it("visit contact page", async () => {
@@ -75,5 +75,6 @@ describe("App interactions", () => {
     submitBtn.click();
     const rule = await twd.waitForRequest("contactSubmit");
     console.log(`Submitted body: ${rule.request}`);
+    twd.clearRequestMockRules();
   });
 });

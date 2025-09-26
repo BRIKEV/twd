@@ -10,21 +10,9 @@ export const TWDSidebar = () => {
   const runTest = async (i: number) => {
     const test = tests[i];
     test.logs = [];
-    const originalLog = console.log;
-    const originalError = console.error;
-
-    console.log = (...args) => {
-      test.logs?.push(args.map(String).join(" "));
-      originalLog(...args);
-      setRefresh((n) => n + 1);
-    };
-    console.error = (...args) => {
-      test.logs?.push(args.map(String).join(" "));
-      originalError(...args);
-      setRefresh((n) => n + 1);
-    };
 
     test.status = "running";
+    setRefresh((n) => n + 1);
     if (test.skip) {
       test.status = "skip";
     } else {
@@ -34,11 +22,9 @@ export const TWDSidebar = () => {
       } catch (e) {
         test.status = "fail";
         console.error("Test failed:", test.name, e);
+        test.logs.push(`Error: ${(e as Error).message}`);
       }
     }
-
-    console.log = originalLog;
-    console.error = originalError;
     setRefresh((n) => n + 1);
   };
 
