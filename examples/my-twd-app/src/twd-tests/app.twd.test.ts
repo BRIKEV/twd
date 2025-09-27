@@ -1,4 +1,4 @@
-import { describe, it, itOnly, itSkip, beforeEach, twd } from "../../../../src/twd";
+import { describe, it, itOnly, itSkip, beforeEach, twd, expect, userEvent } from "../../../../src";
 
 beforeEach(() => {
   console.log("Reset state before each test");
@@ -15,8 +15,11 @@ describe("App interactions", () => {
   });
 
   itOnly("only this one runs if present and long text to check the layout", async () => {
+    const user = userEvent.setup();
     const btn = await twd.get("button");
     btn.click();
+    await user.click(btn.el);
+    await userEvent.click(btn.el);
     console.log("Ran only test");
   });
   describe("Nested describe", () => {
@@ -28,7 +31,6 @@ describe("App interactions", () => {
   });
 
   it("fetches a joke", async () => {
-    await twd.initRequestMocking();
     await twd.mockRequest("joke", {
       method: "GET",
       url: "https://api.chucknorris.io/jokes/random",
@@ -55,9 +57,29 @@ describe("App interactions", () => {
     btn.click();
     await twd.waitForRequest("joke");
     jokeText = await twd.get("p[data-twd='joke-text']");
+    expect(jokeText.el.textContent).to.equal("Mocked second joke!");
     jokeText.should("have.text", "Mocked second joke!");
     // console.log(`Joke text: ${jokeText.el.textContent}`);
     // jokeText.should('be.disabled');
+    twd.clearRequestMockRules();
+  });
+
+  it("fetches a third joke to validate if the mocks are cleaned", async () => {
+    await twd.mockRequest("joke", {
+      method: "GET",
+      url: "https://api.chucknorris.io/jokes/random",
+      response: {
+        value: "Third Mocked joke!",
+      },
+    });
+    const btn = await twd.get("button[data-twd='joke-button']");
+    btn.click();
+    // Wait for the mock fetch to fire
+    await twd.waitForRequest("joke");
+    const jokeText = await twd.get("p[data-twd='joke-text']");
+    // console.log(`Joke text: ${jokeText.el.textContent}`);
+    jokeText.should("have.text", "Third Mocked joke!");
+    twd.clearRequestMockRules();
   });
 
   it("visit contact page", async () => {
@@ -75,5 +97,6 @@ describe("App interactions", () => {
     submitBtn.click();
     const rule = await twd.waitForRequest("contactSubmit");
     console.log(`Submitted body: ${rule.request}`);
+    twd.clearRequestMockRules();
   });
 });

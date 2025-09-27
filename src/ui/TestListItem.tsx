@@ -125,6 +125,7 @@ export const TestListItem = ({ node, depth, idx, runTest }: TestListItemProps) =
                     fontSize: "12px",
                     padding: "4px 6px",
                     borderBottom: "1px solid #d1d5db",
+                    color: "#374151",
                     ...assertStyles(log),
                   }}
                 >
