@@ -1,5 +1,4 @@
-import userEvent from '@testing-library/user-event';
-import { describe, it, itOnly, itSkip, beforeEach, twd, expect } from "../../../../src";
+import { describe, it, itOnly, itSkip, beforeEach, twd, expect, userEvent } from "../../../../src";
 
 beforeEach(() => {
   console.log("Reset state before each test");
@@ -16,10 +15,11 @@ describe("App interactions", () => {
   });
 
   itOnly("only this one runs if present and long text to check the layout", async () => {
-    const user = userEvent.setup()
+    const user = userEvent.setup();
     const btn = await twd.get("button");
     btn.click();
     await user.click(btn.el);
+    await userEvent.click(btn.el);
     console.log("Ran only test");
   });
   describe("Nested describe", () => {
