@@ -19,16 +19,9 @@ function createLoggedProxy(obj: any, prefix = 'userEvent') {
       }
 
       return async (...args: any[]) => {
-        try {
-          const result = await orig(...args);
-          // Success log
-          log(`Assertion passed: ${prefix}.${String(prop)} finished`);
-          return result;
-        } catch (err) {
-          // Failure log
-          log(`Assertion failed: ${prefix}.${String(prop)} failed: ${(err as Error).message}`);
-          throw err;
-        }
+        const result = await orig(...args);
+        log(`Assertion passed: ${prefix}.${String(prop)} finished`);
+        return result;
       };
     },
   });
