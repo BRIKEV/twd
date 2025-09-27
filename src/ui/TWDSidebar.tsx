@@ -3,9 +3,13 @@ import { tests } from "../twdRegistry";
 import { TestList } from "./TestList";
 import { ClosedSidebar } from "./ClosedSidebar";
 
-export const TWDSidebar = () => {
+interface TWDSidebarProps {
+  open: boolean;
+}
+
+export const TWDSidebar = ({ open }: TWDSidebarProps) => {
   const [_, setRefresh] = useState(0);
-  const [open, setOpen] = useState(true);
+  const [isOpen, setIsOpen] = useState(open);
 
   const runTest = async (i: number) => {
     const test = tests[i];
@@ -37,8 +41,8 @@ export const TWDSidebar = () => {
     }
   };
 
-  if (!open) {
-    return <ClosedSidebar setOpen={setOpen} />;
+  if (!isOpen) {
+    return <ClosedSidebar setOpen={setIsOpen} />;
   }
 
   return (
@@ -75,7 +79,7 @@ export const TWDSidebar = () => {
             cursor: "pointer",
             fontSize: "14px",
           }}
-          onClick={() => setOpen(false)}
+          onClick={() => setIsOpen(false)}
         >
           ✖
         </button>
