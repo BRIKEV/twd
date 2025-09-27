@@ -22,7 +22,7 @@ export const TWDSidebar = () => {
       } catch (e) {
         test.status = "fail";
         console.error("Test failed:", test.name, e);
-        test.logs.push(`Error: ${(e as Error).message}`);
+        test.logs.push(`Test failed: ${(e as Error).message}`);
       }
     }
     setRefresh((n) => n + 1);

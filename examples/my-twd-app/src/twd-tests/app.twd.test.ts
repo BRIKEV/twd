@@ -1,4 +1,5 @@
-import { describe, it, itOnly, itSkip, beforeEach, twd } from "../../../../src/twd";
+import userEvent from '@testing-library/user-event';
+import { describe, it, itOnly, itSkip, beforeEach, twd, expect } from "../../../../src";
 
 beforeEach(() => {
   console.log("Reset state before each test");
@@ -15,8 +16,10 @@ describe("App interactions", () => {
   });
 
   itOnly("only this one runs if present and long text to check the layout", async () => {
+    const user = userEvent.setup()
     const btn = await twd.get("button");
     btn.click();
+    await user.click(btn.el);
     console.log("Ran only test");
   });
   describe("Nested describe", () => {
@@ -54,6 +57,7 @@ describe("App interactions", () => {
     btn.click();
     await twd.waitForRequest("joke");
     jokeText = await twd.get("p[data-twd='joke-text']");
+    expect(jokeText.el.textContent).to.equal("Mocked second joke!");
     jokeText.should("have.text", "Mocked second joke!");
     // console.log(`Joke text: ${jokeText.el.textContent}`);
     // jokeText.should('be.disabled');

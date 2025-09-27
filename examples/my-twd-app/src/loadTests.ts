@@ -1,7 +1,7 @@
 import { twd } from "../../../src";
 
 // This automatically imports all files ending with .twd.test.ts
-const modules = import.meta.glob("./**/*.twd.test.ts", { eager: true });
+import.meta.glob("./**/*.twd.test.ts", { eager: true });
 twd.initRequestMocking()
   .then(() => {
     console.log("Request mocking initialized");

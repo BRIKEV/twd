@@ -87,8 +87,9 @@ pnpm add twd-js
    - With Vite:
 
      ```ts
+    import { twd } from "twd-js";
      // src/loadTests.ts
-     const modules = import.meta.glob("./**/*.twd.test.ts", { eager: true });
+    import.meta.glob("./**/*.twd.test.ts", { eager: true });
      // Initialize request mocking once
      twd.initRequestMocking()
       .then(() => {
