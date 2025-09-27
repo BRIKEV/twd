@@ -64,6 +64,24 @@ describe("App interactions", () => {
     twd.clearRequestMockRules();
   });
 
+  it("fetches a third joke to validate if the mocks are cleaned", async () => {
+    await twd.mockRequest("joke", {
+      method: "GET",
+      url: "https://api.chucknorris.io/jokes/random",
+      response: {
+        value: "Third Mocked joke!",
+      },
+    });
+    const btn = await twd.get("button[data-twd='joke-button']");
+    btn.click();
+    // Wait for the mock fetch to fire
+    await twd.waitForRequest("joke");
+    const jokeText = await twd.get("p[data-twd='joke-text']");
+    // console.log(`Joke text: ${jokeText.el.textContent}`);
+    jokeText.should("have.text", "Third Mocked joke!");
+    twd.clearRequestMockRules();
+  });
+
   it("visit contact page", async () => {
     twd.visit("/contact");
     twd.mockRequest("contactSubmit", {
