@@ -12,3 +12,5 @@ export const waitForElement = (fn: () => HTMLElement | null, timeout = 2000, int
     check();
   });
 };
+
+export const wait = (time: number): Promise<void> => new Promise(resolve => setTimeout(resolve, time));

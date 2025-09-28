@@ -1,4 +1,4 @@
-import { waitForElement } from "./utils/wait";
+import { waitForElement, wait } from "./utils/wait";
 import { popSuite, pushSuite, register } from "./twdRegistry";
 import { runAssertion } from "./asserts";
 import { log } from "./utils/log";
@@ -167,6 +167,16 @@ interface TWDAPI {
    * ```
    */
   getRequestMockRules: () => Rule[];
+  /**
+   * Waits for a specified time.
+   * @param time Time in milliseconds to wait
+   * @returns A promise that resolves after the specified time
+   * @example
+   * ```ts
+   * await twd.wait(500); // wait for 500ms
+   * ```
+   */
+  wait: (time: number) => Promise<void>;
 }
 
 /**
@@ -199,4 +209,5 @@ export const twd: TWDAPI = {
   initRequestMocking,
   clearRequestMockRules,
   getRequestMockRules,
+  wait,
 };
