@@ -113,33 +113,6 @@ export interface TWDElemAPI {
   /** The underlying DOM element. */
   el: Element;
   /**
-   * Simulates a user click on the element.
-   * Returns the same API so you can chain more actions.
-   *
-   * @example
-   * ```ts
-   * const button = await twd.get("button");
-   * button.click();
-   * 
-   * ```
-   * 
-   */
-  click: () => void;
-  /**
-   * Types text into an input element.
-   * @param text The text to type.
-   * @returns The input element.
-   * 
-   * @example
-   * ```ts
-   * const email = await twd.get("input#email");
-   * email.type("test@example.com");
-   * 
-   * ```
-   * 
-   */
-  type: (text: string) => HTMLInputElement | HTMLTextAreaElement;
-  /**
    * Asserts something about the element.
    * @param name The name of the assertion.
    * @param args Arguments for the assertion.

@@ -7,7 +7,7 @@ beforeEach(() => {
 describe("App interactions", () => {
   it("clicks the button", async () => {
     const btn = await twd.get("button");
-    btn.click();
+    userEvent.click(btn.el);
   });
 
   itSkip("skipped test", () => {
@@ -17,16 +17,16 @@ describe("App interactions", () => {
   itOnly("only this one runs if present and long text to check the layout", async () => {
     const user = userEvent.setup();
     const btn = await twd.get("button");
-    btn.click();
     await user.click(btn.el);
     await userEvent.click(btn.el);
     console.log("Ran only test");
   });
   describe("Nested describe", () => {
     it("checks text content", async () => {
-      const input = await twd.get("input#simple-input");
-      const value = input.type('hola');
-      console.log(`Input value: ${value.value}`);
+      let input = await twd.get("input#simple-input");
+      await userEvent.type(input.el, "hola");
+      input = await twd.get("input#simple-input");
+      input.should("have.value", "hola");
     });
   });
 
@@ -39,7 +39,7 @@ describe("App interactions", () => {
       },
     });
     let btn = await twd.get("button[data-twd='joke-button']");
-    btn.click();
+    userEvent.click(btn.el);
     // Wait for the mock fetch to fire
     await twd.waitForRequest("joke");
     let jokeText = await twd.get("p[data-twd='joke-text']");
@@ -54,7 +54,7 @@ describe("App interactions", () => {
       },
     });
     btn = await twd.get("button[data-twd='joke-button']");
-    btn.click();
+    userEvent.click(btn.el);
     await twd.waitForRequest("joke");
     jokeText = await twd.get("p[data-twd='joke-text']");
     expect(jokeText.el.textContent).to.equal("Mocked second joke!");
@@ -73,7 +73,7 @@ describe("App interactions", () => {
       },
     });
     const btn = await twd.get("button[data-twd='joke-button']");
-    btn.click();
+    await userEvent.click(btn.el);
     // Wait for the mock fetch to fire
     await twd.waitForRequest("joke");
     const jokeText = await twd.get("p[data-twd='joke-text']");
@@ -84,17 +84,18 @@ describe("App interactions", () => {
 
   it("visit contact page", async () => {
     twd.visit("/contact");
+    const user = userEvent.setup();
     twd.mockRequest("contactSubmit", {
       method: "POST",
       url: 'http://localhost:3001/contact',
       response: { success: true },
     });
     const emailInput = await twd.get("input#email");
-    emailInput.type("test@example.com");
+    await user.type(emailInput.el, "test@example.com");
     const messageInput = await twd.get("textarea#message");
-    messageInput.type("Hello, this is a test message.");
+    await user.type(messageInput.el, "Hello, this is a test message.");
     const submitBtn = await twd.get("button[type='submit']");
-    submitBtn.click();
+    await user.click(submitBtn.el);
     const rule = await twd.waitForRequest("contactSubmit");
     console.log(`Submitted body: ${rule.request}`);
     twd.clearRequestMockRules();

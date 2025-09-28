@@ -1,10 +1,9 @@
-import { waitForElement } from "./utils/wait";
+import { waitForElement, wait } from "./utils/wait";
 import { popSuite, pushSuite, register } from "./twdRegistry";
 import { runAssertion } from "./asserts";
 import { log } from "./utils/log";
 import { mockRequest, Options, Rule, waitForRequest, initRequestMocking, clearRequestMockRules, getRequestMockRules } from "./commands/mockBridge";
 import type { AnyAssertion, ArgsFor, TWDElemAPI } from "./twd-types";
-import { simulateType } from "./commands/type";
 import urlCommand, { type URLCommandAPI } from "./commands/url";
 
 /**
@@ -168,6 +167,16 @@ interface TWDAPI {
    * ```
    */
   getRequestMockRules: () => Rule[];
+  /**
+   * Waits for a specified time.
+   * @param time Time in milliseconds to wait
+   * @returns A promise that resolves after the specified time
+   * @example
+   * ```ts
+   * await twd.wait(500); // wait for 500ms
+   * ```
+   */
+  wait: (time: number) => Promise<void>;
 }
 
 /**
@@ -181,14 +190,6 @@ export const twd: TWDAPI = {
 
     const api: TWDElemAPI = {
       el,
-      click: () => {
-        log(`click(${selector})`);
-        el.click();
-      },
-      type: (text: string) => {
-        log(`type("${text}") into ${selector}`);
-        return simulateType(el as HTMLInputElement, text);
-      },
       should: (name: AnyAssertion, ...args: ArgsFor<AnyAssertion>) => {
         const message = runAssertion(el, name, ...args);
         log(message);
@@ -208,4 +209,5 @@ export const twd: TWDAPI = {
   initRequestMocking,
   clearRequestMockRules,
   getRequestMockRules,
+  wait,
 };

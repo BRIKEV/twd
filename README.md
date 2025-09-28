@@ -143,7 +143,11 @@ This will copy `mock-sw.js` to your public directory.
 Just call `await twd.initRequestMocking()` at the start of your test, then use `twd.mockRequest` to define your mocks. Example:
 
 ```ts
+import { describe, it, twd, userEvent } from "twd-js";
+
 it("fetches a message", async () => {
+  twd.visit("/");
+  const user = userEvent.setup();
   await twd.mockRequest("message", {
     method: "GET",
     url: "https://api.example.com/message",
@@ -152,7 +156,7 @@ it("fetches a message", async () => {
     },
   });
   const btn = await twd.get("button[data-twd='message-button']");
-  btn.click();
+  await user.click(btn.el);
   await twd.waitForRequest("message");
   const messageText = await twd.get("p[data-twd='message-text']");
   messageText.should("have.text", "Mocked message!");
