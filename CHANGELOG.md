@@ -1,3 +1,9 @@
+## 0.3.0 (2025-09-28)
+
+* Feat/add better UI (#23) ([cc63a67](github.com/BRIKEV/twd/commits/cc63a67)), closes [#23](github.com/BRIKEV/twd/issues/23)
+* Fix/mock bridge (#22) ([87eb23a](github.com/BRIKEV/twd/commits/87eb23a)), closes [#22](github.com/BRIKEV/twd/issues/22)
+* Feat/add UI tests (#20) ([491df53](github.com/BRIKEV/twd/commits/491df53)), closes [#20](github.com/BRIKEV/twd/issues/20)
+
 ## 0.2.0 (2025-09-18)
 
 * Feat/add cli command (#19) ([b70110f](github.com/BRIKEV/twd/commits/b70110f)), closes [#19](github.com/BRIKEV/twd/issues/19)
