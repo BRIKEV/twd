@@ -1,4 +1,4 @@
-import { it, twd } from "../../../../src/twd";
+import { it, twd, userEvent } from "../../../../src";
 
 it("assertion examples", async () => {
   await twd.visit("/assertions");
@@ -37,7 +37,7 @@ it("assertion examples", async () => {
 
   // be.focused
   const labelFocused = await twd.get("#label-focused");
-  labelFocused.click();
+  await userEvent.click(labelFocused.el);
   const beFocused = await twd.get("#be-focused");
   beFocused.should("be.focused");
 

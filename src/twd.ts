@@ -4,7 +4,6 @@ import { runAssertion } from "./asserts";
 import { log } from "./utils/log";
 import { mockRequest, Options, Rule, waitForRequest, initRequestMocking, clearRequestMockRules, getRequestMockRules } from "./commands/mockBridge";
 import type { AnyAssertion, ArgsFor, TWDElemAPI } from "./twd-types";
-import { simulateType } from "./commands/type";
 import urlCommand, { type URLCommandAPI } from "./commands/url";
 
 /**
@@ -181,14 +180,6 @@ export const twd: TWDAPI = {
 
     const api: TWDElemAPI = {
       el,
-      click: () => {
-        log(`click(${selector})`);
-        el.click();
-      },
-      type: (text: string) => {
-        log(`type("${text}") into ${selector}`);
-        return simulateType(el as HTMLInputElement, text);
-      },
       should: (name: AnyAssertion, ...args: ArgsFor<AnyAssertion>) => {
         const message = runAssertion(el, name, ...args);
         log(message);
