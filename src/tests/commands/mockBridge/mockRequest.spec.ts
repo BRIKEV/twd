@@ -43,8 +43,9 @@ describe('mockBridge mock request methods', () => {
       method: 'GET',
       response: mockResponse,
       headers: { 'Content-Type': 'application/json' },
+      urlRegex: true,
     });
-
+    
     expect(postMessageMock).toHaveBeenNthCalledWith(1, {
       type: 'ADD_RULE',
       rule: expect.objectContaining({
@@ -55,6 +56,20 @@ describe('mockBridge mock request methods', () => {
         response: mockResponse,
         headers: { 'Content-Type': 'application/json' },
         executed: false,
+      }),
+    });
+
+    expect(postMessageMock).toHaveBeenNthCalledWith(2, {
+      type: 'ADD_RULE',
+      rule: expect.objectContaining({
+        alias,
+        url: mockUrl,
+        status: 200,
+        method: 'GET',
+        response: mockResponse,
+        headers: { 'Content-Type': 'application/json' },
+        executed: false,
+        urlRegex: true,
       }),
     });
 

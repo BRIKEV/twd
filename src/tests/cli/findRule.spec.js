@@ -12,45 +12,38 @@ describe('findRule', () => {
     expect(findRule('GET', 'https://bar.com', rules)).toBeUndefined();
   });
 
-  it('matches by regex url', () => {
+  it('matches by path (rule url starts with /)', () => {
     const rules = [
-      { method: 'GET', url: 'https://foo.com', alias: 'a' },
+      { method: 'GET', url: '/auth/v1/token?grant_type=password', alias: 'a' },
     ];
-    expect(findRule('GET', /^https:\/\/foo\..+/, rules)).toEqual(rules[0]);
+    expect(findRule('GET', 'http://127.0.0.1:54321/auth/v1/token?grant_type=password', rules)).toEqual(rules[0]);
+    expect(findRule('GET', 'http://127.0.0.1:54321/auth/v1/token?grant_type=refresh', rules)).toBeUndefined();
+    expect(findRule('GET', 'http://127.0.0.1:54321/other', rules)).toBeUndefined();
+  });
+
+  it('matches by regex string (starts with ^)', () => {
+    const rules = [
+      { method: 'GET', url: '^https://foo\\.com/.*$', alias: 'a', urlRegex: true },
+    ];
+    expect(findRule('GET', 'https://foo.com/api', rules)).toEqual(rules[0]);
+    expect(findRule('GET', 'https://foo.com/other', rules)).toEqual(rules[0]);
     expect(findRule('GET', 'https://bar.com', rules)).toBeUndefined();
+  });
+
+  it('matches by regex string (wrapped in /.../)', () => {
+    const rules = [
+      { method: 'GET', url: /users.*/, alias: 'a', urlRegex: true },
+    ];
+    expect(findRule('GET', 'https://foo.com/api/users/preferences', rules)).toEqual(rules[0]);
+    expect(findRule('GET', 'https://foo.com/api/products', rules)).toBeUndefined();
   });
 
   it('returns the first matching rule', () => {
     const rules = [
-      { method: 'GET', url: 'https://foo.com', alias: 'first' },
-      { method: 'GET', url: 'https://foo.com', alias: 'second' },
+      { method: 'GET', url: '/api', alias: 'first' },
+      { method: 'GET', url: '/api', alias: 'second' },
     ];
-    expect(findRule('GET', 'https://foo.com', rules)).toEqual(rules[0]);
-  });
-
-  it('should match by contains url', () => {
-    const rules = [
-      { method: 'GET', url: 'https://foo.com/api', alias: 'a' },
-    ];
-    expect(findRule('GET', 'https://foo.com/api', rules)).toEqual(rules[0]);
-    expect(findRule('GET', 'https://foo.com/api/users', rules)).toBeUndefined();
-    expect(findRule('GET', 'https://foo.com/home', rules)).toBeUndefined();
-  });
-
-  it('should match by regex', () => {
-    const rules = [
-      { method: 'GET', url: 'https://foo.com/api/users/preferences', alias: 'a' },
-    ];
-    expect(findRule('GET', /\/users\/*/, rules)).toEqual(rules[0]);
-  });
-
-  it('should match by contains some path of the url', () => {
-    const rules = [
-      { method: 'GET', url: 'https://foo.com/api', alias: 'a' },
-    ];
-    expect(findRule('GET', '/api', rules)).toEqual(rules[0]);
-    expect(findRule('GET', '/api/users', rules)).toBeUndefined();
-    expect(findRule('GET', 'https://foo.com/home', rules)).toBeUndefined();
+    expect(findRule('GET', 'http://localhost/api', rules)).toEqual(rules[0]);
   });
 
   it('is case-insensitive for method', () => {
@@ -60,5 +53,13 @@ describe('findRule', () => {
     expect(findRule('GET', 'https://foo.com', rules)).toEqual(rules[0]);
     expect(findRule('get', 'https://foo.com', rules)).toEqual(rules[0]);
     expect(findRule('Get', 'https://foo.com', rules)).toEqual(rules[0]);
+  });
+
+  it('returns undefined if no match', () => {
+    const rules = [
+      { method: 'GET', url: '/api', alias: 'a' },
+    ];
+    expect(findRule('POST', 'http://localhost/api', rules)).toBeUndefined();
+    expect(findRule('GET', 'http://localhost/other', rules)).toBeUndefined();
   });
 });
