@@ -1,3 +1,8 @@
+## 0.3.1 (2025-10-01)
+
+* docs: add CODE_OF_CONDUCT and CONTRIBUTING guidelines (#28) ([833e2c4](github.com/BRIKEV/twd/commits/833e2c4)), closes [#28](github.com/BRIKEV/twd/issues/28)
+* fix: error with intercept routes (#26) ([19ee847](github.com/BRIKEV/twd/commits/19ee847)), closes [#26](github.com/BRIKEV/twd/issues/26)
+
 ## 0.3.0 (2025-09-28)
 
 * Feat/add better UI (#23) ([cc63a67](github.com/BRIKEV/twd/commits/cc63a67)), closes [#23](github.com/BRIKEV/twd/issues/23)
