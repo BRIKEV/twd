@@ -8,7 +8,6 @@
 
 > ⚠️ This is a **beta release** – expect frequent updates and possible breaking changes.
 
-
 TWD (Testing Web Development) is a library designed to seamlessly integrate testing into your web development workflow. It streamlines the process of writing, running, and managing tests directly in your application, with a modern UI and powerful mocking capabilities.
 
 Currently, TWD supports React, with plans to add more frameworks soon.
@@ -39,23 +38,22 @@ yarn add twd-js
 pnpm add twd-js
 ```
 
-
 ## Quick Start
 
 1. **Add the TWD Sidebar to your React app:**
 
    ```tsx
-   import { StrictMode } from 'react';
-   import { createRoot } from 'react-dom/client';
-   import App from './App';
-   import './index.css';
-   import { TWDSidebar } from 'twd-js';
+   import { StrictMode } from "react";
+   import { createRoot } from "react-dom/client";
+   import App from "./App";
+   import "./index.css";
+   import { TWDSidebar } from "twd-js";
 
-   createRoot(document.getElementById('root')!).render(
+   createRoot(document.getElementById("root")!).render(
      <StrictMode>
        <App />
        <TWDSidebar />
-     </StrictMode>,
+     </StrictMode>
    );
    ```
 
@@ -87,17 +85,18 @@ pnpm add twd-js
    - With Vite:
 
      ```ts
-    import { twd } from "twd-js";
+     import { twd } from "twd-js";
      // src/loadTests.ts
-    import.meta.glob("./**/*.twd.test.ts", { eager: true });
+     import.meta.glob("./**/*.twd.test.ts", { eager: true });
      // Initialize request mocking once
-     twd.initRequestMocking()
-      .then(() => {
-        console.log("Request mocking initialized");
-      })
-      .catch((err) => {
-        console.error("Error initializing request mocking:", err);
-      });
+     twd
+       .initRequestMocking()
+       .then(() => {
+         console.log("Request mocking initialized");
+       })
+       .catch((err) => {
+         console.error("Error initializing request mocking:", err);
+       });
      // No need to export anything
      ```
 
@@ -112,7 +111,7 @@ pnpm add twd-js
    Import `loadTests.ts` in your main entry (e.g., `main.tsx`):
 
    ```tsx
-   import './loadTests';
+   import "./loadTests";
    ```
 
 4. **Run your app and open the TWD sidebar** to see and run your tests in the browser.
@@ -121,7 +120,6 @@ pnpm add twd-js
 
 ## Mock Service Worker (API Mocking)
 
-
 TWD provides a CLI to easily set up a mock service worker for API/request mocking in your app. You do **not** need to manually register the service worker in your app—TWD handles this automatically when you use `twd.initRequestMocking()` in your tests.
 
 ### Install the mock service worker
@@ -129,14 +127,13 @@ TWD provides a CLI to easily set up a mock service worker for API/request mockin
 Run the following command in your project root:
 
 ```bash
-npx twd-mock init <public-dir> [--save]
+npx twd-js init <public-dir> [--save]
 ```
 
 - Replace `<public-dir>` with the path to your app's public/static directory (e.g., `public/` or `dist/`).
 - Use `--save` to print a registration snippet for your app.
 
 This will copy `mock-sw.js` to your public directory.
-
 
 ### How to use request mocking in your tests
 
