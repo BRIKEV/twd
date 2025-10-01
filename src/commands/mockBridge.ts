@@ -8,6 +8,7 @@ export type Rule = {
   request?: unknown;
   status?: number;
   headers?: Record<string, string>;
+  urlRegex?: boolean;
 };
 
 export interface Options {
@@ -16,6 +17,7 @@ export interface Options {
   response: unknown;
   status?: number;
   headers?: Record<string, string>;
+  urlRegex?: boolean;
 }
 
 const rules: Rule[] = [];

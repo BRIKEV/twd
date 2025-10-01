@@ -43,6 +43,7 @@ describe('mockBridge mock request methods', () => {
       method: 'GET',
       response: mockResponse,
       headers: { 'Content-Type': 'application/json' },
+      urlRegex: true,
     });
 
     expect(postMessageMock).toHaveBeenNthCalledWith(1, {
@@ -55,6 +56,7 @@ describe('mockBridge mock request methods', () => {
         response: mockResponse,
         headers: { 'Content-Type': 'application/json' },
         executed: false,
+        urlRegex: false,
       }),
     });
 
