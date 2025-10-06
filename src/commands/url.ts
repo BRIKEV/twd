@@ -1,3 +1,4 @@
+import { log } from "../utils/log";
 import { assertionMessage } from "../utils/assertionMessage";
 /**
  * All supported assertion names for the `should` function in url command
@@ -64,7 +65,11 @@ const should = (name: AnyURLAssertion, value: string) => {
 const urlCommand = (): URLCommandAPI => {
   return {
     location: window.location,
-    should,
+    should: (name: AnyURLAssertion, value: string) => {
+      const result = should(name, value);
+      log(result);
+      return result;
+    },
   };
 };
 

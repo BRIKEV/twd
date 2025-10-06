@@ -98,6 +98,7 @@ describe("App interactions", () => {
     await user.click(submitBtn.el);
     const rule = await twd.waitForRequest("contactSubmit");
     console.log(`Submitted body: ${rule.request}`);
+    twd.url().should("contain.url", "/contact");
     twd.clearRequestMockRules();
   });
 });
