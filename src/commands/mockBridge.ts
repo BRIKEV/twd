@@ -91,7 +91,7 @@ export const waitForRequest = async (alias: string): Promise<Rule> => {
   await wait(SW_DELAY);
   const rule = rules.find((r) => r.alias === alias && r.executed);
   if (rule) return Promise.resolve(rule);
-  throw new Error("Rule not found or not executed");
+  throw new Error(`Rule ${alias} not found or not executed`);
 };
 
 /**

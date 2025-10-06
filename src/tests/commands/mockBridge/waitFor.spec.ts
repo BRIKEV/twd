@@ -57,6 +57,6 @@ describe('waitForRequest', () => {
 
   it('throws if the rule is not found or not executed', async () => {
     const alias = 'nonExistentAlias';
-    await expect(waitForRequest(alias)).rejects.toThrow('Rule not found or not executed');
+    await expect(waitForRequest(alias)).rejects.toThrow(`Rule ${alias} not found or not executed`);
   });
 });
