@@ -1,3 +1,5 @@
+import { wait } from "../utils/wait";
+
 // mockBridge.ts
 export type Rule = {
   method: string;
@@ -43,8 +45,6 @@ export const initRequestMocking = async () => {
   }
 };
 
-const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
-
 /**
  * Mock a network request.
  *
@@ -78,7 +78,7 @@ export const mockRequest = async (alias: string, options: Options) => {
     type: "ADD_RULE",
     rule,
   });
-  await sleep(SW_DELAY);
+  await wait(SW_DELAY);
   await Promise.resolve();
 };
 
@@ -88,7 +88,7 @@ export const mockRequest = async (alias: string, options: Options) => {
  * @returns The matched rule (with body if applicable)
  */
 export const waitForRequest = async (alias: string): Promise<Rule> => {
-  await sleep(SW_DELAY);
+  await wait(SW_DELAY);
   const rule = rules.find((r) => r.alias === alias && r.executed);
   if (rule) return Promise.resolve(rule);
   throw new Error("Rule not found or not executed");

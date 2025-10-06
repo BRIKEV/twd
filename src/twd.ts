@@ -5,6 +5,7 @@ import { log } from "./utils/log";
 import { mockRequest, Options, Rule, waitForRequest, initRequestMocking, clearRequestMockRules, getRequestMockRules } from "./commands/mockBridge";
 import type { AnyAssertion, ArgsFor, TWDElemAPI } from "./twd-types";
 import urlCommand, { type URLCommandAPI } from "./commands/url";
+import { visit } from "./commands/visit";
 
 /**
  * Stores the function to run before each test.
@@ -198,11 +199,7 @@ export const twd: TWDAPI = {
     };
     return api;
   },
-  visit: (url: string) => {
-    log(`visit("${url}")`);
-    window.history.pushState({}, "", url);
-    window.dispatchEvent(new PopStateEvent("popstate"));
-  },
+  visit,
   url: urlCommand,
   mockRequest,
   waitForRequest,
