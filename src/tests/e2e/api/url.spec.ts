@@ -62,6 +62,7 @@ describe('twd url command', () => {
     const result = urlCmd.should('not.contain.url', '/about');
     expect(typeof result).toBe('string');
     expect(result).toContain('Assertion passed');
+    
   });
 
   it('should fail equality assertion with incorrect URL', async () => {
