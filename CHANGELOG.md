@@ -1,3 +1,13 @@
+## 0.4.0 (2025-10-07)
+
+* feat: add get all methods (#43) ([cb2593e](github.com/BRIKEV/twd/commits/cb2593e)), closes [#43](github.com/BRIKEV/twd/issues/43)
+* feat: implement eventsMessage function and update userEvent logging (#42) ([1d38a28](github.com/BRIKEV/twd/commits/1d38a28)), closes [#42](github.com/BRIKEV/twd/issues/42)
+* feat: improve visit command (#37) ([c326810](github.com/BRIKEV/twd/commits/c326810)), closes [#37](github.com/BRIKEV/twd/issues/37)
+* Feat/wait for requests (#41) ([4a7319b](github.com/BRIKEV/twd/commits/4a7319b)), closes [#41](github.com/BRIKEV/twd/issues/41)
+* fix: improve wait command (#40) ([6912369](github.com/BRIKEV/twd/commits/6912369)), closes [#40](github.com/BRIKEV/twd/issues/40)
+* fix: remove truncate chai expects (#39) ([c3404d7](github.com/BRIKEV/twd/commits/c3404d7)), closes [#39](github.com/BRIKEV/twd/issues/39)
+* fix: url command assertion message (#38) ([c40e795](github.com/BRIKEV/twd/commits/c40e795)), closes [#38](github.com/BRIKEV/twd/issues/38)
+
 ## 0.3.1 (2025-10-01)
 
 * docs: add CODE_OF_CONDUCT and CONTRIBUTING guidelines (#28) ([833e2c4](github.com/BRIKEV/twd/commits/833e2c4)), closes [#28](github.com/BRIKEV/twd/issues/28)
