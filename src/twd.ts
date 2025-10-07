@@ -1,4 +1,4 @@
-import { waitForElement, wait } from "./utils/wait";
+import { waitForElement, wait, waitForElements } from "./utils/wait";
 import { popSuite, pushSuite, register } from "./twdRegistry";
 import { runAssertion } from "./asserts";
 import { log } from "./utils/log";
@@ -79,6 +79,20 @@ interface TWDAPI {
    * 
    */
   get: (selector: string) => Promise<TWDElemAPI>;
+  /**
+   * Finds multiple elements by selector and returns an array of TWD APIs for them.
+   * @param selector CSS selector
+   * @returns {Promise<TWDElemAPI[]>} Array of TWD APIs for the elements
+   * 
+   * @example
+   * ```ts
+   * const items = await twd.getAll(".item");
+   * items.at(0).should("be.visible");
+   * items.at(1).should("contain.text", "Hello");
+   * expect(items).to.have.length(3);
+   * ```
+   */
+  getAll: (selector: string) => Promise<TWDElemAPI[]>;
   /**
    * Simulates visiting a URL (SPA navigation).
    * @param url The URL to visit
@@ -208,6 +222,22 @@ export const twd: TWDAPI = {
       },
     };
     return api;
+  },
+  getAll: async (selector: string): Promise<TWDElemAPI[]> => {
+    log(`Searching getAll("${selector}")`);
+    const els = await waitForElements(() => document.querySelectorAll(selector));
+
+    return els.map((el) => {
+      const api: TWDElemAPI = {
+        el,
+        should: (name: AnyAssertion, ...args: ArgsFor<AnyAssertion>) => {
+          const message = runAssertion(el, name, ...args);
+          log(message);
+          return api;
+        },
+      };
+      return api;
+    });
   },
   visit,
   url: urlCommand,
