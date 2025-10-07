@@ -51,7 +51,7 @@ export const statusStyles = (node: TestCase) => {
 };
 
 export const assertStyles = (text: string) => {
-  if (text.startsWith("Assertion passed")) {
+  if (text.startsWith("Assertion passed") || text.startsWith("Event fired")) {
     return { color: "#0d542b", fontWeight: "700" };
   } else if (text.startsWith("Test failed")) {
     return { color: "#fb2c36", fontWeight: "700" };

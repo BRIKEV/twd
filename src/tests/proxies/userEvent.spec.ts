@@ -25,7 +25,7 @@ describe('userEvent', () => {
     });
     tests[0].status = 'running';
     await tests[0].fn();
-    expect(tests[0].logs).toContainEqual(expect.stringContaining('Assertion passed: userEvent.instance.click finished'));
-    expect(tests[0].logs).toContainEqual(expect.stringContaining('Assertion passed: userEvent.instance.type finished'));
+    expect(tests[0].logs).toContainEqual(expect.stringContaining('Event fired: Clicked element'));
+    expect(tests[0].logs).toContainEqual(expect.stringContaining('Event fired: Typed "Hello" into element'));
   });
 });
