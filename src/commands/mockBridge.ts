@@ -83,6 +83,24 @@ export const mockRequest = async (alias: string, options: Options) => {
 };
 
 /**
+ * wait for a list of mocked requests to be made.
+ * @param aliases The aliases of the mock rules to wait for
+ * @returns The matched rules (with body if applicable)
+ * @example
+ * ```ts
+ * await waitForRequests(["getUser", "postComment"]);
+ * ```
+ */
+export const waitForRequests = async (aliases: string[]): Promise<Rule[]> => {
+  const results: Rule[] = [];
+  // parallel wait
+  const rules = await Promise.all(
+    aliases.map((alias) => waitForRequest(alias))
+  );
+  return rules;
+};
+
+/**
  * Wait for a mocked request to be made.
  * @param alias The alias of the mock rule to wait for
  * @returns The matched rule (with body if applicable)
@@ -90,8 +108,8 @@ export const mockRequest = async (alias: string, options: Options) => {
 export const waitForRequest = async (alias: string): Promise<Rule> => {
   await wait(SW_DELAY);
   const rule = rules.find((r) => r.alias === alias && r.executed);
-  if (rule) return Promise.resolve(rule);
-  throw new Error(`Rule ${alias} not found or not executed`);
+  if (!rule) throw new Error(`Rule ${alias} not found or not executed`);
+  return Promise.resolve(rule);
 };
 
 /**

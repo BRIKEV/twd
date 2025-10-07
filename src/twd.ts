@@ -2,7 +2,7 @@ import { waitForElement, wait } from "./utils/wait";
 import { popSuite, pushSuite, register } from "./twdRegistry";
 import { runAssertion } from "./asserts";
 import { log } from "./utils/log";
-import { mockRequest, Options, Rule, waitForRequest, initRequestMocking, clearRequestMockRules, getRequestMockRules } from "./commands/mockBridge";
+import { mockRequest, Options, Rule, waitForRequest, initRequestMocking, clearRequestMockRules, getRequestMockRules, waitForRequests } from "./commands/mockBridge";
 import type { AnyAssertion, ArgsFor, TWDElemAPI } from "./twd-types";
 import urlCommand, { type URLCommandAPI } from "./commands/url";
 import { visit } from "./commands/visit";
@@ -127,6 +127,16 @@ interface TWDAPI {
    */
   waitForRequest: (alias: string) => Promise<Rule>;
   /**
+   * wait for a list of mocked requests to be made.
+   * @param aliases The aliases of the mock rules to wait for
+   * @returns The matched rules (with body if applicable)
+   * @example
+   * ```ts
+   * const rules = await waitForRequests(["getUser", "postComment"]);
+   * ```
+   */
+  waitForRequests: (aliases: string[]) => Promise<Rule[]>;
+  /**
    * URL-related assertions.
    *
    * @example
@@ -203,6 +213,7 @@ export const twd: TWDAPI = {
   url: urlCommand,
   mockRequest,
   waitForRequest,
+  waitForRequests,
   initRequestMocking,
   clearRequestMockRules,
   getRequestMockRules,

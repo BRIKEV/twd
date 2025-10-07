@@ -96,8 +96,8 @@ describe("App interactions", () => {
     await user.type(messageInput.el, "Hello, this is a test message.");
     const submitBtn = await twd.get("button[type='submit']");
     await user.click(submitBtn.el);
-    const rule = await twd.waitForRequest("contactSubmit");
-    console.log(`Submitted body: ${rule.request}`);
+    const rules = await twd.waitForRequests(["contactSubmit"]);
+    console.log(`Submitted body: ${rules[0].request}`);
     twd.url().should("contain.url", "/contact");
     twd.clearRequestMockRules();
   });
