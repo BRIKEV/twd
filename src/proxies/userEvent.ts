@@ -1,5 +1,6 @@
 import userEventLib from '@testing-library/user-event';
 import { log } from '../utils/log';
+import { eventsMessage } from './eventsMessage';
 
 type UserEvent = typeof userEventLib;
 
@@ -20,7 +21,7 @@ function createLoggedProxy(obj: any, prefix = 'userEvent') {
 
       return async (...args: any[]) => {
         const result = await orig(...args);
-        log(`Assertion passed: ${prefix}.${String(prop)} finished`);
+        log(eventsMessage(prefix, prop, args));
         return result;
       };
     },
