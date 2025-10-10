@@ -38,7 +38,10 @@
     "test": "vitest",
     "test:ci": "vitest --run --coverage",
     "conventional-changelog": "conventional-changelog -i CHANGELOG.md",
-    "dev": "vite"
+    "dev": "vite",
+    "docs:dev": "vitepress dev docs",
+    "docs:build": "vitepress build docs",
+    "docs:preview": "vitepress preview docs"
   },
   "peerDependencies": {
     "react": ">=17.0.0",
@@ -58,6 +61,7 @@
     "typescript": "^5.9.2",
     "vite": "^7.1.4",
     "vite-plugin-dts": "^4.5.4",
+    "vitepress": "^2.0.0-alpha.12",
     "vitest": "^3.2.4"
   },
   "keywords": [
