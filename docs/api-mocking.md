@@ -4,9 +4,13 @@ TWD provides powerful API mocking capabilities through Mock Service Worker integ
 
 ## Setup
 
+**VIDEO HERE** - *Step-by-step guide to setting up Mock Service Worker with TWD*
+
 ### 1. Install Mock Service Worker
 
 First, set up the mock service worker in your project:
+
+**IMAGE HERE** - *Terminal screenshot showing the init command and its output*
 
 ```bash
 npx twd-js init public
@@ -41,6 +45,8 @@ You only need to call `initRequestMocking()` once in your test loader, not in in
 :::
 
 ## Basic Mocking
+
+**VIDEO HERE** - *Live demonstration of setting up a mock, triggering a request, and seeing the mocked response*
 
 ### Simple GET Request
 

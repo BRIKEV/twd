@@ -24,9 +24,13 @@ pnpm add twd-js
 
 ## Quick Setup
 
+**VIDEO HERE** - *Step-by-step setup walkthrough from installation to first test*
+
 ### 1. Add TWD Sidebar to Your App
 
 Add the TWD sidebar component to your main React entry point:
+
+**IMAGE HERE** - *Screenshot showing main.tsx file with TWD sidebar import and usage*
 
 ```tsx
 // src/main.tsx
@@ -125,6 +129,11 @@ npm run dev
 ```
 
 You should now see the TWD sidebar in your browser. Click on it to view and run your tests!
+
+**IMAGE HERE** - *Screenshot of browser showing the TWD sidebar closed*
+
+**IMAGE HERE** - *Screenshot of browser showing the TWD sidebar open with test results*
+
 
 ## File Naming Convention
 

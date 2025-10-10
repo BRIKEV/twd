@@ -2,7 +2,11 @@
 
 Learn how to use TWD's comprehensive assertion system to verify element states, content, and behavior.
 
+**VIDEO HERE** - *Live demonstration of different assertion types with visual feedback in the browser*
+
 ## Text Content Assertions
+
+**IMAGE HERE** - *Side-by-side comparison showing element text and corresponding assertion code*
 
 ### Exact Text Matching
 
@@ -360,6 +364,10 @@ describe("Negated Assertions", () => {
 
 ### Form Validation
 
+**IMAGE HERE** - *Screenshot of form showing validation errors with red borders and error messages*
+
+**VIDEO HERE** - *Demo of submitting invalid form and seeing validation errors appear*
+
 ```ts
 describe("Form Validation", () => {
   it("should show validation errors", async () => {
@@ -394,6 +402,8 @@ describe("Form Validation", () => {
 ```
 
 ### Shopping Cart
+
+**IMAGE HERE** - *Shopping cart UI showing item count badge and cart contents*
 
 ```ts
 describe("Shopping Cart", () => {

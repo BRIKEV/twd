@@ -40,6 +40,8 @@ features:
 
 ## Quick Example
 
+**VIDEO HERE** - *Overview of TWD in action - showing the sidebar, running tests, and seeing results in real-time*
+
 ```ts
 import { describe, it, twd, userEvent } from "twd-js";
 

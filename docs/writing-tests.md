@@ -57,6 +57,8 @@ describe("User Management", () => {
 
 ## Element Selection
 
+**VIDEO HERE** - *Demonstrating different element selection strategies in the browser DevTools*
+
 TWD provides two main methods for selecting DOM elements:
 
 ### Single Element Selection
@@ -103,6 +105,8 @@ expect(buttons).to.have.length(3);
 ```
 
 ## Assertions
+
+**IMAGE HERE** - *Visual comparison showing element states (visible vs hidden, enabled vs disabled, etc.)*
 
 TWD provides a comprehensive set of assertions for testing element states and content.
 
@@ -184,6 +188,8 @@ twd.url().should("not.contain.url", "/login");
 ```
 
 ## User Interactions
+
+**VIDEO HERE** - *Live demonstration of user interactions: clicking, typing, form submission*
 
 TWD integrates with `@testing-library/user-event` for realistic user interactions:
 
@@ -389,6 +395,8 @@ describe("User Registration Flow", () => {
 ## Common Patterns
 
 ### Testing Form Validation
+
+**IMAGE HERE** - *Screenshot showing form with validation errors highlighted*
 
 ```ts
 it("should show validation errors for empty required fields", async () => {
