@@ -491,4 +491,3 @@ describe("Setup Errors", () => {
 
 - Learn about [TWD Commands](/api/twd-commands) for element interaction
 - Explore [Assertions](/api/assertions) for testing element states
-- Check [User Events](/api/user-events) for simulating user interactions

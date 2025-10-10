@@ -42,7 +42,6 @@ export default defineConfig({
           { text: 'Test Functions', link: '/api/test-functions' },
           { text: 'TWD Commands', link: '/api/twd-commands' },
           { text: 'Assertions', link: '/api/assertions' },
-          { text: 'User Events', link: '/api/user-events' }
         ]
       }
     ],

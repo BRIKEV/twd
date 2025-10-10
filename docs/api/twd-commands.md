@@ -664,5 +664,4 @@ try {
 ## Next Steps
 
 - Learn about [Assertions](/api/assertions) for testing element states
-- Explore [User Events](/api/user-events) for simulating interactions
 - Check [Test Functions](/api/test-functions) for organizing tests

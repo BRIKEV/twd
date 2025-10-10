@@ -9,7 +9,6 @@ Complete reference documentation for all TWD functions, methods, and types.
 | [Test Functions](/api/test-functions) | `describe`, `it`, `beforeEach`, `itOnly`, `itSkip` |
 | [TWD Commands](/api/twd-commands) | `twd.get()`, `twd.visit()`, `twd.mockRequest()`, etc. |
 | [Assertions](/api/assertions) | All available assertions and their usage |
-| [User Events](/api/user-events) | User interaction methods and patterns |
 
 ## Import Reference
 

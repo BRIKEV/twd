@@ -844,6 +844,5 @@ button.should("be.enabled");
 
 ## Next Steps
 
-- Learn about [User Events](/api/user-events) to trigger state changes
 - Explore [TWD Commands](/api/twd-commands) for element selection
 - Check [Test Functions](/api/test-functions) for organizing tests
