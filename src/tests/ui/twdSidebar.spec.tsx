@@ -13,6 +13,14 @@ describe("TWDSidebar", () => {
   });
 
   describe("component" , () => {
+    it("should render TWDSidebar right position", async () => {
+      render(<TWDSidebar open position="right" />);
+      const sidebarElement = screen.getByTestId("twd-sidebar");
+      // position fixed but right not left
+      expect(sidebarElement).toHaveStyle({ position: 'fixed', right: '0' });
+      expect(sidebarElement).not.toHaveStyle({ position: 'fixed', left: '0' });
+    });
+
     it("should render TWDSidebar component closed", async () => {
       render(<TWDSidebar open={false} />);
       const sidebarElement = screen.getByText("TWD");
@@ -57,6 +65,24 @@ describe("TWDSidebar", () => {
       await user.click(runAllButton);
       expect(firstTest).toHaveBeenCalled();
       expect(secondTest).not.toHaveBeenCalled();
+    });
+
+    it('filter tests by name', async () => {
+      const firstTest = vi.fn();
+      const secondTest = vi.fn();
+      twd.describe('Group filter', () => {
+        twd.it('Apple test', firstTest);
+        twd.it('Banana test', secondTest);
+      });
+      const user = userEvent.setup()
+      render(<TWDSidebar open={true} />);
+      const filterInput = screen.getByPlaceholderText("Filter tests...");
+      expect(filterInput).toBeInTheDocument();
+      // Simulate typing "Apple" in the filter input
+      await user.type(filterInput, "Apple");
+      // Only "Apple test" should be visible
+      expect(screen.getByText("Apple test")).toBeInTheDocument();
+      expect(screen.queryByText("Banana test")).not.toBeInTheDocument();
     });
 
     it('skip test when there is a test with only', async () => {

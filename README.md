@@ -72,10 +72,17 @@ pnpm add twd-js
    createRoot(document.getElementById("root")!).render(
      <StrictMode>
        <App />
-       <TWDSidebar />
+       <TWDSidebar open={false} />
      </StrictMode>
    );
    ```
+
+   **TWDSidebar Props**
+
+    | Prop      | Type                | Default | Description                                 |
+    |-----------|---------------------|---------|---------------------------------------------|
+    | open      | boolean             | true    | Whether the sidebar is open by default       |
+    | position  | "left" \| "right"   | "left" | Sidebar position (left or right side)
 
 2. **Write your tests:**
 

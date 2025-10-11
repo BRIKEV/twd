@@ -4,12 +4,31 @@ import { TestList } from "./TestList";
 import { ClosedSidebar } from "./ClosedSidebar";
 
 interface TWDSidebarProps {
+  /**
+   * Whether the sidebar is open by default
+   */
   open: boolean;
+  /**
+   * Sidebar position
+   * - left: Sidebar on the left side (default)
+   * - right: Sidebar on the right side
+   * 
+   * @default "left"
+   */
+  position?: "left" | "right";
 }
 
-export const TWDSidebar = ({ open }: TWDSidebarProps) => {
+const positionStyles = {
+  left: { left: 0, borderRight: "1px solid #e5e7eb" },
+  right: { right: 0, borderLeft: "1px solid #e5e7eb" },
+};
+
+const fontFamily = `-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"`;
+
+export const TWDSidebar = ({ open, position = "left" }: TWDSidebarProps) => {
   const [_, setRefresh] = useState(0);
   const [isOpen, setIsOpen] = useState(open);
+  const [filter, setFilter] = useState("");
 
   const runTest = async (i: number) => {
     const test = tests[i];
@@ -41,28 +60,35 @@ export const TWDSidebar = ({ open }: TWDSidebarProps) => {
     }
   };
 
+  // Filter tests by name (case-insensitive)
+  const filteredTests = filter.trim()
+    ? tests.filter((t) => t.name.toLowerCase().includes(filter.trim().toLowerCase()))
+    : tests;
+
   if (!isOpen) {
-    return <ClosedSidebar setOpen={setIsOpen} />;
+    return <ClosedSidebar position={position} setOpen={setIsOpen} />;
   }
 
   return (
     <div
       style={{
+        fontFamily,
         position: "fixed",
         top: 0,
-        left: 0,
         bottom: 0,
         width: "280px",
-        textAlign: "left",
         background: "#f9fafb",
-        borderRight: "1px solid #e5e7eb",
         padding: "8px",
         fontSize: "14px",
         overflowY: "auto",
         boxShadow: "2px 0 6px rgba(0,0,0,0.1)",
+        textAlign: "left",
+        zIndex: 1000,
+        ...positionStyles[position]
       }}
+      data-testid="twd-sidebar"
     >
-      <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "14px", alignItems: "center" }}>
+      <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "14px" }}>
         <strong
           style={{
             fontSize: "18px",
@@ -73,6 +99,7 @@ export const TWDSidebar = ({ open }: TWDSidebarProps) => {
           TWD Tests
         </strong>
         <button
+          aria-label="Close sidebar"
           style={{
             background: "transparent",
             border: "none",
@@ -84,6 +111,26 @@ export const TWDSidebar = ({ open }: TWDSidebarProps) => {
           ✖
         </button>
       </div>
+
+      <input
+        type="text"
+        aria-label="Filter tests"
+        placeholder="Filter tests..."
+        value={filter}
+        onChange={e => setFilter(e.target.value)}
+        style={{
+          width: "100%",
+          padding: "6px 8px",
+          marginBottom: "10px",
+          border: "1px solid #d1d5db",
+          borderRadius: "4px",
+          fontSize: "14px",
+          outline: "none",
+          boxSizing: "border-box",
+          background: "#fff",
+        }}
+        data-testid="twd-sidebar-filter"
+      />
 
       <button
         onClick={runAll}
@@ -100,7 +147,7 @@ export const TWDSidebar = ({ open }: TWDSidebarProps) => {
         Run All
       </button>
 
-      <TestList tests={tests} runTest={runTest} />
+      <TestList tests={filteredTests} runTest={runTest} />
     </div>
   );
 };

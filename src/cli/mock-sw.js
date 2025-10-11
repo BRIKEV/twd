@@ -2,10 +2,9 @@ import { findRule } from './utils/findRule.js';
 import { notifyClients } from './utils/notifyClients.js';
 
 // Storage for rules inside the SW
-let rules = [];
+export let rules = [];
 
-// Intercept fetches
-self.addEventListener("fetch", (event) => {
+export const handleFetch = async (event) => {
   const { method } = event.request;
   const url = event.request.url;
 
@@ -34,10 +33,9 @@ self.addEventListener("fetch", (event) => {
       })()
     );
   }
-});
+};
 
-// Listen for messages from the app
-self.addEventListener("message", (event) => {
+export const handleMessage = (event) => {
   const { type, rule } = event.data || {};
   if (type === "ADD_RULE") {
     rules = rules.filter((r) => r.alias !== rule.alias);
@@ -48,4 +46,10 @@ self.addEventListener("message", (event) => {
     rules = [];
     console.log("All rules cleared");
   }
-});
+};
+
+// Intercept fetches
+self.addEventListener("fetch", handleFetch);
+
+// Listen for messages from the app
+self.addEventListener("message", handleMessage);

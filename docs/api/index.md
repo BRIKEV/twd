@@ -27,6 +27,10 @@ import {
 
 // UI Component (for React apps)
 import { TWDSidebar } from "twd-js";
+
+// TWDSidebar props:
+//   open?: boolean        // Whether the sidebar is open by default (default: true)
+//   position?: "left" | "right" // Sidebar position (default: "left")
 ```
 
 ## Type Definitions
