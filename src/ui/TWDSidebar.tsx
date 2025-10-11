@@ -13,6 +13,8 @@ const positionStyles = {
   right: { right: 0, borderLeft: "1px solid #e5e7eb" },
 };
 
+const fontFamily = `-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"`;
+
 export const TWDSidebar = ({ open, position = "left" }: TWDSidebarProps) => {
   const [_, setRefresh] = useState(0);
   const [isOpen, setIsOpen] = useState(open);
@@ -54,6 +56,7 @@ export const TWDSidebar = ({ open, position = "left" }: TWDSidebarProps) => {
   return (
     <div
       style={{
+        fontFamily,
         position: "fixed",
         top: 0,
         width: "280px",

@@ -9,6 +9,6 @@ import { RouterProvider } from 'react-router'
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <RouterProvider router={router} />
-    <TWDSidebar open={true} position="right" />
+    <TWDSidebar open={true} position="left" />
   </StrictMode>,
 )
