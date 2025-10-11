@@ -4,7 +4,17 @@ import { TestList } from "./TestList";
 import { ClosedSidebar } from "./ClosedSidebar";
 
 interface TWDSidebarProps {
+  /**
+   * Whether the sidebar is open by default
+   */
   open: boolean;
+  /**
+   * Sidebar position
+   * - left: Sidebar on the left side (default)
+   * - right: Sidebar on the right side
+   * 
+   * @default "left"
+   */
   position?: "left" | "right";
 }
 
