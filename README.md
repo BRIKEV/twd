@@ -67,7 +67,23 @@ pnpm add twd-js
    import { createRoot } from "react-dom/client";
    import App from "./App";
    import "./index.css";
-   import { TWDSidebar } from "twd-js";
+
+   // Only load the test sidebar and tests in development mode
+    if (import.meta.env.DEV) {
+      // Use Vite's glob import to find all test files
+      const testModules = import.meta.glob("./**/*.twd.test.ts");
+      const { initViteLoadTests, twd } = await import('twd-js');
+      // Initialize the TWD sidebar and load tests
+      initViteLoadTests(testModules, { open: true, position: 'left' });
+      // Optionally initialize request mocking
+      twd.initRequestMocking()
+        .then(() => {
+          console.log("Request mocking initialized");
+        })
+        .catch((err) => {
+          console.error("Error initializing request mocking:", err);
+        });
+    }
 
    createRoot(document.getElementById("root")!).render(
      <StrictMode>
@@ -109,37 +125,54 @@ pnpm add twd-js
 
 3. **Auto-load your tests:**
 
-   - With Vite:
+
+   - With Vite and the new TWD loader:
 
      ```ts
-     import { twd } from "twd-js";
-     // src/loadTests.ts
-     import.meta.glob("./**/*.twd.test.ts", { eager: true });
-     // Initialize request mocking once
-     twd
-       .initRequestMocking()
-       .then(() => {
-         console.log("Request mocking initialized");
-       })
-       .catch((err) => {
-         console.error("Error initializing request mocking:", err);
-       });
-     // No need to export anything
+     // src/main.tsx (or your main entry file)
+     import { StrictMode } from 'react';
+     import { createRoot } from 'react-dom/client';
+     import './index.css';
+     import router from './routes.ts';
+     import { RouterProvider } from 'react-router';
+
+     // Only load the test sidebar and tests in development mode
+     if (import.meta.env.DEV) {
+       // Use Vite's glob import to find all test files
+       const testModules = import.meta.glob("./**/*.twd.test.ts");
+       const { initViteLoadTests, twd } = await import('twd-js');
+       // Initialize the TWD sidebar and load tests
+       initViteLoadTests(testModules, { open: true, position: 'left' });
+       // Optionally initialize request mocking
+       twd.initRequestMocking()
+         .then(() => {
+           console.log("Request mocking initialized");
+         })
+         .catch((err) => {
+           console.error("Error initializing request mocking:", err);
+         });
+     }
+     // ...rest of your app bootstrap
+     createRoot(document.getElementById('root')!).render(
+       <StrictMode>
+         <RouterProvider router={router} />
+       </StrictMode>,
+     );
      ```
 
-   - Or manually:
+   - Or manually (not recommended):
 
      ```ts
-     // src/loadTests.ts
-     import "./app.twd.test";
-     import "./another-test-file.twd.test";
+     // src/main.tsx
+     if (import.meta.env.DEV) {
+       const testModules = {
+         './app.twd.test.ts': () => import('./app.twd.test'),
+         './another-test-file.twd.test.ts': () => import('./another-test-file.twd.test'),
+       };
+       const { initViteLoadTests } = await import('twd-js');
+       initViteLoadTests(testModules);
+     }
      ```
-
-   Import `loadTests.ts` in your main entry (e.g., `main.tsx`):
-
-   ```tsx
-   import "./loadTests";
-   ```
 
 4. **Run your app and open the TWD sidebar** to see and run your tests in the browser.
 

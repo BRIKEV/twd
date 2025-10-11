@@ -20,28 +20,26 @@ This command copies the required `mock-sw.js` file to your public directory.
 
 ### 2. Initialize Mocking
 
-Initialize request mocking in your test loader:
+Initialize request mocking in your main entry file using the standard TWD setup:
 
 ```ts
-// src/loadTests.ts
-import { twd } from "twd-js";
-
-// Auto-discover test files
-import.meta.glob("./**/*.twd.test.ts", { eager: true });
-
-// Initialize request mocking once
-twd
-  .initRequestMocking()
-  .then(() => {
-    console.log("Request mocking initialized");
-  })
-  .catch((err) => {
-    console.error("Error initializing request mocking:", err);
-  });
+// src/main.tsx (or your main entry file)
+if (import.meta.env.DEV) {
+  const testModules = import.meta.glob("./**/*.twd.test.ts");
+  const { initViteLoadTests, twd } = await import('twd-js');
+  initViteLoadTests(testModules, { open: true, position: 'left' });
+  twd.initRequestMocking()
+    .then(() => {
+      console.log("Request mocking initialized");
+    })
+    .catch((err) => {
+      console.error("Error initializing request mocking:", err);
+    });
+}
 ```
 
 ::: tip
-You only need to call `initRequestMocking()` once in your test loader, not in individual tests.
+You only need to call `initRequestMocking()` once in your main entry file, not in individual tests.
 :::
 
 ## Basic Mocking
