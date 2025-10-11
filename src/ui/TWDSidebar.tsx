@@ -18,6 +18,7 @@ const fontFamily = `-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helve
 export const TWDSidebar = ({ open, position = "left" }: TWDSidebarProps) => {
   const [_, setRefresh] = useState(0);
   const [isOpen, setIsOpen] = useState(open);
+  const [filter, setFilter] = useState("");
 
   const runTest = async (i: number) => {
     const test = tests[i];
@@ -49,6 +50,11 @@ export const TWDSidebar = ({ open, position = "left" }: TWDSidebarProps) => {
     }
   };
 
+  // Filter tests by name (case-insensitive)
+  const filteredTests = filter.trim()
+    ? tests.filter((t) => t.name.toLowerCase().includes(filter.trim().toLowerCase()))
+    : tests;
+
   if (!isOpen) {
     return <ClosedSidebar position={position} setOpen={setIsOpen} />;
   }
@@ -59,6 +65,7 @@ export const TWDSidebar = ({ open, position = "left" }: TWDSidebarProps) => {
         fontFamily,
         position: "fixed",
         top: 0,
+        bottom: 0,
         width: "280px",
         background: "#f9fafb",
         padding: "8px",
@@ -82,6 +89,7 @@ export const TWDSidebar = ({ open, position = "left" }: TWDSidebarProps) => {
           TWD Tests
         </strong>
         <button
+          aria-label="Close sidebar"
           style={{
             background: "transparent",
             border: "none",
@@ -93,6 +101,26 @@ export const TWDSidebar = ({ open, position = "left" }: TWDSidebarProps) => {
           ✖
         </button>
       </div>
+
+      <input
+        type="text"
+        aria-label="Filter tests"
+        placeholder="Filter tests..."
+        value={filter}
+        onChange={e => setFilter(e.target.value)}
+        style={{
+          width: "100%",
+          padding: "6px 8px",
+          marginBottom: "10px",
+          border: "1px solid #d1d5db",
+          borderRadius: "4px",
+          fontSize: "14px",
+          outline: "none",
+          boxSizing: "border-box",
+          background: "#fff",
+        }}
+        data-testid="twd-sidebar-filter"
+      />
 
       <button
         onClick={runAll}
@@ -109,7 +137,7 @@ export const TWDSidebar = ({ open, position = "left" }: TWDSidebarProps) => {
         Run All
       </button>
 
-      <TestList tests={tests} runTest={runTest} />
+      <TestList tests={filteredTests} runTest={runTest} />
     </div>
   );
 };

@@ -4,13 +4,26 @@ interface ClosedSidebarProps {
 }
 
 const positionStyles = {
-  left: { left: 0, borderTopRightRadius: "6px", borderBottomRightRadius: "6px" },
-  right: { right: 0, borderTopLeftRadius: "6px", borderBottomLeftRadius: "6px" },
+  left: {
+    left: 0,
+    borderTopRightRadius: "6px",
+    borderBottomRightRadius: "6px",
+    borderTopLeftRadius: "0",
+    borderBottomLeftRadius: "0",
+  },
+  right: {
+    right: 0,
+    borderTopLeftRadius: "6px",
+    borderBottomLeftRadius: "6px",
+    borderTopRightRadius: "0",
+    borderBottomRightRadius: "0",
+  },
 };
 
 export const ClosedSidebar = ({ setOpen, position }: ClosedSidebarProps) => {
   return (
-    <div
+    <button
+      aria-label="Open TWD sidebar"
       style={{
         position: "fixed",
         top: "50%",
@@ -25,6 +38,6 @@ export const ClosedSidebar = ({ setOpen, position }: ClosedSidebarProps) => {
       onClick={() => setOpen(true)}
     >
       TWD
-    </div>
+    </button>
   );
 };
