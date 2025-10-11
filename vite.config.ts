@@ -30,12 +30,27 @@ export default defineConfig({
   },
   test: {
     environment: 'jsdom',
-    exclude: ['node_modules', 'dist', 'examples'],
+    exclude: ['node_modules', 'dist', 'examples', 'docs'],
     setupFiles: 'src/tests/setup.ts',
     coverage: {
       reporter: ['text', 'json', 'html', 'lcov'],
-      include: ['src/**'],
-      exclude: ['src/tests/**', 'examples/**', 'dist/**'],
+      include: [
+        'src/**/*.{ts,tsx}',
+        '!src/**/*.test.{ts,tsx}',
+        '!src/**/*.spec.{ts,tsx}',
+        '!src/tests/**',
+        '!examples/**',
+        '!dist/**',
+        '!docs/**',
+      ],
+      exclude: [
+        'src/tests/**',
+        'src/**/*.test.{ts,tsx}',
+        'src/**/*.spec.{ts,tsx}',
+        'examples/**',
+        'dist/**',
+        'docs/**',
+      ],
     },
   },
 });
