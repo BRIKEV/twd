@@ -5,6 +5,18 @@ interface Options {
   position?: 'left' | 'right';
 }
 
+/**
+ * A record of test module paths to their loader functions.
+ * Each function returns a promise that resolves when the module is loaded.
+ * This is typically used with Vite's `import.meta.glob` to dynamically import test modules.
+ * @example
+ * ```ts
+ * const testModules = {
+ *   './test1.twd.test.ts': () => import('./test1.twd.test.ts'),
+ *   './test2.twd.test.ts': () => import('./test2.twd.test.ts'),
+ * };
+ * ```
+ */
 type TestModule = Record<string, () => Promise<unknown>>;
 
 /**
