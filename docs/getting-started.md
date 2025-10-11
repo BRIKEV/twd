@@ -26,35 +26,44 @@ pnpm add twd-js
 
 **VIDEO HERE** - *Step-by-step setup walkthrough from installation to first test*
 
-### 1. Add TWD Sidebar to Your App
 
-Add the TWD sidebar component to your main React entry point:
+### 1. Add TWD Sidebar and Load Tests Automatically
 
-**IMAGE HERE** - *Screenshot showing main.tsx file with TWD sidebar import and usage*
+To enable the TWD sidebar and automatically load your tests, use the `initViteLoadTests` utility in your main entry file. This is the standard way to set up TWD in your application: the sidebar will be injected and tests loaded automatically in development mode.
+
+**IMAGE HERE** - *Screenshot showing main.tsx file with the new TWD loader usage*
 
 ```tsx
 // src/main.tsx
-import { StrictMode } from "react";
-import { createRoot } from "react-dom/client";
-import App from "./App";
-import "./index.css";
-import { TWDSidebar } from "twd-js";
+import { StrictMode } from 'react';
+import { createRoot } from 'react-dom/client';
+import './index.css';
+import router from './routes.ts';
+import { RouterProvider } from 'react-router';
 
-createRoot(document.getElementById("root")!).render(
+// Only load the test sidebar and tests in development mode
+if (import.meta.env.DEV) {
+  // Use Vite's glob import to find all test files
+  const testModules = import.meta.glob("./**/*.twd.test.ts");
+  const { initViteLoadTests, twd } = await import('twd-js');
+  // Initialize the TWD sidebar and load tests
+  initViteLoadTests(testModules, { open: true, position: 'left' });
+  // Optionally initialize request mocking
+  twd.initRequestMocking()
+    .then(() => {
+      console.log("Request mocking initialized");
+    })
+    .catch((err) => {
+      console.error("Error initializing request mocking:", err);
+    });
+}
+
+createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <App />
-    <TWDSidebar open={true} />
-  </StrictMode>
+    <RouterProvider router={router} />
+  </StrictMode>,
 );
 ```
-
-
-**TWDSidebar Props**
-
-| Prop      | Type                | Default | Description                                 |
-|-----------|---------------------|---------|---------------------------------------------|
-| open      | boolean             | true    | Whether the sidebar is open by default       |
-| position  | "left" \| "right"   | "left" | Sidebar position (left or right side)       |
 
 ### 2. Set Up Mock Service Worker (Optional)
 
@@ -66,38 +75,7 @@ npx twd-js init public
 
 This copies the required `mock-sw.js` file to your public directory.
 
-### 3. Create a Test Loader
-
-Create a file to automatically load your tests:
-
-```ts
-// src/loadTests.ts
-import { twd } from "twd-js";
-
-// Auto-discover test files (with Vite)
-import.meta.glob("./**/*.twd.test.ts", { eager: true });
-
-// Initialize request mocking (if using API mocking)
-twd
-  .initRequestMocking()
-  .then(() => {
-    console.log("Request mocking initialized");
-  })
-  .catch((err) => {
-    console.error("Error initializing request mocking:", err);
-  });
-```
-
-Then import it in your main entry:
-
-```tsx
-// src/main.tsx
-import "./loadTests"; // Add this line
-import { StrictMode } from "react";
-// ... rest of your imports
-```
-
-### 4. Write Your First Test
+### 3. Write Your First Test
 
 Create your first test file:
 
@@ -128,7 +106,7 @@ describe("App Component", () => {
 });
 ```
 
-### 5. Run Your App
+### 4. Run Your App
 
 Start your development server as usual:
 
@@ -136,7 +114,7 @@ Start your development server as usual:
 npm run dev
 ```
 
-You should now see the TWD sidebar in your browser. Click on it to view and run your tests!
+You should now see the TWD sidebar in your browser automatically in development mode. Click on it to view and run your tests!
 
 **IMAGE HERE** - *Screenshot of browser showing the TWD sidebar closed*
 
@@ -171,18 +149,19 @@ You can customize this pattern in your test loader using different glob patterns
 
 ## Troubleshooting
 
+
 ### Tests Not Loading
 
 Make sure you:
-1. Imported your test loader in `main.tsx`
+1. Are running in development mode (`import.meta.env.DEV` is true)
 2. Used the correct file naming pattern (`.twd.test.ts`)
-3. Have the TWD sidebar component added to your app
+3. Have the `initViteLoadTests` logic in your main entry file
 
 ### Mock Service Worker Issues
 
 If API mocking isn't working:
 1. Run `npx twd-js init public` to install the service worker
-2. Make sure you called `twd.initRequestMocking()` in your test loader
+2. Make sure you called `twd.initRequestMocking()` in your main entry file (inside the `import.meta.env.DEV` block)
 3. Check the browser console for service worker registration errors
 
 ## Getting Help

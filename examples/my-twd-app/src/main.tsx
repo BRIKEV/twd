@@ -1,7 +1,6 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
-import './loadTests' // Import test files
 import router from './routes.ts'
 import { RouterProvider } from 'react-router'
 
