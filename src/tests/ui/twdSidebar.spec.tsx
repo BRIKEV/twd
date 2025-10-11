@@ -13,6 +13,14 @@ describe("TWDSidebar", () => {
   });
 
   describe("component" , () => {
+    it("should render TWDSidebar right position", async () => {
+      render(<TWDSidebar open position="right" />);
+      const sidebarElement = screen.getByTestId("twd-sidebar");
+      // position fixed but right not left
+      expect(sidebarElement).toHaveStyle({ position: 'fixed', right: '0' });
+      expect(sidebarElement).not.toHaveStyle({ position: 'fixed', left: '0' });
+    });
+
     it("should render TWDSidebar component closed", async () => {
       render(<TWDSidebar open={false} />);
       const sidebarElement = screen.getByText("TWD");

@@ -5,9 +5,15 @@ import { ClosedSidebar } from "./ClosedSidebar";
 
 interface TWDSidebarProps {
   open: boolean;
+  position?: "left" | "right";
 }
 
-export const TWDSidebar = ({ open }: TWDSidebarProps) => {
+const positionStyles = {
+  left: { left: 0, borderRight: "1px solid #e5e7eb" },
+  right: { right: 0, borderLeft: "1px solid #e5e7eb" },
+};
+
+export const TWDSidebar = ({ open, position = "left" }: TWDSidebarProps) => {
   const [_, setRefresh] = useState(0);
   const [isOpen, setIsOpen] = useState(open);
 
@@ -42,7 +48,7 @@ export const TWDSidebar = ({ open }: TWDSidebarProps) => {
   };
 
   if (!isOpen) {
-    return <ClosedSidebar setOpen={setIsOpen} />;
+    return <ClosedSidebar position={position} setOpen={setIsOpen} />;
   }
 
   return (
@@ -50,19 +56,19 @@ export const TWDSidebar = ({ open }: TWDSidebarProps) => {
       style={{
         position: "fixed",
         top: 0,
-        left: 0,
-        bottom: 0,
         width: "280px",
-        textAlign: "left",
         background: "#f9fafb",
-        borderRight: "1px solid #e5e7eb",
         padding: "8px",
         fontSize: "14px",
         overflowY: "auto",
         boxShadow: "2px 0 6px rgba(0,0,0,0.1)",
+        textAlign: "left",
+        zIndex: 1000,
+        ...positionStyles[position]
       }}
+      data-testid="twd-sidebar"
     >
-      <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "14px", alignItems: "center" }}>
+      <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "14px" }}>
         <strong
           style={{
             fontSize: "18px",
