@@ -1,3 +1,11 @@
+## 0.5.0 (2025-10-11)
+
+* Docs/improve documentation (#44) ([401a5f9](https://github.com/BRIKEV/twd/commit/401a5f9)), closes [#44](https://github.com/BRIKEV/twd/issues/44)
+* Feat/improve loading bundle tests (#51) ([48e7736](https://github.com/BRIKEV/twd/commit/48e7736)), closes [#51](https://github.com/BRIKEV/twd/issues/51)
+* Feat/improve UI (#49) ([ad793a6](https://github.com/BRIKEV/twd/commit/ad793a6)), closes [#49](https://github.com/BRIKEV/twd/issues/49)
+
+
+
 ## 0.4.0 (2025-10-07)
 
 * feat: add get all methods (#43) ([cb2593e](github.com/BRIKEV/twd/commits/cb2593e)), closes [#43](github.com/BRIKEV/twd/issues/43)
