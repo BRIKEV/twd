@@ -67,6 +67,24 @@ describe("TWDSidebar", () => {
       expect(secondTest).not.toHaveBeenCalled();
     });
 
+    it('filter tests by name', async () => {
+      const firstTest = vi.fn();
+      const secondTest = vi.fn();
+      twd.describe('Group filter', () => {
+        twd.it('Apple test', firstTest);
+        twd.it('Banana test', secondTest);
+      });
+      const user = userEvent.setup()
+      render(<TWDSidebar open={true} />);
+      const filterInput = screen.getByPlaceholderText("Filter tests...");
+      expect(filterInput).toBeInTheDocument();
+      // Simulate typing "Apple" in the filter input
+      await user.type(filterInput, "Apple");
+      // Only "Apple test" should be visible
+      expect(screen.getByText("Apple test")).toBeInTheDocument();
+      expect(screen.queryByText("Banana test")).not.toBeInTheDocument();
+    });
+
     it('skip test when there is a test with only', async () => {
       const firstTest = vi.fn();
       const secondTest = vi.fn();
