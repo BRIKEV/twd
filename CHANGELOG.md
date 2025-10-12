@@ -1,3 +1,7 @@
+## 0.5.1 (2025-10-12)
+
+* Fix/error installing library (#53) ([879951c](https://github.com/BRIKEV/twd/commit/879951c)), closes [#53](https://github.com/BRIKEV/twd/issues/53)
+
 ## 0.5.0 (2025-10-11)
 
 * Docs/improve documentation (#44) ([401a5f9](https://github.com/BRIKEV/twd/commit/401a5f9)), closes [#44](https://github.com/BRIKEV/twd/issues/44)
