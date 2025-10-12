@@ -1,8 +1,6 @@
-import { TWDSidebar } from '../ui/TWDSidebar';
-
 interface Options {
-  open: boolean;
-  position?: 'left' | 'right';
+  Component: React.ReactNode;
+  createRoot: (el: HTMLElement) => { render: (el: React.ReactNode) => void };
 }
 
 /**
@@ -13,14 +11,16 @@ interface Options {
  * import { initSidebar } from 'twd-js';
  * 
  * // Initialize the sidebar (e.g., in your main app file)
- * initSidebar({ open: false, position: 'left' });
+ * initSidebar({
+ *   Component: <TWDSidebar open={true} position="left" />,
+ *   createRoot,
+ * });
  * ```
  */
-export const initSidebar = async (options: Options) => {
+export const initSidebar = (options: Options) => {
+  const { Component, createRoot } = options;
   const el = document.createElement('div');
   document.body.appendChild(el);
-
-  const { createRoot } = await import('react-dom/client');
   const root = createRoot(el);
-  root.render(<TWDSidebar open={options.open} position={options.position} />);
+  root.render(Component);
 };

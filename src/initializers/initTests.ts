@@ -1,8 +1,8 @@
 import { initSidebar } from "./initSidebar";
 
 interface Options {
-  open: boolean;
-  position?: 'left' | 'right';
+  Component: React.ReactNode;
+  createRoot: (el: HTMLElement) => { render: (el: React.ReactNode) => void };
 }
 
 /**
@@ -22,17 +22,19 @@ type TestModule = Record<string, () => Promise<unknown>>;
 /**
  * Initialize Vite test loading.
  * @param testModules - The test modules to load.
- * @param options - Options for initializing the test loader.
+ * @param component - The React component to render the sidebar.
+ * @param createRoot - Function to create a React root.
  * @example
  * ```ts
  * if (import.meta.env.DEV) {
  *   const testModules = import.meta.glob("./example.twd.test.ts");
- *   const { initViteLoadTests } = await import('twd-js');
- *   await initViteLoadTests(testModules, { open: false, position: 'left' });
+ *   const { initViteLoadTests, TWDSidebar } = await import('twd-js');
+ *   const { createRoot } = await import('react-dom/client');
+ *   await initViteLoadTests(testModules, <TWDSidebar open={true} position="left" />, createRoot);
  * }
  * ```
  */
-export const initViteLoadTests = async (testModules: TestModule, options: Options) => {
+export const initTests = async (testModules: TestModule, Component: React.ReactNode, createRoot: (el: HTMLElement) => { render: (el: React.ReactNode) => void }) => {
   for (const path in testModules) await testModules[path]();
-  initSidebar({ open: options.open, position: options.position });
+  initSidebar({ Component, createRoot });
 };
