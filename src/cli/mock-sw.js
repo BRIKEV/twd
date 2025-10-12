@@ -21,7 +21,6 @@ export const handleFetch = async (event) => {
         // Capture body if needed
         let body = null;
         const requestContentType = event.request.headers.get("content-type") || "application/json";
-        console.log("[TWD] Request content-type:", requestContentType);
         
         if (requestContentType.includes("application/json")) {
           try {
