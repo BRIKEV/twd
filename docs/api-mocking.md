@@ -27,7 +27,6 @@ Initialize request mocking in your main entry file using the standard TWD setup:
 if (import.meta.env.DEV) {
   const testModules = import.meta.glob("./**/*.twd.test.ts");
   const { initTests, twd, TWDSidebar } = await import('twd-js');
-  const { createRoot } = await import('react-dom/client');
   initTests(testModules, <TWDSidebar open={true} position="left" />, createRoot);
   twd.initRequestMocking()
     .then(() => {

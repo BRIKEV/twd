@@ -73,7 +73,6 @@ pnpm add twd-js
       // Use Vite's glob import to find all test files
       const testModules = import.meta.glob("./**/*.twd.test.ts");
       const { initTests, twd, TWDSidebar } = await import('twd-js');
-      const { createRoot } = await import('react-dom/client');
       // You need to pass the test modules, the sidebar component, and createRoot function
       initTests(testModules, <TWDSidebar open={true} position="left" />, createRoot);
       // if you want to use mock requests, you can initialize it here
@@ -141,7 +140,6 @@ pnpm add twd-js
        // Use Vite's glob import to find all test files
        const testModules = import.meta.glob("./**/*.twd.test.ts");
        const { initTests, twd, TWDSidebar } = await import('twd-js');
-       const { createRoot } = await import('react-dom/client');
        // You need to pass the test modules, the sidebar component, and createRoot function
        initTests(testModules, <TWDSidebar open={true} position="left" />, createRoot);
        // Optionally initialize request mocking
@@ -171,7 +169,6 @@ pnpm add twd-js
          './another-test-file.twd.test.ts': () => import('./another-test-file.twd.test'),
        };
        const { initTests, TWDSidebar } = await import('twd-js');
-       const { createRoot } = await import('react-dom/client');
        initTests(testModules, <TWDSidebar open={true} position="left" />, createRoot);
      }
      ```
