@@ -28,9 +28,9 @@ type TestModule = Record<string, () => Promise<unknown>>;
  * ```ts
  * if (import.meta.env.DEV) {
  *   const testModules = import.meta.glob("./example.twd.test.ts");
- *   const { initViteLoadTests, TWDSidebar } = await import('twd-js');
+ *   const { initTests, TWDSidebar } = await import('twd-js');
  *   const { createRoot } = await import('react-dom/client');
- *   await initViteLoadTests(testModules, <TWDSidebar open={true} position="left" />, createRoot);
+ *   await initTests(testModules, <TWDSidebar open={true} position="left" />, createRoot);
  * }
  * ```
  */

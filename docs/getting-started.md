@@ -29,7 +29,7 @@ pnpm add twd-js
 
 ### 1. Add TWD Sidebar and Load Tests Automatically
 
-To enable the TWD sidebar and automatically load your tests, use the `initViteLoadTests` utility in your main entry file. This is the standard way to set up TWD in your application: the sidebar will be injected and tests loaded automatically in development mode.
+To enable the TWD sidebar and automatically load your tests, use the `initTests` utility in your main entry file. This is the standard way to set up TWD in your application: the sidebar will be injected and tests loaded automatically in development mode.
 
 **IMAGE HERE** - *Screenshot showing main.tsx file with the new TWD loader usage*
 
@@ -45,9 +45,10 @@ import { RouterProvider } from 'react-router';
 if (import.meta.env.DEV) {
   // Use Vite's glob import to find all test files
   const testModules = import.meta.glob("./**/*.twd.test.ts");
-  const { initViteLoadTests, twd } = await import('twd-js');
-  // Initialize the TWD sidebar and load tests
-  initViteLoadTests(testModules, { open: true, position: 'left' });
+  const { initTests, twd, TWDSidebar } = await import('twd-js');
+  const { createRoot } = await import('react-dom/client');
+  // You need to pass the test modules, the sidebar component, and createRoot function
+  initTests(testModules, <TWDSidebar open={true} position="left" />, createRoot);
   // Optionally initialize request mocking
   twd.initRequestMocking()
     .then(() => {
@@ -155,7 +156,7 @@ You can customize this pattern in your test loader using different glob patterns
 Make sure you:
 1. Are running in development mode (`import.meta.env.DEV` is true)
 2. Used the correct file naming pattern (`.twd.test.ts`)
-3. Have the `initViteLoadTests` logic in your main entry file
+3. Have the `initTests` logic in your main entry file
 
 ### Mock Service Worker Issues
 
