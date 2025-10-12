@@ -9,7 +9,7 @@ export type Rule = {
   executed?: boolean;
   request?: unknown;
   status?: number;
-  headers?: Record<string, string>;
+  responseHeaders?: Record<string, string>;
   urlRegex?: boolean;
 };
 
@@ -18,7 +18,7 @@ export interface Options {
   url: string | RegExp;
   response: unknown;
   status?: number;
-  headers?: Record<string, string>;
+  responseHeaders?: Record<string, string>;
   urlRegex?: boolean;
 }
 
@@ -54,7 +54,8 @@ export const initRequestMocking = async () => {
  *  - `url`: URL string or RegExp to match
  *  - `response`: Body of the mocked response
  *  - `status`: (optional) HTTP status code (default: 200)
- *  - `headers`: (optional) Response headers
+ *  - `responseHeaders`: (optional) Response headers
+ *  - `urlRegex`: (optional) Whether the URL is a regex (default: false)
  *
  * @example
  * ```ts
@@ -92,8 +93,6 @@ export const mockRequest = async (alias: string, options: Options) => {
  * ```
  */
 export const waitForRequests = async (aliases: string[]): Promise<Rule[]> => {
-  const results: Rule[] = [];
-  // parallel wait
   const rules = await Promise.all(
     aliases.map((alias) => waitForRequest(alias))
   );

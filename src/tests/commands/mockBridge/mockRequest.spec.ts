@@ -35,14 +35,14 @@ describe('mockBridge mock request methods', () => {
       status: 200,
       method: 'GET',
       response: mockResponse,
-      headers: { 'Content-Type': 'application/json' },
+      responseHeaders: { 'Content-Type': 'application/json' },
     });
     await mockRequest(alias, {
       url: mockUrl,
       status: 200,
       method: 'GET',
       response: mockResponse,
-      headers: { 'Content-Type': 'application/json' },
+      responseHeaders: { 'Content-Type': 'application/json' },
       urlRegex: true,
     });
     
@@ -54,7 +54,7 @@ describe('mockBridge mock request methods', () => {
         status: 200,
         method: 'GET',
         response: mockResponse,
-        headers: { 'Content-Type': 'application/json' },
+        responseHeaders: { 'Content-Type': 'application/json' },
         executed: false,
       }),
     });
@@ -67,7 +67,7 @@ describe('mockBridge mock request methods', () => {
         status: 200,
         method: 'GET',
         response: mockResponse,
-        headers: { 'Content-Type': 'application/json' },
+        responseHeaders: { 'Content-Type': 'application/json' },
         executed: false,
         urlRegex: true,
       }),
