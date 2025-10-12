@@ -85,7 +85,7 @@ describe("App interactions", () => {
   it("visit contact page", async () => {
     twd.visit("/contact");
     const user = userEvent.setup();
-    twd.mockRequest("contactSubmit", {
+    await twd.mockRequest("contactSubmit", {
       method: "POST",
       url: 'http://localhost:3001/contact',
       response: { success: true },
@@ -97,7 +97,8 @@ describe("App interactions", () => {
     const submitBtn = await twd.get("button[type='submit']");
     await user.click(submitBtn.el);
     const rules = await twd.waitForRequests(["contactSubmit"]);
-    console.log(`Submitted body: ${rules[0].request}`);
+    const request = rules[0].request;
+    expect(request).to.deep.equal({ email: "test@example.com", message: "Hello, this is a test message." });
     twd.url().should("contain.url", "/contact");
     twd.clearRequestMockRules();
   });

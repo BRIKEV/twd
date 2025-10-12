@@ -256,7 +256,7 @@ Mocks an HTTP request with specified response.
 #### Syntax
 
 ```ts
-twd.mockRequest(alias: string, options: Options): void
+await twd.mockRequest(alias: string, options: Options): void
 ```
 
 #### Parameters
@@ -280,7 +280,7 @@ interface Options {
 
 ```ts
 // Basic GET request
-twd.mockRequest("getUser", {
+await twd.mockRequest("getUser", {
   method: "GET",
   url: "/api/user/123",
   response: {
@@ -291,7 +291,7 @@ twd.mockRequest("getUser", {
 });
 
 // POST request with custom status
-twd.mockRequest("createUser", {
+await twd.mockRequest("createUser", {
   method: "POST",
   url: "/api/users",
   response: { id: 456, created: true },
@@ -303,14 +303,14 @@ twd.mockRequest("createUser", {
 });
 
 // Using RegExp for dynamic URLs
-twd.mockRequest("getUserById", {
+await twd.mockRequest("getUserById", {
   method: "GET",
   url: /\/api\/users\/\d+/,
   response: { id: 123, name: "Dynamic User" }
 });
 
 // Error response
-twd.mockRequest("serverError", {
+await twd.mockRequest("serverError", {
   method: "GET",
   url: "/api/data",
   response: { error: "Internal server error" },
@@ -342,7 +342,7 @@ twd.waitForRequest(alias: string): Promise<Rule>
 
 ```ts
 // Wait for single request
-twd.mockRequest("getProfile", {
+await twd.mockRequest("getProfile", {
   method: "GET",
   url: "/api/profile",
   response: { name: "John Doe" }
@@ -355,7 +355,7 @@ const rule = await twd.waitForRequest("getProfile");
 console.log("Request completed:", rule);
 
 // Verify request body for POST requests
-twd.mockRequest("submitForm", {
+await twd.mockRequest("submitForm", {
   method: "POST",
   url: "/api/contact",
   response: { success: true }
@@ -396,13 +396,13 @@ twd.waitForRequests(aliases: string[]): Promise<Rule[]>
 
 ```ts
 // Wait for multiple requests
-twd.mockRequest("getUser", {
+await twd.mockRequest("getUser", {
   method: "GET",
   url: "/api/user",
   response: { id: 1, name: "John" }
 });
 
-twd.mockRequest("getUserPosts", {
+await twd.mockRequest("getUserPosts", {
   method: "GET",
   url: "/api/user/posts",
   response: [{ id: 1, title: "First Post" }]
@@ -484,7 +484,7 @@ describe("API Integration", () => {
   });
 
   it("should handle user creation", async () => {
-    twd.mockRequest("createUser", {
+    await twd.mockRequest("createUser", {
       method: "POST",
       url: "/api/users",
       response: { id: 1, created: true }
@@ -500,12 +500,12 @@ describe("API Integration", () => {
 describe("Complex API Test", () => {
   it("should handle multiple scenarios", async () => {
     // First scenario
-    twd.mockRequest("scenario1", { /* ... */ });
+    await twd.mockRequest("scenario1", { /* ... */ });
     // Test scenario 1...
     
     // Clear and set up second scenario
     twd.clearRequestMockRules();
-    twd.mockRequest("scenario2", { /* ... */ });
+    await twd.mockRequest("scenario2", { /* ... */ });
     // Test scenario 2...
   });
 });
@@ -531,13 +531,13 @@ twd.getRequestMockRules(): Rule[]
 
 ```ts
 // Debug active mocks
-twd.mockRequest("getUser", {
+await twd.mockRequest("getUser", {
   method: "GET",
   url: "/api/user",
   response: { id: 1 }
 });
 
-twd.mockRequest("getPosts", {
+await twd.mockRequest("getPosts", {
   method: "GET", 
   url: "/api/posts",
   response: []
@@ -602,7 +602,7 @@ await twd.wait(3000); // Why 3 seconds?
 
 ```ts
 // ✅ Good - Realistic data structure
-twd.mockRequest("getUser", {
+await twd.mockRequest("getUser", {
   method: "GET",
   url: "/api/user/123",
   response: {
@@ -619,7 +619,7 @@ twd.mockRequest("getUser", {
 });
 
 // ❌ Too minimal
-twd.mockRequest("getUser", {
+await twd.mockRequest("getUser", {
   method: "GET",
   url: "/api/user/123", 
   response: { name: "test" }

@@ -133,7 +133,7 @@ await user.type(element.el, "text");
 
 ```ts
 // Mock requests
-twd.mockRequest("alias", {
+await twd.mockRequest("alias", {
   method: "GET",
   url: "/api/endpoint",
   response: { data: "value" }

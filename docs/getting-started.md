@@ -33,20 +33,18 @@ To enable the TWD sidebar and automatically load your tests, use the `initTests`
 
 **IMAGE HERE** - *Screenshot showing main.tsx file with the new TWD loader usage*
 
-```tsx
+```tsx{7-23}
 // src/main.tsx
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import './index.css';
 import router from './routes.ts';
-import { RouterProvider } from 'react-router';
 
 // Only load the test sidebar and tests in development mode
 if (import.meta.env.DEV) {
   // Use Vite's glob import to find all test files
   const testModules = import.meta.glob("./**/*.twd.test.ts");
   const { initTests, twd, TWDSidebar } = await import('twd-js');
-  const { createRoot } = await import('react-dom/client');
   // You need to pass the test modules, the sidebar component, and createRoot function
   initTests(testModules, <TWDSidebar open={true} position="left" />, createRoot);
   // Optionally initialize request mocking

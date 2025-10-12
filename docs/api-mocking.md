@@ -27,7 +27,6 @@ Initialize request mocking in your main entry file using the standard TWD setup:
 if (import.meta.env.DEV) {
   const testModules = import.meta.glob("./**/*.twd.test.ts");
   const { initTests, twd, TWDSidebar } = await import('twd-js');
-  const { createRoot } = await import('react-dom/client');
   initTests(testModules, <TWDSidebar open={true} position="left" />, createRoot);
   twd.initRequestMocking()
     .then(() => {
@@ -55,7 +54,7 @@ import { describe, it, twd, userEvent } from "twd-js";
 describe("User Profile", () => {
   it("should load user data", async () => {
     // Mock the API request
-    twd.mockRequest("getUser", {
+    await twd.mockRequest("getUser", {
       method: "GET",
       url: "https://api.example.com/user/123",
       response: {
@@ -85,7 +84,7 @@ describe("User Profile", () => {
 
 ```ts
 it("should create new user", async () => {
-  twd.mockRequest("createUser", {
+  await twd.mockRequest("createUser", {
     method: "POST",
     url: "https://api.example.com/users",
     response: {
@@ -127,7 +126,7 @@ it("should create new user", async () => {
 ```ts
 it("should handle dynamic user IDs", async () => {
   // Mock any user ID
-  twd.mockRequest("getUserById", {
+  await twd.mockRequest("getUserById", {
     method: "GET",
     url: /\/api\/users\/\d+/, // Matches /api/users/123, /api/users/456, etc.
     response: {
@@ -151,7 +150,7 @@ it("should handle dynamic user IDs", async () => {
 
 ```ts
 it("should handle API errors", async () => {
-  twd.mockRequest("getUserError", {
+  await twd.mockRequest("getUserError", {
     method: "GET",
     url: "https://api.example.com/user/999",
     response: {
@@ -183,13 +182,13 @@ it("should handle API errors", async () => {
 ```ts
 it("should handle multiple API calls", async () => {
   // Mock multiple endpoints
-  twd.mockRequest("getUser", {
+  await twd.mockRequest("getUser", {
     method: "GET",
     url: "/api/user/123",
     response: { id: 123, name: "John Doe" }
   });
 
-  twd.mockRequest("getUserPosts", {
+  await twd.mockRequest("getUserPosts", {
     method: "GET", 
     url: "/api/user/123/posts",
     response: [
@@ -224,7 +223,7 @@ it("should handle multiple API calls", async () => {
 ```ts
 it("should handle changing API responses", async () => {
   // Initial mock
-  twd.mockRequest("getStatus", {
+  await twd.mockRequest("getStatus", {
     method: "GET",
     url: "/api/status",
     response: { status: "loading" }
@@ -241,7 +240,7 @@ it("should handle changing API responses", async () => {
   statusText.should("have.text", "loading");
 
   // Update the mock
-  twd.mockRequest("getStatus", {
+  await twd.mockRequest("getStatus", {
     method: "GET",
     url: "/api/status",
     response: { status: "completed" }
@@ -261,7 +260,7 @@ it("should handle changing API responses", async () => {
 ```ts
 it("should handle authentication states", async () => {
   // Mock unauthorized response first
-  twd.mockRequest("getProfile", {
+  await twd.mockRequest("getProfile", {
     method: "GET",
     url: "/api/profile",
     response: { error: "Unauthorized" },
@@ -275,7 +274,7 @@ it("should handle authentication states", async () => {
   twd.url().should("contain.url", "/login");
 
   // Now mock successful login
-  twd.mockRequest("login", {
+  await twd.mockRequest("login", {
     method: "POST",
     url: "/api/login",
     response: { 
@@ -285,7 +284,7 @@ it("should handle authentication states", async () => {
   });
 
   // Mock authorized profile request
-  twd.mockRequest("getProfile", {
+  await twd.mockRequest("getProfile", {
     method: "GET",
     url: "/api/profile", 
     response: {
@@ -318,7 +317,7 @@ it("should handle authentication states", async () => {
 
 ```ts
 it("should send correct form data", async () => {
-  twd.mockRequest("submitForm", {
+  await twd.mockRequest("submitForm", {
     method: "POST",
     url: "/api/contact",
     response: { success: true }
@@ -355,7 +354,7 @@ it("should include authentication headers", async () => {
   // Set up authentication token
   localStorage.setItem("authToken", "bearer-token-123");
 
-  twd.mockRequest("authenticatedRequest", {
+  await twd.mockRequest("authenticatedRequest", {
     method: "GET",
     url: "/api/protected",
     response: { data: "secret data" }
@@ -387,7 +386,7 @@ describe("User Management", () => {
 
   it("should handle user creation", async () => {
     // This test starts with clean mocks
-    twd.mockRequest("createUser", {
+    await twd.mockRequest("createUser", {
       method: "POST",
       url: "/api/users",
       response: { id: 1, created: true }
@@ -404,13 +403,13 @@ describe("User Management", () => {
 
 ```ts
 it("should have correct mocks configured", async () => {
-  twd.mockRequest("getUsers", {
+  await twd.mockRequest("getUsers", {
     method: "GET",
     url: "/api/users",
     response: []
   });
 
-  twd.mockRequest("createUser", {
+  await twd.mockRequest("createUser", {
     method: "POST", 
     url: "/api/users",
     response: { id: 1 }
@@ -432,7 +431,7 @@ it("should have correct mocks configured", async () => {
 ```ts
 it("should show loading spinner during API call", async () => {
   // Add delay to mock to simulate slow network
-  twd.mockRequest("slowRequest", {
+  await twd.mockRequest("slowRequest", {
     method: "GET",
     url: "/api/slow",
     response: { data: "loaded" }
@@ -463,7 +462,7 @@ it("should show loading spinner during API call", async () => {
 
 ```ts
 it("should display error message on API failure", async () => {
-  twd.mockRequest("failedRequest", {
+  await twd.mockRequest("failedRequest", {
     method: "GET",
     url: "/api/data",
     response: { 
@@ -496,7 +495,7 @@ it("should display error message on API failure", async () => {
 ```ts
 it("should handle paginated results", async () => {
   // Mock first page
-  twd.mockRequest("getPage1", {
+  await twd.mockRequest("getPage1", {
     method: "GET",
     url: "/api/users?page=1",
     response: {
@@ -513,7 +512,7 @@ it("should handle paginated results", async () => {
   });
 
   // Mock second page
-  twd.mockRequest("getPage2", {
+  await twd.mockRequest("getPage2", {
     method: "GET", 
     url: "/api/users?page=2",
     response: {
@@ -555,8 +554,8 @@ it("should handle paginated results", async () => {
 
 ```ts
 // Good ✅
-twd.mockRequest("getUserProfile", { /* ... */ });
-twd.mockRequest("updateUserSettings", { /* ... */ });
+await twd.mockRequest("getUserProfile", { /* ... */ });
+await twd.mockRequest("updateUserSettings", { /* ... */ });
 
 // Bad ❌
 twd.mockRequest("req1", { /* ... */ });
@@ -567,7 +566,7 @@ twd.mockRequest("api2", { /* ... */ });
 
 ```ts
 // Good ✅ - Realistic user data
-twd.mockRequest("getUser", {
+await twd.mockRequest("getUser", {
   method: "GET",
   url: "/api/user/123",
   response: {
@@ -636,16 +635,17 @@ describe("Error Handling", () => {
 
 ### Mock Not Triggering
 
-1. **Check the URL pattern** - Make sure it matches exactly
-2. **Verify the HTTP method** - GET, POST, PUT, DELETE must match
-3. **Ensure mocking is initialized** - Call `twd.initRequestMocking()`
-4. **Check browser console** - Look for service worker errors
+1. **Check in console mock-sw.js version** - Should log `[TWD] Mock Service Worker loaded - version x.x.x` the same version as your `twd-js` package
+2. **Ensure mocking is initialized** - Call `twd.initRequestMocking()`
+3. **Check the URL pattern** - Make sure it matches exactly
+4. **Verify the HTTP method** - GET, POST, PUT, DELETE must match
+5. **Check browser console** - Look for service worker errors
 
 ### Request Not Matching
 
 ```ts
 // Use RegExp for flexible matching
-twd.mockRequest("flexibleMatch", {
+await twd.mockRequest("flexibleMatch", {
   method: "GET",
   url: /\/api\/users\/\d+/, // Matches any user ID
   response: { /* ... */ }

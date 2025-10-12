@@ -87,7 +87,7 @@ it("should handle button clicks", async () => {
 
 ```ts
 it("should load user data", async () => {
-  twd.mockRequest("getUser", {
+  await twd.mockRequest("getUser", {
     method: "GET",
     url: "/api/user",
     response: { name: "John Doe" }
@@ -235,7 +235,7 @@ describe("API Integration", () => {
     await twd.initRequestMocking();
     
     // Set up common mocks
-    twd.mockRequest("getUser", {
+    await twd.mockRequest("getUser", {
       method: "GET",
       url: "/api/user",
       response: { id: 1, name: "Test User" }
