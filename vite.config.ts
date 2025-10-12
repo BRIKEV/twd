@@ -50,6 +50,7 @@ export default defineConfig({
         'examples/**',
         'dist/**',
         'docs/**',
+        'coverage/**'
       ],
     },
   },

@@ -1,6 +1,7 @@
 export * from './twd';
 import { config } from 'chai';
-export { initViteLoadTests } from './initializers/viteLoadTests';
+export { TWDSidebar } from './ui/TWDSidebar';
+export { initTests } from './initializers/initTests';
 export { expect } from 'chai';
 export { userEvent } from './proxies/userEvent';
 

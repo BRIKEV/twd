@@ -72,10 +72,11 @@ pnpm add twd-js
     if (import.meta.env.DEV) {
       // Use Vite's glob import to find all test files
       const testModules = import.meta.glob("./**/*.twd.test.ts");
-      const { initViteLoadTests, twd } = await import('twd-js');
-      // Initialize the TWD sidebar and load tests
-      initViteLoadTests(testModules, { open: true, position: 'left' });
-      // Optionally initialize request mocking
+      const { initTests, twd, TWDSidebar } = await import('twd-js');
+      const { createRoot } = await import('react-dom/client');
+      // You need to pass the test modules, the sidebar component, and createRoot function
+      initTests(testModules, <TWDSidebar open={true} position="left" />, createRoot);
+      // if you want to use mock requests, you can initialize it here
       twd.initRequestMocking()
         .then(() => {
           console.log("Request mocking initialized");
@@ -88,7 +89,6 @@ pnpm add twd-js
    createRoot(document.getElementById("root")!).render(
      <StrictMode>
        <App />
-       <TWDSidebar open={false} />
      </StrictMode>
    );
    ```
@@ -140,9 +140,10 @@ pnpm add twd-js
      if (import.meta.env.DEV) {
        // Use Vite's glob import to find all test files
        const testModules = import.meta.glob("./**/*.twd.test.ts");
-       const { initViteLoadTests, twd } = await import('twd-js');
-       // Initialize the TWD sidebar and load tests
-       initViteLoadTests(testModules, { open: true, position: 'left' });
+       const { initTests, twd, TWDSidebar } = await import('twd-js');
+       const { createRoot } = await import('react-dom/client');
+       // You need to pass the test modules, the sidebar component, and createRoot function
+       initTests(testModules, <TWDSidebar open={true} position="left" />, createRoot);
        // Optionally initialize request mocking
        twd.initRequestMocking()
          .then(() => {
@@ -169,8 +170,9 @@ pnpm add twd-js
          './app.twd.test.ts': () => import('./app.twd.test'),
          './another-test-file.twd.test.ts': () => import('./another-test-file.twd.test'),
        };
-       const { initViteLoadTests } = await import('twd-js');
-       initViteLoadTests(testModules);
+       const { initTests, TWDSidebar } = await import('twd-js');
+       const { createRoot } = await import('react-dom/client');
+       initTests(testModules, <TWDSidebar open={true} position="left" />, createRoot);
      }
      ```
 
