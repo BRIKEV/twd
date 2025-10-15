@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { tests } from "../twdRegistry";
 import { TestList } from "./TestList";
 import { ClosedSidebar } from "./ClosedSidebar";
+import { useLayout } from "./hooks/useLayout";
 
 interface TWDSidebarProps {
   /**
@@ -29,6 +30,7 @@ export const TWDSidebar = ({ open, position = "left" }: TWDSidebarProps) => {
   const [_, setRefresh] = useState(0);
   const [isOpen, setIsOpen] = useState(open);
   const [filter, setFilter] = useState("");
+  useLayout({ isOpen, position });
 
   const runTest = async (i: number) => {
     const test = tests[i];
