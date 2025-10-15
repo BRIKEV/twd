@@ -210,8 +210,10 @@ interface TWDAPI {
  */
 export const twd: TWDAPI = {
   get: async (selector: string): Promise<TWDElemAPI> => {
+    // Prepend selector to exclude TWD sidebar elements
+    const enhancedSelector = `body > div:not(#twd-sidebar-root) ${selector}`;
     log(`Searching get("${selector}")`);
-    const el = await waitForElement(() => document.querySelector(selector));
+    const el = await waitForElement(() => document.querySelector(enhancedSelector));
 
     const api: TWDElemAPI = {
       el,
@@ -224,14 +226,16 @@ export const twd: TWDAPI = {
     return api;
   },
   getAll: async (selector: string): Promise<TWDElemAPI[]> => {
+    // Prepend selector to exclude TWD sidebar elements
+    const enhancedSelector = `body > div:not(#twd-sidebar-root) ${selector}`;
     log(`Searching getAll("${selector}")`);
-    const els = await waitForElements(() => document.querySelectorAll(selector));
+    const els = await waitForElements(() => document.querySelectorAll(enhancedSelector));
 
     return els.map((el) => {
       const api: TWDElemAPI = {
-        el,
+        el: el as HTMLElement,
         should: (name: AnyAssertion, ...args: ArgsFor<AnyAssertion>) => {
-          const message = runAssertion(el, name, ...args);
+          const message = runAssertion(el as HTMLElement, name, ...args);
           log(message);
           return api;
         },
