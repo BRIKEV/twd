@@ -8,20 +8,25 @@ describe('twd getAll command', () => {
 
   beforeEach(() => {
     document.body.innerHTML = '';
+    // Create a wrapper div that would be the app container (not the sidebar)
+    const container = document.createElement('div');
+    container.id = 'app';
+    document.body.appendChild(container);
+
     item1 = document.createElement('div');
     item1.className = 'item';
     item1.textContent = 'Hello';
-    document.body.appendChild(item1);
+    container.appendChild(item1);
 
     item2 = document.createElement('div');
     item2.className = 'item';
     item2.textContent = 'World';
-    document.body.appendChild(item2);
+    container.appendChild(item2);
 
     item3 = document.createElement('div');
     item3.className = 'item';
     item3.textContent = '!';
-    document.body.appendChild(item3);
+    container.appendChild(item3);
   });
   
   it('should get all elements', async () => {

@@ -6,8 +6,13 @@ describe('twd should', () => {
 
   beforeEach(() => {
     document.body.innerHTML = '';
+    // Create a wrapper div that would be the app container (not the sidebar)
+    const appContainer = document.createElement('div');
+    appContainer.id = 'app';
+    document.body.appendChild(appContainer);
+    
     div = document.createElement('div');
-    document.body.appendChild(div);
+    appContainer.appendChild(div);
   });
   
   it('should assert have.text', async () => {
