@@ -19,6 +19,9 @@ describe("TWDSidebar", () => {
       // position fixed but right not left
       expect(sidebarElement).toHaveStyle({ position: 'fixed', right: '0' });
       expect(sidebarElement).not.toHaveStyle({ position: 'fixed', left: '0' });
+      // html margin right 280px
+      expect(document.documentElement).toHaveStyle({ marginRight: '280px' });
+      expect(document.documentElement).not.toHaveStyle({ marginLeft: '280px' });
     });
 
     it("should render TWDSidebar component closed", async () => {
