@@ -1,3 +1,13 @@
+## 0.6.0 (2025-10-16)
+
+* Feat/improve design (#59) ([e788575](https://github.com/BRIKEV/twd/commit/e788575)), closes [#59](https://github.com/BRIKEV/twd/issues/59)
+* fix: error with http no content responses (#60) ([dca1005](https://github.com/BRIKEV/twd/commit/dca1005)), closes [#60](https://github.com/BRIKEV/twd/issues/60)
+* Add Vite plugin to remove mock service worker from production builds (#61) ([0eeb03f](https://github.com/BRIKEV/twd/commit/0eeb03f)), closes [#61](https://github.com/BRIKEV/twd/issues/61)
+
+## 0.5.2 (2025-10-12)
+
+* Feat/improve mocking requests format (#55) ([36aec97](https://github.com/BRIKEV/twd/commit/36aec97)), closes [#55](https://github.com/BRIKEV/twd/issues/55)
+
 ## 0.5.1 (2025-10-12)
 
 * Fix/error installing library (#53) ([879951c](https://github.com/BRIKEV/twd/commit/879951c)), closes [#53](https://github.com/BRIKEV/twd/issues/53)
