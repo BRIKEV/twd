@@ -82,7 +82,7 @@ export const handleMessage = (event) => {
 };
 
 // console.log command to tell current version
-console.log("[TWD] Mock Service Worker loaded - version 0.5.2");
+console.log("[TWD] Mock Service Worker loaded - version 0.6.0");
 // Intercept fetches
 self.addEventListener("fetch", handleFetch);
 
