@@ -19,7 +19,7 @@ export default defineConfig({
       fileName: (format) => `twd.${format}.js`,
     },
     rollupOptions: {
-      external: ['react', 'react-dom'],
+      external: ['react', 'react-dom', 'fs', 'path', 'vite'],
       output: {
         globals: {
           react: 'React',
