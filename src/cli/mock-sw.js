@@ -1,5 +1,6 @@
 import { findRule } from './utils/findRule.js';
 import { notifyClients } from './utils/notifyClients.js';
+import { mockResponse } from './utils/mockResponse.js';
 
 /**
  * List of currently active mock rules.
@@ -57,10 +58,11 @@ export const handleFetch = async (event) => {
           notifyClients(clients, rule, body);
         });
 
-        return new Response(JSON.stringify(rule.response), {
-          status: rule.status || 200,
-          headers: rule.responseHeaders || { "Content-Type": "application/json" },
-        });
+        return mockResponse(
+          rule.response,
+          rule.status ?? 200,
+          rule.responseHeaders
+        );
       })()
     );
   }
