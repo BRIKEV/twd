@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from 'vitest';
-import * as twd from '../../';
+import * as twd from '../../runner';
 import { tests, clearTests } from '../../twdRegistry';
 import groupTests from "../../ui/groupTests";
 

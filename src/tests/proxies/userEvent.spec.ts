@@ -1,5 +1,5 @@
 import { describe, it, beforeEach, vi, expect } from 'vitest';
-import * as twd from '../../';
+import * as twd from '../../runner';
 import { userEvent } from '../../proxies/userEvent';
 import { tests } from '../../twdRegistry';
 

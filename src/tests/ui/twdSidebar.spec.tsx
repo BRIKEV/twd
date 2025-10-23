@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, suite, beforeEach } from "vitest";
 import userEvent from '@testing-library/user-event';
 import { render, screen } from '@testing-library/react'
-import * as twd from '../../';
+import * as twd from '../../runner';
 import { TWDSidebar } from "../../ui/TWDSidebar";
 import { clearTests } from "../../twdRegistry";
 
