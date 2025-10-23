@@ -80,6 +80,19 @@ interface TWDAPI {
    */
   get: (selector: string) => Promise<TWDElemAPI>;
   /**
+   * Sets the value of an input element and dispatches an input event. We recommend using this only for range, color, time inputs.
+   * @param el The input element
+   * @param value The value to set
+   * 
+   * @example
+   * ```ts
+   * const input = await twd.get("input[type='time']");
+   * twd.setInputValue(input.el, "13:30");
+   * 
+   * ```
+   */
+  setInputValue: (el: Element, value: string) => void;
+  /**
    * Finds multiple elements by selector and returns an array of TWD APIs for them.
    * @param selector CSS selector
    * @returns {Promise<TWDElemAPI[]>} Array of TWD APIs for the elements
@@ -224,6 +237,16 @@ export const twd: TWDAPI = {
       },
     };
     return api;
+  },
+  setInputValue: (el: Element, value: string) => {
+    const { set } = Object.getOwnPropertyDescriptor(
+       // @ts-expect-error we ignore this error because __proto__ exists
+      el.__proto__,
+      'value'
+    )!;
+    // @ts-expect-error we ignore this error because we know set exists
+    set.call(el, value);
+    el.dispatchEvent(new Event('input', { bubbles: true }));
   },
   getAll: async (selector: string): Promise<TWDElemAPI[]> => {
     // Prepend selector to exclude TWD sidebar elements

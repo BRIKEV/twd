@@ -8,7 +8,7 @@ import { RouterProvider } from 'react-router'
 if (import.meta.env.DEV) {
   // You choose how to load the tests; this example uses Vite's glob import
   const testModules = import.meta.glob("./**/*.twd.test.ts");
-  const { initTests, twd, TWDSidebar } = await import('../../../src');
+  const { initTests, twd, TWDSidebar } = await import('../../../src/index.ts');
   // You need to pass the test modules, the sidebar component, and createRoot function
   initTests(testModules, <TWDSidebar open={true} position="left" />, createRoot);
   // if you want to use mock requests, you can initialize it here
