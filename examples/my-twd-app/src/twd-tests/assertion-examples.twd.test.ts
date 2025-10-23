@@ -1,4 +1,5 @@
-import { it, twd, userEvent } from "../../../../src";
+import { twd, userEvent } from "../../../../src";
+import { it } from "../../../../src/runner";
 
 it("assertion examples", async () => {
   await twd.visit("/assertions");

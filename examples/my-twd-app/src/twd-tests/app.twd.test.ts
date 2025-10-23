@@ -1,4 +1,5 @@
-import { describe, it, itOnly, itSkip, beforeEach, twd, expect, userEvent } from "../../../../src";
+import { twd, expect, userEvent } from "../../../../src";
+import { describe, it, itOnly, itSkip, beforeEach } from "../../../../src/runner";
 
 beforeEach(() => {
   console.log("Reset state before each test");

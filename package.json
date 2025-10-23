@@ -23,6 +23,16 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/twd.es.js",
       "require": "./dist/twd.umd.js"
+    },
+    "./runner": {
+      "types": "./dist/runner.d.ts",
+      "import": "./dist/runner.es.js",
+      "require": "./dist/runner.umd.js"
+    },
+    "./vite-plugin": {
+      "types": "./dist/vite-plugin.d.ts",
+      "import": "./dist/vite-plugin.es.js",
+      "require": "./dist/vite-plugin.umd.js"
     }
   },
   "files": [
