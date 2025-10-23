@@ -11,6 +11,15 @@
  * @property {boolean} [urlRegex] - Whether the URL is a regex pattern.
  */
 
+const validRegex = (pattern) => {
+  try {
+    new RegExp(pattern);
+    return true;
+  } catch {
+    return false;
+  }
+};
+
 /**
  * Find a matching rule based on method and url
  * @param {string} method
@@ -22,7 +31,7 @@ export function findRule(method, url, rules) {
   return rules.find(
     (r) => {
       const isMethodMatch = r.method.toLowerCase() === method.toLowerCase();
-      if (r.urlRegex) {
+      if (r.urlRegex && validRegex(r.url)) {
         const regex = new RegExp(r.url);
         return isMethodMatch && regex.test(url);
       }

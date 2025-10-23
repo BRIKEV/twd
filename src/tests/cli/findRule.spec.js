@@ -30,6 +30,13 @@ describe('findRule', () => {
     expect(findRule('GET', 'https://bar.com', rules)).toBeUndefined();
   });
 
+  it('should not throw for invalid regex', () => {
+    const rules = [
+      { method: 'GET', url: '^https://foo\\.com/([.*$', alias: 'a', urlRegex: true },
+    ];
+    expect(findRule('GET', 'https://foo.com/api', rules)).toBeUndefined();
+  });
+
   it('matches by regex string (wrapped in /.../)', () => {
     const rules = [
       { method: 'GET', url: /users.*/, alias: 'a', urlRegex: true },
