@@ -1,8 +1,8 @@
-import { useEffect, useState } from "react";
-import { tests } from "../twdRegistry";
+import { useState } from "react";
 import { TestList } from "./TestList";
 import { ClosedSidebar } from "./ClosedSidebar";
 import { useLayout } from "./hooks/useLayout";
+import { handlers, TestRunner } from "../runner-v2";
 
 interface TWDSidebarProps {
   /**
@@ -32,39 +32,42 @@ export const TWDSidebar = ({ open, position = "left" }: TWDSidebarProps) => {
   const [filter, setFilter] = useState("");
   useLayout({ isOpen, position });
 
-  const runTest = async (i: number) => {
-    const test = tests[i];
-    test.logs = [];
-
-    test.status = "running";
-    setRefresh((n) => n + 1);
-    if (test.skip) {
+  const runner = new TestRunner({
+    onStart: (test) => {
+      test.status = "running";
+      setRefresh((n) => n + 1);
+    },
+    onPass: (test) => {
+      test.status = "pass";
+      setRefresh((n) => n + 1);
+    },
+    onFail: (test, err) => {
+      test.status = "fail";
+      console.error("Test failed:", test.name, err);
+      test.logs.push(`Test failed: ${err.message}`);
+      setRefresh((n) => n + 1);
+    },
+    onSkip: (test) => {
       test.status = "skip";
-    } else {
-      try {
-        await test.fn();
-        test.status = "pass";
-      } catch (e) {
-        test.status = "fail";
-        console.error("Test failed:", test.name, e);
-        test.logs.push(`Test failed: ${(e as Error).message}`);
-      }
-    }
-    setRefresh((n) => n + 1);
-  };
+      setRefresh((n) => n + 1);
+    },
+  });
 
   const runAll = async () => {
-    const onlyTests = tests.filter((t) => t.only);
-    const toRun = onlyTests.length > 0 ? onlyTests : tests;
-    for (let i = 0; i < toRun.length; i++) {
-      const idx = tests.indexOf(toRun[i]);
-      await runTest(idx);
-    }
+    await runner.runAll();
   };
 
-  // Filter tests by name (case-insensitive)
+  const runTest = async (id: string) => {
+    const test = Array.from(handlers.values()).filter(h => h.type === "test").find(t => t.id === id);
+    if (!test) return;
+    await runner.runSingle(test.id);
+  };
+  
+  const tests = Array.from(handlers.values());
   const filteredTests = filter.trim()
-    ? tests.filter((t) => t.name.toLowerCase().includes(filter.trim().toLowerCase()))
+    ? tests.filter((t) =>
+        t.name.toLowerCase().includes(filter.trim().toLowerCase())
+      )
     : tests;
 
   if (!isOpen) {
@@ -149,7 +152,20 @@ export const TWDSidebar = ({ open, position = "left" }: TWDSidebarProps) => {
         Run All
       </button>
 
-      <TestList tests={filteredTests} runTest={runTest} />
+      <TestList
+        tests={filteredTests.map(test => ({
+          name: test.name,
+          depth: test.depth,
+          status: test.status,
+          logs: test.logs,
+          id: test.id,
+          parent: test.parent,
+          type: test.type,
+          only: test.only,
+          skip: test.skip,
+        }))}
+        runTest={runTest}
+      />
     </div>
   );
 };

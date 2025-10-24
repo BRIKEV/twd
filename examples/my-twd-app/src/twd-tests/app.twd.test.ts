@@ -1,5 +1,5 @@
 import { twd, expect, userEvent } from "../../../../src";
-import { describe, it, itOnly, itSkip, beforeEach } from "../../../../src/runner";
+import { describe, it, beforeEach } from "../../../../src/runner-v2";
 
 
 describe("App interactions", () => {
@@ -22,11 +22,11 @@ describe("App interactions", () => {
     });
   });
 
-  itSkip("skipped test", () => {
+  it.skip("skipped test", () => {
     throw new Error("Should not run");
   });
 
-  itOnly("only this one runs if present and long text to check the layout", async () => {
+  it.only("only this one runs if present and long text to check the layout", async () => {
     const user = userEvent.setup();
     const btn = await twd.get("button");
     await user.click(btn.el);

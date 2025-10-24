@@ -2,14 +2,26 @@ import { TestCase } from "../twdRegistry";
 import Loader from "./Icons/Loader";
 import Play from "./Icons/Play";
 
-interface TestListItemProps {
-  node: TestCase;
+interface Test {
+  name: string;
   depth: number;
-  idx: number;
-  runTest: (i: number) => void;
+  status?: "idle" | "pass" | "fail" | "skip" | "running";
+  logs?: string[];
+  id: string;
+  parent?: string;
+  type: "test" | "suite";
+  only?: boolean;
+  skip?: boolean;
 }
 
-export const statusStyles = (node: TestCase) => {
+interface TestListItemProps {
+  node: Test;
+  depth: number;
+  id: string;
+  runTest: (i: string) => void;
+}
+
+export const statusStyles = (node: Test) => {
   switch (node.status) {
     case "pass":
       return {
@@ -59,10 +71,10 @@ export const assertStyles = (text: string) => {
   return {};
 };
 
-export const TestListItem = ({ node, depth, idx, runTest }: TestListItemProps) => {
+export const TestListItem = ({ node, depth, id, runTest }: TestListItemProps) => {
   const styles = statusStyles(node);
   return (
-        <li key={node.name} style={{ marginBottom: "4px", marginLeft: depth * 6, ...styles.container }} data-testid={`test-list-item-${idx}`}>
+        <li key={node.name} style={{ marginBottom: "4px", marginLeft: depth * 6, ...styles.container }} data-testid={`test-list-item-${depth}`}>
           <div
             style={{
               display: "flex",
@@ -76,14 +88,14 @@ export const TestListItem = ({ node, depth, idx, runTest }: TestListItemProps) =
             <span style={{ fontWeight: "500", color: "#374151", maxWidth: "220px" }}>
               {node.name}{" "}
               {node.only && (
-                <span style={{ color: "#2563eb" }} data-testid={`only-indicator-${idx}`}> (only)</span>
+                <span style={{ color: "#2563eb" }} data-testid={`only-indicator-${depth}`}> (only)</span>
               )}
               {node.skip && (
-                <span style={{ color: "#6b7280" }} data-testid={`skip-indicator-${idx}`}> (skipped)</span>
+                <span style={{ color: "#6b7280" }} data-testid={`skip-indicator-${depth}`}> (skipped)</span>
               )}
             </span>
             <button
-              onClick={() => runTest(idx)}
+              onClick={() => runTest(id)}
               aria-label={`Run ${node.name} test`}
               style={{
                 background: "transparent",
@@ -100,7 +112,7 @@ export const TestListItem = ({ node, depth, idx, runTest }: TestListItemProps) =
                 justifyContent: "center",
               }}
               disabled={node.status === "running"}
-              data-testid={`run-test-button-${idx}`}
+              data-testid={`run-test-button-${depth}`}
             >
               {node.status === "running" ? <Loader /> : <Play />}
             </button>
