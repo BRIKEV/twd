@@ -1,5 +1,5 @@
 import { twd, expect, userEvent } from "../../../../src";
-import { describe, it, beforeEach } from "../../../../src/runner-v2";
+import { describe, it, beforeEach } from "../../../../src/runner";
 
 
 describe("App interactions", () => {

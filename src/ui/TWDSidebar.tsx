@@ -2,7 +2,7 @@ import { useState } from "react";
 import { TestList } from "./TestList";
 import { ClosedSidebar } from "./ClosedSidebar";
 import { useLayout } from "./hooks/useLayout";
-import { handlers, TestRunner } from "../runner-v2";
+import { handlers, TestRunner } from "../runner";
 
 interface TWDSidebarProps {
   /**
