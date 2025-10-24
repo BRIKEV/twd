@@ -1,14 +1,25 @@
 import { twd, expect, userEvent } from "../../../../src";
 import { describe, it, itOnly, itSkip, beforeEach } from "../../../../src/runner";
 
-beforeEach(() => {
-  console.log("Reset state before each test");
-});
 
 describe("App interactions", () => {
-  it("clicks the button", async () => {
-    const btn = await twd.get("button");
-    userEvent.click(btn.el);
+  beforeEach(() => {
+    console.log("Reset state before each test");
+  });
+
+  describe("nested level 1", () => {
+    beforeEach(() => {
+      console.log("Reset state before each test 1");
+    });
+    describe("nested level 2", () => {
+      beforeEach(() => {
+        console.log("Reset state before each test 2");
+      });
+      it("clicks the button", async () => {
+        const btn = await twd.get("button");
+        userEvent.click(btn.el);
+      });
+    });
   });
 
   itSkip("skipped test", () => {
