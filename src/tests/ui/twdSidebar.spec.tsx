@@ -58,7 +58,7 @@ describe("TWDSidebar", () => {
       const secondTest = vi.fn();
       twd.describe('Group 1', () => {
         twd.it('Test 1.1', firstTest);
-        twd.itSkip('Test 1.2', secondTest);
+        twd.it.skip('Test 1.2', secondTest);
       });
       const user = userEvent.setup()
       render(<TWDSidebar open={true} />);
@@ -93,7 +93,7 @@ describe("TWDSidebar", () => {
       const secondTest = vi.fn();
       twd.describe('Group test only', () => {
         twd.it('Test no only', firstTest);
-        twd.itOnly('Test only', secondTest);
+        twd.it.only('Test only', secondTest);
       });
       const user = userEvent.setup()
       render(<TWDSidebar open={true} />);

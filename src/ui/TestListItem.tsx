@@ -1,4 +1,3 @@
-import { TestCase } from "../twdRegistry";
 import Loader from "./Icons/Loader";
 import Play from "./Icons/Play";
 
