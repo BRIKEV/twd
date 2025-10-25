@@ -1,7 +1,6 @@
 import { describe, it, beforeEach, vi, expect } from 'vitest';
 import * as twd from '../../runner';
 import { userEvent } from '../../proxies/userEvent';
-import { tests } from '../../twdRegistry';
 
 describe('userEvent', () => {
   beforeEach(() => {
@@ -13,7 +12,6 @@ describe('userEvent', () => {
       twd.it('should log userEvent actions', async () => {
         const user = userEvent.setup();
         const input = document.createElement('input');
-        const nonFinded = document.createElement('div');
         document.body.appendChild(input);
 
         await user.click(input);
@@ -23,9 +21,11 @@ describe('userEvent', () => {
         expect((input as HTMLInputElement).value).toBe('Hello');
       });
     });
-    tests[0].status = 'running';
-    await tests[0].fn();
-    expect(tests[0].logs).toContainEqual(expect.stringContaining('Event fired: Clicked element'));
-    expect(tests[0].logs).toContainEqual(expect.stringContaining('Event fired: Typed "Hello" into element'));
+    const tests = twd.handlers;
+    const testArray = Array.from(tests.values());
+    testArray[1].status = 'running';
+    await testArray[1].handler();
+    expect(testArray[1].logs).toContainEqual(expect.stringContaining('Event fired: Clicked element'));
+    expect(testArray[1].logs).toContainEqual(expect.stringContaining('Event fired: Typed "Hello" into element'));
   });
 });
