@@ -1,4 +1,4 @@
-interface Handler {
+export interface Handler {
   id: string;
   name: string;
   parent?: string;

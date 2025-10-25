@@ -53,14 +53,14 @@ export const TestList = ({ tests, runTest }: TestListProps) => {
             marginBottom: "4px",
             gap: "6px",
           }}
+          data-testid={`test-group-${node.name}`}
+          tabIndex={0}
+          role="button"
+          aria-expanded={!isCollapsed}
+          onClick={() => toggle(node.id)}
         >
-          <div
-            style={{ display: "flex", alignItems: "center", gap: "4px" }}
-            onClick={() => toggle(node.id)}
-          >
-            {isCollapsed ? <ChevronRight /> : <ChevronDown />}
-            {node.name}
-          </div>
+          {node.name}
+          {isCollapsed ? <ChevronRight /> : <ChevronDown />}
         </div>
 
         {!isCollapsed && node.childrenNodes && node.childrenNodes.length > 0 && (

@@ -29,7 +29,6 @@ const fontFamily = `-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helve
 export const TWDSidebar = ({ open, position = "left" }: TWDSidebarProps) => {
   const [_, setRefresh] = useState(0);
   const [isOpen, setIsOpen] = useState(open);
-  const [filter, setFilter] = useState("");
   useLayout({ isOpen, position });
 
   const runner = new TestRunner({
@@ -64,13 +63,8 @@ export const TWDSidebar = ({ open, position = "left" }: TWDSidebarProps) => {
   };
   
   const tests = Array.from(handlers.values());
-  const filteredTests = filter.trim()
-    ? tests.filter((t) =>
-        t.name.toLowerCase().includes(filter.trim().toLowerCase())
-      )
-    : tests;
 
-  if (!isOpen) {
+    if (!isOpen) {
     return <ClosedSidebar position={position} setOpen={setIsOpen} />;
   }
 
@@ -117,26 +111,6 @@ export const TWDSidebar = ({ open, position = "left" }: TWDSidebarProps) => {
         </button>
       </div>
 
-      <input
-        type="text"
-        aria-label="Filter tests"
-        placeholder="Filter tests..."
-        value={filter}
-        onChange={e => setFilter(e.target.value)}
-        style={{
-          width: "100%",
-          padding: "6px 8px",
-          marginBottom: "10px",
-          border: "1px solid #d1d5db",
-          borderRadius: "4px",
-          fontSize: "14px",
-          outline: "none",
-          boxSizing: "border-box",
-          background: "#fff",
-        }}
-        data-testid="twd-sidebar-filter"
-      />
-
       <button
         onClick={runAll}
         style={{
@@ -153,7 +127,7 @@ export const TWDSidebar = ({ open, position = "left" }: TWDSidebarProps) => {
       </button>
 
       <TestList
-        tests={filteredTests.map(test => ({
+        tests={tests.map(test => ({
           name: test.name,
           depth: test.depth,
           status: test.status,
