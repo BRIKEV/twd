@@ -1,20 +1,32 @@
-import { describe, it, itOnly, itSkip, beforeEach, twd, expect, userEvent } from "../../../../src";
+import { twd, expect, userEvent } from "../../../../src";
+import { describe, it, beforeEach } from "../../../../src/runner";
 
-beforeEach(() => {
-  console.log("Reset state before each test");
-});
 
 describe("App interactions", () => {
-  it("clicks the button", async () => {
-    const btn = await twd.get("button");
-    userEvent.click(btn.el);
+  beforeEach(() => {
+    console.log("Reset state before each test");
   });
 
-  itSkip("skipped test", () => {
+  describe("nested level 1", () => {
+    beforeEach(() => {
+      console.log("Reset state before each test 1");
+    });
+    describe("nested level 2", () => {
+      beforeEach(() => {
+        console.log("Reset state before each test 2");
+      });
+      it("clicks the button", async () => {
+        const btn = await twd.get("button");
+        userEvent.click(btn.el);
+      });
+    });
+  });
+
+  it.skip("skipped test", () => {
     throw new Error("Should not run");
   });
 
-  itOnly("only this one runs if present and long text to check the layout", async () => {
+  it.only("only this one runs if present and long text to check the layout", async () => {
     const user = userEvent.setup();
     const btn = await twd.get("button");
     await user.click(btn.el);

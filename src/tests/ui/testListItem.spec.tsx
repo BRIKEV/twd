@@ -3,59 +3,64 @@ import userEvent from '@testing-library/user-event';
 import { render, screen } from '@testing-library/react'
 import { TestListItem, assertStyles, statusStyles } from "../../ui/TestListItem";
 
+
 describe("TestListItem", () => {
   describe('component' , () => {
     it("should render TestListItem component", async () => {
+      const testId = 'test-1';
       const test = {
         name: 'Sample Test',
         only: false,
         skip: false,
         status: 'idle',
         logs: [],
-        fn: () => { /* test function */ },
-        suite: ['Sample Suite']
+        id: 'test-1',
+        type: 'test',
+        depth: 1,
       };
-      const idx = 1;
       const mockRunTest = vi.fn();
       const user = userEvent.setup()
   
       render(<TestListItem node={{
         ...test,
         status: 'idle',
-      }} depth={2} idx={idx} runTest={mockRunTest} />);
+        type: 'test',
+      }} depth={2} id={testId} runTest={mockRunTest} />);
       const testNameElement = screen.getByText("Sample Test");
       expect(testNameElement).toBeInTheDocument();
       // Simulate a click event
-      const buttonElement = screen.getByTestId(`run-test-button-${idx}`);
+      const buttonElement = screen.getByTestId(`run-test-button-${testId}`);
       await user.click(buttonElement);
-      expect(mockRunTest).toHaveBeenCalledWith(idx);
-      const onlyIndicator = screen.queryByTestId(`only-indicator-${idx}`);
+      expect(mockRunTest).toHaveBeenCalledWith(testId);
+      const onlyIndicator = screen.queryByTestId(`only-indicator-${testId}`);
       expect(onlyIndicator).toBeNull();
-      const skipIndicator = screen.queryByTestId(`skip-indicator-${idx}`);
+      const skipIndicator = screen.queryByTestId(`skip-indicator-${testId}`);
       expect(skipIndicator).toBeNull();
     });
   
     it("should render only and skip indicators when applicable", () => {
+      const testId = 'test-1';
       const test = {
-        name: 'Only Test',
+        name: 'Sample Test',
         only: true,
         skip: true,
         status: 'idle',
         logs: [],
-        fn: () => { /* test function */ },
-        suite: ['Sample Suite']
+        id: 'test-1',
+        type: 'test',
+        depth: 1,
       };
-      const idx = 2;
       const mockRunTest = vi.fn();
   
       render(<TestListItem node={{
         ...test,
         status: 'idle',
-      }} depth={1} idx={idx} runTest={mockRunTest} />);
-      const onlyIndicator = screen.getByTestId(`only-indicator-${idx}`);
+        type: 'test',
+      }} depth={1} id={testId} runTest={mockRunTest} />);
+      const onlyIndicator = screen.getByTestId(`only-indicator-${testId}`);
       expect(onlyIndicator).toBeInTheDocument();
       expect(onlyIndicator).toHaveTextContent('(only)');
-      const skipIndicator = screen.getByTestId(`skip-indicator-${idx}`);
+      const skipIndicator = screen.getByTestId(`skip-indicator-${testId}`);
       expect(skipIndicator).toBeInTheDocument();
       expect(skipIndicator).toHaveTextContent('(skipped)');
     });
@@ -67,18 +72,20 @@ describe("TestListItem", () => {
         skip: false,
         status: 'idle',
         logs: [],
-        fn: () => { /* test function */ },
-        suite: ['Sample Suite']
+        id: 'test-1',
+        type: 'test',
+        depth: 3,
       };
-      const idx = 3;
+      const testId = 'test-3';
       const mockRunTest = vi.fn();
       const depth = 3;
   
       render(<TestListItem node={{
         ...test,
         status: 'idle',
-      }} depth={depth} idx={idx} runTest={mockRunTest} />);
-      const listItem = screen.getByTestId(`test-list-item-${idx}`);
+        type: 'test',
+      }} depth={depth} id={testId} runTest={mockRunTest} />);
+      const listItem = screen.getByTestId(`test-list-item-${testId}`);
       expect(listItem).toBeInTheDocument();
       expect(listItem).toHaveStyle(`margin-left: ${depth * 6}px`);
     });
@@ -90,17 +97,19 @@ describe("TestListItem", () => {
         skip: false,
         status: 'running',
         logs: [],
-        fn: () => { /* test function */ },
-        suite: ['Sample Suite']
+        id: 'test-1',
+        type: 'test',
+        depth: 3,
       };
-      const idx = 4;
+      const testId = 'test-4';
       const mockRunTest = vi.fn();
   
       render(<TestListItem node={{
         ...test,
         status: 'running',
-      }} depth={0} idx={idx} runTest={mockRunTest} />);
-      const buttonElement = screen.getByTestId(`run-test-button-${idx}`);
+        type: 'test',
+      }} depth={0} id={testId} runTest={mockRunTest} />);
+      const buttonElement = screen.getByTestId(`run-test-button-${testId}`);
       expect(buttonElement).toBeDisabled();
     });
 
@@ -111,16 +120,18 @@ describe("TestListItem", () => {
         skip: false,
         status: 'fail',
         logs: ['Assertion passed: Value is true', 'Test failed: Value is false'],
-        fn: () => { /* test function */ },
-        suite: ['Sample Suite']
+        id: 'test-1',
+        type: 'test',
+        depth: 3,
       };
-      const idx = 5;
+      const testId = 'test-5';
       const mockRunTest = vi.fn();
   
       render(<TestListItem node={{
         ...test,
         status: 'fail',
-      }} depth={0} idx={idx} runTest={mockRunTest} />);
+        type: 'test',
+      }} depth={0} id={testId} runTest={mockRunTest} />);
       const log1 = screen.getByText('Assertion passed: Value is true');
       expect(log1).toBeInTheDocument();
       expect(log1).toHaveStyle('color: #0d542b; font-weight: 700;');
@@ -148,8 +159,22 @@ describe("TestListItem", () => {
   });
 
   describe('statusStyles method', () => {
+    const test = {
+      name: 'Test name',
+      only: false,
+      skip: false,
+      status: 'pass',
+      logs: [],
+      id: 'test-1',
+      type: 'test',
+      depth: 1,
+    };
     it("should return correct styles for 'pass' status", () => {
-      const styles = statusStyles({ name: '', only: false, skip: false, status: 'pass', logs: [], fn: () => {}, suite: [] });
+      const styles = statusStyles({
+        ...test,
+        status: 'pass',
+        type: 'test',
+      });
       expect(styles).toEqual({
         item: { background: "#dcfce7" },
         container: { borderLeft: "3px solid #00c951" },
@@ -157,7 +182,11 @@ describe("TestListItem", () => {
     });
 
     it("should return correct styles for 'fail' status", () => {
-      const styles = statusStyles({ name: '', only: false, skip: false, status: 'fail', logs: [], fn: () => {}, suite: [] });
+      const styles = statusStyles({
+        ...test,
+        status: 'fail',
+        type: 'test',
+      });
       expect(styles).toEqual({
         item: { background: "#fee2e2" },
         container: { borderLeft: "3px solid #fb2c36" },
@@ -165,21 +194,33 @@ describe("TestListItem", () => {
     });
 
     it("should return correct styles for 'skip' status", () => {
-      const styles = statusStyles({ name: '', only: false, skip: false, status: 'skip', logs: [], fn: () => {}, suite: [] });
+      const styles = statusStyles({
+        ...test,
+        status: 'skip',
+        type: 'test',
+      });
       expect(styles).toEqual({
         item: { background: "#f3f4f6" },
       });
     });
 
     it("should return correct styles for 'running' status", () => {
-      const styles = statusStyles({ name: '', only: false, skip: false, status: 'running', logs: [], fn: () => {}, suite: [] });
+      const styles = statusStyles({
+        ...test,
+        status: 'running',
+        type: 'test',
+      });
       expect(styles).toEqual({
         item: { background: "#fef9c3" },
       });
     });
 
     it("should return correct styles for unknown status", () => {
-      const styles = statusStyles({ name: '', only: false, skip: false, status: 'idle', logs: [], fn: () => {}, suite: [] });
+      const styles = statusStyles({
+        ...test,
+        status: 'idle',
+        type: 'test',
+      });
       expect(styles).toEqual({
         item: { background: "transparent" },
       });

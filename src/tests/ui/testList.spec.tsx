@@ -1,9 +1,8 @@
-import { describe, it, expect, vi, suite } from "vitest";
+import { describe, it, expect, vi } from "vitest";
 import userEvent from '@testing-library/user-event';
 import { render, screen } from '@testing-library/react'
-import * as twd from '../../';
+import * as twd from '../../runner';
 import { TestList } from "../../ui/TestList";
-import { tests } from "../../twdRegistry";
 
 describe("TestList", () => {
   it("should render TestList component with tests", async () => {
@@ -19,9 +18,11 @@ describe("TestList", () => {
       });
     });
     const mockRunTest = vi.fn();
-    const user = userEvent.setup()
+    const user = userEvent.setup();
+    const tests = twd.handlers;
+    const testArray = Array.from(tests.values());
 
-    render(<TestList tests={tests} runTest={mockRunTest} />);
+    render(<TestList tests={testArray} runTest={mockRunTest} />);
     // aria-expanded is false when collapsed
     const testGroupA = screen.getByTestId('test-group-Group 1');
     expect(testGroupA).toBeInTheDocument();

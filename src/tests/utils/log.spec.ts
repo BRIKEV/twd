@@ -1,17 +1,17 @@
 import { describe, expect, it } from 'vitest';
 import { log } from '../../utils/log';
-import { register, tests } from '../../twdRegistry';
+import * as twd from '../../runner';
 
 describe("log util", () => {
   it("should add logs to the current test", () => {
-    register("test with logs", async () => {
+    twd.it("test with logs", async () => {
       log("First log");
       log("Second log");
     });
-    expect(tests).toHaveLength(1);
-    expect(tests[0].logs).toEqual([]);
-    tests[0].status = "running"; // simulate running
-    tests[0].fn();
-    expect(tests[0].logs).toEqual(["First log", "Second log"]);
+    const tests = twd.handlers;
+    const testArray = Array.from(tests.values());
+    testArray[0].status = "running";
+    testArray[0].handler();
+    expect(testArray[0].logs).toEqual(["First log", "Second log"]);
   });
 });
