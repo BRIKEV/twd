@@ -193,6 +193,7 @@ export class TestRunner {
 
     try {
       for (const hook of hooks.before) await hook();
+      test.logs = [];
       await test.handler();
       this.events.onPass(test);
     } catch (err) {
