@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from 'vitest';
-import { twd } from '../../..';
+import { twd } from '../../';
 
 describe('twd get command', () => {
   let div: HTMLDivElement;
