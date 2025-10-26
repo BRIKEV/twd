@@ -1,5 +1,5 @@
 import { beforeEach, describe, it } from 'vitest';
-import { twd } from '../../..';
+import { twd } from '../..';
 
 describe('twd setInputValue command', () => {
   let div: HTMLDivElement;
