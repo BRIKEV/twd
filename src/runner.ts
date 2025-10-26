@@ -157,6 +157,7 @@ export class TestRunner {
     for (const suite of rootSuites) {
       await this.runSuite(suite, hasOnly);
     }
+    return handlers;
   }
 
   async runSingle(id: string) {
@@ -203,3 +204,5 @@ export class TestRunner {
     }
   }
 }
+
+window.__testRunner = TestRunner;
