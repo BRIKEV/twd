@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it } from 'vitest';
-import { twd } from '../../..';
+import { twd } from '../../';
 
-describe('twd should', () => {
+describe('twd get command', () => {
   let div: HTMLDivElement;
 
   beforeEach(() => {
@@ -11,14 +11,19 @@ describe('twd should', () => {
     appContainer.id = 'app';
     document.body.appendChild(appContainer);
     
+    // append a div inside the app container
     div = document.createElement('div');
+    div.className = 'inner';
     appContainer.appendChild(div);
   });
   
-  it('should assert have.text', async () => {
+  it('should get element', async () => {
     div.textContent = 'Hello World';
     const elem = await twd.get('div');
-    elem.should('have.text', 'Hello World');
-    expect(() => elem.should('have.text', 'Wrong Text')).toThrow();
+    expect(elem).not.toBeNull();
+  });
+
+  it('should throw error if element not found', async () => {
+    await expect(twd.get('.non-existent')).rejects.toThrow();
   });
 });

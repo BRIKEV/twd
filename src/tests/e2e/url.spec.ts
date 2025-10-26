@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi, afterAll } from 'vitest';
-import { twd } from '../../..';
+import { twd } from '../..';
 
 describe('twd url command', () => {
   const originalLocation = window.location;

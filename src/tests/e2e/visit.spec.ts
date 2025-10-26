@@ -1,5 +1,5 @@
 import { describe, expect, it, beforeEach, vi } from 'vitest';
-import { twd } from '../../..';
+import { twd } from '../..';
 
 describe('twd visit command', () => {
   beforeEach(() => {
