@@ -1,14 +1,14 @@
 import chalk from 'chalk';
 import { Handler } from "./runner";
 
-export interface TestResult {
+interface TestResult {
   id: string;
   status: 'pass' | 'fail' | 'skip';
   error?: string;
 }
 
-export const reportResults = (handlers: Map<string, Handler>, testResults: TestResult[]) => {
-  const roots = [...handlers.values()].filter(h => !h.parent);
+export const reportResults = (handlers: Handler[], testResults: TestResult[]) => {
+  const roots = [...handlers].filter(h => !h.parent);
 
   const printHandler = (handler: Handler, indent = 0) => {
     const prefix = '  '.repeat(indent);
@@ -39,7 +39,7 @@ export const reportResults = (handlers: Map<string, Handler>, testResults: TestR
 
     if (handler.children) {
       for (const childId of handler.children) {
-        const child = handlers.get(childId);
+        const child = handlers.find(h => h.id === childId);
         if (child) printHandler(child, indent + 1);
       }
     }
