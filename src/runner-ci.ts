@@ -1,7 +1,7 @@
 import chalk from 'chalk';
 import { Handler } from "./runner";
 
-interface TestResult {
+export interface TestResult {
   id: string;
   status: 'pass' | 'fail' | 'skip';
   error?: string;
@@ -48,7 +48,7 @@ export const reportResults = (handlers: Map<string, Handler>, testResults: TestR
   for (const root of roots) printHandler(root);
 };
 
-export const executeTests = async () => {
+export const executeTests = async (): Promise<{ handlers: Handler[], testStatus: TestResult[] }> => {
   const TestRunner = window.__testRunner;
   const testStatus: TestResult[] = [];
   const runner = new TestRunner({
@@ -63,6 +63,6 @@ export const executeTests = async () => {
       testStatus.push({ id: test.id, status: "skip" });
     },
   });
-  const handlers= await runner.runAll();
+  const handlers = await runner.runAll();
   return { handlers: Array.from(handlers.values()), testStatus };
 };
