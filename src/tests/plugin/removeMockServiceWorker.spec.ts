@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { removeMockServiceWorker } from '../../plugin/removeMockServiceWorker';
+import { removeMockServiceWorker } from '../../vite-plugin';
 
 describe('removeMockServiceWorker', () => {
   it('should return a valid Vite plugin object', () => {
