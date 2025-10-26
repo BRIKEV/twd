@@ -1,3 +1,13 @@
+## 0.7.0 (2025-10-26)
+
+* Feat/add window to handle ci tests (#70) ([81c808e](https://github.com/BRIKEV/twd/commit/81c808e)), closes [#70](https://github.com/BRIKEV/twd/issues/70)
+* Feat/improve runner (#67) ([72ca85e](https://github.com/BRIKEV/twd/commit/72ca85e)), closes [#67](https://github.com/BRIKEV/twd/issues/67)
+* Feat/visit command improvements (#69) ([c669452](https://github.com/BRIKEV/twd/commit/c669452)), closes [#69](https://github.com/BRIKEV/twd/issues/69)
+* feat: add support to other types (#66) ([fef815f](https://github.com/BRIKEV/twd/commit/fef815f)), closes [#66](https://github.com/BRIKEV/twd/issues/66)
+* fix: error when regex is invalid (#65) ([dba0cdf](https://github.com/BRIKEV/twd/commit/dba0cdf)), closes [#65](https://github.com/BRIKEV/twd/issues/65)
+* fix: error with http no content responses (#60) ([dca1005](https://github.com/BRIKEV/twd/commit/dca1005)), closes [#60](https://github.com/BRIKEV/twd/issues/60)
+
+
 ## 0.6.0 (2025-10-16)
 
 * Feat/improve design (#59) ([e788575](https://github.com/BRIKEV/twd/commit/e788575)), closes [#59](https://github.com/BRIKEV/twd/issues/59)
