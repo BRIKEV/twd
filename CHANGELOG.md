@@ -1,3 +1,7 @@
+## 0.7.1 (2025-10-28)
+
+* fix: error exporting bundle files
+
 ## 0.7.0 (2025-10-26)
 
 * Feat/add window to handle ci tests (#70) ([81c808e](https://github.com/BRIKEV/twd/commit/81c808e)), closes [#70](https://github.com/BRIKEV/twd/issues/70)
