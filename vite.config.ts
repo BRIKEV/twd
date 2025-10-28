@@ -24,7 +24,7 @@ export default defineConfig({
       fileName: (format, entryName) => `${entryName}.${format}.js`,
     },
     rollupOptions: {
-      external: ['react', 'react-dom', 'fs', 'path', 'vite'],
+      external: ['react', 'react-dom', 'fs', 'path', 'vite', 'chalk'],
       output: {
         globals: {
           react: 'React',

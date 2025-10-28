@@ -8,8 +8,8 @@
   "bugs": {
     "url": "https://github.com/BRIKEV/twd/issues"
   },
-  "main": "./dist/twd.umd.js",
-  "module": "./dist/twd.es.js",
+  "main": "./dist/index.cjs.js",
+  "module": "./dist/index.es.js",
   "types": "./dist/index.d.ts",
   "bin": {
     "twd-js": "./dist/cli.js"
@@ -21,23 +21,23 @@
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/twd.es.js",
-      "require": "./dist/twd.umd.js"
+      "import": "./dist/index.es.js",
+      "require": "./dist/index.cjs.js"
     },
     "./runner": {
       "types": "./dist/runner.d.ts",
       "import": "./dist/runner.es.js",
-      "require": "./dist/runner.umd.js"
+      "require": "./dist/runner.cjs.js"
     },
     "./vite-plugin": {
       "types": "./dist/vite-plugin.d.ts",
       "import": "./dist/vite-plugin.es.js",
-      "require": "./dist/vite-plugin.umd.js"
+      "require": "./dist/vite-plugin.cjs.js"
     },
     "./runner-ci": {
       "types": "./dist/runner-ci.d.ts",
       "import": "./dist/runner-ci.es.js",
-      "require": "./dist/runner-ci.umd.js"
+      "require": "./dist/runner-ci.cjs.js"
     }
   },
   "files": [
