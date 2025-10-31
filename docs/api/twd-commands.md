@@ -40,17 +40,6 @@ button.should("be.visible");
 emailInput.should("have.value", "test@example.com");
 ```
 
-#### Error Handling
-
-```ts
-try {
-  const element = await twd.get(".non-existent");
-} catch (error) {
-  // Element not found after timeout
-  console.error("Element not found:", error.message);
-}
-```
-
 ---
 
 ### twd.getAll(selector)
@@ -624,30 +613,6 @@ await twd.mockRequest("getUser", {
   url: "/api/user/123", 
   response: { name: "test" }
 });
-```
-
-## Error Handling
-
-### Element Not Found
-
-```ts
-try {
-  const element = await twd.get(".non-existent");
-} catch (error) {
-  console.error("Element not found:", error.message);
-  // Handle gracefully or let test fail
-}
-```
-
-### Mock Not Matched
-
-```ts
-try {
-  await twd.waitForRequest("nonExistentMock");
-} catch (error) {
-  console.error("Mock not matched:", error.message);
-  // Check if mock was set up correctly
-}
 ```
 
 ### Service Worker Issues
