@@ -20,6 +20,7 @@ interface Options {
 export const initSidebar = (options: Options) => {
   const { Component, createRoot } = options;
   const el = document.createElement('div');
+  el.setAttribute('id', 'twd-sidebar-root');
   document.body.appendChild(el);
   const root = createRoot(el);
   root.render(Component);

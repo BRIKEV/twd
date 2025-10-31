@@ -22,7 +22,8 @@ export default defineConfig({
         items: [
           { text: 'Getting Started', link: '/getting-started' },
           { text: 'Writing Tests', link: '/writing-tests' },
-          { text: 'API Mocking', link: '/api-mocking' }
+          { text: 'API Mocking', link: '/api-mocking' },
+          { text: 'CI Execution', link: '/ci-execution' }
         ]
       },
       {

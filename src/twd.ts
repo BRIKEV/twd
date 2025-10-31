@@ -1,69 +1,10 @@
 import { waitForElement, wait, waitForElements } from "./utils/wait";
-import { popSuite, pushSuite, register } from "./twdRegistry";
 import { runAssertion } from "./asserts";
 import { log } from "./utils/log";
 import { mockRequest, Options, Rule, waitForRequest, initRequestMocking, clearRequestMockRules, getRequestMockRules, waitForRequests } from "./commands/mockBridge";
 import type { AnyAssertion, ArgsFor, TWDElemAPI } from "./twd-types";
 import urlCommand, { type URLCommandAPI } from "./commands/url";
 import { visit } from "./commands/visit";
-
-/**
- * Stores the function to run before each test.
- */
-let beforeEachFn: (() => void | Promise<void>) | null = null;
-
-/**
- * Registers a function to run before each test.
- * @example
- * beforeEach(() => { ... });
- */
-export const beforeEach = (fn: typeof beforeEachFn) => {
-  beforeEachFn = fn;
-};
-
-/**
- * Groups related tests together.
- * @example
- * describe("My group", () => { ... });
- */
-export const describe = (name: string, fn: () => void) => {
-  pushSuite(name);
-  fn(); // for now, just run immediately
-  popSuite();
-};
-
-/**
- * Defines a test case.
- * @example
- * it("does something", async () => { ... });
- */
-export const it = (name: string, fn: () => Promise<void> | void) => {
-  register(name, async () => {
-    if (beforeEachFn) await beforeEachFn();
-    await fn();
-  });
-};
-
-/**
- * Defines an exclusive test case (only this runs).
- * @example
- * itOnly("runs only this", async () => { ... });
- */
-export const itOnly = (name: string, fn: () => Promise<void> | void) => {
-  register(name, async () => {
-    if (beforeEachFn) await beforeEachFn();
-    await fn();
-  }, { only: true });
-};
-
-/**
- * Skips a test case.
- * @example
- * itSkip("skipped test", () => { ... });
- */
-export const itSkip = (name: string, _fn: () => Promise<void> | void) => {
-  register(name, async () => {}, { skip: true });
-};
 
 interface TWDAPI {
   /**
@@ -79,6 +20,19 @@ interface TWDAPI {
    * 
    */
   get: (selector: string) => Promise<TWDElemAPI>;
+  /**
+   * Sets the value of an input element and dispatches an input event. We recommend using this only for range, color, time inputs.
+   * @param el The input element
+   * @param value The value to set
+   * 
+   * @example
+   * ```ts
+   * const input = await twd.get("input[type='time']");
+   * twd.setInputValue(input.el, "13:30");
+   * 
+   * ```
+   */
+  setInputValue: (el: Element, value: string) => void;
   /**
    * Finds multiple elements by selector and returns an array of TWD APIs for them.
    * @param selector CSS selector
@@ -210,8 +164,10 @@ interface TWDAPI {
  */
 export const twd: TWDAPI = {
   get: async (selector: string): Promise<TWDElemAPI> => {
+    // Prepend selector to exclude TWD sidebar elements
+    const enhancedSelector = `body > div:not(#twd-sidebar-root) ${selector}`;
     log(`Searching get("${selector}")`);
-    const el = await waitForElement(() => document.querySelector(selector));
+    const el = await waitForElement(() => document.querySelector(enhancedSelector));
 
     const api: TWDElemAPI = {
       el,
@@ -223,15 +179,27 @@ export const twd: TWDAPI = {
     };
     return api;
   },
+  setInputValue: (el: Element, value: string) => {
+    const { set } = Object.getOwnPropertyDescriptor(
+       // @ts-expect-error we ignore this error because __proto__ exists
+      el.__proto__,
+      'value'
+    )!;
+    // @ts-expect-error we ignore this error because we know set exists
+    set.call(el, value);
+    el.dispatchEvent(new Event('input', { bubbles: true }));
+  },
   getAll: async (selector: string): Promise<TWDElemAPI[]> => {
+    // Prepend selector to exclude TWD sidebar elements
+    const enhancedSelector = `body > div:not(#twd-sidebar-root) ${selector}`;
     log(`Searching getAll("${selector}")`);
-    const els = await waitForElements(() => document.querySelectorAll(selector));
+    const els = await waitForElements(() => document.querySelectorAll(enhancedSelector));
 
     return els.map((el) => {
       const api: TWDElemAPI = {
-        el,
+        el: el as HTMLElement,
         should: (name: AnyAssertion, ...args: ArgsFor<AnyAssertion>) => {
-          const message = runAssertion(el, name, ...args);
+          const message = runAssertion(el as HTMLElement, name, ...args);
           log(message);
           return api;
         },

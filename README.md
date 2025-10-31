@@ -289,6 +289,25 @@ npx twd-js init <public-dir> [--save]
 
 This will copy `mock-sw.js` to your public directory.
 
+**Removing the Service Worker in Production Builds**
+
+The service worker file (`mock-sw.js`) is only needed during development for API mocking. To remove it from production builds, use the `removeMockServiceWorker` Vite plugin:
+
+```ts
+// vite.config.ts
+import { defineConfig } from 'vite';
+import { removeMockServiceWorker } from 'twd-js';
+
+export default defineConfig({
+  plugins: [
+    // ... other plugins
+    removeMockServiceWorker()
+  ]
+});
+```
+
+This plugin will automatically remove `mock-sw.js` from your build output during production builds.
+
 ### Mock Requests
 
 Use `twd.mockRequest()` to define API mocks in your tests:

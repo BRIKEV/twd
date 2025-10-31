@@ -1,59 +1,82 @@
 import { useState } from "react";
-import groupTests, { Group } from "./groupTests";
-import { TestCase } from "../twdRegistry";
+import { buildTreeFromHandlers, Node } from "./buildTreeFromHandlers";
 import { TestListItem } from "./TestListItem";
 import ChevronDown from "./Icons/ChevronDown";
 import ChevronRight from "./Icons/ChevronRight";
 
-interface TestListProps {
-  runTest: (i: number) => Promise<void>;
-  tests: TestCase[];
+interface Test {
+  name: string;
+  depth: number;
+  status?: "idle" | "pass" | "fail" | "skip" | "running";
+  logs?: string[];
+  parent?: string;
+  id: string;
+  type: "test" | "suite";
+  only?: boolean;
+  skip?: boolean;
 }
 
-export const TestList = ({ runTest, tests }: TestListProps) => {
-  const [collapsed, setCollapsed] = useState<Record<string, boolean>>({});
+interface TestListProps {
+  runTest: (id: string) => Promise<void>;
+  tests: Test[];
+}
 
-  const renderNode = (node: Group | typeof tests[number], depth = 0) => {
-    if ("status" in node) {
-      // it's a test
-      return <TestListItem key={node.name} node={node} depth={depth} idx={tests.indexOf(node)} runTest={runTest} />;
+export const TestList = ({ tests, runTest }: TestListProps) => {
+  const [collapsed, setCollapsed] = useState<Record<string, boolean>>({});
+  const toggle = (id: string) =>
+    setCollapsed((prev) => ({ ...prev, [id]: !prev[id] }));
+
+  const renderNode = (node: Node, depth = 0) => {
+    if (node.type === "test") {
+      return (
+        <TestListItem
+          key={node.id}
+          node={node}
+          depth={depth}
+          id={node.id}
+          runTest={() => runTest(node.id)}
+        />
+      );
     }
 
-    // it's a group
-    const isCollapsed = collapsed[node.name];
+    const isCollapsed = collapsed[node.id];
     return (
-      <li key={node.name} style={{ marginBottom: "6px", marginLeft: depth * 12, textAlign: "left" }}>
+      <li key={node.id} style={{ marginLeft: depth * 12 }}>
         <div
           style={{
             fontWeight: "bold",
             cursor: "pointer",
             color: "#374151",
-            marginBottom: "4px",
             display: "flex",
             alignItems: "center",
-            gap: "4px",
+            justifyContent: "space-between",
+            marginBottom: "4px",
+            gap: "6px",
           }}
-          onClick={() => setCollapsed((c) => ({ ...c, [node.name]: !c[node.name] }))}
           data-testid={`test-group-${node.name}`}
           tabIndex={0}
           role="button"
           aria-expanded={!isCollapsed}
+          onClick={() => toggle(node.id)}
         >
-          {node.name} {isCollapsed ? <ChevronRight /> : <ChevronDown />}
+          {node.name}
+          {isCollapsed ? <ChevronRight /> : <ChevronDown />}
         </div>
-        {!isCollapsed && (
-          <ul style={{ listStyle: "none", padding: 0 }}>
-            {(node as Group).children.map((child) => renderNode(child, depth + 1))}
+
+        {!isCollapsed && node.childrenNodes && node.childrenNodes.length > 0 && (
+          <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
+            {node.childrenNodes.map((child) => renderNode(child, depth + 1))}
           </ul>
         )}
       </li>
     );
   };
-  const grouped = groupTests(tests);
+
+  const roots = buildTreeFromHandlers(tests);
 
   return (
     <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
-      {grouped.map((g) => renderNode(g))}
+      {roots.map((n) => renderNode(n))}
     </ul>
   );
 };

@@ -1,20 +1,32 @@
-import { describe, it, itOnly, itSkip, beforeEach, twd, expect, userEvent } from "../../../../src";
+import { twd, expect, userEvent } from "../../../../src";
+import { describe, it, beforeEach } from "../../../../src/runner";
 
-beforeEach(() => {
-  console.log("Reset state before each test");
-});
 
 describe("App interactions", () => {
-  it("clicks the button", async () => {
-    const btn = await twd.get("button");
-    userEvent.click(btn.el);
+  beforeEach(() => {
+    console.log("Reset state before each test");
   });
 
-  itSkip("skipped test", () => {
+  describe("nested level 1", () => {
+    beforeEach(() => {
+      console.log("Reset state before each test 1");
+    });
+    describe("nested level 2", () => {
+      beforeEach(() => {
+        console.log("Reset state before each test 2");
+      });
+      it("clicks the button", async () => {
+        const btn = await twd.get("button");
+        userEvent.click(btn.el);
+      });
+    });
+  });
+
+  it.skip("skipped test", () => {
     throw new Error("Should not run");
   });
 
-  itOnly("only this one runs if present and long text to check the layout", async () => {
+  it.only("only this one runs if present and long text to check the layout", async () => {
     const user = userEvent.setup();
     const btn = await twd.get("button");
     await user.click(btn.el);
@@ -94,11 +106,25 @@ describe("App interactions", () => {
     await user.type(emailInput.el, "test@example.com");
     const messageInput = await twd.get("textarea#message");
     await user.type(messageInput.el, "Hello, this is a test message.");
+    const dateInput = await twd.get("input#date");
+    await user.type(dateInput.el, "2023-01-01");
+    const monthInput = await twd.get("input#month");
+    await user.type(monthInput.el, "2023-01");
+    const timeInput = await twd.get("input#time");
+    await user.type(timeInput.el, "12:00");
+    const weekInput = await twd.get("input#week");
+    await user.type(weekInput.el, "2023-W15");
+    const colorInput = await twd.get("input#color");
+    twd.setInputValue(colorInput.el, '#ff0000');
+    const rangeInput = await twd.get("input#range");
+    twd.setInputValue(rangeInput.el, '75');
+    const hourInput = await twd.get('input[name="hour"]');
+    twd.setInputValue(hourInput.el, '14:30');
     const submitBtn = await twd.get("button[type='submit']");
     await user.click(submitBtn.el);
     const rules = await twd.waitForRequests(["contactSubmit"]);
     const request = rules[0].request;
-    expect(request).to.deep.equal({ email: "test@example.com", message: "Hello, this is a test message." });
+    expect(request).to.deep.equal({ email: "test@example.com", message: "Hello, this is a test message.", date: "2023-01-01", month: "2023-01", time: "12:00", color: "#ff0000", range: "75", hour: "14:30", week: "2023-W15" });
     twd.url().should("contain.url", "/contact");
     twd.clearRequestMockRules();
   });

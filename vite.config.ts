@@ -14,12 +14,17 @@ export default defineConfig({
   ],
   build: {
     lib: {
-      entry: 'src/index.ts',
+      entry: {
+        index: 'src/index.ts',
+        runner: 'src/runner.ts',
+        'vite-plugin': 'src/vite-plugin.ts',
+        'runner-ci': 'src/runner-ci.ts',
+      },
       name: 'TWD',
-      fileName: (format) => `twd.${format}.js`,
+      fileName: (format, entryName) => `${entryName}.${format}.js`,
     },
     rollupOptions: {
-      external: ['react', 'react-dom'],
+      external: ['react', 'react-dom', 'fs', 'path', 'vite', 'chalk'],
       output: {
         globals: {
           react: 'React',

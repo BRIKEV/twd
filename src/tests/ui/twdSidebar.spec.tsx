@@ -1,14 +1,13 @@
 import { describe, it, expect, vi, suite, beforeEach } from "vitest";
 import userEvent from '@testing-library/user-event';
 import { render, screen } from '@testing-library/react'
-import * as twd from '../../';
+import * as twd from '../../runner';
 import { TWDSidebar } from "../../ui/TWDSidebar";
-import { clearTests } from "../../twdRegistry";
 
 describe("TWDSidebar", () => {
   beforeEach(() => {
     // Clear all registered tests before each test case
-    clearTests();
+    twd.clearTests();
     vi.clearAllMocks();
   });
 
@@ -19,6 +18,9 @@ describe("TWDSidebar", () => {
       // position fixed but right not left
       expect(sidebarElement).toHaveStyle({ position: 'fixed', right: '0' });
       expect(sidebarElement).not.toHaveStyle({ position: 'fixed', left: '0' });
+      // html margin right 280px
+      expect(document.documentElement).toHaveStyle({ marginRight: '280px' });
+      expect(document.documentElement).not.toHaveStyle({ marginLeft: '280px' });
     });
 
     it("should render TWDSidebar component closed", async () => {
@@ -55,7 +57,7 @@ describe("TWDSidebar", () => {
       const secondTest = vi.fn();
       twd.describe('Group 1', () => {
         twd.it('Test 1.1', firstTest);
-        twd.itSkip('Test 1.2', secondTest);
+        twd.it.skip('Test 1.2', secondTest);
       });
       const user = userEvent.setup()
       render(<TWDSidebar open={true} />);
@@ -67,30 +69,12 @@ describe("TWDSidebar", () => {
       expect(secondTest).not.toHaveBeenCalled();
     });
 
-    it('filter tests by name', async () => {
-      const firstTest = vi.fn();
-      const secondTest = vi.fn();
-      twd.describe('Group filter', () => {
-        twd.it('Apple test', firstTest);
-        twd.it('Banana test', secondTest);
-      });
-      const user = userEvent.setup()
-      render(<TWDSidebar open={true} />);
-      const filterInput = screen.getByPlaceholderText("Filter tests...");
-      expect(filterInput).toBeInTheDocument();
-      // Simulate typing "Apple" in the filter input
-      await user.type(filterInput, "Apple");
-      // Only "Apple test" should be visible
-      expect(screen.getByText("Apple test")).toBeInTheDocument();
-      expect(screen.queryByText("Banana test")).not.toBeInTheDocument();
-    });
-
     it('skip test when there is a test with only', async () => {
       const firstTest = vi.fn();
       const secondTest = vi.fn();
       twd.describe('Group test only', () => {
         twd.it('Test no only', firstTest);
-        twd.itOnly('Test only', secondTest);
+        twd.it.only('Test only', secondTest);
       });
       const user = userEvent.setup()
       render(<TWDSidebar open={true} />);

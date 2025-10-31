@@ -31,9 +31,10 @@ describe("User Authentication", () => {
 |----------|---------|---------|
 | `describe(name, fn)` | Groups related tests | `describe("Login Form", () => {...})` |
 | `it(name, fn)` | Defines a test case | `it("should submit form", async () => {...})` |
-| `itOnly(name, fn)` | Runs only this test | `itOnly("debug this test", () => {...})` |
-| `itSkip(name, fn)` | Skips this test | `itSkip("broken test", () => {...})` |
+| `it.only(name, fn)` | Runs only this test | `it.only("debug this test", () => {...})` |
+| `it.skip(name, fn)` | Skips this test | `it.skip("broken test", () => {...})` |
 | `beforeEach(fn)` | Runs before each test | `beforeEach(() => {...})` |
+| `afterEach(fn)` | Runs after each test | `afterEach(() => {...})` |
 
 ### Nested Describes
 
