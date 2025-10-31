@@ -103,7 +103,7 @@ interface TWDAPI {
    * 
    * ```
    */
-  visit: (url: string) => void;
+  visit: (url: string) => Promise<void>;
   /**
    * Mock a network request.
    *
