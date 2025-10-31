@@ -6,7 +6,7 @@ Complete reference documentation for all TWD functions, methods, and types.
 
 | Section | Description |
 |---------|-------------|
-| [Test Functions](/api/test-functions) | `describe`, `it`, `beforeEach`, `itOnly`, `itSkip` |
+| [Test Functions](/api/test-functions) | `describe`, `it`, `beforeEach`, `it.only`, `it.skip`, `afterEach` |
 | [TWD Commands](/api/twd-commands) | `twd.get()`, `twd.visit()`, `twd.mockRequest()`, etc. |
 | [Assertions](/api/assertions) | All available assertions and their usage |
 
@@ -17,12 +17,11 @@ Complete reference documentation for all TWD functions, methods, and types.
 import { 
   describe, 
   it, 
-  itOnly, 
-  itSkip, 
   beforeEach, 
+  afterEach,
   twd, 
   userEvent,
-  expect 
+  expect
 } from "twd-js";
 
 // UI Component (for React apps)
@@ -147,33 +146,6 @@ const rules = await twd.waitForRequests(["alias1", "alias2"]);
 twd.clearRequestMockRules();
 ```
 
-## Error Handling
-
-### Common Errors
-
-```ts
-// Element not found
-try {
-  const element = await twd.get(".non-existent");
-} catch (error) {
-  // Handle element not found
-}
-
-// Assertion failure
-try {
-  element.should("have.text", "wrong text");
-} catch (error) {
-  // Handle assertion failure
-}
-
-// Mock not matched
-try {
-  await twd.waitForRequest("non-existent-alias");
-} catch (error) {
-  // Handle timeout
-}
-```
-
 ### Best Practices
 
 1. **Use data attributes** for reliable element selection
@@ -202,7 +174,7 @@ TWD works in all modern browsers that support:
 - Element queries use `document.querySelector` internally
 - Service Worker mocking adds minimal overhead
 - Tests run in the main thread (no web workers)
-- Memory usage scales with number of active tests
+- Tests are not included in the bundle, so they are not included in the bundle size.
 
 ## Debugging
 
@@ -211,7 +183,7 @@ TWD works in all modern browsers that support:
 - Use browser DevTools to inspect elements
 - Check Network tab for mocked requests
 - Console logs show TWD operations
-- Service Worker tab shows mock status
+- Check sidebar for logs and mock rules
 
 ### Common Debug Patterns
 
