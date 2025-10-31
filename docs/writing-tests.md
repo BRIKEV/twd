@@ -58,8 +58,6 @@ describe("User Management", () => {
 
 ## Element Selection
 
-**VIDEO HERE** - *Demonstrating different element selection strategies in the browser DevTools*
-
 TWD provides two main methods for selecting DOM elements:
 
 ### Single Element Selection
@@ -100,14 +98,9 @@ const listItems = await twd.getAll("li");
 // Access specific elements
 buttons[0].should("be.visible");
 listItems[2].should("contain.text", "Third item");
-
-// Check array length
-expect(buttons).to.have.length(3);
 ```
 
 ## Assertions
-
-**IMAGE HERE** - *Visual comparison showing element states (visible vs hidden, enabled vs disabled, etc.)*
 
 TWD provides a comprehensive set of assertions for testing element states and content.
 
@@ -188,9 +181,21 @@ twd.url().should("contain.url", "localhost");
 twd.url().should("not.contain.url", "/login");
 ```
 
-## User Interactions
+### chai expect assertions
 
-**VIDEO HERE** - *Live demonstration of user interactions: clicking, typing, form submission*
+You can use the `expect` function from the `chai` library to make assertions:
+
+```ts
+import { expect, twd } from "twd-js";
+
+// Get all list items
+const listItems = await twd.getAll("li");
+
+// Assert array length. These assertions are not displayed in the sidebar logs.
+expect(listItems).to.have.length(3);
+```
+
+## User Interactions
 
 TWD integrates with `@testing-library/user-event` for realistic user interactions:
 
@@ -276,15 +281,15 @@ await user.upload(fileInput.el, files);
 
 ```ts
 // Navigate to different routes
-twd.visit("/");
-twd.visit("/login");
-twd.visit("/dashboard");
+await twd.visit("/");
+await twd.visit("/login");
+await twd.visit("/dashboard");
 
 // Navigate with query parameters
-twd.visit("/search?q=testing");
+await twd.visit("/search?q=testing");
 
 // Navigate with hash
-twd.visit("/docs#getting-started");
+await twd.visit("/docs#getting-started");
 ```
 
 ### Waiting
@@ -373,7 +378,7 @@ Test complete user workflows rather than isolated functions:
 ```ts
 describe("User Registration Flow", () => {
   it("should register new user and redirect to dashboard", async () => {
-    twd.visit("/register");
+    await twd.visit("/register");
     
     const user = userEvent.setup();
     
@@ -401,7 +406,7 @@ describe("User Registration Flow", () => {
 
 ```ts
 it("should show validation errors for empty required fields", async () => {
-  twd.visit("/contact");
+  await twd.visit("/contact");
   
   const user = userEvent.setup();
   const submitButton = await twd.get("button[type='submit']");
@@ -425,7 +430,7 @@ it("should show admin panel for admin users", async () => {
   // Set up admin user state
   localStorage.setItem("userRole", "admin");
   
-  twd.visit("/dashboard");
+  await twd.visit("/dashboard");
   
   const adminPanel = await twd.get(".admin-panel");
   adminPanel.should("be.visible");
