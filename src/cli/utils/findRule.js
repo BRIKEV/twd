@@ -22,12 +22,15 @@ const validRegex = (pattern) => {
 
 /**
  * Check if the url is a file with extension
+ * (handles query params, e.g. /api.twd.test.ts?t=12345)
  * @param {string} url
  * @returns {boolean}
  */
 const isFile = (url) => {
-  const regex = /\.([a-zA-Z0-9]+)$/; // check if the url is a file with extension
-  return regex.test(url);
+  // Remove query string before checking for file extension
+  const urlWithoutQuery = url.split('?')[0];
+  const regex = /\.([a-zA-Z0-9]+)$/;
+  return regex.test(urlWithoutQuery);
 };
 
 /**
