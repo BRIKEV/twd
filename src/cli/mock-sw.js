@@ -1,6 +1,7 @@
 import { findRule } from './utils/findRule.js';
 import { notifyClients } from './utils/notifyClients.js';
 import { mockResponse } from './utils/mockResponse.js';
+import { TWD_VERSION } from '../constants/version.js';
 
 /**
  * List of currently active mock rules.
@@ -81,8 +82,16 @@ export const handleMessage = (event) => {
   }
 };
 
+self.addEventListener('install', () => {
+  self.skipWaiting(); // Don't wait, activate immediately
+});
+
+self.addEventListener('activate', (event) => {
+  event.waitUntil(self.clients.claim()); // Take control of all pages immediately
+});
+
 // console.log command to tell current version
-console.log("[TWD] Mock Service Worker loaded - version 0.7.1");
+console.log(`[TWD] Mock Service Worker loaded - version ${TWD_VERSION}`);
 // Intercept fetches
 self.addEventListener("fetch", handleFetch);
 
