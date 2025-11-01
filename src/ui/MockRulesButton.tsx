@@ -1,4 +1,5 @@
 import { twd } from "../";
+import MockRequestIcon from "./Icons/MockRequestIcon";
 
 export const MockRulesButton = () => {
   const rules = twd.getRequestMockRules();
@@ -35,7 +36,7 @@ export const MockRulesButton = () => {
         boxShadow: "0 1px 2px rgba(0, 0, 0, 0.05)",
       }}
     >
-      <span style={{ fontSize: "14px" }}>🌐</span>
+      <MockRequestIcon />
       <span style={{ flex: 1 }}>
         Rules: {triggeredRules.length}/{rules.length} triggered
       </span>
