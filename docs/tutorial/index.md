@@ -20,12 +20,12 @@ Follow this recommended learning path to master TWD:
 
 By the end of this tutorial, you'll be able to:
 
-- ✅ Set up TWD in any React project
-- ✅ Write comprehensive UI tests with assertions
-- ✅ Mock API calls for isolated testing
-- ✅ Organize tests with hooks and test management
-- ✅ Build production-ready applications without test code
-- ✅ Integrate TWD tests into your CI/CD pipeline
+- Set up TWD in any React project
+- Write comprehensive UI tests with assertions
+- Mock API calls for isolated testing
+- Organize tests with hooks and test management
+- Build production-ready applications without test code
+- Integrate TWD tests into your CI/CD pipeline
 
 ## Prerequisites
 

@@ -141,9 +141,9 @@ npx serve dist
 ```
 
 Visit your app and verify:
-- ✅ No TWD sidebar visible
-- ✅ No console errors about missing mock-sw.js
-- ✅ App functions normally without test infrastructure
+- No TWD sidebar visible
+- No console errors about missing mock-sw.js
+- App functions normally without test infrastructure
 
 ## Environment Detection
 

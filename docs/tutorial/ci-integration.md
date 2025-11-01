@@ -649,12 +649,12 @@ await page.waitForSelector('[data-testid="element"]', {
 
 Congratulations! 🎉 You've completed the TWD tutorial and learned how to:
 
-- ✅ Install and set up TWD
-- ✅ Write comprehensive tests with assertions
-- ✅ Mock APIs for isolated testing
-- ✅ Organize tests with hooks
-- ✅ Build production-ready applications
-- ✅ Integrate tests into CI/CD pipelines
+- Install and set up TWD
+- Write comprehensive tests with assertions
+- Mock APIs for isolated testing
+- Organize tests with hooks
+- Build production-ready applications
+- Integrate tests into CI/CD pipelines
 
 ### What's Next?
 
