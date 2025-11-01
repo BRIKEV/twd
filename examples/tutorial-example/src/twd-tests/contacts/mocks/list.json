@@ -1,0 +1,31 @@
+[
+  {
+    "id": "1",
+    "firstName": "Jane",
+    "lastName": "Doe",
+    "username": "jane_doe",
+    "avatar": "https://i.pravatar.cc/150?img=1",
+    "email": "jane.doe@example.com",
+    "phone": "+1 555-1234",
+    "favorite": true
+  },
+  {
+    "id": "2",
+    "firstName": "John",
+    "lastName": "Smith",
+    "username": "john_smith",
+    "avatar": "https://i.pravatar.cc/150?img=12",
+    "email": "john.smith@example.com",
+    "phone": "+1 555-5678",
+    "favorite": true
+  },
+  {
+    "id": "003f",
+    "firstName": "test",
+    "lastName": "test",
+    "username": "test",
+    "email": "test@test.com",
+    "phone": "234234",
+    "favorite": true
+  }
+]

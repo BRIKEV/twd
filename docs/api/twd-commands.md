@@ -40,17 +40,6 @@ button.should("be.visible");
 emailInput.should("have.value", "test@example.com");
 ```
 
-#### Error Handling
-
-```ts
-try {
-  const element = await twd.get(".non-existent");
-} catch (error) {
-  // Element not found after timeout
-  console.error("Element not found:", error.message);
-}
-```
-
 ---
 
 ### twd.getAll(selector)
@@ -186,6 +175,212 @@ twd.url().should("contain.url", "/login");
 const loginButton = await twd.get("button[type='submit']");
 await userEvent.click(loginButton.el);
 twd.url().should("contain.url", "/dashboard");
+```
+
+---
+
+## Input Handling
+
+### userEvent (Recommended)
+
+The primary and recommended way to interact with form inputs. `userEvent` simulates realistic user interactions and should be used for most input scenarios.
+
+#### Import and Setup
+
+```ts
+import { userEvent } from 'twd-js';
+
+// In your test
+const user = userEvent.setup();
+```
+
+#### Text Inputs
+
+```ts
+describe("Form Input Tests", () => {
+  it("should handle text input realistically", async () => {
+    twd.visit("/contact");
+    
+    const user = userEvent.setup();
+    const nameInput = await twd.get("input[name='name']");
+    const emailInput = await twd.get("input[name='email']");
+    const messageTextarea = await twd.get("textarea[name='message']");
+    
+    // Type text naturally (with timing and events)
+    await user.type(nameInput.el, "John Doe");
+    await user.type(emailInput.el, "john@example.com");
+    await user.type(messageTextarea.el, "Hello, this is my message!");
+    
+    // Verify values
+    nameInput.should("have.value", "John Doe");
+    emailInput.should("have.value", "john@example.com");
+    messageTextarea.should("have.value", "Hello, this is my message!");
+  });
+});
+```
+
+#### Form Interactions
+
+```ts
+describe("Complete Form Workflow", () => {
+  it("should handle full form interaction", async () => {
+    twd.visit("/registration");
+    
+    const user = userEvent.setup();
+    
+    // Fill text inputs
+    const usernameInput = await twd.get("input[name='username']");
+    const passwordInput = await twd.get("input[name='password']");
+    await user.type(usernameInput.el, "johndoe");
+    await user.type(passwordInput.el, "securepassword123");
+    
+    // Handle checkboxes
+    const termsCheckbox = await twd.get("input[name='terms']");
+    await user.click(termsCheckbox.el);
+    termsCheckbox.should("be.checked");
+    
+    // Handle select dropdowns
+    const countrySelect = await twd.get("select[name='country']");
+    await user.selectOptions(countrySelect.el, "US");
+    countrySelect.should("have.value", "US");
+    
+    // Submit form
+    const submitButton = await twd.get("button[type='submit']");
+    await user.click(submitButton.el);
+    
+    // Verify submission
+    const successMessage = await twd.get(".success-message");
+    successMessage.should("contain.text", "Registration successful");
+  });
+});
+```
+
+#### Advanced User Interactions
+
+```ts
+describe("Advanced Input Interactions", () => {
+  it("should handle complex user behaviors", async () => {
+    const user = userEvent.setup();
+    const searchInput = await twd.get("input[name='search']");
+    
+    // Type and then clear
+    await user.type(searchInput.el, "initial search");
+    await user.clear(searchInput.el);
+    searchInput.should("have.value", "");
+    
+    // Type with special keys
+    await user.type(searchInput.el, "Hello{backspace}{backspace}lo World");
+    searchInput.should("have.value", "Hello World");
+    
+    // Tab navigation
+    await user.tab();
+    const nextInput = await twd.get("input[name='email']");
+    nextInput.should("be.focused");
+  });
+});
+```
+
+#### Why Use userEvent?
+
+- **Realistic interactions** - Simulates actual user behavior
+- **Proper event firing** - Triggers all necessary DOM events
+- **Timing simulation** - Includes natural typing delays
+- **Focus management** - Handles focus/blur correctly
+- **Accessibility testing** - Works with screen readers and keyboard navigation
+- **Framework compatibility** - Works with React, Vue, and other frameworks
+
+---
+
+### twd.setInputValue(element, value) - Special Cases Only
+
+⚠️ **Use sparingly** - Only for specific input types where `userEvent` doesn't work well.
+
+Sets the value of an input element directly and dispatches an input event. **Only recommended for range, color, time, and date inputs** where user event simulation is complex or unreliable.
+
+#### Syntax
+
+```ts
+twd.setInputValue(element: Element, value: string): void
+```
+
+#### When to Use setInputValue
+
+Use `setInputValue` **only** for these specific input types:
+
+```ts
+describe("Special Input Types", () => {
+  it("should handle inputs that userEvent struggles with", async () => {
+    twd.visit("/settings");
+    
+    // ✅ Range inputs - dragging simulation is complex
+    const volumeSlider = await twd.get("input[type='range']");
+    twd.setInputValue(volumeSlider.el, "75");
+    volumeSlider.should("have.value", "75");
+    
+    // ✅ Color inputs - color picker doesn't respond to typing
+    const colorPicker = await twd.get("input[type='color']");
+    twd.setInputValue(colorPicker.el, "#ff0000");
+    colorPicker.should("have.value", "#ff0000");
+    
+    // ✅ Time inputs - complex time format requirements
+    const timeInput = await twd.get("input[type='time']");
+    twd.setInputValue(timeInput.el, "13:30");
+    timeInput.should("have.value", "13:30");
+    
+    // ✅ Date inputs - date picker complexity
+    const dateInput = await twd.get("input[type='date']");
+    twd.setInputValue(dateInput.el, "2024-12-25");
+    dateInput.should("have.value", "2024-12-25");
+  });
+});
+```
+
+#### ❌ Don't Use setInputValue For
+
+```ts
+// ❌ BAD - Use userEvent instead for text inputs
+const nameInput = await twd.get("input[type='text']");
+twd.setInputValue(nameInput.el, "John Doe"); // Don't do this
+
+// ✅ GOOD - Use userEvent for realistic interaction
+const user = userEvent.setup();
+await user.type(nameInput.el, "John Doe"); // Do this instead
+
+// ❌ BAD - Use userEvent for checkboxes
+const checkbox = await twd.get("input[type='checkbox']");
+twd.setInputValue(checkbox.el, "true"); // Don't do this
+
+// ✅ GOOD - Use userEvent for checkboxes
+await user.click(checkbox.el); // Do this instead
+```
+
+#### Best Practice Pattern
+
+```ts
+describe("Mixed Input Form", () => {
+  it("should use appropriate method for each input type", async () => {
+    const user = userEvent.setup();
+    
+    // Use userEvent for standard inputs (RECOMMENDED)
+    const nameInput = await twd.get("input[name='name']");
+    const emailInput = await twd.get("input[name='email']");
+    await user.type(nameInput.el, "John Doe");
+    await user.type(emailInput.el, "john@example.com");
+    
+    // Use setInputValue ONLY for special input types
+    const birthDate = await twd.get("input[type='date']");
+    const favoriteColor = await twd.get("input[type='color']");
+    const volume = await twd.get("input[type='range']");
+    
+    twd.setInputValue(birthDate.el, "1990-05-15");
+    twd.setInputValue(favoriteColor.el, "#3366cc");
+    twd.setInputValue(volume.el, "80");
+    
+    // Back to userEvent for form submission
+    const submitButton = await twd.get("button[type='submit']");
+    await user.click(submitButton.el);
+  });
+});
 ```
 
 ---
@@ -624,30 +819,6 @@ await twd.mockRequest("getUser", {
   url: "/api/user/123", 
   response: { name: "test" }
 });
-```
-
-## Error Handling
-
-### Element Not Found
-
-```ts
-try {
-  const element = await twd.get(".non-existent");
-} catch (error) {
-  console.error("Element not found:", error.message);
-  // Handle gracefully or let test fail
-}
-```
-
-### Mock Not Matched
-
-```ts
-try {
-  await twd.waitForRequest("nonExistentMock");
-} catch (error) {
-  console.error("Mock not matched:", error.message);
-  // Check if mock was set up correctly
-}
 ```
 
 ### Service Worker Issues

@@ -11,8 +11,8 @@ hero:
       text: Get Started
       link: /getting-started
     - theme: alt
-      text: View Examples
-      link: /examples/
+      text: Tutorial
+      link: /tutorial/
     - theme: alt
       text: GitHub
       link: https://github.com/BRIKEV/twd

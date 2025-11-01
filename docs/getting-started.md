@@ -38,7 +38,7 @@ To enable the TWD sidebar and automatically load your tests, use the `initTests`
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import './index.css';
-import router from './routes.ts';
+import App from './App';
 
 // Only load the test sidebar and tests in development mode
 if (import.meta.env.DEV) {
@@ -59,7 +59,7 @@ if (import.meta.env.DEV) {
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <RouterProvider router={router} />
+    <App />
   </StrictMode>,
 );
 ```
@@ -84,14 +84,14 @@ import { describe, it, twd, userEvent } from "twd-js";
 
 describe("App Component", () => {
   it("should render the main heading", async () => {
-    twd.visit("/");
+    await twd.visit("/");
     
     const heading = await twd.get("h1");
     heading.should("be.visible");
   });
 
   it("should handle button clicks", async () => {
-    twd.visit("/");
+    await twd.visit("/");
     
     const user = userEvent.setup();
     const button = await twd.get("button");
@@ -143,7 +143,7 @@ You can customize this pattern in your test loader using different glob patterns
 
 - Learn about [Writing Tests](/writing-tests) in detail
 - Explore [API Mocking](/api-mocking) capabilities  
-- Check out [Examples](/examples/) for common patterns
+- Follow the [Tutorial](/tutorial/) for step-by-step learning
 - Browse the [API Reference](/api/) for all available methods
 
 ## Troubleshooting

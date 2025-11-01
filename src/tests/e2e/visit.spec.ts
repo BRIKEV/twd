@@ -67,7 +67,6 @@ describe('twd visit command', () => {
     window.addEventListener('popstate', popstateHandler);
     
     await twd.visit('/same-path');
-    const firstCallCount = popstateHandler.mock.calls.length;
     
     popstateHandler.mockClear();
     await twd.visit('/same-path');

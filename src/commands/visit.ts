@@ -3,7 +3,7 @@ import { log } from "../utils/log";
 
 const DELAY = 100;
 
-export const visit = async (url: string) => {
+export const visit = async (url: string): Promise<void> => {
   log(`visit("${url}")`);
 
   // If already on same path, toggle to dummy route first

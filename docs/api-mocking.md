@@ -1,16 +1,12 @@
 # API Mocking
 
-TWD provides powerful API mocking capabilities through Mock Service Worker integration, allowing you to test your application with realistic network requests and responses.
+TWD provides powerful API mocking capabilities through our own mock service worker integration, allowing you to test your application with realistic network requests and responses.
 
 ## Setup
-
-**VIDEO HERE** - *Step-by-step guide to setting up Mock Service Worker with TWD*
 
 ### 1. Install Mock Service Worker
 
 First, set up the mock service worker in your project:
-
-**IMAGE HERE** - *Terminal screenshot showing the init command and its output*
 
 ```bash
 npx twd-js init public
@@ -67,8 +63,6 @@ You only need to call `initRequestMocking()` once in your main entry file, not i
 
 ## Basic Mocking
 
-**VIDEO HERE** - *Live demonstration of setting up a mock, triggering a request, and seeing the mocked response*
-
 ### Simple GET Request
 
 ```ts
@@ -87,7 +81,7 @@ describe("User Profile", () => {
       }
     });
 
-    twd.visit("/profile");
+    await twd.visit("/profile");
 
     // Trigger the request
     const loadButton = await twd.get("button[data-testid='load-profile']");
@@ -119,7 +113,7 @@ it("should create new user", async () => {
     status: 201
   });
 
-  twd.visit("/users/new");
+  await twd.visit("/users/new");
 
   const user = userEvent.setup();
   
@@ -134,8 +128,7 @@ it("should create new user", async () => {
   const rule = await twd.waitForRequest("createUser");
   
   // Check the request body
-  const requestBody = JSON.parse(rule.request as string);
-  expect(requestBody).to.deep.equal({
+  expect(rule.request).to.deep.equal({
     name: "Jane Smith",
     email: "jane@example.com"
   });
@@ -159,7 +152,7 @@ it("should handle dynamic user IDs", async () => {
   });
 
   // This will match the pattern
-  twd.visit("/users/123");
+  await twd.visit("/users/123");
   
   // Trigger request and verify
   const loadButton = await twd.get("button[data-testid='load-user']");
@@ -187,7 +180,7 @@ it("should handle API errors", async () => {
     }
   });
 
-  twd.visit("/user/999");
+  await twd.visit("/user/999");
 
   const loadButton = await twd.get("button[data-testid='load-user']");
   await userEvent.click(loadButton.el);
@@ -220,7 +213,7 @@ it("should handle multiple API calls", async () => {
     ]
   });
 
-  twd.visit("/user/123");
+  await twd.visit("/user/123");
 
   const loadButton = await twd.get("button[data-testid='load-all']");
   await userEvent.click(loadButton.el);
@@ -252,7 +245,7 @@ it("should handle changing API responses", async () => {
     response: { status: "loading" }
   });
 
-  twd.visit("/dashboard");
+  await twd.visit("/dashboard");
 
   const refreshButton = await twd.get("button[data-testid='refresh']");
   await userEvent.click(refreshButton.el);
@@ -290,7 +283,7 @@ it("should handle authentication states", async () => {
     status: 401
   });
 
-  twd.visit("/profile");
+  await twd.visit("/profile");
 
   // Should redirect to login
   await twd.wait(100);
@@ -360,9 +353,8 @@ it("should send correct form data", async () => {
 
   // Verify request data
   const rule = await twd.waitForRequest("submitForm");
-  const requestData = JSON.parse(rule.request as string);
   
-  expect(requestData).to.deep.equal({
+  expect(rule.request).to.deep.equal({
     email: "test@example.com",
     message: "Hello world", 
     newsletter: true
@@ -449,38 +441,6 @@ it("should have correct mocks configured", async () => {
 
 ## Common Patterns
 
-### Loading States
-
-```ts
-it("should show loading spinner during API call", async () => {
-  // Add delay to mock to simulate slow network
-  await twd.mockRequest("slowRequest", {
-    method: "GET",
-    url: "/api/slow",
-    response: { data: "loaded" }
-  });
-
-  twd.visit("/slow-page");
-
-  const loadButton = await twd.get("button[data-testid='load']");
-  await userEvent.click(loadButton.el);
-
-  // Check loading state immediately
-  const spinner = await twd.get(".loading-spinner");
-  spinner.should("be.visible");
-
-  // Wait for request to complete
-  await twd.waitForRequest("slowRequest");
-
-  // Loading should be gone
-  spinner.should("not.be.visible");
-
-  // Data should be shown
-  const data = await twd.get("[data-testid='data']");
-  data.should("contain.text", "loaded");
-});
-```
-
 ### Error Handling
 
 ```ts
@@ -495,7 +455,7 @@ it("should display error message on API failure", async () => {
     status: 500
   });
 
-  twd.visit("/data-page");
+  await twd.visit("/data-page");
 
   const loadButton = await twd.get("button[data-testid='load-data']");
   await userEvent.click(loadButton.el);
@@ -529,7 +489,7 @@ it("should handle paginated results", async () => {
       pagination: {
         page: 1,
         hasNext: true,
-        total: 10
+        total: 3
       }
     }
   });
@@ -541,17 +501,16 @@ it("should handle paginated results", async () => {
     response: {
       users: [
         { id: 3, name: "User 3" },
-        { id: 4, name: "User 4" }
       ],
       pagination: {
         page: 2,
-        hasNext: true,
-        total: 10
+        hasNext: false,
+        total: 3
       }
     }
   });
 
-  twd.visit("/users");
+  await twd.visit("/users");
 
   // Load first page
   await twd.waitForRequest("getPage1");
@@ -567,7 +526,7 @@ it("should handle paginated results", async () => {
 
   // Should now have 4 users total
   users = await twd.getAll(".user-item");
-  expect(users).to.have.length(4);
+  expect(users).to.have.length(1);
 });
 ```
 
@@ -608,6 +567,46 @@ twd.mockRequest("getUser", {
   url: "/api/user/123",
   response: { name: "test" }
 });
+```
+
+### 3. Mock before request event is fired
+
+```ts
+// Good ✅ - mock before request event is fired
+await twd.mockRequest("saveUser", {
+  method: "POST",
+  url: "/api/users",
+  response: { id: 1, created: true }
+});
+
+await twd.visit("/users/new");
+
+const user = userEvent.setup();
+await user.type(await twd.get("#name"), "John Doe");
+await user.type(await twd.get("#email"), "john.doe@example.com");
+await user.click(await twd.get("button[type='submit']"));
+
+await twd.waitForRequest("saveUser");
+
+const userName = await twd.get("[data-testid='user-name']");
+userName.should("have.text", "John Doe");
+```
+
+```ts
+// Bad ❌ - mock after request event is fired
+await twd.visit("/users/new");
+
+const user = userEvent.setup();
+await user.type(await twd.get("#name"), "John Doe");
+await user.type(await twd.get("#email"), "john.doe@example.com");
+await user.click(await twd.get("button[type='submit']"));
+// Bad ❌ - mock after request event is fired
+twd.mockRequest("saveUser", {
+  method: "POST",
+  url: "/api/users",
+  response: { id: 1 }
+});
+await twd.waitForRequest("saveUser");
 ```
 
 ### 3. Clean Up Mocks
@@ -683,6 +682,5 @@ await twd.mockRequest("flexibleMatch", {
 
 ## Next Steps
 
-- Explore [Examples](/examples/mocking) for more mocking patterns
-- Learn about [User Events](/examples/user-events) for form interactions
+- Learn about [User Events in the Tutorial](/tutorial/first-test) for form interactions
 - Check the [API Reference](/api/twd-commands) for all mocking methods
