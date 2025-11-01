@@ -3,6 +3,7 @@ import { TestList } from "./TestList";
 import { ClosedSidebar } from "./ClosedSidebar";
 import { useLayout } from "./hooks/useLayout";
 import { handlers, TestRunner } from "../runner";
+import { MockRulesButton } from "./MockRulesButton";
 
 interface TWDSidebarProps {
   /**
@@ -77,7 +78,6 @@ export const TWDSidebar = ({ open, position = "left" }: TWDSidebarProps) => {
         bottom: 0,
         width: "280px",
         background: "#f9fafb",
-        padding: "8px",
         fontSize: "14px",
         overflowY: "auto",
         boxShadow: "2px 0 6px rgba(0,0,0,0.1)",
@@ -87,59 +87,52 @@ export const TWDSidebar = ({ open, position = "left" }: TWDSidebarProps) => {
       }}
       data-testid="twd-sidebar"
     >
-      <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "14px" }}>
-        <strong
-          style={{
-            fontSize: "18px",
-            fontWeight: "bold",
-            color: "#374151",
-          }}
-        >
-          TWD Tests
-        </strong>
-        <button
-          aria-label="Close sidebar"
-          style={{
-            background: "transparent",
-            border: "none",
-            cursor: "pointer",
-            fontSize: "14px",
-          }}
-          onClick={() => setIsOpen(false)}
-        >
-          ✖
-        </button>
+      <div style={{ padding: "8px", background: "#f9fafb", position: "sticky", top: 0, zIndex: 1000 }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "14px" }}>
+          <button
+            onClick={runAll}
+            style={{
+              background: "#3b82f6",
+              color: "white",
+              padding: "4px 8px",
+              borderRadius: "4px",
+              border: "none",
+              cursor: "pointer",
+            }}
+          >
+            Run All
+          </button>
+          <button
+            aria-label="Close sidebar"
+            style={{
+              background: "transparent",
+              border: "none",
+              cursor: "pointer",
+              fontSize: "14px",
+            }}
+            onClick={() => setIsOpen(false)}
+          >
+            ✖
+          </button>
+        </div>
+        <MockRulesButton />
       </div>
-
-      <button
-        onClick={runAll}
-        style={{
-          background: "#3b82f6",
-          color: "white",
-          padding: "4px 8px",
-          borderRadius: "4px",
-          border: "none",
-          marginBottom: "10px",
-          cursor: "pointer",
-        }}
-      >
-        Run All
-      </button>
-
-      <TestList
-        tests={tests.map(test => ({
-          name: test.name,
-          depth: test.depth,
-          status: test.status,
-          logs: test.logs,
-          id: test.id,
-          parent: test.parent,
-          type: test.type,
-          only: test.only,
-          skip: test.skip,
-        }))}
-        runTest={runTest}
-      />
+      <div style={{ padding: "8px" }}>
+        <TestList
+          tests={tests.map(test => ({
+            name: test.name,
+            depth: test.depth,
+            status: test.status,
+            logs: test.logs,
+            id: test.id,
+            parent: test.parent,
+            type: test.type,
+            only: test.only,
+            skip: test.skip,
+          }))}
+          runTest={runTest}
+        />
+      </div>
     </div>
   );
 };

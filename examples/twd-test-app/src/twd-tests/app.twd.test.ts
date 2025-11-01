@@ -73,7 +73,6 @@ describe("App interactions", () => {
     jokeText.should("have.text", "Mocked second joke!");
     // console.log(`Joke text: ${jokeText.el.textContent}`);
     // jokeText.should('be.disabled');
-    twd.clearRequestMockRules();
   });
 
   it("fetches a third joke to validate if the mocks are cleaned", async () => {
@@ -91,7 +90,6 @@ describe("App interactions", () => {
     const jokeText = await twd.get("p[data-twd='joke-text']");
     // console.log(`Joke text: ${jokeText.el.textContent}`);
     jokeText.should("have.text", "Third Mocked joke!");
-    twd.clearRequestMockRules();
   });
 
   it("visit contact page", async () => {
@@ -126,6 +124,5 @@ describe("App interactions", () => {
     const request = rules[0].request;
     expect(request).to.deep.equal({ email: "test@example.com", message: "Hello, this is a test message.", date: "2023-01-01", month: "2023-01", time: "12:00", color: "#ff0000", range: "75", hour: "14:30", week: "2023-W15" });
     twd.url().should("contain.url", "/contact");
-    twd.clearRequestMockRules();
   });
 });
