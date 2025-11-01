@@ -1,9 +1,9 @@
 import { twd, expect } from "../../../../../src";
-import { describe, it, afterEach } from "../../../../../src/runner";
+import { describe, it, beforeEach } from "../../../../../src/runner";
 import list from "./mocks/list.json";
 
 describe("Contacts Page", () => {
-  afterEach(() => {
+  beforeEach(() => {
     twd.clearRequestMockRules();
   });
 
