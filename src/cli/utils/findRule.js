@@ -20,6 +20,11 @@ const validRegex = (pattern) => {
   }
 };
 
+/**
+ * Check if the url is a file with extension
+ * @param {string} url
+ * @returns {boolean}
+ */
 const isFile = (url) => {
   const regex = /\.([a-zA-Z0-9]+)$/; // check if the url is a file with extension
   return regex.test(url);
