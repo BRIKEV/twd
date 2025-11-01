@@ -27,6 +27,12 @@ import {
 // UI Component (for React apps)
 import { TWDSidebar } from "twd-js";
 
+// Vite Plugin (for production builds)
+import { removeMockServiceWorker } from "twd-js";
+
+// CI Integration (for test execution)
+import { reportResults } from "twd-js";
+
 // TWDSidebar props:
 //   open?: boolean        // Whether the sidebar is open by default (default: true)
 //   position?: "left" | "right" // Sidebar position (default: "left")
@@ -232,6 +238,107 @@ await userEvent.click(button.el);
 const message = await twd.get('[data-testid="message"]');
 message.should('contain.text', 'Success');
 ```
+
+## Vite Plugin
+
+### removeMockServiceWorker()
+
+Vite plugin that removes the mock service worker file from production builds. This ensures your production bundle doesn't include testing infrastructure.
+
+#### Syntax
+
+```ts
+import { removeMockServiceWorker } from "twd-js";
+```
+
+#### Usage
+
+```ts
+// vite.config.ts
+import { defineConfig } from 'vite';
+import { removeMockServiceWorker } from 'twd-js';
+
+export default defineConfig({
+  plugins: [
+    // ... other plugins
+    removeMockServiceWorker()
+  ]
+});
+```
+
+#### What it does
+
+- **Build-time cleanup**: Automatically removes `mock-sw.js` from the `dist` folder
+- **Production-safe**: Only runs during build (`apply: 'build'`)
+- **Zero configuration**: Works out of the box with standard Vite setups
+- **Logging**: Provides feedback about file removal
+
+#### Example Output
+
+```bash
+# During build
+🧹 Removed mock-sw.js from build
+
+# If no mock file found
+🧹 No mock-sw.js found in build
+```
+
+---
+
+## CI Integration
+
+### reportResults(handlers, testStatus)
+
+Formats and displays test results in a readable format with colored output.
+
+#### Syntax
+
+```ts
+reportResults(handlers: Handler[], testStatus: TestResult[]): void
+```
+
+#### Parameters
+
+- **handlers** (`Handler[]`) - Test handlers from `executeTests()`
+- **testStatus** (`TestResult[]`) - Test results from `executeTests()`
+
+#### Usage
+
+```ts
+import { executeTests, reportResults } from "twd-js";
+
+// Complete CI workflow
+const { handlers, testStatus } = await executeTests();
+reportResults(handlers, testStatus);
+
+// Exit with appropriate code
+const hasFailures = testStatus.some(t => t.status === 'fail');
+process.exit(hasFailures ? 1 : 0);
+```
+
+#### Example Output
+
+```bash
+User Authentication
+  ✓ should login with valid credentials
+  ✓ should logout successfully
+  ✗ should handle invalid credentials
+    - Error: Expected element to contain text "Invalid credentials"
+
+Shopping Cart
+  ✓ should add items to cart
+  ○ should remove items from cart (skipped)
+```
+
+#### Output Format
+
+- **✓** Green checkmark for passed tests
+- **✗** Red X for failed tests  
+- **○** Yellow circle for skipped tests
+- **Error details** shown below failed tests
+- **Hierarchical structure** matches your test organization
+
+---
 
 ## Contributing
 

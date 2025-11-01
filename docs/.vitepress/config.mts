@@ -12,7 +12,7 @@ export default defineConfig({
     nav: [
       { text: 'Home', link: '/' },
       { text: 'Guide', link: '/getting-started' },
-      { text: 'Examples', link: '/examples/' },
+      { text: 'Tutorial', link: '/tutorial/' },
       { text: 'API Reference', link: '/api/' }
     ],
 
@@ -27,13 +27,16 @@ export default defineConfig({
         ]
       },
       {
-        text: 'Examples',
+        text: 'Tutorial',
         items: [
-          { text: 'Overview', link: '/examples/' },
-          { text: 'Selectors', link: '/examples/selectors' },
-          { text: 'Assertions', link: '/examples/assertions' },
-          { text: 'API Mocking', link: '/examples/mocking' },
-          { text: 'User Events', link: '/examples/user-events' }
+          { text: 'Overview', link: '/tutorial/' },
+          { text: 'Installation', link: '/tutorial/installation' },
+          { text: 'First Test', link: '/tutorial/first-test' },
+          { text: 'Assertions & Navigation', link: '/tutorial/assertions-navigation' },
+          { text: 'API Mocking', link: '/tutorial/api-mocking' },
+          { text: 'Test Hooks', link: '/tutorial/test-hooks' },
+          { text: 'Production Builds', link: '/tutorial/production-builds' },
+          { text: 'CI Integration', link: '/tutorial/ci-integration' }
         ]
       },
       {

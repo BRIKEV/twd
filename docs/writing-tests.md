@@ -443,5 +443,5 @@ it("should show admin panel for admin users", async () => {
 ## Next Steps
 
 - Learn about [API Mocking](/api-mocking) for testing with external APIs
-- Explore [Examples](/examples/) for more complex testing scenarios
+- Follow the [Tutorial](/tutorial/) for comprehensive testing scenarios
 - Check the [API Reference](/api/) for complete method documentation

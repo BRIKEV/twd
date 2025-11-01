@@ -179,6 +179,91 @@ twd.url().should("contain.url", "/dashboard");
 
 ---
 
+## Input Handling
+
+### twd.setInputValue(element, value)
+
+Sets the value of an input element and dispatches an input event. Recommended for range, color, time, and other special input types where user events might not work as expected.
+
+#### Syntax
+
+```ts
+twd.setInputValue(element: Element, value: string): void
+```
+
+#### Parameters
+
+- **element** (`Element`) - The input element to set the value on
+- **value** (`string`) - The value to set
+
+#### Examples
+
+```ts
+// Range input
+const rangeInput = await twd.get("input[type='range']");
+twd.setInputValue(rangeInput.el, "75");
+rangeInput.should("have.value", "75");
+
+// Color input
+const colorInput = await twd.get("input[type='color']");
+twd.setInputValue(colorInput.el, "#ff0000");
+colorInput.should("have.value", "#ff0000");
+
+// Time input
+const timeInput = await twd.get("input[type='time']");
+twd.setInputValue(timeInput.el, "13:30");
+timeInput.should("have.value", "13:30");
+
+// Date input
+const dateInput = await twd.get("input[type='date']");
+twd.setInputValue(dateInput.el, "2024-12-25");
+dateInput.should("have.value", "2024-12-25");
+```
+
+#### Use Cases
+
+```ts
+describe("Form Input Tests", () => {
+  it("should handle range slider", async () => {
+    twd.visit("/settings");
+    
+    const volumeSlider = await twd.get("input[name='volume']");
+    twd.setInputValue(volumeSlider.el, "80");
+    
+    volumeSlider.should("have.value", "80");
+    
+    const submitButton = await twd.get("button[type='submit']");
+    await userEvent.click(submitButton.el);
+    
+    // Verify the form submission worked
+    const confirmation = await twd.get(".success-message");
+    confirmation.should("be.visible");
+  });
+
+  it("should handle color picker", async () => {
+    const colorPicker = await twd.get("input[type='color']");
+    twd.setInputValue(colorPicker.el, "#00ff00");
+    
+    colorPicker.should("have.value", "#00ff00");
+    
+    // Verify color change is reflected in UI
+    const preview = await twd.get(".color-preview");
+    preview.should("have.attr", "style", "background-color: rgb(0, 255, 0);");
+  });
+});
+```
+
+#### Why Use setInputValue?
+
+For most text inputs, use `userEvent.type()` for realistic user interaction. Use `setInputValue` for:
+
+- **Range inputs** - Sliders where dragging simulation is complex
+- **Color inputs** - Color pickers that don't respond to typing
+- **Time/Date inputs** - Inputs with complex formatting requirements
+- **Number inputs** - When you need precise values without typing simulation
+
+---
+
 ## Utility Functions
 
 ### twd.wait(ms)

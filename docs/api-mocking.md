@@ -682,5 +682,5 @@ await twd.mockRequest("flexibleMatch", {
 
 ## Next Steps
 
-- Learn about [User Events](/examples/user-events) for form interactions
+- Learn about [User Events in the Tutorial](/tutorial/first-test) for form interactions
 - Check the [API Reference](/api/twd-commands) for all mocking methods

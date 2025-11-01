@@ -143,7 +143,7 @@ You can customize this pattern in your test loader using different glob patterns
 
 - Learn about [Writing Tests](/writing-tests) in detail
 - Explore [API Mocking](/api-mocking) capabilities  
-- Check out [Examples](/examples/) for common patterns
+- Follow the [Tutorial](/tutorial/) for step-by-step learning
 - Browse the [API Reference](/api/) for all available methods
 
 ## Troubleshooting
