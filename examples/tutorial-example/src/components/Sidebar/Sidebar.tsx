@@ -38,7 +38,7 @@ export default function Sidebar({ contacts, pendingContactName }: { contacts: Co
               variant={contact.id === contactId ? "default" : "ghost"}
               asChild
             >
-              <NavLink to={`/contacts/${contact.id}`} viewTransition>
+              <NavLink to={`/contacts/${contact.id}`} viewTransition data-testid="contact-link">
                 {contact.name}
               </NavLink>
             </Button>
