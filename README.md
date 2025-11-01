@@ -8,9 +8,15 @@
 
 > ⚠️ This is a **beta release** – expect frequent updates and possible breaking changes.
 
+<p>
+  <img src="./images/logo_full_sized.png" alt="TWD Logo" width="400">
+</p>
+
 TWD (Testing Web Development) is a library designed to seamlessly integrate testing into your web development workflow. It streamlines the process of writing, running, and managing tests directly in your application, with a modern UI and powerful mocking capabilities.
 
 Currently, TWD supports React, with plans to add more frameworks soon.
+
+**For complete documentation, tutorials, and examples, visit: [https://brikev.github.io/twd/](https://brikev.github.io/twd/)**
 
 ## Table of Contents
 
