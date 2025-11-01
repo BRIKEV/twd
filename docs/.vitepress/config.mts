@@ -7,10 +7,10 @@ export default defineConfig({
   base: '/twd/',
   head: [
     // Favicon and app icons
-    ['link', { rel: 'icon', href: '/twd/favicon/favicon.ico' }],
-    ['link', { rel: 'icon', type: 'image/svg+xml', href: '/twd/favicon/favicon.svg' }],
-    ['link', { rel: 'apple-touch-icon', href: '/twd/favicon/apple-touch-icon.png' }],
-    ['link', { rel: 'manifest', href: '/twd/favicon/site.webmanifest' }],
+    ['link', { rel: 'icon', href: '/twd/favicon.ico' }],
+    ['link', { rel: 'icon', type: 'image/svg+xml', href: '/twd/favicon.svg' }],
+    ['link', { rel: 'apple-touch-icon', href: '/twd/apple-touch-icon.png' }],
+    ['link', { rel: 'manifest', href: '/twd/site.webmanifest' }],
     
     // SEO Meta Tags
     ['meta', { name: 'description', content: 'TWD (Test While Developing) - In-browser testing framework for React applications with instant feedback, Mock Service Worker integration, and beautiful UI.' }],
@@ -22,7 +22,7 @@ export default defineConfig({
     ['meta', { property: 'og:description', content: 'In-browser testing framework for React applications with instant feedback, Mock Service Worker integration, and beautiful UI. Because testing isn\'t a phase, it\'s part of the flow.' }],
     ['meta', { property: 'og:url', content: 'https://brikev.github.io/twd/' }],
     ['meta', { property: 'og:site_name', content: 'TWD Documentation' }],
-    ['meta', { property: 'og:image', content: 'https://brikev.github.io/twd/favicon/web-app-manifest-512x512.png' }],
+    ['meta', { property: 'og:image', content: 'https://brikev.github.io/twd/web-app-manifest-512x512.png' }],
     ['meta', { property: 'og:image:width', content: '512' }],
     ['meta', { property: 'og:image:height', content: '512' }],
     ['meta', { property: 'og:image:alt', content: 'TWD - Test While Developing Logo' }],
@@ -31,7 +31,7 @@ export default defineConfig({
     ['meta', { name: 'twitter:card', content: 'summary_large_image' }],
     ['meta', { name: 'twitter:title', content: 'TWD - Test While Developing' }],
     ['meta', { name: 'twitter:description', content: 'In-browser testing framework for React applications with instant feedback and beautiful UI.' }],
-    ['meta', { name: 'twitter:image', content: 'https://brikev.github.io/twd/favicon/web-app-manifest-512x512.png' }],
+    ['meta', { name: 'twitter:image', content: 'https://brikev.github.io/twd/web-app-manifest-512x512.png' }],
     ['meta', { name: 'twitter:image:alt', content: 'TWD - Test While Developing Logo' }],
     
     // Additional Meta Tags
