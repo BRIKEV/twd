@@ -78,6 +78,8 @@ describe('findRule', () => {
     expect(findRule('GET', 'http://localhost/api.txt', rules)).toBeUndefined();
     expect(findRule('GET', 'http://localhost/api.xml', rules)).toBeUndefined();
     expect(findRule('GET', 'http://localhost/api.html', rules)).toBeUndefined();
+    expect(findRule('GET', 'http://localhost/api.twd.test.ts', rules)).toBeUndefined();
+    expect(findRule('GET', 'http://localhost/api.twd.test.ts?t=12345', rules)).toBeUndefined();
   });
 
   it('should match if the url is a file with extension and the rule url is a file with extension', () => {
