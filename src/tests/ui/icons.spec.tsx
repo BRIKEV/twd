@@ -4,6 +4,7 @@ import Play from "../../ui/Icons/Play";
 import ChevronDown from "../../ui/Icons/ChevronDown";
 import ChevronRight from "../../ui/Icons/ChevronRight";
 import Loader from "../../ui/Icons/Loader";
+import MockRequestIcon from "../../ui/Icons/MockRequestIcon";
 
 describe("Icons", () => {
   it("should render Play icon", () => {
@@ -31,6 +32,13 @@ describe("Icons", () => {
     // Test implementation goes here
     render(<Loader />);
     const iconElement = screen.getByTestId("loader-icon");
+    expect(iconElement).toBeInTheDocument();
+  });
+
+  it("should render MockRequestIcon icon", () => {
+    // Test implementation goes here
+    render(<MockRequestIcon />);
+    const iconElement = screen.getByTestId("wifi-pen-icon");
     expect(iconElement).toBeInTheDocument();
   });
 });
