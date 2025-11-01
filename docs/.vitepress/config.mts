@@ -4,6 +4,7 @@ import { defineConfig } from 'vitepress'
 export default defineConfig({
   title: "TWD",
   description: "Test While Developing (TWD) - in-browser testing for React applications",
+  base: '/twd/',
   head: [
     ['link', { rel: 'icon', href: '/favicon.ico' }]
   ],

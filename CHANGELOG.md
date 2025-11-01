@@ -1,3 +1,9 @@
+## 0.8.0 (2025-11-01)
+
+* Docs/ci example (#71) ([17983ab](https://github.com/BRIKEV/twd/commit/17983ab)), closes [#71](https://github.com/BRIKEV/twd/issues/71)
+* Fix/service worker installation (#76) ([b374c41](https://github.com/BRIKEV/twd/commit/b374c41)), closes [#76](https://github.com/BRIKEV/twd/issues/76)
+* Fix/url mocking (#75) ([268bd4b](https://github.com/BRIKEV/twd/commit/268bd4b)), closes [#75](https://github.com/BRIKEV/twd/issues/75)
+
 ## 0.7.1 (2025-10-28)
 
 * fix: error exporting bundle files
