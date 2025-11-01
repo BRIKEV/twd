@@ -659,7 +659,7 @@ Congratulations! 🎉 You've completed the TWD tutorial and learned how to:
 ### What's Next?
 
 - 📖 Explore the [API Reference](/api/) for detailed documentation
-- 🔍 Check out [real examples](/examples/) in the examples directory
+- 🔍 Check out [our tutorial](/tutorial/) in the examples directory
 - 🐛 [Report issues](https://github.com/BRIKEV/twd/issues) if you find bugs
 - 💬 [Join discussions](https://github.com/BRIKEV/twd/discussions) to ask questions
 - ⭐ [Star the project](https://github.com/BRIKEV/twd) if you find it useful!
