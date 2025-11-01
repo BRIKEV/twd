@@ -69,4 +69,24 @@ describe('findRule', () => {
     expect(findRule('POST', 'http://localhost/api', rules)).toBeUndefined();
     expect(findRule('GET', 'http://localhost/other', rules)).toBeUndefined();
   });
+
+  it('should not match if the url is a file with extension', () => {
+    const rules = [
+      { method: 'GET', url: '/api', alias: 'a' },
+    ];
+    expect(findRule('GET', 'http://localhost/api.json', rules)).toBeUndefined();
+    expect(findRule('GET', 'http://localhost/api.txt', rules)).toBeUndefined();
+    expect(findRule('GET', 'http://localhost/api.xml', rules)).toBeUndefined();
+    expect(findRule('GET', 'http://localhost/api.html', rules)).toBeUndefined();
+  });
+
+  it('should match if the url is a file with extension and the rule url is a file with extension', () => {
+    const rules = [
+      { method: 'GET', url: '/api.json', alias: 'a' },
+    ];
+    expect(findRule('GET', 'http://localhost/api.json', rules)).toEqual(rules[0]);
+    expect(findRule('GET', 'http://localhost/api.txt', rules)).toBeUndefined();
+    expect(findRule('GET', 'http://localhost/api.xml', rules)).toBeUndefined();
+    expect(findRule('GET', 'http://localhost/api.html', rules)).toBeUndefined();
+  });
 });

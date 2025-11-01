@@ -20,6 +20,11 @@ const validRegex = (pattern) => {
   }
 };
 
+const isFile = (url) => {
+  const regex = /\.([a-zA-Z0-9]+)$/; // check if the url is a file with extension
+  return regex.test(url);
+};
+
 /**
  * Find a matching rule based on method and url
  * @param {string} method
@@ -35,7 +40,11 @@ export function findRule(method, url, rules) {
         const regex = new RegExp(r.url);
         return isMethodMatch && regex.test(url);
       }
+      const ruleIsFile = isFile(r.url);
+      if (ruleIsFile) {
+        return isMethodMatch && url.includes(r.url);
+      }
       const isUrlMatch = r.url === url || url.includes(r.url);
-      return isMethodMatch && isUrlMatch;
+      return isMethodMatch && isUrlMatch && !isFile(url);
   });
 }
