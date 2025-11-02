@@ -18,5 +18,10 @@ describe("Contacts Page", () => {
     await twd.waitForRequest("getContacts");
     const contacts = await twd.getAll("[data-testid='contact-link']");
     expect(contacts).to.have.length(list.length);
+    contacts.forEach((contact, index) => {
+      contact.should("have.text", `${list[index].firstName} ${list[index].lastName}`);
+    });
+    const newContactBtn = await twd.get("a[data-testid='new-contact-button']");
+    newContactBtn.should("be.visible").should("not.have.text", "New contact");
   });
 });
