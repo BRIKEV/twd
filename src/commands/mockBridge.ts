@@ -55,6 +55,7 @@ export const initRequestMocking = async () => {
     }
     navigator.serviceWorker.addEventListener("message", (event) => {
       if (event.data?.type === "EXECUTED") {
+        console.log(event);
         const { alias, request } = event.data;
         const rule = rules.find((r) => r.alias === alias);
         if (rule) {
