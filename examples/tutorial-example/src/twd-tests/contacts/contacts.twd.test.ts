@@ -1,6 +1,6 @@
 import { twd, expect } from "../../../../../src";
 import { describe, it, beforeEach } from "../../../../../src/runner";
-import list from "./mocks/list.json";
+import list from "../mocks/list.json";
 
 describe("Contacts Page", () => {
   beforeEach(() => {
