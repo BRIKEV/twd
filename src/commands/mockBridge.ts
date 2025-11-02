@@ -8,7 +8,7 @@ export type Rule = {
   response: unknown;
   alias: string;
   executed?: boolean;
-  request?: unknown;
+  request?: any;
   status?: number;
   responseHeaders?: Record<string, string>;
   urlRegex?: boolean;

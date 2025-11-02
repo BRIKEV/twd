@@ -40,17 +40,18 @@ Create a script to run your tests in headless mode:
 import puppeteer from "puppeteer";
 import { reportResults } from 'twd-js/runner-ci';
 
-const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-
 const browser = await puppeteer.launch({ headless: true });
 const page = await browser.newPage();
 
+console.time('Total Test Time');
 try {
   // Navigate to your development server
+  console.log('Navigating to http://localhost:5173 ...');
   await page.goto('http://localhost:5173');
-  await page.reload(); // Reload the page to double check service worker is loaded
-  await sleep(2000); // Wait for the page to reload
-
+  // wait to load data-testid="twd-sidebar"
+  await page.waitForSelector('[data-testid="twd-sidebar"]', { timeout: 10000 });
+  console.log('Page loaded. Starting tests...');
+  // reload page
   // Execute all tests
   const { handlers, testStatus } = await page.evaluate(async () => {
     const TestRunner = window.__testRunner;
@@ -70,18 +71,21 @@ try {
     const handlers = await runner.runAll();
     return { handlers: Array.from(handlers.values()), testStatus };
   });
+  console.log(`Tests to report: ${testStatus.length}`);
   
   // Display results in console
   reportResults(handlers, testStatus);
 
   // Exit with appropriate code
   const hasFailures = testStatus.some(test => test.status === 'fail');
+  console.timeEnd('Total Test Time');
   process.exit(hasFailures ? 1 : 0);
   
 } catch (error) {
   console.error('Error running tests:', error);
   process.exit(1);
 } finally {
+  console.log('Closing browser...');
   await browser.close();
 }
 ```
