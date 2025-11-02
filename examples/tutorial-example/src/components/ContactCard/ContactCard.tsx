@@ -33,7 +33,7 @@ export default function ContactCard({ avatar, name, username, favorite, id }: Co
         <div className="flex gap-2">
           <deleteFetcher.Form method="DELETE">
             <input type="hidden" name="id" value={id} />
-            <Button type="submit" variant="destructive" disabled={disableDelete}>
+            <Button type="submit" variant="destructive" disabled={disableDelete} data-testid="delete-contact">
               {disableDelete ? "Deleting..." : "Delete"}
             </Button>
           </deleteFetcher.Form>

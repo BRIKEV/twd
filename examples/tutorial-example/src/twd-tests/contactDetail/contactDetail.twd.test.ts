@@ -23,7 +23,7 @@ describe("Contacts detail page", () => {
       },
       status: 200,
     });
-    await twd.visit(`/contacts/${contacts[0].id}`);
+    await twd.visit(`/contacts/${contacts[0].id}`, true);
     await twd.waitForRequest("getContacts");
     const newContactListElement = await twd.get("[data-testid='contact-link']:nth-child(1)");
     newContactListElement.should("have.text", "Jane Doe").should("have.class", "bg-primary");
@@ -46,5 +46,28 @@ describe("Contacts detail page", () => {
     await twd.waitForRequest("getContacts");
     const unmarkAsFavoriteIcon = await twd.get("[aria-label='Mark as favorite']");
     unmarkAsFavoriteIcon.should("be.visible");
+  });
+
+  it('should delete contact', async () => {
+    await twd.mockRequest("getContacts", {
+      method: "GET",
+      url: "/api/contacts",
+      response: contacts,
+      status: 200,
+    });
+    await twd.mockRequest("deleteContact", {
+      method: "DELETE",
+      url: `/api/contacts/${contacts[0].id}`,
+      response: {},
+      status: 200,
+    });
+    await twd.visit(`/contacts/${contacts[0].id}`, true);
+    await twd.waitForRequest("getContacts");
+    const deleteBtn = await twd.get("[data-testid='delete-contact']");
+    deleteBtn.should("be.visible").should("have.text", "Delete");
+    await userEvent.click(deleteBtn.el);
+    await twd.waitForRequest("deleteContact");
+    await twd.waitForRequest("getContacts");
+    twd.url().should("not.contain.url", "/contacts");
   });
 });
