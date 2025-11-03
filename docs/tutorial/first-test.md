@@ -1,246 +1,351 @@
-# First Test
+# First Test - Selectors & Assertions
 
-Write and run your first TWD test to understand the basics.
+Let's write your first complete TWD test! We'll use the Hello World page example to learn about navigation, element selection, and assertions.
 
-## Your First Test
+## The Hello World Page
 
-Let's create a simple test that verifies your app renders correctly.
+In our tutorial example, we have a simple home page with:
+- A welcome title
+- A counter button that increments when clicked
 
-### 1. Create a Test File
+Let's test it step by step!
+
+## Complete Test Example
+
+Here's the full test we'll be building:
 
 ```ts
-// src/tests/app.twd.test.ts
-import { describe, it, twd } from 'twd-js';
+// src/twd-tests/helloWorld.twd.test.ts
+import { twd, userEvent } from "../../../../src";
+import { describe, it } from "../../../../src/runner";
 
-describe('My First Test', () => {
-  it('should display the app title', async () => {
-    // Navigate to the home page
-    twd.visit('/');
+describe("Hello World Page", () => {
+  it("should display the welcome title and counter button", async () => {
+    await twd.visit("/");
     
-    // Find the main heading
-    const heading = await twd.get('h1');
+    const title = await twd.get("[data-testid='welcome-title']");
+    title.should("be.visible").should("have.text", "Welcome to TWD");
     
-    // Assert it's visible
-    heading.should('be.visible');
+    const counterButton = await twd.get("[data-testid='counter-button']");
+    counterButton.should("be.visible").should("have.text", "Count is 0");
     
-    // Assert it contains expected text
-    heading.should('contain.text', 'Welcome');
+    await userEvent.click(counterButton.el);
+    counterButton.should("have.text", "Count is 1");
+    
+    await userEvent.click(counterButton.el);
+    counterButton.should("have.text", "Count is 2");
+    
+    await userEvent.click(counterButton.el);
+    counterButton.should("have.text", "Count is 3");
   });
 });
 ```
 
-### 2. Run the Test
+Let's break this down piece by piece!
 
-1. **Start your dev server** if it's not running:
+## Step 1: Navigation with `twd.visit()`
+
+The first thing we do in our test is navigate to a route:
+
+```ts
+await twd.visit("/");
+```
+
+**What this does:**
+- Navigates to the root route (`/`) of your application
+- Works with React Router, Next.js router, or any routing solution
+- Automatically waits for the page to load before continuing
+
+**Try it yourself:**
+```ts
+await twd.visit("/about");    // Navigate to /about
+await twd.visit("/todos");     // Navigate to /todos
+await twd.visit("/contacts");  // Navigate to /contacts
+```
+
+## Step 2: Selecting Elements with `twd.get()`
+
+After navigating, we need to find elements on the page:
+
+```ts
+const title = await twd.get("[data-testid='welcome-title']");
+```
+
+**What this does:**
+- Finds an element using a CSS selector
+- Waits automatically for the element to appear (no need for manual waits!)
+- Returns a TWD element object that we can use for assertions
+
+### Using Data Attributes (Recommended)
+
+The best practice is to use `data-testid` attributes in your components:
+
+```tsx
+// In your React component
+<h1 data-testid="welcome-title">Welcome to TWD</h1>
+```
+
+Then in your test:
+```ts
+const title = await twd.get("[data-testid='welcome-title']");
+```
+
+**Why use data-testid?**
+- ✅ Stable - won't break if CSS classes change
+- ✅ Semantic - clearly indicates it's for testing
+- ✅ Not tied to styling - won't break if design changes
+
+### Other Selector Options
+
+You can also use standard CSS selectors:
+
+```ts
+// By tag name
+const heading = await twd.get("h1");
+
+// By ID
+const header = await twd.get("#header");
+
+// By class
+const card = await twd.get(".card");
+
+// By attribute
+const submitBtn = await twd.get("button[type='submit']");
+
+// Combined selectors
+const emailInput = await twd.get("input[name='email']");
+```
+
+## Step 3: Making Assertions with `.should()`
+
+Once we have an element, we can make assertions about it:
+
+```ts
+title.should("be.visible").should("have.text", "Welcome to TWD");
+```
+
+**What this does:**
+- Checks that the element is visible on the page
+- Checks that the element contains the exact text "Welcome to TWD"
+- Chainable - you can add multiple assertions in one line!
+
+### Common Assertions
+
+```ts
+// Visibility
+element.should("be.visible");
+element.should("not.be.visible");
+
+// Text content
+element.should("have.text", "Exact text");
+element.should("contain.text", "Partial text");
+
+// Attributes
+element.should("have.attr", "data-testid", "my-button");
+element.should("have.class", "active");
+
+// Multiple assertions (chained)
+element
+  .should("be.visible")
+  .should("have.text", "Hello")
+  .should("have.class", "highlight");
+```
+
+## Step 4: User Interactions with `userEvent`
+
+To test interactive elements like buttons, we use `userEvent`:
+
+```ts
+await userEvent.click(counterButton.el);
+```
+
+**What this does:**
+- Simulates a real user click on the button
+- Triggers all the same events a real click would (onClick, onMouseDown, etc.)
+- Waits for the interaction to complete
+
+**Note:** We use `.el` to access the underlying DOM element that `userEvent` needs.
+
+### Other User Interactions
+
+```ts
+// Click
+await userEvent.click(button.el);
+
+// Type text
+await userEvent.type(input.el, "Hello World");
+
+// Clear input
+await userEvent.clear(input.el);
+
+// Select options
+await userEvent.selectOptions(select.el, "option1");
+```
+
+## Step 5: Testing State Changes
+
+After clicking the button, we verify the state changed:
+
+```ts
+await userEvent.click(counterButton.el);
+counterButton.should("have.text", "Count is 1");
+```
+
+**What's happening:**
+1. We click the button
+2. React updates the state (count goes from 0 to 1)
+3. The button text updates
+4. We assert the new text is correct
+
+TWD automatically waits for React to update the DOM before making assertions, so you don't need to manually wait!
+
+## Running the Test
+
+Now that you understand the test, here's how to run it:
+
+1. **Make sure your dev server is running:**
    ```bash
    npm run dev
    ```
 
-2. **Open your browser** and navigate to your app
+2. **Open your browser** and look for the TWD sidebar on the left
 
-3. **Look for the TWD sidebar** on the left side of your screen
+3. **Find your test** in the sidebar - you should see "Hello World Page" with a test underneath
 
-4. **Click the play button** next to your test to run it
+4. **Click the play button** ▶️ next to the test to run it
 
-### 3. Understanding the Results
+5. **Watch it execute!** You'll see:
+   - The page navigate to `/`
+   - The title element be found
+   - The button be clicked multiple times
+   - All assertions pass ✅
 
-- ✅ **Green checkmark** = Test passed
-- ❌ **Red X** = Test failed  
-- 📝 **Logs** = Detailed information about what happened
+## Understanding the Test Flow
 
-## Breaking Down the Test
+Let's trace through what happens when you run the test:
 
-Let's understand each part of the test:
-
-### Test Structure
-
-```ts
-describe('My First Test', () => {
-  // Test group - organizes related tests
-  
-  it('should display the app title', async () => {
-    // Individual test - describes what should happen
-  });
-});
+```
+1. twd.visit("/") 
+   → Browser navigates to home page
+   
+2. twd.get("[data-testid='welcome-title']")
+   → Waits for the title element to appear
+   → Returns element object
+   
+3. title.should("be.visible")
+   → Checks if element is visible ✅
+   
+4. title.should("have.text", "Welcome to TWD")
+   → Checks if text matches ✅
+   
+5. twd.get("[data-testid='counter-button']")
+   → Finds the counter button
+   
+6. counterButton.should("have.text", "Count is 0")
+   → Verifies initial state ✅
+   
+7. userEvent.click(counterButton.el)
+   → Clicks the button
+   → React updates state (count = 1)
+   
+8. counterButton.should("have.text", "Count is 1")
+   → Verifies state updated ✅
+   
+... and so on for clicks 2 and 3
 ```
 
-### Navigation
+## Tips for Writing Tests
+
+### Use Descriptive Test Names
 
 ```ts
-twd.visit('/');
-```
-
-- Navigates to a specific route in your single-page application
-- Works with React Router, Next.js router, etc.
-- Use relative paths like `/`, `/about`, `/products`
-
-### Element Selection
-
-```ts
-const heading = await twd.get('h1');
-```
-
-- Finds an element using CSS selectors
-- Returns a TWD element API for making assertions
-- Waits automatically for the element to appear
-
-### Assertions
-
-```ts
-heading.should('be.visible');
-heading.should('contain.text', 'Welcome');
-```
-
-- Tests element properties and content
-- Provides clear error messages when tests fail
-- Chainable for multiple assertions
-
-## Common Selectors
-
-### By Tag Name
-```ts
-const button = await twd.get('button');
-const input = await twd.get('input');
-```
-
-### By ID
-```ts
-const header = await twd.get('#header');
-const loginForm = await twd.get('#login-form');
-```
-
-### By Class
-```ts
-const card = await twd.get('.card');
-const errorMessage = await twd.get('.error-message');
-```
-
-### By Attribute
-```ts
-const submitButton = await twd.get('button[type="submit"]');
-const emailInput = await twd.get('input[name="email"]');
-```
-
-### By Data Attribute (Recommended)
-```ts
-const userCard = await twd.get('[data-testid="user-card"]');
-const menuButton = await twd.get('[data-testid="menu-toggle"]');
-```
-
-## Writing Better Tests
-
-### Use Descriptive Names
-
-```ts
-// ✅ Good - Clear and specific
-it('should show validation error when email is empty', async () => {
-  // Test implementation
+// ✅ Good - Clear what it tests
+it("should display the welcome title and counter button", async () => {
+  // ...
 });
 
 // ❌ Bad - Too vague
-it('should validate form', async () => {
-  // Test implementation
+it("should work", async () => {
+  // ...
 });
 ```
 
 ### Test User Workflows
 
+Think about what a real user would do:
+
 ```ts
-describe('User Registration', () => {
-  it('should register a new user successfully', async () => {
-    // Navigate to registration page
-    twd.visit('/register');
-    
-    // Fill out the form
-    const nameInput = await twd.get('input[name="name"]');
-    const emailInput = await twd.get('input[name="email"]');
-    const passwordInput = await twd.get('input[name="password"]');
-    const submitButton = await twd.get('button[type="submit"]');
-    
-    // Use userEvent for realistic interactions
-    const user = userEvent.setup();
-    await user.type(nameInput.el, 'John Doe');
-    await user.type(emailInput.el, 'john@example.com');
-    await user.type(passwordInput.el, 'password123');
-    await user.click(submitButton.el);
-    
-    // Verify success
-    const successMessage = await twd.get('.success-message');
-    successMessage.should('contain.text', 'Registration successful');
-  });
+it("should increment counter when button is clicked", async () => {
+  // 1. Navigate to page
+  await twd.visit("/");
+  
+  // 2. Find the button
+  const button = await twd.get("[data-testid='counter-button']");
+  
+  // 3. Verify initial state
+  button.should("have.text", "Count is 0");
+  
+  // 4. Interact with it
+  await userEvent.click(button.el);
+  
+  // 5. Verify it changed
+  button.should("have.text", "Count is 1");
 });
 ```
 
-### Use Data Attributes
+### Keep Tests Focused
 
-Add `data-testid` attributes to your components for reliable testing:
-
-```tsx
-// In your React component
-function LoginForm() {
-  return (
-    <form>
-      <input 
-        type="email" 
-        name="email"
-        data-testid="email-input"
-      />
-      <input 
-        type="password" 
-        name="password"
-        data-testid="password-input"
-      />
-      <button 
-        type="submit"
-        data-testid="login-button"
-      >
-        Login
-      </button>
-    </form>
-  );
-}
-```
+Each test should verify one specific behavior:
 
 ```ts
-// In your test
-const emailInput = await twd.get('[data-testid="email-input"]');
-const passwordInput = await twd.get('[data-testid="password-input"]');
-const loginButton = await twd.get('[data-testid="login-button"]');
-```
+// ✅ Good - One focused test
+it("should display welcome title", async () => {
+  await twd.visit("/");
+  const title = await twd.get("[data-testid='welcome-title']");
+  title.should("be.visible");
+});
 
-## Debugging Tests
-
-### View Element Details
-
-```ts
-const element = await twd.get('button');
-console.log('Element:', element.el);
-console.log('Text:', element.el.textContent);
-console.log('Classes:', element.el.className);
-```
-
-### Add Pauses for Inspection
-
-```ts
-it('should debug the form', async () => {
-  twd.visit('/form');
-  
-  // Pause to inspect the page
-  await twd.wait(2000);
-  
-  const form = await twd.get('form');
-  form.should('be.visible');
+// ❌ Bad - Testing too many things
+it("should test everything", async () => {
+  // Too many assertions in one test
 });
 ```
 
-### Use Browser DevTools
+## Common Issues
 
-- **Inspect elements** to verify selectors
-- **Check console** for TWD logs and errors
-- **Use Network tab** to see requests (useful for API mocking later)
+### Element Not Found
 
-## Next Steps
+If you get an error that an element wasn't found:
 
-Great job! You've written and run your first TWD test. Now let's learn about assertions and navigation.
+```ts
+// ❌ This might fail if element loads slowly
+const button = await twd.get("[data-testid='my-button']");
+```
 
-👉 [Assertions & Navigation](./assertions-navigation)
+**Solution:** TWD automatically waits, but make sure:
+- The selector is correct
+- The element actually exists in your component
+- You're on the right page (check with `twd.visit()`)
+
+### Assertion Failed
+
+If an assertion fails:
+
+```ts
+// Check what the actual value is
+console.log(button.el.textContent); // See actual text
+```
+
+**Tip:** Use the browser DevTools to inspect elements and verify selectors!
+
+## What's Next?
+
+Great job! You now know how to:
+- ✅ Navigate to pages
+- ✅ Select elements
+- ✅ Make assertions
+- ✅ Interact with elements
+
+Next, let's learn about **API mocking** - how to test pages that load data from APIs!
+
+👉 [API Mocking - Testing with Network Requests](./api-mocking)

@@ -1,639 +1,564 @@
-# API Mocking
+# API Mocking - Testing with Network Requests
 
-Learn to mock HTTP requests and responses for comprehensive testing without depending on external APIs.
+Now let's learn how to test pages that make API calls! We'll use the Todo List page as our example, which loads todos from an API endpoint.
 
 ## Why Mock APIs?
 
-API mocking allows you to:
+When testing pages that load data from APIs, we need to:
+- **Control the data** - Test with specific data without depending on a real server
+- **Test in isolation** - Don't rely on external services being available
+- **Test different scenarios** - Success cases, error cases, loading states
+- **Fast tests** - No network delays
 
-- **Test in isolation** - No dependency on external services
-- **Control responses** - Test success, error, and edge cases
-- **Faster tests** - No network delays
-- **Reliable tests** - Consistent, predictable responses
+TWD uses **Mock Service Worker** to intercept HTTP requests and return mocked responses. This happens in the browser, so it's fast and reliable!
 
-## Getting Started with Mocking
+## The Todo List Example
 
-### 1. Initialize Request Mocking
+Our Todo List page:
+- Loads todos from `/api/todos` when the page loads
+- Creates new todos via POST to `/api/todos`
+- Deletes todos via DELETE to `/api/todos/:id`
+
+Let's test all of these features!
+
+## Setting Up Mocking with `beforeEach`
+
+Before we start mocking, we need to set up our test suite. The `beforeEach` hook runs before each test, making it perfect for cleaning up mocks:
 
 ```ts
-import { describe, it, beforeEach, twd } from 'twd-js';
+// src/twd-tests/todoList.twd.test.ts
+import { twd, expect, userEvent } from "../../../../src";
+import { describe, it, beforeEach } from "../../../../src/runner";
+import todoListMock from "./mocks/todoList.json";
 
-describe('API Testing', () => {
-  beforeEach(async () => {
-    // Initialize mocking before each test
-    await twd.initRequestMocking();
-    
-    // Clear any previous mocks
+describe("Todo List Page", () => {
+  beforeEach(() => {
     twd.clearRequestMockRules();
   });
-
-  it('should load user data', async () => {
-    // Your test here
-  });
-});
-```
-
-### 2. Basic Request Mocking
-
-```ts
-describe('User Profile', () => {
-  beforeEach(async () => {
-    await twd.initRequestMocking();
-    twd.clearRequestMockRules();
-  });
-
-  it('should display user information', async () => {
-    // Mock the API call
-    await twd.mockRequest('getUser', {
-      method: 'GET',
-      url: '/api/user/123',
-      response: {
-        id: 123,
-        name: 'John Doe',
-        email: 'john@example.com',
-        avatar: 'https://example.com/avatar.jpg'
-      }
-    });
-
-    // Navigate to profile page
-    twd.visit('/profile/123');
-
-    // Wait for the request to be made
-    await twd.waitForRequest('getUser');
-
-    // Verify the UI shows the mocked data
-    const userName = await twd.get('[data-testid="user-name"]');
-    userName.should('contain.text', 'John Doe');
-
-    const userEmail = await twd.get('[data-testid="user-email"]');
-    userEmail.should('contain.text', 'john@example.com');
-  });
-});
-```
-
-## Mock Request Options
-
-### Complete Options Interface
-
-```ts
-interface MockOptions {
-  method: string;           // HTTP method: 'GET', 'POST', 'PUT', 'DELETE', etc.
-  url: string | RegExp;     // URL to match (exact string or regex pattern)
-  response: unknown;        // Response body (object, array, string, etc.)
-  status?: number;          // HTTP status code (default: 200)
-  headers?: Record<string, string>; // Response headers
-}
-```
-
-### HTTP Methods
-
-```ts
-// GET request
-await twd.mockRequest('getUsers', {
-  method: 'GET',
-  url: '/api/users',
-  response: [
-    { id: 1, name: 'John' },
-    { id: 2, name: 'Jane' }
-  ]
-});
-
-// POST request
-await twd.mockRequest('createUser', {
-  method: 'POST',
-  url: '/api/users',
-  response: { id: 3, name: 'New User', created: true },
-  status: 201
-});
-
-// PUT request
-await twd.mockRequest('updateUser', {
-  method: 'PUT',
-  url: '/api/users/123',
-  response: { id: 123, name: 'Updated Name' }
-});
-
-// DELETE request
-await twd.mockRequest('deleteUser', {
-  method: 'DELETE',
-  url: '/api/users/123',
-  response: { success: true },
-  status: 204
-});
-```
-
-### URL Patterns
-
-```ts
-// Exact URL match
-await twd.mockRequest('getUser', {
-  method: 'GET',
-  url: '/api/user/123',
-  response: { id: 123, name: 'John' }
-});
-
-// RegExp for dynamic URLs
-await twd.mockRequest('getUserById', {
-  method: 'GET',
-  url: /\/api\/users\/\d+/,  // Matches /api/users/123, /api/users/456, etc.
-  response: { id: 123, name: 'Dynamic User' }
-});
-
-// Query parameters
-await twd.mockRequest('searchUsers', {
-  method: 'GET',
-  url: /\/api\/users\?search=.*/,
-  response: { results: [], total: 0 }
-});
-```
-
-### Custom Status Codes and Headers
-
-```ts
-// Success with custom headers
-await twd.mockRequest('createPost', {
-  method: 'POST',
-  url: '/api/posts',
-  response: { id: 456, title: 'New Post' },
-  status: 201,
-  headers: {
-    'Location': '/api/posts/456',
-    'Content-Type': 'application/json'
-  }
-});
-
-// Error responses
-await twd.mockRequest('serverError', {
-  method: 'GET',
-  url: '/api/data',
-  response: { error: 'Internal server error' },
-  status: 500
-});
-
-await twd.mockRequest('notFound', {
-  method: 'GET',
-  url: '/api/missing',
-  response: { error: 'Resource not found' },
-  status: 404
-});
-
-await twd.mockRequest('unauthorized', {
-  method: 'GET',
-  url: '/api/protected',
-  response: { error: 'Unauthorized' },
-  status: 401
-});
-```
-
-## Waiting for Requests
-
-### Single Request
-
-```ts
-it('should handle user creation', async () => {
-  await twd.mockRequest('createUser', {
-    method: 'POST',
-    url: '/api/users',
-    response: { id: 123, created: true }
-  });
-
-  // Trigger the request (e.g., form submission)
-  const submitButton = await twd.get('button[type="submit"]');
-  const user = userEvent.setup();
-  await user.click(submitButton.el);
-
-  // Wait for the request to complete
-  const rule = await twd.waitForRequest('createUser');
   
-  // Access request details
-  console.log('Request completed:', rule.alias);
-  console.log('Request body:', rule.request);
+  // Tests go here...
 });
 ```
 
-### Multiple Requests
+**What `beforeEach` does:**
+- Runs **before each test** in the describe block
+- Perfect for cleanup - clears all previous mock rules
+- Ensures each test starts with a clean slate
+
+**What `clearRequestMockRules()` does:**
+- Removes all previously set up mock requests
+- Prevents mocks from one test affecting another
+- Essential for test isolation!
+
+## Test 1: Displaying the Todo List
+
+Let's start by testing that the page loads and displays todos:
 
 ```ts
-it('should load dashboard data', async () => {
-  // Mock multiple endpoints
-  await twd.mockRequest('getUser', {
-    method: 'GET',
-    url: '/api/user',
-    response: { id: 1, name: 'John' }
+it("should display the todo list", async () => {
+  // Step 1: Set up the mock
+  await twd.mockRequest("getTodoList", {
+    method: "GET",
+    url: "/api/todos",
+    response: todoListMock,
+    status: 200,
   });
-
-  await twd.mockRequest('getUserPosts', {
-    method: 'GET',
-    url: '/api/user/posts',
-    response: [{ id: 1, title: 'First Post' }]
-  });
-
-  await twd.mockRequest('getNotifications', {
-    method: 'GET',
-    url: '/api/notifications',
-    response: { unread: 3, items: [] }
-  });
-
-  // Navigate to dashboard
-  twd.visit('/dashboard');
-
-  // Wait for all requests to complete
-  const rules = await twd.waitForRequests([
-    'getUser',
-    'getUserPosts', 
-    'getNotifications'
-  ]);
-
-  expect(rules).to.have.length(3);
-
-  // Verify UI loaded correctly
-  const userName = await twd.get('[data-testid="user-name"]');
-  userName.should('contain.text', 'John');
+  
+  // Step 2: Navigate to the page
+  await twd.visit("/todos");
+  
+  // Step 3: Wait for the API call to complete
+  await twd.waitForRequest("getTodoList");
+  
+  // Step 4: Verify the todos are displayed
+  const todoList = await twd.getAll("[data-testid='todo-item']");
+  expect(todoList).to.have.length(2);
+  
+  const todo1Title = await twd.get("[data-testid='todo-title-1']");
+  todo1Title.should("have.text", "Learn TWD");
 });
 ```
 
-## Testing Different Scenarios
+Let's break this down step by step!
 
-### Success Scenarios
+### Step 1: Mocking with `mockRequest()`
 
 ```ts
-describe('Successful API Calls', () => {
-  beforeEach(async () => {
-    await twd.initRequestMocking();
+await twd.mockRequest("getTodoList", {
+  method: "GET",
+  url: "/api/todos",
+  response: todoListMock,
+  status: 200,
+});
+```
+
+**What this does:**
+- **First parameter** (`"getTodoList"`): An alias/name for this mock - we'll use this to wait for it later
+- **`method`**: The HTTP method (GET, POST, PUT, DELETE, etc.)
+- **`url`**: The exact URL path to intercept
+- **`response`**: The data to return (can be an object, array, string, etc.)
+- **`status`**: HTTP status code (200 = success, 404 = not found, 500 = server error, etc.)
+
+**Important:** Only mock API endpoints, **not your application routes!**
+
+```ts
+// ✅ Good - Mocking API calls
+await twd.mockRequest("getTodos", {
+  method: "GET",
+  url: "/api/todos",  // API endpoint
+  response: [...]
+});
+
+// ❌ Bad - Don't mock app routes!
+await twd.mockRequest("getTodos", {
+  method: "GET",
+  url: "/todos",  // This is your app route, not an API!
+  response: [...]
+});
+```
+
+### Step 2: Navigate and Load
+
+```ts
+await twd.visit("/todos");
+```
+
+When you navigate to `/todos`, the page's loader (if using React Router) will automatically make a GET request to `/api/todos`. Our mock intercepts this!
+
+### Step 3: Wait for the Request with `waitForRequest()`
+
+```ts
+await twd.waitForRequest("getTodoList");
+```
+
+**What this does:**
+- Waits for the mock request with alias `"getTodoList"` to be triggered
+- Ensures the API call completed before we continue
+- Prevents race conditions - we know the data is loaded!
+
+**Why wait?**
+Without waiting, we might try to check if todos are displayed before the API call completes. This would cause our test to fail!
+
+### Step 4: Verify the Data
+
+```ts
+const todoList = await twd.getAll("[data-testid='todo-item']");
+expect(todoList).to.have.length(2);
+```
+
+**`getAll()` vs `get()`:**
+- `get()`: Finds one element
+- `getAll()`: Finds multiple elements (returns an array)
+
+Now we can verify each todo's details:
+
+```ts
+const todo1Title = await twd.get("[data-testid='todo-title-1']");
+todo1Title.should("have.text", "Learn TWD");
+
+const todo2Title = await twd.get("[data-testid='todo-title-2']");
+todo2Title.should("have.text", "Build Todo App");
+
+const todo1Description = await twd.get("[data-testid='todo-description-1']");
+todo1Description.should("have.text", "Understand how to use TWD...");
+```
+
+## Test 2: Creating a Todo
+
+Now let's test creating a new todo! This involves:
+1. Mocking the POST request
+2. Filling out the form
+3. Submitting it
+4. Verifying it was created
+
+```ts
+it("should create a todo", async () => {
+  // Step 1: Mock the initial empty list
+  await twd.mockRequest("getTodoList", {
+    method: "GET",
+    url: "/api/todos",
+    response: [],
+    status: 200,
+  });
+  
+  await twd.visit("/todos");
+  await twd.waitForRequest("getTodoList");
+  
+  // Step 2: Verify empty state
+  const noTodosMessage = await twd.get("[data-testid='no-todos-message']");
+  noTodosMessage.should("be.visible");
+  
+  // Step 3: Mock the POST request (creation)
+  await twd.mockRequest("createTodo", {
+    method: "POST",
+    url: "/api/todos",
+    response: todoListMock[0],
+    status: 200,
+  });
+  
+  // Step 4: Mock the updated list (after creation)
+  await twd.mockRequest("getTodoList", {
+    method: "GET",
+    url: "/api/todos",
+    response: [todoListMock[0]],
+    status: 200,
+  });
+  
+  // Step 5: Fill out the form
+  const title = await twd.get("input[name='title']");
+  await userEvent.type(title.el, "Test Todo");
+  
+  const description = await twd.get("input[name='description']");
+  await userEvent.type(description.el, "Test Description");
+  
+  const date = await twd.get("input[name='date']");
+  await userEvent.type(date.el, "2024-12-20");
+  
+  // Step 6: Submit the form
+  const submitButton = await twd.get("button[type='submit']");
+  await userEvent.click(submitButton.el);
+  
+  // Step 7: Wait for requests and verify
+  await twd.waitForRequest("getTodoList");
+  const rule = await twd.waitForRequest("createTodo");
+  
+  // Verify the request body
+  expect(rule.request).to.deep.equal({
+    title: "Test Todo",
+    description: "Test Description",
+    date: "2024-12-20",
+  });
+  
+  // Verify the todo appears in the list
+  const todoList = await twd.getAll("[data-testid='todo-item']");
+  expect(todoList).to.have.length(1);
+});
+```
+
+### Typing in Form Fields
+
+Notice how we use `userEvent.type()` to fill out form fields:
+
+```ts
+const title = await twd.get("input[name='title']");
+await userEvent.type(title.el, "Test Todo");
+```
+
+**What this does:**
+- Finds the input field by its `name` attribute
+- Types the text character by character (like a real user!)
+- Triggers all the same events (onChange, onInput, etc.)
+
+**Important:** We use `.el` to access the underlying DOM element that `userEvent` needs.
+
+### Verifying the Request
+
+After submitting, we can verify what data was sent:
+
+```ts
+const rule = await twd.waitForRequest("createTodo");
+expect(rule.request).to.deep.equal({
+  title: "Test Todo",
+  description: "Test Description",
+  date: "2024-12-20",
+});
+```
+
+**What `rule.request` contains:**
+- The request body that was sent to the API
+- Perfect for verifying the form data is correct!
+
+## Test 3: Deleting a Todo
+
+Let's test deleting a todo:
+
+```ts
+it("should delete a todo", async () => {
+  // Step 1: Mock the DELETE request
+  await twd.mockRequest("deleteTodo", {
+    method: "DELETE",
+    url: "/api/todos/1",
+    response: null,
+    status: 200,
+  });
+  
+  // Step 2: Mock the initial list (with the todo we'll delete)
+  await twd.mockRequest("getTodoList", {
+    method: "GET",
+    url: "/api/todos",
+    response: todoListMock,
+    status: 200,
+  });
+  
+  await twd.visit("/todos");
+  
+  // Step 3: Find the delete button
+  const deleteButton = await twd.get("[data-testid='delete-todo-1']");
+  
+  // Step 4: Mock the updated list (after deletion)
+  await twd.mockRequest("getTodoList", {
+    method: "GET",
+    url: "/api/todos",
+    response: todoListMock.filter((todo) => todo.id !== "1"),
+    status: 200,
+  });
+  
+  // Step 5: Click delete
+  await userEvent.click(deleteButton.el);
+  
+  // Step 6: Wait for both requests
+  await twd.waitForRequest("deleteTodo");
+  await twd.waitForRequest("getTodoList");
+  
+  // Step 7: Verify the todo was removed
+  const todoList = await twd.getAll("[data-testid='todo-item']");
+  expect(todoList).to.have.length(1);
+});
+```
+
+**Key points:**
+- We mock the DELETE request with the specific todo ID
+- After deletion, we mock the updated list (without the deleted todo)
+- We wait for both the DELETE and the subsequent GET request
+- We verify the list now has one less item
+
+## The "Rules Triggered" Button
+
+When you're running tests with mocks, look at the TWD sidebar - you'll see a **"Rules Triggered"** button! 
+
+**What it shows:**
+- All the mock requests that have been triggered during your test
+- The request details (method, URL, body)
+- The response that was returned
+
+**How to use it:**
+1. Run a test that uses mocks
+2. Click the "Rules Triggered" button in the sidebar
+3. See all the API calls that were intercepted
+4. Perfect for debugging - verify your mocks are working!
+
+This is especially useful when:
+- A mock isn't being triggered (check if it appears in the list)
+- You want to see what data was sent in a request
+- You're debugging why a test is failing
+
+## Complete Example
+
+Here's the complete test file with all three tests:
+
+```ts
+// src/twd-tests/todoList.twd.test.ts
+import { twd, expect, userEvent } from "../../../../src";
+import { describe, it, beforeEach } from "../../../../src/runner";
+import todoListMock from "./mocks/todoList.json";
+
+describe("Todo List Page", () => {
+  beforeEach(() => {
     twd.clearRequestMockRules();
   });
-
-  it('should display products list', async () => {
-    await twd.mockRequest('getProducts', {
-      method: 'GET',
-      url: '/api/products',
-      response: {
-        products: [
-          { id: 1, name: 'Laptop', price: 999 },
-          { id: 2, name: 'Phone', price: 599 }
-        ],
-        total: 2
-      }
+  
+  it("should display the todo list", async () => {
+    await twd.mockRequest("getTodoList", {
+      method: "GET",
+      url: "/api/todos",
+      response: todoListMock,
+      status: 200,
     });
-
-    twd.visit('/products');
-    await twd.waitForRequest('getProducts');
-
-    const productList = await twd.getAll('[data-testid="product-item"]');
-    expect(productList).to.have.length(2);
-
-    productList[0].should('contain.text', 'Laptop');
-    productList[1].should('contain.text', 'Phone');
-  });
-});
-```
-
-### Error Scenarios
-
-```ts
-describe('API Error Handling', () => {
-  beforeEach(async () => {
-    await twd.initRequestMocking();
-    twd.clearRequestMockRules();
+    await twd.visit("/todos");
+    await twd.waitForRequest("getTodoList");
+    const todoList = await twd.getAll("[data-testid='todo-item']");
+    expect(todoList).to.have.length(2);
+    // ... more assertions
   });
 
-  it('should show error message when API fails', async () => {
-    await twd.mockRequest('getProductsError', {
-      method: 'GET',
-      url: '/api/products',
-      response: { error: 'Failed to load products' },
-      status: 500
+  it("should delete a todo", async () => {
+    await twd.mockRequest("deleteTodo", {
+      method: "DELETE",
+      url: "/api/todos/1",
+      response: null,
+      status: 200,
     });
-
-    twd.visit('/products');
-    await twd.waitForRequest('getProductsError');
-
-    const errorMessage = await twd.get('[data-testid="error-message"]');
-    errorMessage.should('be.visible');
-    errorMessage.should('contain.text', 'Failed to load products');
+    await twd.mockRequest("getTodoList", {
+      method: "GET",
+      url: "/api/todos",
+      response: todoListMock,
+      status: 200,
+    });
+    await twd.visit("/todos");
+    const deleteButton = await twd.get("[data-testid='delete-todo-1']");
+    await twd.mockRequest("getTodoList", {
+      method: "GET",
+      url: "/api/todos",
+      response: todoListMock.filter((todo) => todo.id !== "1"),
+      status: 200,
+    });
+    await userEvent.click(deleteButton.el);
+    await twd.waitForRequest("deleteTodo");
+    await twd.waitForRequest("getTodoList");
+    const todoList = await twd.getAll("[data-testid='todo-item']");
+    expect(todoList).to.have.length(1);
   });
 
-  it('should handle network timeout', async () => {
-    await twd.mockRequest('timeoutError', {
-      method: 'GET',
-      url: '/api/slow-endpoint',
-      response: { error: 'Request timeout' },
-      status: 408
+  it("should create a todo", async () => {
+    await twd.mockRequest("createTodo", {
+      method: "POST",
+      url: "/api/todos",
+      response: todoListMock[0],
+      status: 200,
     });
-
-    twd.visit('/slow-page');
-    await twd.waitForRequest('timeoutError');
-
-    const timeoutMessage = await twd.get('[data-testid="timeout-message"]');
-    timeoutMessage.should('contain.text', 'Request timed out');
-  });
-});
-```
-
-### Loading States
-
-```ts
-describe('Loading States', () => {
-  beforeEach(async () => {
-    await twd.initRequestMocking();
-    twd.clearRequestMockRules();
-  });
-
-  it('should show loading spinner during API call', async () => {
-    await twd.mockRequest('slowRequest', {
-      method: 'GET',
-      url: '/api/data',
-      response: { data: 'loaded' }
+    await twd.mockRequest("getTodoList", {
+      method: "GET",
+      url: "/api/todos",
+      response: [],
+      status: 200,
     });
-
-    twd.visit('/data-page');
-
-    // Check loading state appears
-    const loadingSpinner = await twd.get('[data-testid="loading-spinner"]');
-    loadingSpinner.should('be.visible');
-
-    // Wait for request to complete
-    await twd.waitForRequest('slowRequest');
-
-    // Check loading state disappears
-    loadingSpinner.should('not.be.visible');
-
-    // Check data appears
-    const dataContent = await twd.get('[data-testid="data-content"]');
-    dataContent.should('be.visible');
-  });
-});
-```
-
-## Form Submission Testing
-
-### POST Request with Form Data
-
-```ts
-describe('Form Submission', () => {
-  beforeEach(async () => {
-    await twd.initRequestMocking();
-    twd.clearRequestMockRules();
-  });
-
-  it('should submit contact form', async () => {
-    await twd.mockRequest('submitContact', {
-      method: 'POST',
-      url: '/api/contact',
-      response: { success: true, message: 'Thank you for your message!' }
+    await twd.visit("/todos");
+    await twd.waitForRequest("getTodoList");
+    await twd.mockRequest("getTodoList", {
+      method: "GET",
+      url: "/api/todos",
+      response: [todoListMock[0]],
+      status: 200,
     });
-
-    twd.visit('/contact');
-
-    // Fill out form
-    const nameInput = await twd.get('input[name="name"]');
-    const emailInput = await twd.get('input[name="email"]');
-    const messageInput = await twd.get('textarea[name="message"]');
-    const submitButton = await twd.get('button[type="submit"]');
-
-    const user = userEvent.setup();
-    await user.type(nameInput.el, 'John Doe');
-    await user.type(emailInput.el, 'john@example.com');
-    await user.type(messageInput.el, 'Hello, this is a test message.');
-    await user.click(submitButton.el);
-
-    // Wait for submission
-    const rule = await twd.waitForRequest('submitContact');
-
-    // Verify request body
-    const requestBody = JSON.parse(rule.request as string);
-    expect(requestBody).to.deep.equal({
-      name: 'John Doe',
-      email: 'john@example.com',
-      message: 'Hello, this is a test message.'
+    const noTodosMessage = await twd.get("[data-testid='no-todos-message']");
+    noTodosMessage.should("be.visible");
+    const title = await twd.get("input[name='title']");
+    await userEvent.type(title.el, "Test Todo");
+    const description = await twd.get("input[name='description']");
+    await userEvent.type(description.el, "Test Description");
+    const date = await twd.get("input[name='date']");
+    await userEvent.type(date.el, "2024-12-20");
+    const submitButton = await twd.get("button[type='submit']");
+    await userEvent.click(submitButton.el);
+    await twd.waitForRequest("getTodoList");
+    const rule = await twd.waitForRequest("createTodo");
+    expect(rule.request).to.deep.equal({
+      title: "Test Todo",
+      description: "Test Description",
+      date: "2024-12-20",
     });
-
-    // Verify success message
-    const successMessage = await twd.get('[data-testid="success-message"]');
-    successMessage.should('contain.text', 'Thank you for your message!');
-  });
-});
-```
-
-## Advanced Mocking Patterns
-
-### Dynamic Responses
-
-```ts
-describe('Dynamic API Responses', () => {
-  it('should handle different user roles', async () => {
-    // Mock for admin user
-    await twd.mockRequest('getAdminUser', {
-      method: 'GET',
-      url: '/api/user',
-      response: {
-        id: 1,
-        name: 'Admin User',
-        role: 'admin',
-        permissions: ['read', 'write', 'delete']
-      }
-    });
-
-    twd.visit('/dashboard');
-    await twd.waitForRequest('getAdminUser');
-
-    // Admin should see admin panel
-    const adminPanel = await twd.get('[data-testid="admin-panel"]');
-    adminPanel.should('be.visible');
-
-    // Clear and mock regular user
-    twd.clearRequestMockRules();
-    
-    await twd.mockRequest('getRegularUser', {
-      method: 'GET',
-      url: '/api/user',
-      response: {
-        id: 2,
-        name: 'Regular User',
-        role: 'user',
-        permissions: ['read']
-      }
-    });
-
-    twd.visit('/dashboard');
-    await twd.waitForRequest('getRegularUser');
-
-    // Regular user should not see admin panel
-    const adminPanelHidden = await twd.get('[data-testid="admin-panel"]').catch(() => null);
-    expect(adminPanelHidden).to.be.null;
-  });
-});
-```
-
-### Pagination Testing
-
-```ts
-describe('Pagination', () => {
-  beforeEach(async () => {
-    await twd.initRequestMocking();
-    twd.clearRequestMockRules();
-  });
-
-  it('should handle paginated results', async () => {
-    // Mock first page
-    await twd.mockRequest('getPage1', {
-      method: 'GET',
-      url: /\/api\/posts\?page=1/,
-      response: {
-        posts: [
-          { id: 1, title: 'Post 1' },
-          { id: 2, title: 'Post 2' }
-        ],
-        pagination: {
-          current: 1,
-          total: 3,
-          hasNext: true
-        }
-      }
-    });
-
-    // Mock second page
-    await twd.mockRequest('getPage2', {
-      method: 'GET',
-      url: /\/api\/posts\?page=2/,
-      response: {
-        posts: [
-          { id: 3, title: 'Post 3' },
-          { id: 4, title: 'Post 4' }
-        ],
-        pagination: {
-          current: 2,
-          total: 3,
-          hasNext: true
-        }
-      }
-    });
-
-    twd.visit('/posts');
-    await twd.waitForRequest('getPage1');
-
-    // Verify first page loaded
-    const posts = await twd.getAll('[data-testid="post-item"]');
-    expect(posts).to.have.length(2);
-
-    // Click next page
-    const nextButton = await twd.get('[data-testid="next-page"]');
-    const user = userEvent.setup();
-    await user.click(nextButton.el);
-
-    await twd.waitForRequest('getPage2');
-
-    // Verify second page loaded
-    const newPosts = await twd.getAll('[data-testid="post-item"]');
-    expect(newPosts).to.have.length(2);
-    newPosts[0].should('contain.text', 'Post 3');
+    const todoList = await twd.getAll("[data-testid='todo-item']");
+    expect(todoList).to.have.length(1);
   });
 });
 ```
 
 ## Best Practices
 
-### 1. Clean Up Mocks
+### 1. Always Use `beforeEach` to Clear Mocks
 
 ```ts
-describe('API Tests', () => {
-  beforeEach(async () => {
-    await twd.initRequestMocking();
-    twd.clearRequestMockRules(); // Always clear before each test
-  });
-
-  // Tests here
-});
-```
-
-### 2. Use Realistic Data
-
-```ts
-// ✅ Good - Realistic user data
-await twd.mockRequest('getUser', {
-  method: 'GET',
-  url: '/api/user/123',
-  response: {
-    id: 123,
-    name: 'John Doe',
-    email: 'john.doe@example.com',
-    avatar: 'https://example.com/avatars/john.jpg',
-    createdAt: '2024-01-15T10:30:00Z',
-    preferences: {
-      theme: 'dark',
-      notifications: true
-    }
-  }
-});
-
-// ❌ Bad - Too minimal
-await twd.mockRequest('getUser', {
-  method: 'GET',
-  url: '/api/user/123',
-  response: { name: 'test' }
-});
-```
-
-### 3. Test Both Success and Error Cases
-
-```ts
-describe('User Profile', () => {
-  it('should load user data successfully', async () => {
-    // Test success case
-  });
-
-  it('should handle user not found error', async () => {
-    // Test 404 error
-  });
-
-  it('should handle server error', async () => {
-    // Test 500 error
+describe("My Tests", () => {
+  beforeEach(() => {
+    twd.clearRequestMockRules(); // Clean slate for each test
   });
 });
 ```
 
-### 4. Use Descriptive Aliases
+### 2. Mock Before Navigating
+
+```ts
+// ✅ Good - Mock first, then navigate
+await twd.mockRequest("getTodos", { ... });
+await twd.visit("/todos");
+
+// ❌ Bad - Navigate first, mock might be too late
+await twd.visit("/todos");
+await twd.mockRequest("getTodos", { ... });
+```
+
+### 3. Always Wait for Requests
+
+```ts
+// ✅ Good - Wait for the request
+await twd.visit("/todos");
+await twd.waitForRequest("getTodos");
+// Now verify the UI
+
+// ❌ Bad - Don't assume it's done
+await twd.visit("/todos");
+// UI might not be updated yet!
+```
+
+### 4. Use Descriptive Mock Aliases
 
 ```ts
 // ✅ Good - Clear purpose
-await twd.mockRequest('getUserProfile', { /* ... */ });
-await twd.mockRequest('updateUserEmail', { /* ... */ });
+await twd.mockRequest("getTodoList", { ... });
+await twd.mockRequest("createTodo", { ... });
 
-// ❌ Bad - Unclear purpose
-await twd.mockRequest('api1', { /* ... */ });
-await twd.mockRequest('request2', { /* ... */ });
+// ❌ Bad - Unclear
+await twd.mockRequest("api1", { ... });
+await twd.mockRequest("req2", { ... });
 ```
 
-## Troubleshooting
-
-### Mock Not Triggered
+### 5. Don't Mock Your App Routes
 
 ```ts
-// Check active mocks
-console.log('Active mocks:', twd.getRequestMockRules());
+// ✅ Good - Mock API endpoints
+await twd.mockRequest("getTodos", {
+  url: "/api/todos",  // API endpoint
+  ...
+});
 
-// Verify URL pattern matches
-await twd.mockRequest('test', {
-  method: 'GET',
-  url: '/api/exact-url', // Make sure this matches exactly
-  response: { data: 'test' }
+// ❌ Bad - Don't mock app routes
+await twd.mockRequest("getTodos", {
+  url: "/todos",  // This is your app route!
+  ...
 });
 ```
 
-### Service Worker Issues
+## Common Issues
+
+### Mock Not Triggered
+
+**Problem:** The mock isn't being called.
+
+**Solutions:**
+1. Check the URL matches exactly (including leading `/`)
+2. Verify the HTTP method matches
+3. Use the "Rules Triggered" button to see what's being called
+4. Make sure you're mocking before navigating
+
+### Request Happens Before Mock
+
+**Problem:** The API call happens before the mock is set up.
+
+**Solution:** Always set up mocks **before** navigating:
 
 ```ts
-// Ensure service worker is initialized
-try {
-  await twd.initRequestMocking();
-  console.log('Service worker initialized');
-} catch (error) {
-  console.error('Service worker failed:', error);
-}
+// ✅ Correct order
+await twd.mockRequest("getTodos", { ... });
+await twd.visit("/todos");
+
+// ❌ Wrong order
+await twd.visit("/todos");
+await twd.mockRequest("getTodos", { ... }); // Too late!
 ```
 
-## Next Steps
+### Test Fails Because Data Not Loaded
 
-Great! You now know how to mock APIs for comprehensive testing. Let's learn about test hooks to organize and manage your tests better.
+**Problem:** You're checking for elements before the API call completes.
 
-👉 [Test Hooks](./test-hooks)
+**Solution:** Always wait for the request:
+
+```ts
+await twd.visit("/todos");
+await twd.waitForRequest("getTodos"); // Wait for data to load
+// Now it's safe to check the UI
+const todos = await twd.getAll("[data-testid='todo-item']");
+```
+
+## What's Next?
+
+Excellent! You now know how to:
+- ✅ Mock API requests
+- ✅ Wait for requests to complete
+- ✅ Test form submissions
+- ✅ Test deletions
+- ✅ Use `beforeEach` for cleanup
+- ✅ Use the "Rules Triggered" button for debugging
+
+Next, let's learn about **CI Integration** - running these tests automatically in your CI/CD pipeline!
+
+👉 [CI Integration](./ci-integration)

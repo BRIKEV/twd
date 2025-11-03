@@ -1,155 +1,107 @@
 # Installation
 
-Set up TWD in your React project and get ready to start testing.
+Let's set up TWD in your React project and see the sidebar appear in your browser!
 
-## Quick Start
+## Step 1: Install TWD
 
-### 1. Install TWD
+First, we'll install the TWD library in your project:
 
 ```bash
 npm install twd-js
-# or
-yarn add twd-js
 ```
 
-### 2. Install Mock Service Worker
+That's it! TWD is now installed in your project.
+
+## Step 2: Set Up Mock Service Worker
+
+For API mocking capabilities (which we'll use later), we need to initialize the mock service worker:
 
 ```bash
 npx twd-mock init public
 ```
 
-This copies the mock service worker file to your `public` directory.
+This command copies the `mock-sw.js` file to your `public` directory, which enables TWD to intercept and mock HTTP requests during testing.
 
-### 3. Add TWD Sidebar to Your App
+## Step 3: Initialize TWD in Your App
+
+Now, let's add the TWD sidebar to your application. Open your main entry file (usually `src/main.tsx` or `src/App.tsx`) and add the initialization code:
 
 ```tsx
-// src/main.tsx or src/App.tsx
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import { TWDSidebar } from 'twd-js';
-import App from './App';
+// src/main.tsx
+import { StrictMode } from 'react'
+import { createRoot } from 'react-dom/client'
+import './index.css'
+import { RouterProvider } from "react-router";
+import router from './AppRoutes';
 
-ReactDOM.createRoot(document.getElementById('root')!).render(
-  <React.StrictMode>
-    <App />
-    {/* Add TWD Sidebar - only shows in development */}
-    <TWDSidebar />
-  </React.StrictMode>
-);
+if (import.meta.env.DEV) {
+  // Import TWD test initialization
+  const testModules = import.meta.glob("./**/*.twd.test.ts");
+  const { initTests, twd, TWDSidebar } = await import('twd-js');
+  
+  // Initialize tests with the sidebar
+  initTests(
+    testModules, 
+    <TWDSidebar open={true} position="left" />, 
+    createRoot
+  );
+  
+  // Initialize request mocking for API testing
+  twd.initRequestMocking()
+    .then(() => {
+      console.log("Request mocking initialized");
+    })
+    .catch((err) => {
+      console.error("Error initializing request mocking:", err);
+    });
+}
+
+createRoot(document.getElementById('root')!).render(
+  <StrictMode>
+    <RouterProvider router={router} />
+  </StrictMode>,
+)
 ```
 
-### 4. Create Your First Test File
+## Step 4: Create Your First Test File
+
+Let's create a test file to see TWD in action. Create a file with the `.twd.test.ts` extension:
 
 ```ts
-// src/tests/app.twd.test.ts
-import { describe, it, twd } from 'twd-js';
+// src/twd-tests/helloWorld.twd.test.ts
+import { twd } from "../../../../src";
+import { describe, it } from "../../../../src/runner";
 
-describe('App', () => {
-  it('should render welcome message', async () => {
-    twd.visit('/');
-    
-    const heading = await twd.get('h1');
-    heading.should('be.visible');
+describe("Hello World Page", () => {
+  it("should display the welcome title", async () => {
+    await twd.visit("/");
+    // We'll add more to this test in the next section!
   });
 });
 ```
 
-### 5. Start Your Development Server
+## Step 5: Start Your Development Server
+
+Now, start your development server:
 
 ```bash
 npm run dev
-# or
-yarn dev
 ```
 
-You should now see the TWD sidebar in your browser! 🎉
+## See the Magic! ✨
 
-## Detailed Setup
+Once your server starts and you open your browser, you'll see the **TWD sidebar appear on the left side** of your screen! 
 
-### Project Structure
+The sidebar shows:
+- 📋 **All your test files** organized by test suites
+- ▶️ **Play buttons** to run individual tests or entire test suites
+- ✅ **Test results** with pass/fail indicators
+- 📊 **Mock rules** button to see which API calls are being mocked
 
-After installation, your project should look like this:
+The sidebar only appears in development mode - it won't show up in production builds, so there's no performance impact!
 
-```
-my-app/
-├── public/
-│   ├── mock-sw.js          # Mock service worker (added by TWD)
-│   └── ...
-├── src/
-│   ├── tests/              # Your test files (create this)
-│   │   └── *.twd.test.ts
-│   ├── App.tsx
-│   └── main.tsx            # TWDSidebar added here
-├── package.json
-└── ...
-```
+## What's Next?
 
-### Configuration Options
+Now that TWD is installed and you can see the sidebar, let's write your first complete test using selectors, assertions, and navigation!
 
-#### TWDSidebar Props
-
-```tsx
-<TWDSidebar 
-  open={true}           // Start with sidebar open (default: true)
-  position="left"       // Sidebar position: "left" | "right" (default: "left")
-/>
-```
-
-#### Environment Detection
-
-TWD automatically detects development vs production:
-
-- **Development**: Sidebar is visible and functional
-- **Production**: Sidebar is hidden (no bundle impact)
-
-### Vite Configuration (Optional)
-
-For production builds, add the TWD plugin to remove mock files:
-
-```ts
-// vite.config.ts
-import { defineConfig } from 'vite';
-import react from '@vitejs/plugin-react';
-import { removeMockServiceWorker } from 'twd-js';
-
-export default defineConfig({
-  plugins: [
-    react(),
-    removeMockServiceWorker() // Removes mock-sw.js from build
-  ]
-});
-```
-
-## Troubleshooting
-
-### Common Issues
-
-#### Sidebar Not Showing
-
-1. **Check console for errors** - Look for JavaScript errors
-2. **Verify TWDSidebar import** - Make sure it's imported correctly
-3. **Check development mode** - Sidebar only shows in development
-
-#### Mock Service Worker Issues
-
-1. **File not found** - Run `npx twd-mock init public` again
-2. **HTTPS issues** - Service workers require HTTPS in production
-3. **Browser support** - Ensure your browser supports service workers
-
-#### Test Files Not Loading
-
-1. **File naming** - Use `*.twd.test.ts` or `*.twd.test.js`
-2. **File location** - Place files in `src/` directory or subdirectories
-3. **Import errors** - Check your import statements
-
-### Getting Help
-
-- 📖 [API Reference](/api/) for detailed documentation
-- 🐛 [Report issues](https://github.com/BRIKEV/twd/issues)
-- 💬 [Ask questions](https://github.com/BRIKEV/twd/discussions)
-
-## Next Steps
-
-Now that TWD is installed, let's write your first test! 
-
-👉 [First Test](./first-test)
+👉 [First Test - Selectors & Assertions](./first-test)

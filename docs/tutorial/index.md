@@ -10,11 +10,9 @@ Follow this recommended learning path to master TWD:
 |------|-------|-------------|
 | 1 | [Installation](./installation) | Set up TWD in your project |
 | 2 | [First Test](./first-test) | Write and run your first test |
-| 3 | [Assertions & Navigation](./assertions-navigation) | Learn assertions, URL testing, and multiple elements |
-| 4 | [API Mocking](./api-mocking) | Mock HTTP requests and responses |
-| 5 | [Test Hooks](./test-hooks) | Use beforeEach, afterEach, it.only, it.skip |
-| 6 | [Production Builds](./production-builds) | Remove test code from production bundles |
-| 7 | [CI Integration](./ci-integration) | Run tests in continuous integration |
+| 3 | [API Mocking](./api-mocking) | Mock HTTP requests and responses |
+| 4 | [Production Builds](./production-builds) | Remove test code from production bundles |
+| 5 | [CI Integration](./ci-integration) | Run tests in continuous integration |
 
 ## What You'll Learn
 
@@ -23,7 +21,6 @@ By the end of this tutorial, you'll be able to:
 - Set up TWD in any React project
 - Write comprehensive UI tests with assertions
 - Mock API calls for isolated testing
-- Organize tests with hooks and test management
 - Build production-ready applications without test code
 - Integrate TWD tests into your CI/CD pipeline
 
