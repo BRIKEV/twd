@@ -23,12 +23,12 @@ const AppRoutes = createBrowserRouter([
     Component: ContactsPage,
     children: [
       {
-        path: "contacts/:contactId",
+        path: ":contactId",
         action: contactDetailActions,
         Component: ContactDetail,
       },
       {
-        path: "contacts/new",
+        path: "new",
         action: newContactAction,
         Component: ContactForm,
       },

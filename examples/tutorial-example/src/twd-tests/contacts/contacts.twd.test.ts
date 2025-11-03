@@ -14,7 +14,7 @@ describe("Contacts Page", () => {
       response: list,
       status: 200,
     });
-    await twd.visit("/", true);
+    await twd.visit("/contacts", true);
     await twd.waitForRequest("getContacts");
     const contacts = await twd.getAll("[data-testid='contact-link']");
     expect(contacts).to.have.length(list.length);

@@ -68,6 +68,6 @@ describe("Contacts detail page", () => {
     await userEvent.click(deleteBtn.el);
     await twd.waitForRequest("deleteContact");
     await twd.waitForRequest("getContacts");
-    twd.url().should("not.contain.url", "/contacts");
+    twd.url().should("not.contain.url", `/contacts/${contacts[0].id}`);
   });
 });
