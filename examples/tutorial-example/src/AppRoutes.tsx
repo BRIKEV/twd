@@ -6,6 +6,9 @@ import ContactsSkeletonPage from "./Layouts/HomeSkeleton";
 import ContactDetail from "./pages/contacts/ContactDetail";
 import { contactDetailActions, newContactAction } from "./pages/contacts/actions";
 import Helloworld from "./pages/Helloworld/Helloworld";
+import TodoList from "./pages/TodoList/TodoList";
+import { loadTodos } from "./pages/TodoList/loader";
+import { todoActions } from "./pages/TodoList/action";
 
 const AppRoutes = createBrowserRouter([
   {
@@ -30,6 +33,12 @@ const AppRoutes = createBrowserRouter([
         Component: ContactForm,
       },
     ],
+  },
+  {
+    path: "/todos",
+    loader: loadTodos,
+    action: todoActions,
+    Component: TodoList,
   },
   {
     path: "/about",
