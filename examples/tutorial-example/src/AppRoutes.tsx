@@ -1,14 +1,19 @@
 import { createBrowserRouter } from "react-router";
-import ContactsPage from "./pages/Contacts";
-import ContactForm from "./pages/ContactForm";
-import { loadContacts } from "./pages/loader";
+import ContactsPage from "./pages/contacts/Contacts";
+import ContactForm from "./pages/contacts/ContactForm";
+import { loadContacts } from "./pages/contacts/loader";
 import ContactsSkeletonPage from "./Layouts/HomeSkeleton";
-import ContactDetail from "./pages/ContactDetail";
-import { contactDetailActions, newContactAction } from "./pages/actions";
+import ContactDetail from "./pages/contacts/ContactDetail";
+import { contactDetailActions, newContactAction } from "./pages/contacts/actions";
+import Helloworld from "./pages/Helloworld/Helloworld";
 
 const AppRoutes = createBrowserRouter([
   {
     path: "/",
+    Component: Helloworld,
+  },
+  {
+    path: "/contacts",
     loader: loadContacts,
     id: "root",
     HydrateFallback: ContactsSkeletonPage,
