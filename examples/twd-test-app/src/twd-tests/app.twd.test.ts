@@ -50,11 +50,11 @@ describe("App interactions", () => {
         value: "Mocked joke!",
       },
     });
-    let btn = await twd.get("button[data-twd='joke-button']");
-    userEvent.click(btn.el);
+    const btn = await twd.get("button[data-twd='joke-button']");
+    await userEvent.click(btn.el);
     // Wait for the mock fetch to fire
     await twd.waitForRequest("joke");
-    let jokeText = await twd.get("p[data-twd='joke-text']");
+    const jokeText = await twd.get("p[data-twd='joke-text']");
     // console.log(`Joke text: ${jokeText.el.textContent}`);
     jokeText.should("have.text", "Mocked joke!");
     // overwrite mid-test
@@ -65,12 +65,11 @@ describe("App interactions", () => {
         value: "Mocked second joke!",
       },
     });
-    btn = await twd.get("button[data-twd='joke-button']");
-    userEvent.click(btn.el);
+    await userEvent.click(btn.el);
     await twd.waitForRequest("joke");
-    jokeText = await twd.get("p[data-twd='joke-text']");
-    expect(jokeText.el.textContent).to.equal("Mocked second joke!");
-    jokeText.should("have.text", "Mocked second joke!");
+    const jokeText2 = await twd.get("p[data-twd='joke-text']");
+    expect(jokeText2.el.textContent).to.equal("Mocked second joke!");
+    jokeText2.should("have.text", "Mocked second joke!");
     // console.log(`Joke text: ${jokeText.el.textContent}`);
     // jokeText.should('be.disabled');
   });
