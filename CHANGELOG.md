@@ -1,3 +1,12 @@
+## 1.0.0 (2025-11-10)
+
+* chore(deps-dev): bump vite from 7.1.4 to 7.2.2 in /examples/twd-test-app (#78) ([87a50af](https://github.com/BRIKEV/twd/commit/87a50af)), closes [#78](https://github.com/BRIKEV/twd/issues/78)
+* Docs/improve framework docs (#79) ([2b01606](https://github.com/BRIKEV/twd/commit/2b01606)), closes [#79](https://github.com/BRIKEV/twd/issues/79)
+* Feat/add better tutorials (#77) ([b790749](https://github.com/BRIKEV/twd/commit/b790749)), closes [#77](https://github.com/BRIKEV/twd/issues/77)
+* docs: improve docs by adding logo ([9e7225f](https://github.com/BRIKEV/twd/commit/9e7225f))
+* docs: update favicon and web app manifest files ([ce189c9](https://github.com/BRIKEV/twd/commit/ce189c9))
+
+
 ## 0.8.0 (2025-11-01)
 
 * Docs/ci example (#71) ([17983ab](https://github.com/BRIKEV/twd/commit/17983ab)), closes [#71](https://github.com/BRIKEV/twd/issues/71)

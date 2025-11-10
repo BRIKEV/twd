@@ -35,7 +35,7 @@
     "tailwind-merge": "^3.2.0",
     "tailwindcss": "^4.1.4",
     "tw-animate-css": "^1.2.5",
-    "twd-js": "^0.8.0",
+    "twd-js": "^1.0.0",
     "zustand": "^5.0.3"
   },
   "devDependencies": {
