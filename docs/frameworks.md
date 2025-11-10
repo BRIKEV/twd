@@ -69,11 +69,68 @@ if (process.env.NODE_ENV === "development") {
 
 ## Astro
 
-::: warning TODO
-Astro integration guide is coming soon. If you're using Astro with React components, you can adapt the Vite setup, but full Astro support is still in development.
+TWD works with Astro when using React components. Create a React component to initialize the test sidebar:
 
-If you'd like to contribute or share your Astro setup, please [open an issue](https://github.com/BRIKEV/twd/issues) or [start a discussion](https://github.com/BRIKEV/twd/discussions).
-:::
+```tsx
+// src/components/TestSidebar.tsx
+import { useEffect } from 'react';
+import { createRoot } from 'react-dom/client';
+
+export default function TestSidebar() {
+  useEffect(() => {
+    if (import.meta.env.DEV) {
+      const initializeTests = async () => {
+        const testModules = import.meta.glob("../**/*.twd.test.ts");
+        const { initTests, twd, TWDSidebar } = await import('twd-js');
+        initTests(testModules, <TWDSidebar open={true} position="left" />, createRoot);
+        
+        twd.initRequestMocking()
+          .then(() => console.log("Request mocking initialized"))
+          .catch((err) => console.error("Error initializing request mocking:", err));
+      };
+      initializeTests();
+    }
+  }, []);
+
+  return <div id="test-sidebar-container"></div>;
+}
+```
+
+Configure Astro's Vite plugin to handle test file hot reload:
+
+```js
+// astro.config.mjs
+export default defineConfig({
+  integrations: [react()],
+  vite: {
+    plugins: [
+      {
+        name: "force-full-reload-on-tests",
+        handleHotUpdate({ file, server }) {
+          if (file.endsWith(".twd.test.ts")) {
+            server.ws.send({ type: "full-reload", path: "*" });
+            return [];
+          }
+        },
+      },
+    ],
+  },
+});
+```
+
+Include the component in your Astro pages:
+
+```astro
+---
+import TestSidebar from '../components/TestSidebar.tsx';
+const isDev = import.meta.env.DEV
+---
+
+<Layout>
+  <!-- your content -->
+  {isDev && <TestSidebar client:load />}
+</Layout>
+```
 
 ## Other Frameworks
 
