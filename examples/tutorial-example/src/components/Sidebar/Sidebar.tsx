@@ -24,7 +24,7 @@ export default function Sidebar({ contacts, pendingContactName }: { contacts: Co
   return (
     <>
       <Input placeholder="Search..." className="mb-2" value={search} onChange={handlesearchChange} />
-      <Button className="w-full" variant="secondary" asChild>
+      <Button className="w-full" variant="secondary" asChild data-testid="new-contact-button">
         <Link to="/contacts/new" viewTransition>
           New
         </Link>

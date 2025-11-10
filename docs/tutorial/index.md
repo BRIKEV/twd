@@ -8,24 +8,24 @@ Follow this recommended learning path to master TWD:
 
 | Step | Topic | Description |
 |------|-------|-------------|
+| 0 | [Introduction](./intro) | Welcome to TWD and what you'll learn |
 | 1 | [Installation](./installation) | Set up TWD in your project |
-| 2 | [First Test](./first-test) | Write and run your first test |
-| 3 | [Assertions & Navigation](./assertions-navigation) | Learn assertions, URL testing, and multiple elements |
-| 4 | [API Mocking](./api-mocking) | Mock HTTP requests and responses |
-| 5 | [Test Hooks](./test-hooks) | Use beforeEach, afterEach, it.only, it.skip |
+| 2 | [First Test](./first-test) | Write and run your first test with selectors and assertions |
+| 3 | [API Mocking](./api-mocking) | Mock HTTP requests and responses |
+| 4 | [CI Integration](./ci-integration) | Run tests in continuous integration |
+| 5 | [Code Coverage](./coverage) | Collect and visualize code coverage |
 | 6 | [Production Builds](./production-builds) | Remove test code from production bundles |
-| 7 | [CI Integration](./ci-integration) | Run tests in continuous integration |
 
 ## What You'll Learn
 
 By the end of this tutorial, you'll be able to:
 
 - Set up TWD in any React project
-- Write comprehensive UI tests with assertions
+- Write comprehensive UI tests with assertions and user interactions
 - Mock API calls for isolated testing
-- Organize tests with hooks and test management
+- Run tests automatically in CI/CD pipelines
+- Collect and report code coverage
 - Build production-ready applications without test code
-- Integrate TWD tests into your CI/CD pipeline
 
 ## Prerequisites
 
@@ -39,7 +39,8 @@ By the end of this tutorial, you'll be able to:
 If you get stuck during the tutorial:
 
 - 📖 Check the [API Reference](/api/) for detailed documentation
+- 📚 Review the [Writing Tests Guide](/writing-tests) for best practices
 - 🐛 [Report issues](https://github.com/BRIKEV/twd/issues) if you find bugs
 - 💬 [Join discussions](https://github.com/BRIKEV/twd/discussions) for questions
 
-Let's get started! 👉 [Installation](./installation)
+Let's get started! [Introduction](./intro)

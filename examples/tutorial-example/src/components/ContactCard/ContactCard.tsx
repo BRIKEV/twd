@@ -33,7 +33,7 @@ export default function ContactCard({ avatar, name, username, favorite, id }: Co
         <div className="flex gap-2">
           <deleteFetcher.Form method="DELETE">
             <input type="hidden" name="id" value={id} />
-            <Button type="submit" variant="destructive" disabled={disableDelete}>
+            <Button type="submit" variant="destructive" disabled={disableDelete} data-testid="delete-contact">
               {disableDelete ? "Deleting..." : "Delete"}
             </Button>
           </deleteFetcher.Form>
@@ -42,8 +42,8 @@ export default function ContactCard({ avatar, name, username, favorite, id }: Co
             <input type="hidden" name="favorite" value={String(!favorite)} />
             <Button type="submit" variant="ghost" disabled={optimisticToggleFav} data-testid="toggle-favorite">
                 {optimisticToggleFav
-                ? (!favorite ? <Star className="w-4 h-4" aria-label="Favorite" /> : <StarOff className="w-4 h-4" aria-label="Not Favorite" />)
-                : (favorite ? <Star className="w-4 h-4" aria-label="Favorite" /> : <StarOff className="w-4 h-4" aria-label="Not Favorite" />)
+                ? (!favorite ? <Star className="w-4 h-4" aria-label="Unmark as favorite" /> : <StarOff className="w-4 h-4" aria-label="Mark as favorite" />)
+                : (favorite ? <Star className="w-4 h-4" aria-label="Unmark as favorite" /> : <StarOff className="w-4 h-4" aria-label="Mark as favorite" />)
                 }
             </Button>
           </toggleFavFetcher.Form>

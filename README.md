@@ -6,8 +6,6 @@
 [![Maintainability](https://qlty.sh/gh/BRIKEV/projects/twd/maintainability.svg)](https://qlty.sh/gh/BRIKEV/projects/twd)
 [![Code Coverage](https://qlty.sh/gh/BRIKEV/projects/twd/coverage.svg)](https://qlty.sh/gh/BRIKEV/projects/twd)
 
-> ⚠️ This is a **beta release** – expect frequent updates and possible breaking changes.
-
 <p>
   <img src="./images/logo_full_sized.png" alt="TWD Logo" width="400">
 </p>
@@ -16,7 +14,7 @@ TWD (Testing Web Development) is a library designed to seamlessly integrate test
 
 Currently, TWD supports React, with plans to add more frameworks soon.
 
-**For complete documentation, tutorials, and examples, visit: [https://brikev.github.io/twd/](https://brikev.github.io/twd/)**
+**For complete and updated documentation, tutorials, and examples, visit: [https://brikev.github.io/twd/](https://brikev.github.io/twd/)**
 
 ## Table of Contents
 
@@ -111,7 +109,8 @@ pnpm add twd-js
 
    ```ts
    // src/app.twd.test.ts
-   import { describe, it, twd } from "twd-js";
+   import { twd } from "twd-js";
+   import { describe, it, beforeEach } from "twd-js/runner";
 
    beforeEach(() => {
      // Reset state before each test
@@ -119,9 +118,8 @@ pnpm add twd-js
 
    describe("App interactions", () => {
      it("clicks the button", async () => {
-       twd.visit("/");
+       await twd.visit("/");
        const btn = await twd.get("button");
-       btn.click();
        const message = await twd.get("#message");
        message.should("have.text", "Hello");
      });
@@ -188,23 +186,23 @@ pnpm add twd-js
 TWD uses a familiar testing structure with `describe`, `it`, `beforeEach`, and other common testing functions:
 
 ```ts
-import { describe, it, itSkip, itOnly, beforeEach, twd, userEvent } from "twd-js";
-
+import { twd, userEvent } from "twd-js";
+import { describe, it, beforeEach } from "twd-js/runner";
 
 describe("User authentication", () => {
   beforeEach(() => {
     // Reset state before each test
   });
   it("should login successfully", async () => {
-    twd.visit("/login");
+    await twd.visit("/login");
     // Your test logic here
   });
   
-  itSkip("skipped test", () => {
+  it.skip("skipped test", () => {
     // This test will be skipped
   });
   
-  itOnly("only this test runs", () => {
+  it.only("only this test runs", () => {
     // Only this test will run when .only is present
   });
 });
@@ -375,8 +373,8 @@ console.log("Response:", rule.response);
 |----------|-------------|---------|
 | `describe(name, fn)` | Groups related tests | `describe("User login", () => {...})` |
 | `it(name, fn)` | Defines a test case | `it("should login", async () => {...})` |
-| `itOnly(name, fn)` | Runs only this test | `itOnly("focused test", () => {...})` |
-| `itSkip(name, fn)` | Skips this test | `itSkip("broken test", () => {...})` |
+| `it.only(name, fn)` | Runs only this test | `it.only("focused test", () => {...})` |
+| `it.skip(name, fn)` | Skips this test | `it.skip("broken test", () => {...})` |
 | `beforeEach(fn)` | Runs before each test | `beforeEach(() => {...})` |
 
 ### TWD Commands
@@ -419,11 +417,12 @@ All assertions can be negated with `not.` prefix (e.g., `not.be.disabled`).
 ### Basic Form Testing
 
 ```ts
-import { describe, it, twd, userEvent } from "twd-js";
+import { twd, userEvent } from "twd-js";
+import { describe, it } from "twd-js/runner";
 
 describe("Contact form", () => {
   it("submits form data", async () => {
-    twd.visit("/contact");
+    await twd.visit("/contact");
     
     const user = userEvent.setup();
     const emailInput = await twd.get("input#email");
@@ -444,24 +443,25 @@ describe("Contact form", () => {
 ### API Mocking with Authentication
 
 ```ts
-import { describe, it, twd, userEvent } from "twd-js";
+import { twd, userEvent } from "twd-js";
+import { describe, it } from "twd-js/runner";
 
 describe("Protected routes", () => {
   it("redirects to login when unauthorized", async () => {
-    twd.visit("/dashboard");
+    await twd.visit("/dashboard");
     await twd.wait(100);
     twd.url().should("contain.url", "/login");
   });
   
   it("loads dashboard with valid session", async () => {
     // Mock authentication check
-    twd.mockRequest("authCheck", {
+    await twd.mockRequest("authCheck", {
       method: "GET", 
       url: "/api/auth/me",
       response: { id: 1, name: "John Doe" }
     });
     
-    twd.visit("/dashboard");
+    await twd.visit("/dashboard");
     await twd.waitForRequest("authCheck");
     
     const welcome = await twd.get("h1");

@@ -50,14 +50,16 @@ interface TWDAPI {
   /**
    * Simulates visiting a URL (SPA navigation).
    * @param url The URL to visit
+   * @param [reload] Whether to force a reload even if already on the URL (optional)
    *
    * @example
    * ```ts
    * twd.visit("/contact");
-   * 
+   * // visit with reload
+   * twd.visit("/contact", true);
    * ```
    */
-  visit: (url: string) => Promise<void>;
+  visit: (url: string, reload?: boolean) => Promise<void>;
   /**
    * Mock a network request.
    *

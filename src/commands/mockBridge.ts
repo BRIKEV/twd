@@ -8,7 +8,7 @@ export type Rule = {
   response: unknown;
   alias: string;
   executed?: boolean;
-  request?: unknown;
+  request?: any;
   status?: number;
   responseHeaders?: Record<string, string>;
   urlRegex?: boolean;
@@ -55,6 +55,7 @@ export const initRequestMocking = async () => {
     }
     navigator.serviceWorker.addEventListener("message", (event) => {
       if (event.data?.type === "EXECUTED") {
+        console.log(event);
         const { alias, request } = event.data;
         const rule = rules.find((r) => r.alias === alias);
         if (rule) {

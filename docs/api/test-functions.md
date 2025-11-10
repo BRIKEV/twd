@@ -70,7 +70,7 @@ it(name: string, fn: () => Promise<void> | void): void
 
 ```ts
 it("should display welcome message", async () => {
-  twd.visit("/");
+  await twd.visit("/");
   const heading = await twd.get("h1");
   heading.should("contain.text", "Welcome");
 });
@@ -93,7 +93,7 @@ it("should load user data", async () => {
     response: { name: "John Doe" }
   });
 
-  twd.visit("/profile");
+  await twd.visit("/profile");
   await twd.waitForRequest("getUser");
   
   const userName = await twd.get(".user-name");
@@ -124,7 +124,7 @@ itOnly(name: string, fn: () => Promise<void> | void): void
 describe("User Management", () => {
   itOnly("should create new user", async () => {
     // Only this test will run
-    twd.visit("/users/new");
+    await twd.visit("/users/new");
     // Test implementation...
   });
 
@@ -260,7 +260,7 @@ describe("E-commerce Tests", () => {
   describe("Shopping Cart", () => {
     beforeEach(() => {
       // Runs before cart tests (after parent beforeEach)
-      twd.visit("/cart");
+      await twd.visit("/cart");
     });
 
     it("should add items to cart", async () => {
@@ -355,7 +355,7 @@ describe("Authentication Flow", () => {
   beforeEach(async () => {
     // Common setup for all auth tests
     await twd.initRequestMocking();
-    twd.visit("/login");
+    await twd.visit("/login");
   });
 
   it("should login successfully", async () => {
@@ -376,7 +376,7 @@ describe("Authentication Flow", () => {
 describe("E-commerce Application", () => {
   describe("Authentication", () => {
     beforeEach(() => {
-      twd.visit("/login");
+      await twd.visit("/login");
     });
 
     it("should login with valid credentials", async () => {});
@@ -386,7 +386,7 @@ describe("E-commerce Application", () => {
 
   describe("Product Catalog", () => {
     beforeEach(() => {
-      twd.visit("/products");
+      await twd.visit("/products");
     });
 
     it("should display product list", async () => {});
@@ -397,7 +397,7 @@ describe("E-commerce Application", () => {
   describe("Shopping Cart", () => {
     beforeEach(() => {
       localStorage.setItem("user", JSON.stringify({ id: 1 }));
-      twd.visit("/cart");
+      await twd.visit("/cart");
     });
 
     it("should add products to cart", async () => {});
@@ -431,7 +431,7 @@ describe("Feature Tests", () => {
 describe("Debug Session", () => {
   // Focus on the failing test
   itOnly("should handle complex user workflow", async () => {
-    twd.visit("/complex-page");
+    await twd.visit("/complex-page");
     
     // Add debug logging
     console.log("Starting complex workflow test");

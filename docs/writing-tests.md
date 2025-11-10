@@ -7,7 +7,8 @@ Learn how to write effective tests with TWD's intuitive API and powerful feature
 TWD uses a familiar testing structure similar to Jest, Mocha, and other popular testing frameworks:
 
 ```ts
-import { describe, it, beforeEach, twd, userEvent } from "twd-js";
+import { twd, userEvent } from "twd-js";
+import { describe, it, beforeEach } from "twd-js/runner";
 
 describe("User Authentication", () => {
   beforeEach(() => {

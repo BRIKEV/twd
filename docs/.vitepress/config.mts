@@ -61,13 +61,13 @@ export default defineConfig({
         text: 'Tutorial',
         items: [
           { text: 'Overview', link: '/tutorial/' },
+          { text: 'Introduction', link: '/tutorial/intro' },
           { text: 'Installation', link: '/tutorial/installation' },
           { text: 'First Test', link: '/tutorial/first-test' },
-          { text: 'Assertions & Navigation', link: '/tutorial/assertions-navigation' },
           { text: 'API Mocking', link: '/tutorial/api-mocking' },
-          { text: 'Test Hooks', link: '/tutorial/test-hooks' },
-          { text: 'Production Builds', link: '/tutorial/production-builds' },
-          { text: 'CI Integration', link: '/tutorial/ci-integration' }
+          { text: 'CI Integration', link: '/tutorial/ci-integration' },
+          { text: 'Code Coverage', link: '/tutorial/coverage' },
+          { text: 'Production Builds', link: '/tutorial/production-builds' }
         ]
       },
       {

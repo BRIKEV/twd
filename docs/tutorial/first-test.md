@@ -1,246 +1,163 @@
-# First Test
+# Selectors, Assertions, and User Events
 
-Write and run your first TWD test to understand the basics.
+In the [previous tutorial](./installation), we set up our basic testing configuration and used the `visit` command to load our app.
+Now, we're ready to make our tests a little more meaningful.
 
-## Your First Test
+In this part, we'll focus on three key features:
 
-Let's create a simple test that verifies your app renders correctly.
+- Selectors – how we find elements in our UI
+- Assertions – how we verify what's on screen
+- User events – how we simulate real interactions
 
-### 1. Create a Test File
+Let's dive in.
+
+## Before You Start
+
+If you're following along from the installation tutorial, you can continue as is. But if you want to reset your repo or make sure you're on the correct branch:
+
+```
+# Repo git clone git@github.com:BRIKEV/twd-docs-tutorial.git
+git reset --hard
+git clean -d -f
+git checkout 02-assertions
+npm run serve:dev
+```
+
+---
+
+## Selectors
+
+TWD uses a simple and familiar approach for selectors.
+It provides two commands — `get` and `getAll` — which are based directly on the native DOM APIs `document.querySelector` and `document.querySelectorAll`.
+
+That means you can use any selector you'd normally use in the browser: class, id, tag, attribute, role, etc.
+We believe this keeps things flexible and intuitive, especially for developers already comfortable with the DOM.
+
+Let's improve our existing test file `src/twd-tests/helloWorld.twd.test.ts`.
+We'll test that our title displays the text "Welcome to TWD" and that our counter button updates as expected.
+
+We'll start by selecting the elements using twd.get:
 
 ```ts
-// src/tests/app.twd.test.ts
-import { describe, it, twd } from 'twd-js';
+const title = await twd.get("[data-testid='welcome-title']");
+```
 
-describe('My First Test', () => {
-  it('should display the app title', async () => {
-    // Navigate to the home page
-    twd.visit('/');
+Here, we're using a `data-testid` attribute — just like in React Testing Library or Cypress.
+Because `get` is based on `querySelector`, you can use any CSS selector you prefer.
+
+For the counter button, we can do the same:
+
+```ts
+const counterButton = await twd.get("[data-testid='counter-button']");
+```
+
+> Note: Selectors are async because TWD automatically retries finding the element for up to two seconds.
+> So don't forget to use `await` before them.
+
+---
+
+## Assertions
+
+Once we've selected our elements, it's time to verify that our UI behaves as expected.
+
+Each selected element returned by `twd.get` includes two useful properties:
+
+- `el` – the raw DOM element
+- `should` – a utility for performing assertions
+
+Here's how we can assert visibility and text content:
+
+```ts
+const title = await twd.get("[data-testid='welcome-title']");
+title.should("be.visible").should("have.text", "Welcome to TWD");
+
+const counterButton = await twd.get("[data-testid='counter-button']");
+counterButton.should("be.visible").should("have.text", "Count is 0");
+```
+
+The should command is chainable, so you can stack multiple conditions easily.
+TWD supports several built-in assertions such as:
+
+- be.visible
+- have.text
+- have.class
+- have.attribute
+- and even their `not` versions (e.g. `should("not.have.text", "Error")`)
+
+Once you run your tests, the sidebar will clearly show what was tested:
+
+![Tests running](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/6cpsujkux94p9jzfw1a8.png)
+
+---
+
+## Interacting with the UI
+
+Now that we can find and verify elements, let's make things interactive.
+
+TWD integrates directly with [user event](https://github.com/testing-library/user-event) from React Testing Library — a well-known tool that handles realistic user interactions such as clicks, typing, and keyboard input.
+
+We chose `user-event` because it already supports most common browser interactions and mimics how a real user would use the app.
+TWD also provides a custom `setInputValue` helper for specific inputs that `user-event` doesn't handle perfectly.
+
+To use it, import both `twd` and `userEvent`:
+
+```ts
+import { twd, userEvent } from "twd-js";
+```
+
+Then, to simulate a click:
+
+```ts
+const counterButton = await twd.get("[data-testid='counter-button']");
+await userEvent.click(counterButton.el);
+```
+
+Notice we pass the element itself (`.el`) to `userEvent`, as that's what the library expects.
+
+---
+
+## Putting It All Together
+
+Now let's combine selectors, assertions, and events into a single test.
+Our `helloWorld.twd.test.ts` will look like this:
+
+```ts
+import { twd, userEvent } from "twd-js";
+import { describe, it } from "twd-js/runner";
+
+describe("Hello World Page", () => {
+  it("should display the welcome title and counter button", async () => {
+    await twd.visit("/");
     
-    // Find the main heading
-    const heading = await twd.get('h1');
+    const title = await twd.get("[data-testid='welcome-title']");
+    title.should("be.visible").should("have.text", "Welcome to TWD");
     
-    // Assert it's visible
-    heading.should('be.visible');
+    const counterButton = await twd.get("[data-testid='counter-button']");
+    counterButton.should("be.visible").should("have.text", "Count is 0");
     
-    // Assert it contains expected text
-    heading.should('contain.text', 'Welcome');
+    await userEvent.click(counterButton.el);
+    counterButton.should("have.text", "Count is 1");
+    
+    await userEvent.click(counterButton.el);
+    counterButton.should("have.text", "Count is 2");
+    
+    await userEvent.click(counterButton.el);
+    counterButton.should("have.text", "Count is 3");
   });
 });
 ```
 
-### 2. Run the Test
+And the test results will look like this:
 
-1. **Start your dev server** if it's not running:
-   ```bash
-   npm run dev
-   ```
+![test running after three clicks](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/l1e29i5r2cuyjsz2mz6l.png)
 
-2. **Open your browser** and navigate to your app
+As you can see, the UI updates in real time — and since it's your actual app, you can continue using it normally while your tests run.
 
-3. **Look for the TWD sidebar** on the left side of your screen
+---
 
-4. **Click the play button** next to your test to run it
+## What's Next
 
-### 3. Understanding the Results
+In the [next tutorial](./api-mocking), we'll explore one of the most powerful features of TWD: network mocking.
+This will let developers test their frontend independently, without relying on backend integrations — perfect for building and testing features faster.
 
-- ✅ **Green checkmark** = Test passed
-- ❌ **Red X** = Test failed  
-- 📝 **Logs** = Detailed information about what happened
-
-## Breaking Down the Test
-
-Let's understand each part of the test:
-
-### Test Structure
-
-```ts
-describe('My First Test', () => {
-  // Test group - organizes related tests
-  
-  it('should display the app title', async () => {
-    // Individual test - describes what should happen
-  });
-});
-```
-
-### Navigation
-
-```ts
-twd.visit('/');
-```
-
-- Navigates to a specific route in your single-page application
-- Works with React Router, Next.js router, etc.
-- Use relative paths like `/`, `/about`, `/products`
-
-### Element Selection
-
-```ts
-const heading = await twd.get('h1');
-```
-
-- Finds an element using CSS selectors
-- Returns a TWD element API for making assertions
-- Waits automatically for the element to appear
-
-### Assertions
-
-```ts
-heading.should('be.visible');
-heading.should('contain.text', 'Welcome');
-```
-
-- Tests element properties and content
-- Provides clear error messages when tests fail
-- Chainable for multiple assertions
-
-## Common Selectors
-
-### By Tag Name
-```ts
-const button = await twd.get('button');
-const input = await twd.get('input');
-```
-
-### By ID
-```ts
-const header = await twd.get('#header');
-const loginForm = await twd.get('#login-form');
-```
-
-### By Class
-```ts
-const card = await twd.get('.card');
-const errorMessage = await twd.get('.error-message');
-```
-
-### By Attribute
-```ts
-const submitButton = await twd.get('button[type="submit"]');
-const emailInput = await twd.get('input[name="email"]');
-```
-
-### By Data Attribute (Recommended)
-```ts
-const userCard = await twd.get('[data-testid="user-card"]');
-const menuButton = await twd.get('[data-testid="menu-toggle"]');
-```
-
-## Writing Better Tests
-
-### Use Descriptive Names
-
-```ts
-// ✅ Good - Clear and specific
-it('should show validation error when email is empty', async () => {
-  // Test implementation
-});
-
-// ❌ Bad - Too vague
-it('should validate form', async () => {
-  // Test implementation
-});
-```
-
-### Test User Workflows
-
-```ts
-describe('User Registration', () => {
-  it('should register a new user successfully', async () => {
-    // Navigate to registration page
-    twd.visit('/register');
-    
-    // Fill out the form
-    const nameInput = await twd.get('input[name="name"]');
-    const emailInput = await twd.get('input[name="email"]');
-    const passwordInput = await twd.get('input[name="password"]');
-    const submitButton = await twd.get('button[type="submit"]');
-    
-    // Use userEvent for realistic interactions
-    const user = userEvent.setup();
-    await user.type(nameInput.el, 'John Doe');
-    await user.type(emailInput.el, 'john@example.com');
-    await user.type(passwordInput.el, 'password123');
-    await user.click(submitButton.el);
-    
-    // Verify success
-    const successMessage = await twd.get('.success-message');
-    successMessage.should('contain.text', 'Registration successful');
-  });
-});
-```
-
-### Use Data Attributes
-
-Add `data-testid` attributes to your components for reliable testing:
-
-```tsx
-// In your React component
-function LoginForm() {
-  return (
-    <form>
-      <input 
-        type="email" 
-        name="email"
-        data-testid="email-input"
-      />
-      <input 
-        type="password" 
-        name="password"
-        data-testid="password-input"
-      />
-      <button 
-        type="submit"
-        data-testid="login-button"
-      >
-        Login
-      </button>
-    </form>
-  );
-}
-```
-
-```ts
-// In your test
-const emailInput = await twd.get('[data-testid="email-input"]');
-const passwordInput = await twd.get('[data-testid="password-input"]');
-const loginButton = await twd.get('[data-testid="login-button"]');
-```
-
-## Debugging Tests
-
-### View Element Details
-
-```ts
-const element = await twd.get('button');
-console.log('Element:', element.el);
-console.log('Text:', element.el.textContent);
-console.log('Classes:', element.el.className);
-```
-
-### Add Pauses for Inspection
-
-```ts
-it('should debug the form', async () => {
-  twd.visit('/form');
-  
-  // Pause to inspect the page
-  await twd.wait(2000);
-  
-  const form = await twd.get('form');
-  form.should('be.visible');
-});
-```
-
-### Use Browser DevTools
-
-- **Inspect elements** to verify selectors
-- **Check console** for TWD logs and errors
-- **Use Network tab** to see requests (useful for API mocking later)
-
-## Next Steps
-
-Great job! You've written and run your first TWD test. Now let's learn about assertions and navigation.
-
-👉 [Assertions & Navigation](./assertions-navigation)
+You can also learn more about selectors, assertions, and user events in our [official API documentation](/api/twd-commands).
