@@ -80,7 +80,8 @@ Create your first test file:
 
 ```ts
 // src/App.twd.test.ts
-import { describe, it, twd, userEvent } from "twd-js";
+import { twd, userEvent } from "twd-js";
+import { describe, it } from "twd-js/runner";
 
 describe("App Component", () => {
   it("should render the main heading", async () => {

@@ -66,7 +66,8 @@ You only need to call `initRequestMocking()` once in your main entry file, not i
 ### Simple GET Request
 
 ```ts
-import { describe, it, twd, userEvent } from "twd-js";
+import { twd, userEvent } from "twd-js";
+import { describe, it } from "twd-js/runner";
 
 describe("User Profile", () => {
   it("should load user data", async () => {
@@ -319,7 +320,7 @@ it("should handle authentication states", async () => {
   await twd.waitForRequest("login");
   
   // Should now access profile
-  twd.visit("/profile");
+  await twd.visit("/profile");
   await twd.waitForRequest("getProfile");
   
   const profileName = await twd.get("[data-testid='profile-name']");
@@ -339,7 +340,7 @@ it("should send correct form data", async () => {
     response: { success: true }
   });
 
-  twd.visit("/contact");
+  await twd.visit("/contact");
 
   const user = userEvent.setup();
   
@@ -375,7 +376,7 @@ it("should include authentication headers", async () => {
     response: { data: "secret data" }
   });
 
-  twd.visit("/protected");
+  await twd.visit("/protected");
 
   const loadButton = await twd.get("button[data-testid='load-protected']");
   await userEvent.click(loadButton.el);

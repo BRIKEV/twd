@@ -43,11 +43,12 @@ features:
 **VIDEO HERE** - *Overview of TWD in action - showing the sidebar, running tests, and seeing results in real-time*
 
 ```ts
-import { describe, it, twd, userEvent } from "twd-js";
+import { twd, userEvent } from "twd-js";
+import { describe, it } from "twd-js/runner";
 
 describe("User login", () => {
   it("should login successfully", async () => {
-    twd.visit("/login");
+    await twd.visit("/login");
     
     const user = userEvent.setup();
     const emailInput = await twd.get("input#email");

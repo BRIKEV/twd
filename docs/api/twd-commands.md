@@ -85,36 +85,41 @@ for (let i = 0; i < listItems.length; i++) {
 
 ## Navigation
 
-### twd.visit(url)
+### twd.visit(url, reload?)
 
 Navigates to a specific URL in your single-page application.
 
 #### Syntax
 
 ```ts
-twd.visit(url: string): void
+twd.visit(url: string, reload?: boolean): Promise<void>
 ```
 
 #### Parameters
 
 - **url** (`string`) - The URL path to navigate to
+- **reload** (`boolean`, optional) - If `true`, forces a reload even if already on the target URL. Defaults to `false`.
+
+#### Returns
+
+`Promise<void>` - Resolves when navigation is complete
 
 #### Examples
 
 ```ts
 // Basic navigation
-twd.visit("/");
-twd.visit("/products");
-twd.visit("/user/profile");
+await twd.visit("/");
+await twd.visit("/products");
+await twd.visit("/user/profile");
 
 // With query parameters
-twd.visit("/search?q=laptop&category=electronics");
+await twd.visit("/search?q=laptop&category=electronics");
 
 // With hash fragments
-twd.visit("/docs#getting-started");
+await twd.visit("/docs#getting-started");
 
-// Absolute URLs (if needed)
-twd.visit("https://example.com/page");
+// Force reload even if already on the page
+await twd.visit("/dashboard", true);
 ```
 
 #### Use Cases
@@ -122,12 +127,12 @@ twd.visit("https://example.com/page");
 ```ts
 describe("Navigation Tests", () => {
   it("should navigate between pages", async () => {
-    twd.visit("/");
+    await twd.visit("/");
     
     const homeHeading = await twd.get("h1");
     homeHeading.should("contain.text", "Home");
     
-    twd.visit("/about");
+    await twd.visit("/about");
     
     const aboutHeading = await twd.get("h1");
     aboutHeading.should("contain.text", "About");
@@ -199,7 +204,7 @@ const user = userEvent.setup();
 ```ts
 describe("Form Input Tests", () => {
   it("should handle text input realistically", async () => {
-    twd.visit("/contact");
+    await twd.visit("/contact");
     
     const user = userEvent.setup();
     const nameInput = await twd.get("input[name='name']");
@@ -224,7 +229,7 @@ describe("Form Input Tests", () => {
 ```ts
 describe("Complete Form Workflow", () => {
   it("should handle full form interaction", async () => {
-    twd.visit("/registration");
+    await twd.visit("/registration");
     
     const user = userEvent.setup();
     
@@ -310,7 +315,7 @@ Use `setInputValue` **only** for these specific input types:
 ```ts
 describe("Special Input Types", () => {
   it("should handle inputs that userEvent struggles with", async () => {
-    twd.visit("/settings");
+    await twd.visit("/settings");
     
     // ✅ Range inputs - dragging simulation is complex
     const volumeSlider = await twd.get("input[type='range']");

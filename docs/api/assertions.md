@@ -627,7 +627,7 @@ emailInput
 ```ts
 describe("Form Validation", () => {
   it("should validate required fields", async () => {
-    twd.visit("/contact");
+    await twd.visit("/contact");
 
     const user = userEvent.setup();
     const submitButton = await twd.get("button[type='submit']");
@@ -662,7 +662,7 @@ describe("Form Validation", () => {
 ```ts
 describe("Shopping Cart", () => {
   it("should update cart state correctly", async () => {
-    twd.visit("/products");
+    await twd.visit("/products");
 
     // Initial empty state
     const cartCount = await twd.get(".cart-count");
@@ -700,7 +700,7 @@ describe("Shopping Cart", () => {
 ```ts
 describe("Modal Dialog", () => {
   it("should handle modal state transitions", async () => {
-    twd.visit("/modal-example");
+    await twd.visit("/modal-example");
 
     const modal = await twd.get(".modal");
     const overlay = await twd.get(".modal-overlay");
