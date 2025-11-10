@@ -19,7 +19,7 @@ export default function TodoItem({ todo }: TodoItemProps) {
       </CardHeader>
       <CardFooter className="flex justify-between items-center">
         <span className="text-sm text-muted-foreground" data-testid={`todo-date-${todo.id}`}>
-          Date: {new Date(todo.date).toLocaleDateString()}
+          Date: {todo.date}
         </span>
         <deleteFetcher.Form method="DELETE" action="/todos">
           <input type="hidden" name="id" value={todo.id} />

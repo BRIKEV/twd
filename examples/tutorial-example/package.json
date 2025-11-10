@@ -5,13 +5,17 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "dev:ci": "CI=true VITE_COVERAGE=true vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "test": "vitest",
     "preview": "vite preview",
     "serve": "json-server --watch data/data.json --routes data/routes.json --port 3001",
     "serve:dev": "npm-run-all --parallel serve dev",
-    "collect:coverage": "nyc report --reporter=html --report-dir=coverage --temp-dir=coverage"
+    "test:ci": "node scripts/run-tests-ci.js",
+    "collect:coverage:html": "npx nyc report --reporter=html --report-dir=coverage",
+    "collect:coverage:lcov": "npx nyc report --reporter=lcov --report-dir=coverage",
+    "collect:coverage:text": "npx nyc report --reporter=text --report-dir=coverage"
   },
   "dependencies": {
     "@radix-ui/react-avatar": "^1.1.4",
@@ -31,6 +35,7 @@
     "tailwind-merge": "^3.2.0",
     "tailwindcss": "^4.1.4",
     "tw-animate-css": "^1.2.5",
+    "twd-js": "^0.8.0",
     "zustand": "^5.0.3"
   },
   "devDependencies": {
@@ -52,6 +57,7 @@
     "jsdom": "^26.1.0",
     "npm-run-all": "^4.1.5",
     "nyc": "^17.1.0",
+    "puppeteer": "^24.29.1",
     "typescript": "~5.7.2",
     "typescript-eslint": "^8.26.1",
     "vite": "^6.3.1",
