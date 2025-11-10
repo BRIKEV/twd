@@ -40,27 +40,28 @@ features:
 
 ## Quick Example
 
-**VIDEO HERE** - *Overview of TWD in action - showing the sidebar, running tests, and seeing results in real-time*
+See TWD in action with the test sidebar running tests directly in your browser:
+
+<p align="center">
+  <img src="/images/twd_side_bar_success.png" alt="TWD Sidebar showing test execution" width="800">
+</p>
 
 ```ts
 import { twd, userEvent } from "twd-js";
 import { describe, it } from "twd-js/runner";
 
-describe("User login", () => {
-  it("should login successfully", async () => {
-    await twd.visit("/login");
+describe("Hello World Page", () => {
+  it("should display the welcome title and counter button", async () => {
+    await twd.visit("/");
     
-    const user = userEvent.setup();
-    const emailInput = await twd.get("input#email");
-    const passwordInput = await twd.get("input#password");
-    const loginButton = await twd.get("button[type='submit']");
+    const title = await twd.get("[data-testid='welcome-title']");
+    title.should("be.visible").should("have.text", "Welcome to TWD");
     
-    await user.type(emailInput.el, "user@example.com");
-    await user.type(passwordInput.el, "password123");
-    await user.click(loginButton.el);
+    const counterButton = await twd.get("[data-testid='counter-button']");
+    counterButton.should("be.visible").should("have.text", "Count is 0");
     
-    const welcome = await twd.get("h1");
-    welcome.should("contain.text", "Welcome");
+    await userEvent.click(counterButton.el);
+    counterButton.should("have.text", "Count is 1");
   });
 });
 ```

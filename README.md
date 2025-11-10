@@ -109,22 +109,28 @@ pnpm add twd-js
 
    ```ts
    // src/app.twd.test.ts
-   import { twd } from "twd-js";
-   import { describe, it, beforeEach } from "twd-js/runner";
+   import { twd, userEvent } from "twd-js";
+   import { describe, it } from "twd-js/runner";
 
-   beforeEach(() => {
-     // Reset state before each test
-   });
-
-   describe("App interactions", () => {
-     it("clicks the button", async () => {
+   describe("Hello World Page", () => {
+     it("should display the welcome title and counter button", async () => {
        await twd.visit("/");
-       const btn = await twd.get("button");
-       const message = await twd.get("#message");
-       message.should("have.text", "Hello");
+       
+       const title = await twd.get("[data-testid='welcome-title']");
+       title.should("be.visible").should("have.text", "Welcome to TWD");
+       
+       const counterButton = await twd.get("[data-testid='counter-button']");
+       counterButton.should("be.visible").should("have.text", "Count is 0");
+       
+       await userEvent.click(counterButton.el);
+       counterButton.should("have.text", "Count is 1");
      });
    });
    ```
+
+   <p align="center">
+     <img src="./images/twd_side_bar_success.png" alt="TWD Sidebar in action" width="800">
+   </p>
 
 3. **Auto-load your tests:**
 
