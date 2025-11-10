@@ -54,6 +54,7 @@ export default defineConfig({
           { text: 'Getting Started', link: '/getting-started' },
           { text: 'Writing Tests', link: '/writing-tests' },
           { text: 'API Mocking', link: '/api-mocking' },
+          { text: 'Framework Integration', link: '/frameworks' },
           { text: 'CI Execution', link: '/ci-execution' }
         ]
       },
