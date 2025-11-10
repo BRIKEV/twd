@@ -6,8 +6,6 @@
 [![Maintainability](https://qlty.sh/gh/BRIKEV/projects/twd/maintainability.svg)](https://qlty.sh/gh/BRIKEV/projects/twd)
 [![Code Coverage](https://qlty.sh/gh/BRIKEV/projects/twd/coverage.svg)](https://qlty.sh/gh/BRIKEV/projects/twd)
 
-> ⚠️ This is a **beta release** – expect frequent updates and possible breaking changes.
-
 <p>
   <img src="./images/logo_full_sized.png" alt="TWD Logo" width="400">
 </p>
@@ -16,7 +14,7 @@ TWD (Testing Web Development) is a library designed to seamlessly integrate test
 
 Currently, TWD supports React, with plans to add more frameworks soon.
 
-**For complete documentation, tutorials, and examples, visit: [https://brikev.github.io/twd/](https://brikev.github.io/twd/)**
+**For complete and updated documentation, tutorials, and examples, visit: [https://brikev.github.io/twd/](https://brikev.github.io/twd/)**
 
 ## Table of Contents
 
@@ -188,7 +186,7 @@ pnpm add twd-js
 TWD uses a familiar testing structure with `describe`, `it`, `beforeEach`, and other common testing functions:
 
 ```ts
-import { describe, it, itSkip, itOnly, beforeEach, twd, userEvent } from "twd-js";
+import { describe, it, beforeEach, twd, userEvent } from "twd-js";
 
 
 describe("User authentication", () => {
@@ -200,11 +198,11 @@ describe("User authentication", () => {
     // Your test logic here
   });
   
-  itSkip("skipped test", () => {
+  it.skip("skipped test", () => {
     // This test will be skipped
   });
   
-  itOnly("only this test runs", () => {
+  it.only("only this test runs", () => {
     // Only this test will run when .only is present
   });
 });
@@ -375,8 +373,8 @@ console.log("Response:", rule.response);
 |----------|-------------|---------|
 | `describe(name, fn)` | Groups related tests | `describe("User login", () => {...})` |
 | `it(name, fn)` | Defines a test case | `it("should login", async () => {...})` |
-| `itOnly(name, fn)` | Runs only this test | `itOnly("focused test", () => {...})` |
-| `itSkip(name, fn)` | Skips this test | `itSkip("broken test", () => {...})` |
+| `it.only(name, fn)` | Runs only this test | `it.only("focused test", () => {...})` |
+| `it.skip(name, fn)` | Skips this test | `it.skip("broken test", () => {...})` |
 | `beforeEach(fn)` | Runs before each test | `beforeEach(() => {...})` |
 
 ### TWD Commands

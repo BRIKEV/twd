@@ -1,12 +1,12 @@
-# Testing While Developing (Part 5): Collecting Coverage
+# Collecting Code Coverage
 
-We’ve reached the final part of this tutorial series!
-TWD still has many more advanced features — such as function mocking — but with what we’ve covered so far, you already have everything a solid testing tool needs.
-In this last step, we’ll see how to collect code coverage from your TWD tests and visualize it locally or in CI.
+We've reached the final part of this tutorial series!
+TWD still has many more advanced features — such as function mocking — but with what we've covered so far, you already have everything a solid testing tool needs.
+In this last step, we'll see how to collect code coverage from your TWD tests and visualize it locally or in CI.
 
 ## Before You Start
 
-If you’re following along from Part 4, you can continue as is. But if you want to reset your repo or make sure you're on the correct branch:
+If you're following along from the [CI integration tutorial](./ci-integration), you can continue as is. But if you want to reset your repo or make sure you're on the correct branch:
 
 ```
 # Repo git clone git@github.com:BRIKEV/twd-docs-tutorial.git
@@ -18,7 +18,7 @@ npm run serve:dev
 
 ## Instrumenting the Vite App
 
-We’ll use the [vite-plugin-istanbul](https://www.npmjs.com/package/vite-plugin-istanbul) plugin to instrument our code and generate coverage data.
+We'll use the [vite-plugin-istanbul](https://www.npmjs.com/package/vite-plugin-istanbul) plugin to instrument our code and generate coverage data.
 
 ```
 npm i --save-dev vite-plugin-istanbul
@@ -67,7 +67,7 @@ This plugin automatically adds coverage data to `window.__coverage__`, which mea
 
 ## Updating the Puppeteer Script
 
-Let’s update our `scripts/run-tests-ci.js` script to collect that coverage and save it locally:
+Let's update our `scripts/run-tests-ci.js` script to collect that coverage and save it locally:
 
 ```ts
 import fs from 'fs';
@@ -186,7 +186,7 @@ npm run collect:coverage:lcov
 npm run collect:coverage:text
 ```
 
-You’ll see something like this:
+You'll see something like this:
 
 ![coverage html reporter](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/ss03qfi57r43ehwgf0fn.png)
 
@@ -238,11 +238,11 @@ jobs:
           npm run collect:coverage:text
 ```
 
-With the new `Display coverage` step, you’ll see the coverage summary directly in your GitHub Action logs:
+With the new `Display coverage` step, you'll see the coverage summary directly in your GitHub Action logs:
 
 ![Github action coverage](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/0cznd4txgvtpxz5tn10o.png)
 
-Having this basic configuration, it’s entirely up to you how you want to handle the coverage results.
+Having this basic configuration, it's entirely up to you how you want to handle the coverage results.
 You can publish them to a service like Codecov or Coveralls, display them as badges in your README, or even use them in your CI pipeline to fail a build if coverage drops below a threshold.
 What matters is that the library gives you the flexibility to collect and track coverage directly from your browser tests, without relying on a separate test runner.
 
@@ -250,9 +250,9 @@ What matters is that the library gives you the flexibility to collect and track 
 
 ## Conclusion
 
-And that’s it — we’ve reached the end of the TWD tutorial series!
+And that's it — we've reached the end of the TWD tutorial series!
 
-Throughout these five parts, we’ve built a complete workflow from zero to production-ready testing:
+Throughout these five parts, we've built a complete workflow from zero to production-ready testing:
 
 - Setup and first visit test
 - Selectors, assertions, and user events
@@ -263,4 +263,5 @@ Throughout these five parts, we’ve built a complete workflow from zero to prod
 With this foundation, you can now test your apps as you develop them, keeping your environment close to what your users actually see — which is what TWD (**Test While Developing**) is all about.
 
 Thanks for following along, and happy testing!
-You can always explore more in our [official docs](https://brikev.github.io/twd/getting-started.html).
+You can always explore more in our [official docs](/getting-started).
+

@@ -1,426 +1,196 @@
 # CI Integration - Running Tests in Continuous Integration
 
-Now that you've written tests locally, let's learn how to run them automatically in your CI/CD pipeline! This allows you to catch bugs before they reach production.
+In the [previous tutorial](./api-mocking), we explored one of TWD's core features — **network mocking** — and completed our first full set of tests.
+Now, it's time to take the next step: **running those tests in the terminal** so we can integrate them into a **CI workflow**.
 
-## What is CI Integration?
+To do this, we'll use Puppeteer and one of TWD's utilities, `reportResults`, to display test results directly in the console.
 
-CI (Continuous Integration) means automatically running your tests:
-- **On every commit** - Catch issues immediately
-- **On pull requests** - Verify changes before merging
-- **In production-like environments** - Test in headless mode without UI
+## Before You Start
 
-TWD provides utilities to run your tests programmatically using headless browsers like Puppeteer or Playwright.
+If you're following along from the previous tutorial, you can continue as is. But if you want to reset your repo or make sure you're on the correct branch:
 
-## Overview
+```
+# Repo git clone git@github.com:BRIKEV/twd-docs-tutorial.git
+git reset --hard
+git clean -d -f
+git checkout 04-ci-integration
+npm run serve:dev
+```
 
-The CI execution mode allows you to:
-- ✅ Run tests headlessly without the browser UI
-- ✅ Generate test reports for CI/CD pipelines
-- ✅ Execute tests programmatically in Node.js scripts
-- ✅ Integrate with existing testing infrastructure
+---
 
-## Step 1: Install Dependencies
+## Running Tests in the Terminal
 
-First, we need to install a headless browser tool. Let's use Puppeteer:
+TWD exposes its runner on the `window` object, which means you can programmatically execute your tests from any environment — including tools like Puppeteer.
+
+Here's the basic version of that script:
+
+```ts
+import { reportResults } from 'twd-js/runner-ci';
+
+const TestRunner = window.__testRunner;
+const testStatus = [];
+const runner = new TestRunner({
+  onStart: () => {},
+  onPass: (test) => {
+    testStatus.push({ id: test.id, status: "pass" });
+  },
+  onFail: (test, err) => {
+    testStatus.push({ id: test.id, status: "fail", error: err.message });
+  },
+  onSkip: (test) => {
+    testStatus.push({ id: test.id, status: "skip" });
+  },
+});
+const handlers = await runner.runAll();
+// report results
+reportResults(handlers, testStatus);
+```
+
+That's the core logic we need to run TWD tests headlessly — but we still need a way to access the `window` context.
+Let's do that by using Puppeteer.
+
+---
+
+## Step 1. Install Dependencies
 
 ```bash
 npm install --save-dev puppeteer
 ```
 
-Or if you prefer Playwright:
+## Step 2. Create a CI Script
 
-```bash
-npm install --save-dev playwright
-```
-
-## Step 2: Import CI Utilities
-
-Import the required functions from TWD's CI runner module:
+Let's create a new file: `scripts/run-tests-ci.js`:
 
 ```ts
 import puppeteer from "puppeteer";
 import { reportResults } from 'twd-js/runner-ci';
-```
 
-## Step 3: Create a CI Test Script
-
-Let's create a script that runs all our tests in headless mode:
-
-```ts
-// scripts/run-tests-ci.js
-import puppeteer from "puppeteer";
-import { reportResults } from 'twd-js/runner-ci';
-
-async function runCITests() {
-  // Step 1: Launch a headless browser
-  const browser = await puppeteer.launch({ headless: true });
-  const page = await browser.newPage();
-
-  console.time('Total Test Time');
-  
-  try {
-    // Step 2: Navigate to your development server
-    console.log('Navigating to http://localhost:5173 ...');
-    await page.goto('http://localhost:5173');
-    
-    // Step 3: Wait for TWD sidebar to load
-    await page.waitForSelector('[data-testid="twd-sidebar"]', { timeout: 10000 });
-    console.log('Page loaded. Starting tests...');
-    
-    // Step 4: Execute all tests
-    const { handlers, testStatus } = await page.evaluate(async () => {
-      const TestRunner = window.__testRunner;
-      const testStatus = [];
-      
-      const runner = new TestRunner({
-        onStart: () => {},
-        onPass: (test) => {
-          testStatus.push({ id: test.id, status: "pass" });
-        },
-        onFail: (test, err) => {
-          testStatus.push({ id: test.id, status: "fail", error: err.message });
-        },
-        onSkip: (test) => {
-          testStatus.push({ id: test.id, status: "skip" });
-        },
-      });
-      
-      const handlers = await runner.runAll();
-      return { handlers: Array.from(handlers.values()), testStatus };
-    });
-    
-    console.log(`Tests to report: ${testStatus.length}`);
-    
-    // Step 5: Display results in console
-    reportResults(handlers, testStatus);
-
-    // Step 6: Exit with appropriate code
-    const hasFailures = testStatus.some(test => test.status === 'fail');
-    console.timeEnd('Total Test Time');
-    
-    process.exit(hasFailures ? 1 : 0);
-    
-  } catch (error) {
-    console.error('Error running tests:', error);
-    process.exit(1);
-  } finally {
-    console.log('Closing browser...');
-    await browser.close();
-  }
-}
-
-runCITests().catch(console.error);
-```
-
-Let's break down what this script does:
-
-### Step 1: Launch Browser
-
-```ts
-const browser = await puppeteer.launch({ headless: true });
-const page = await browser.newPage();
-```
-
-- Launches a headless Chrome browser (no UI)
-- Creates a new page/tab to run tests in
-
-### Step 2: Navigate to Your App
-
-```ts
-await page.goto('http://localhost:5173');
-```
-
-- Navigates to your development server
-- Make sure your dev server is running on this port!
-
-### Step 3: Wait for TWD to Load
-
-```ts
-await page.waitForSelector('[data-testid="twd-sidebar"]', { timeout: 10000 });
-```
-
-- Waits for the TWD sidebar to appear (confirms TWD is loaded)
-- 10 second timeout prevents hanging forever
-
-### Step 4: Execute Tests
-
-```ts
-const { handlers, testStatus } = await page.evaluate(async () => {
-  // This code runs inside the browser!
-  const TestRunner = window.__testRunner;
-  // ... run tests and collect results
+const browser = await puppeteer.launch({
+  headless: true,
+  args: ['--no-sandbox', '--disable-setuid-sandbox'],
 });
+const page = await browser.newPage();
+console.time('Total Test Time');
+try {
+  // Navigate to your development server
+  console.log('Navigating to http://localhost:5173 ...');
+  await page.goto('http://localhost:5173');
+  // wait to load data-testid="twd-sidebar"
+  await page.waitForSelector('[data-testid="twd-sidebar"]', { timeout: 10000 });
+  console.log('Page loaded. Starting tests...');
+  // reload page
+  // Execute all tests
+  const { handlers, testStatus } = await page.evaluate(async () => {
+    const TestRunner = window.__testRunner;
+    const testStatus = [];
+    const runner = new TestRunner({
+      onStart: () => {},
+      onPass: (test) => {
+        testStatus.push({ id: test.id, status: "pass" });
+      },
+      onFail: (test, err) => {
+        testStatus.push({ id: test.id, status: "fail", error: err.message });
+      },
+      onSkip: (test) => {
+        testStatus.push({ id: test.id, status: "skip" });
+      },
+    });
+    const handlers = await runner.runAll();
+    return { handlers: Array.from(handlers.values()), testStatus };
+  });
+  console.log(`Tests to report: ${testStatus.length}`);
+  
+  // Display results in console
+  reportResults(handlers, testStatus);
+
+  // Exit with appropriate code
+  const hasFailures = testStatus.some(test => test.status === 'fail');
+  console.timeEnd('Total Test Time');
+  process.exit(hasFailures ? 1 : 0);
+  
+} catch (error) {
+  console.error('Error running tests:', error);
+  process.exit(1);
+} finally {
+  console.log('Closing browser...');
+  await browser.close();
+}
 ```
 
-- `page.evaluate()` runs code inside the browser context
-- `window.__testRunner` is TWD's test runner (available in the browser)
-- Collects test results (pass/fail/skip)
+## Step 3. Add the Script to package.json
 
-### Step 5: Report Results
-
-```ts
-reportResults(handlers, testStatus);
-```
-
-- Displays test results in the console
-- Shows which tests passed/failed
-- Prints error messages for failed tests
-
-### Step 6: Exit with Status Code
-
-```ts
-const hasFailures = testStatus.some(test => test.status === 'fail');
-process.exit(hasFailures ? 1 : 0);
-```
-
-- Exits with code `1` if tests fail (CI will fail)
-- Exits with code `0` if all tests pass (CI will pass)
-
-## Step 4: Add to Package.json
-
-Add a script to your `package.json` to run CI tests:
-
-```json
+```jsonc
 {
   "scripts": {
-    "test:ci": "node scripts/run-tests-ci.js",
-    "dev": "vite",
-    "build": "vite build"
+    // ...
+    "test:ci": "node scripts/run-tests-ci.js"
   }
 }
 ```
 
-Now you can run:
+Now, with your development server running in another terminal, execute:
 
 ```bash
 npm run test:ci
 ```
 
-## Running in CI/CD
+And you should see something like this:
 
-### GitHub Actions Example
+![tests loaded](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/dfqyh4iuktkuy4qm8ttl.png)
 
-Here's how to set up GitHub Actions to run your tests:
+---
 
-```yaml
-# .github/workflows/test.yml
-name: Run Tests
+## GitHub Actions Integration
+
+We're still working on a built-in CI solution, but for now you can easily integrate TWD with GitHub Actions using Puppeteer.
+
+Create a file at `.github/workflows/ci.yml`:
+
+```yml
+name: CI - PR Tests
 
 on:
-  push:
-    branches: [ main, develop ]
   pull_request:
     branches: [ main ]
 
 jobs:
   test:
     runs-on: ubuntu-latest
-    
+
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-      
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
       - name: Setup Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v5
         with:
-          node-version: '18'
-      
+          node-version: 24
+          cache: 'npm'
+
       - name: Install dependencies
         run: npm ci
-      
-      - name: Start dev server
-        run: npm run dev &
-      
-      - name: Wait for server
-        run: npx wait-on http://localhost:5173
-      
-      - name: Run tests
+
+      - name: Start Vite dev server
+        run: |
+          nohup npm run dev > vite.log 2>&1 &
+          npx wait-on http://localhost:5173
+        env:
+          CI: true
+
+      - name: Run Puppeteer tests (test:ci)
         run: npm run test:ci
+        env:
+          CI: true
 ```
 
-**What this does:**
-1. Checks out your code
-2. Sets up Node.js
-3. Installs dependencies
-4. Starts your dev server in the background
-5. Waits for the server to be ready
-6. Runs your tests
+And that's it — your tests will now run automatically in CI.
 
-### GitLab CI Example
+![Image description](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/xny2jnyq13l6a5euy3hl.png)
 
-```yaml
-# .gitlab-ci.yml
-test:
-  image: node:18
-  script:
-    - npm ci
-    - npm run dev &
-    - npx wait-on http://localhost:5173
-    - npm run test:ci
-```
+## What's Next
 
-## Advanced: With Test Server
+We've learned how TWD integrates smoothly into CI workflows.
+The [next step](./coverage) is to collect code coverage, the last missing piece of most testing setups — and that's exactly what we'll cover in the next tutorial.
 
-If you want to build and serve your app for testing:
-
-```ts
-// scripts/run-tests-ci.js
-import puppeteer from "puppeteer";
-import { reportResults } from 'twd-js/runner-ci';
-import { exec } from 'child_process';
-import { promisify } from 'util';
-
-const execAsync = promisify(exec);
-
-async function runCITests() {
-  try {
-    // Build your app
-    console.log('Building application...');
-    await execAsync('npm run build');
-    
-    // Start a simple server (you might need to install a simple server)
-    console.log('Starting test server...');
-    const server = exec('npx serve dist -p 3000');
-    
-    // Wait for server to start
-    await new Promise(resolve => setTimeout(resolve, 3000));
-    
-    // Run tests
-    const browser = await puppeteer.launch({ headless: true });
-    const page = await browser.newPage();
-    
-    await page.goto('http://localhost:3000');
-    await page.waitForSelector('[data-testid="twd-sidebar"]', { timeout: 10000 });
-    
-    // ... rest of test execution code
-    
-    await browser.close();
-    server.kill();
-    
-  } catch (error) {
-    console.error('Error:', error);
-    process.exit(1);
-  }
-}
-```
-
-## Environment Variables
-
-You can make your script configurable with environment variables:
-
-```ts
-// scripts/run-tests-ci.js
-const SERVER_URL = process.env.TEST_SERVER_URL || 'http://localhost:5173';
-const HEADLESS = process.env.HEADLESS !== 'false'; // Default to true
-
-const browser = await puppeteer.launch({ 
-  headless: HEADLESS 
-});
-
-await page.goto(SERVER_URL);
-```
-
-Then run with:
-
-```bash
-TEST_SERVER_URL=http://localhost:3000 HEADLESS=true npm run test:ci
-```
-
-## Troubleshooting
-
-### Server Not Ready
-
-**Problem:** Tests run before the server is ready.
-
-**Solution:** Add a wait step:
-
-```ts
-// Wait for server to be ready
-await page.goto('http://localhost:5173');
-await page.waitForSelector('[data-testid="twd-sidebar"]', { timeout: 30000 });
-```
-
-### Tests Timeout
-
-**Problem:** Tests take too long and timeout.
-
-**Solution:** Increase timeout in Puppeteer:
-
-```ts
-const browser = await puppeteer.launch({ 
-  headless: true,
-  args: ['--no-sandbox', '--disable-setuid-sandbox']
-});
-```
-
-### Port Already in Use
-
-**Problem:** Port 5173 is already in use.
-
-**Solution:** Use a different port or kill the existing process:
-
-```bash
-# Kill process on port 5173
-lsof -ti:5173 | xargs kill -9
-```
-
-## Best Practices
-
-### 1. Always Run in Headless Mode for CI
-
-```ts
-// ✅ Good - Headless for CI
-const browser = await puppeteer.launch({ headless: true });
-
-// ❌ Bad - Shows UI in CI (slower, unnecessary)
-const browser = await puppeteer.launch({ headless: false });
-```
-
-### 2. Handle Errors Gracefully
-
-```ts
-try {
-  // Run tests
-} catch (error) {
-  console.error('Test execution failed:', error);
-  process.exit(1); // Fail the CI build
-} finally {
-  await browser.close(); // Always clean up
-}
-```
-
-### 3. Set Appropriate Timeouts
-
-```ts
-// Give enough time for tests to complete
-await page.waitForSelector('[data-testid="twd-sidebar"]', { 
-  timeout: 30000 // 30 seconds
-});
-```
-
-### 4. Run Tests in Parallel (Optional)
-
-For large test suites, you might want to run tests in parallel:
-
-```ts
-// Run multiple test suites in parallel
-const testSuites = ['unit', 'integration', 'e2e'];
-
-await Promise.all(
-  testSuites.map(suite => runTestSuite(suite))
-);
-```
-
-## What's Next?
-
-Congratulations! You now know how to:
-- ✅ Run tests locally with the TWD sidebar
-- ✅ Write tests with selectors and assertions
-- ✅ Mock API requests
-- ✅ Run tests in CI/CD pipelines
-
-You're ready to test your applications with TWD! 🎉
-
-For more advanced topics, check out:
-- [Production Builds](./production-builds) - Remove test code from production
-- [API Reference](/api/) - Complete function documentation
+You can always check out [our official docs](/ci-execution) to learn more.
