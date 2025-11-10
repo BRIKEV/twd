@@ -1,5 +1,5 @@
-import { twd, userEvent } from "../../../../src";
-import { describe, it } from "../../../../src/runner";
+import { twd, userEvent } from "twd-js";
+import { describe, it } from "twd-js/runner";
 
 describe("Hello World Page", () => {
   it("should display the welcome title and counter button", async () => {
@@ -18,8 +18,6 @@ describe("Hello World Page", () => {
     counterButton.should("have.text", "Count is 2");
     
     await userEvent.click(counterButton.el);
-    console.log(counterButton.el.textContent);
-    
     counterButton.should("have.text", "Count is 3");
   });
 });

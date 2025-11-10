@@ -1,51 +1,24 @@
-# React Router data Example
+# TWD Docs Tutorial — Test While Developing
 
-This example demonstrates the data mode of React Router v7, which is my favorite mode for developing single-page applications (SPAs). It is the simplest approach because it leverages web standards, allowing you to define loaders and actions directly on routes for seamless data fetching and mutation. By using the React Router approach, you can avoid relying on additional state management or request management tools, keeping your application lightweight and straightforward.
+This repository contains the complete tutorial series for **TWD (Test While Developing)** — a minimal JavaScript testing library designed to run **inside your app** while you develop.  
+Each part of this tutorial explores a different aspect of building a modern testing workflow with **Vite**, **React Router**, and **TWD**, from basic setup to continuous integration and coverage.
 
-This example will include twd-js and test the application with TWD.
-
-For a detailed overview of the features available in data mode, refer to the [React Router API and Mode Availability Table](https://reactrouter.com/start/modes#api--mode-availability-table).
-
-## Installation
-
-To use this mode, install the React Router library:
-
-```bash
-npm install react-router
-```
-
-## Running This Example
-
-Follow these steps to run the example:
-
-1. **Install Dependencies**  
-  Navigate to the project directory and install the required dependencies:
-
-  ```bash
-  npm install
-  ```
-
-2. **Start the Development Server**  
-  Run the following command to start the development server and the fake data which is provided by [json-sever](https://www.npmjs.com/package/json-server).
-
-  ```bash
-  npm run serve:dev
-  ```
-
-3. **Access the Application**  
-  Open your browser and navigate to the URL provided in the terminal to view the application.
+> The idea behind TWD is simple:  
+> **Test while you develop — no context switching, no extra setup, just instant feedback.**
 
 ---
 
-Feel free to explore the code in this folder to understand how declarative routing is implemented in this example.
+## Tutorial Series
 
-## Tools Used in This Example
+Here’s the complete list of articles in the **Testing While Developing (TWD)** tutorial series, each one linked to its corresponding branch in this repository and DEV post.
 
-This example leverages the following tools:
+| Part | Title | DEV Link | Branch |
+|------|--------|-----------|---------|
+| **Part 0** | [TWD – Getting Started (Introduction)](https://dev.to/kevinccbsg/twd-getting-started-4hh4) | `00-introduction` |
+| **Part 1** | [Installation and First Test](https://dev.to/kevinccbsg/getting-started-with-twd-installation-and-first-test-part-1-1a15) | `01-getting-started` |
+| **Part 2** | [Selectors, Assertions, and User Events](https://dev.to/kevinccbsg/testing-while-developing-part-2-selectors-assertions-and-user-events-d6p) | `02-assertions` |
+| **Part 3** | [Mocking API Requests](https://dev.to/kevinccbsg/testing-while-developing-part-3-mocking-api-requests-41ld) | `03-mocking` |
+| **Part 4** | [Running Tests in CI](https://dev.to/kevinccbsg/testing-while-developing-part-4-running-tests-in-ci-10op) | `04-ci-integration` |
+| **Part 5** | [Collecting Coverage](https://dev.to/kevinccbsg/testing-while-developing-part-5-collecting-coverage-1gom) | `05-coverage` |
 
-- **React Router**: A library for declarative routing in React applications.
-- **json-server**: A simple tool to create a fake REST API for testing and prototyping.
-- **twd-js**: A library for testing React applications with TWD.
-
-These tools help demonstrate how data mode works in a practical scenario, with React Router handling navigation and data fetching, json-server providing mock data for the application, and React Router's built-in loaders and actions managing application state seamlessly without requiring additional state management libraries.
-
+> Each part builds on the previous one. You can switch to any branch to start from that lesson’s final state.
