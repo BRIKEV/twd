@@ -22,7 +22,12 @@
     ".": {
       "types": "./dist/index.d.ts",
       "import": "./dist/index.es.js",
-      "require": "./dist/index.cjs.js"
+      "require": "./dist/index.cjs.js",
+      "default": "./dist/index.es.js"
+    },
+    "./bundled": {
+      "types": "./dist/bundled.d.ts",
+      "import": "./dist/bundled.es.js"
     },
     "./runner": {
       "types": "./dist/runner.d.ts",
@@ -49,7 +54,7 @@
     "node": ">=16"
   },
   "scripts": {
-    "build": "vite build && vite build -c vite.sw.config.js && cp src/cli/installsw.js dist/cli.js",
+    "build": "vite build && vite build -c vite.sw.config.js && vite build -c vite.bundle.config.ts && cp src/cli/installsw.js dist/cli.js",
     "test": "vitest",
     "test:ci": "vitest --run --coverage",
     "conventional-changelog": "conventional-changelog -i CHANGELOG.md",
@@ -67,7 +72,7 @@
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.0",
     "@testing-library/user-event": "^14.6.1",
-    "@types/react": "^19.2.2",
+    "@types/react": "^19.2.3",
     "@types/react-dom": "^19.2.2",
     "@vitejs/plugin-react": "^5.1.0",
     "@vitest/coverage-v8": "^4.0.8",
@@ -90,6 +95,7 @@
     "typescript"
   ],
   "dependencies": {
+    "chai": "^6.2.1",
     "chalk": "^5.6.2"
   }
 }
