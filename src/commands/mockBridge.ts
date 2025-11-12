@@ -33,19 +33,6 @@ const SW_DELAY = 100;
  */
 export const initRequestMocking = async () => {
   if ("serviceWorker" in navigator) {
-    const currentVersion = localStorage.getItem('twd-sw-version');
-    const shouldUpdate = currentVersion !== TWD_VERSION;
-
-    if (shouldUpdate) {
-      console.log("[TWD] Updating service worker to version", TWD_VERSION);
-      // Unregister old SW first
-      const registrations = await navigator.serviceWorker.getRegistrations();
-      await Promise.all(registrations.map(reg => reg.unregister()));
-      
-      // Clear version-specific storage
-      localStorage.setItem('twd-sw-version', TWD_VERSION);
-    }
-
     await navigator.serviceWorker.register(`/mock-sw.js?v=${TWD_VERSION}`);
     // ADD THIS: Wait for the service worker to actually control the page
     if (!navigator.serviceWorker.controller) {
@@ -55,7 +42,6 @@ export const initRequestMocking = async () => {
     }
     navigator.serviceWorker.addEventListener("message", (event) => {
       if (event.data?.type === "EXECUTED") {
-        console.log(event);
         const { alias, request } = event.data;
         const rule = rules.find((r) => r.alias === alias);
         if (rule) {
@@ -99,6 +85,7 @@ export const mockRequest = async (alias: string, options: Options) => {
   navigator.serviceWorker.controller?.postMessage({
     type: "ADD_RULE",
     rule,
+    version: TWD_VERSION,
   });
   await wait(SW_DELAY);
   await Promise.resolve();
@@ -145,6 +132,7 @@ export const clearRequestMockRules = () => {
   // Also tell the SW
   navigator.serviceWorker.controller?.postMessage({
     type: "CLEAR_RULES",
+    version: TWD_VERSION,
   });
   rules.length = 0;
 };

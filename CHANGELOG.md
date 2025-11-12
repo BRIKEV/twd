@@ -1,3 +1,8 @@
+## <small>1.0.1 (2025-11-11)</small>
+
+* fix: error chai types ([524d298](https://github.com/BRIKEV/twd/commit/524d298))
+
+
 ## 1.0.0 (2025-11-10)
 
 * chore(deps-dev): bump vite from 7.1.4 to 7.2.2 in /examples/twd-test-app (#78) ([87a50af](https://github.com/BRIKEV/twd/commit/87a50af)), closes [#78](https://github.com/BRIKEV/twd/issues/78)

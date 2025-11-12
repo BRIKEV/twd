@@ -6,3 +6,5 @@ export { expect } from 'chai';
 export { userEvent } from './proxies/userEvent';
 
 config.truncateThreshold = 0;
+
+export type { Chai };

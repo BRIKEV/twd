@@ -7,6 +7,7 @@ vi.mock('../../cli/utils/notifyClients.js', () => ({
 
 import { handleFetch, handleMessage, rules } from '../../cli/mock-sw.js';
 import { notifyClients } from '../../cli/utils/notifyClients.js';
+import { TWD_VERSION } from '../../constants/version_cli.js';
 
 
 global.self = {
@@ -44,13 +45,27 @@ describe('Service Worker', () => {
 
   it('adds a rule via message', () => {
     const rule = { alias: 'test', method: 'GET', url: '/foo' };
-    handleMessage({ data: { type: 'ADD_RULE', rule } });
+    handleMessage({ data: { type: 'ADD_RULE', rule, version: TWD_VERSION } });
     expect(rules).toContainEqual(rule);
+  });
+
+  it('execute console warning on version mismatch', () => {
+    const consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    handleMessage({ data: { type: 'ADD_RULE', rule: {}, version: '0.0.0' } });
+    expect(consoleWarnSpy).toHaveBeenCalledWith(
+      expect.stringContaining('This may lead to unexpected behavior.'),
+    );
+    expect(consoleWarnSpy).toHaveBeenCalledWith(
+      expect.stringContaining('Please unregister the Service Worker and reload the page to ensure compatibility.'),
+    );
+    expect(consoleWarnSpy).toHaveBeenCalledWith(
+      expect.stringContaining('npx twd-js init public --save'),
+    );
   });
 
   it('clears rules via message', () => {
     rules.push({ alias: 'a' });
-    handleMessage({ data: { type: 'CLEAR_RULES' } });
+    handleMessage({ data: { type: 'CLEAR_RULES', version: TWD_VERSION } });
     expect(rules).toEqual([]);
   });
 
