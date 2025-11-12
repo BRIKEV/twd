@@ -1,3 +1,8 @@
+## <small>1.0.2 (2025-11-12)</small>
+
+* Fix/types coverage v1 (#82) ([83bebd1](https://github.com/BRIKEV/twd/commit/83bebd1)), closes [#82](https://github.com/BRIKEV/twd/issues/82)
+
+
 ## <small>1.0.1 (2025-11-11)</small>
 
 * fix: error chai types ([524d298](https://github.com/BRIKEV/twd/commit/524d298))
