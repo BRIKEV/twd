@@ -1,7 +1,7 @@
 import { findRule } from './utils/findRule.js';
 import { notifyClients } from './utils/notifyClients.js';
 import { mockResponse } from './utils/mockResponse.js';
-import { TWD_VERSION } from '../constants/version.js';
+import { TWD_VERSION } from '../constants/version_cli.js';
 
 /**
  * List of currently active mock rules.
