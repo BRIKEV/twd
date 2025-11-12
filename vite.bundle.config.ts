@@ -37,7 +37,7 @@ export default defineConfig({
         },
       },
     },
-
+    emptyOutDir: false,
     // optional, ensures smaller modern output
     target: "esnext",
     minify: "esbuild",
