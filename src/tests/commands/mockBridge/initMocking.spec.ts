@@ -80,10 +80,7 @@ describe('initRequestMocking', () => {
     });
   });
 
-  it('handles first install when no version is stored', async () => {
-    // No version in localStorage (first install)
-    expect(localStorage.getItem('twd-sw-version')).toBeNull();
-    
+  it('handles first install when no version is stored', async () => {    
     const registerMock = vi.fn().mockResolvedValue({});
     const addEventListenerMock = vi.fn();
     const getRegistrationsMock = vi.fn().mockResolvedValue([]);
@@ -101,45 +98,6 @@ describe('initRequestMocking', () => {
 
     await initRequestMocking();
     
-    expect(getRegistrationsMock).toHaveBeenCalled(); // Should check for existing registrations
-    expect(consoleLogSpy).toHaveBeenCalledWith("[TWD] Updating service worker to version", TWD_VERSION);
-    expect(localStorage.getItem('twd-sw-version')).toBe(TWD_VERSION);
-    expect(registerMock).toHaveBeenCalledWith(`/mock-sw.js?v=${TWD_VERSION}`);
-
-    // Restore
-    Object.defineProperty(navigator, 'serviceWorker', {
-      configurable: true,
-      value: originalSW,
-    });
-  });
-
-  it('handles version update by unregistering old service workers', async () => {
-    // Set old version in localStorage
-    const oldVersion = '0.6.0';
-    localStorage.setItem('twd-sw-version', oldVersion);
-    
-    const mockRegistration = { unregister: vi.fn().mockResolvedValue(true) };
-    const registerMock = vi.fn().mockResolvedValue({});
-    const addEventListenerMock = vi.fn();
-    const getRegistrationsMock = vi.fn().mockResolvedValue([mockRegistration]);
-    const originalSW = navigator.serviceWorker;
-    
-    Object.defineProperty(navigator, 'serviceWorker', {
-      configurable: true,
-      value: {
-        register: registerMock,
-        addEventListener: addEventListenerMock,
-        getRegistrations: getRegistrationsMock,
-        controller: { postMessage: vi.fn() },
-      },
-    });
-
-    await initRequestMocking();
-    
-    expect(consoleLogSpy).toHaveBeenCalledWith("[TWD] Updating service worker to version", TWD_VERSION);
-    expect(getRegistrationsMock).toHaveBeenCalled();
-    expect(mockRegistration.unregister).toHaveBeenCalled();
-    expect(localStorage.getItem('twd-sw-version')).toBe(TWD_VERSION);
     expect(registerMock).toHaveBeenCalledWith(`/mock-sw.js?v=${TWD_VERSION}`);
 
     // Restore

@@ -1,5 +1,6 @@
 import { describe, expect, it, vi, beforeEach } from 'vitest';
 import { clearRequestMockRules, getRequestMockRules, mockRequest } from '../../../commands/mockBridge';
+import { TWD_VERSION } from '../../../constants/version';
 
 describe('mockBridge mock request methods', () => {
   beforeEach(() => {
@@ -57,6 +58,7 @@ describe('mockBridge mock request methods', () => {
         responseHeaders: { 'Content-Type': 'application/json' },
         executed: false,
       }),
+      version: TWD_VERSION,
     });
 
     expect(postMessageMock).toHaveBeenNthCalledWith(2, {
@@ -71,6 +73,7 @@ describe('mockBridge mock request methods', () => {
         executed: false,
         urlRegex: true,
       }),
+      version: TWD_VERSION,
     });
 
     expect(getRequestMockRules().length).toBe(1);
@@ -80,7 +83,7 @@ describe('mockBridge mock request methods', () => {
     clearRequestMockRules();
     expect(getRequestMockRules().length).toBe(0);
     expect(postMessageMock).toHaveBeenCalledTimes(3);
-    expect(postMessageMock).toHaveBeenNthCalledWith(3, { type: "CLEAR_RULES" });
+    expect(postMessageMock).toHaveBeenNthCalledWith(3, { type: "CLEAR_RULES", version: TWD_VERSION });
 
     // Restore original controller
     Object.defineProperty(navigator.serviceWorker, 'controller', {
