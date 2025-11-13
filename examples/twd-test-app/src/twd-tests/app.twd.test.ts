@@ -16,6 +16,7 @@ describe("App interactions", () => {
         console.log("Reset state before each test 2");
       });
       it("clicks the button", async () => {
+        await twd.visit("/");
         const btn = await twd.get("button");
         userEvent.click(btn.el);
       });
@@ -26,15 +27,17 @@ describe("App interactions", () => {
     throw new Error("Should not run");
   });
 
-  it.only("only this one runs if present and long text to check the layout", async () => {
+  it("only this one runs if present and long text to check the layout", async () => {
+    await twd.visit("/");
     const user = userEvent.setup();
     const btn = await twd.get("button");
     await user.click(btn.el);
     await userEvent.click(btn.el);
-    console.log("Ran only test");
   });
+
   describe("Nested describe", () => {
     it("checks text content", async () => {
+      await twd.visit("/");
       let input = await twd.get("input#simple-input");
       await userEvent.type(input.el, "hola");
       input = await twd.get("input#simple-input");
@@ -50,6 +53,7 @@ describe("App interactions", () => {
         value: "Mocked joke!",
       },
     });
+    await twd.visit("/");
     const btn = await twd.get("button[data-twd='joke-button']");
     await userEvent.click(btn.el);
     // Wait for the mock fetch to fire
@@ -82,6 +86,7 @@ describe("App interactions", () => {
         value: "Third Mocked joke!",
       },
     });
+    await twd.visit("/");
     const btn = await twd.get("button[data-twd='joke-button']");
     await userEvent.click(btn.el);
     // Wait for the mock fetch to fire
