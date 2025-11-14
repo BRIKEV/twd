@@ -5,8 +5,10 @@ import puppeteer from "puppeteer";
 // Determine project root
 let __dirname = path.resolve();
 
+const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
 const browser = await puppeteer.launch({
-  headless: true,
+  headless: false,
   args: ['--no-sandbox', '--disable-setuid-sandbox'],
 });
 const page = await browser.newPage();
@@ -20,11 +22,11 @@ try {
   });
   // wait to load data-testid="twd-sidebar"
   console.log('Waiting for sidebar to appear...');
-  await page.waitForSelector('[data-testid="twd-sidebar"]', { timeout: 60000 });
+  await sleep(3000);
   console.log('Page loaded. Starting tests...');
   // reload page
   // Execute all tests
-  const { handlers, testStatus } = await page.evaluate(async () => {
+  const { testStatus } = await page.evaluate(async () => {
     const TestRunner = window.__testRunner;
     const testStatus = [];
     const runner = new TestRunner({

@@ -1,4 +1,4 @@
-name: CI - PR Tests
+name: CI - TWD Test App CI tests
 
 on:
   pull_request:
