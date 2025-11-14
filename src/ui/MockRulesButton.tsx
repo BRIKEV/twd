@@ -42,7 +42,7 @@ export const MockRulesButton = () => {
       </span>
       <span style={{ 
         fontSize: "10px", 
-        color: "#94a3b8",
+        color: "#1E293B",
         fontWeight: "500"
       }}>
         View rules in console

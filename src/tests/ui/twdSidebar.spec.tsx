@@ -101,5 +101,36 @@ describe("TWDSidebar", () => {
       const errorLog = screen.getByText(/Test failed: Test error/);
       expect(errorLog).toBeInTheDocument();
     });
+
+    it('should render the total number of tests', async () => {
+      twd.describe('Group test', () => {
+        twd.it('Test 1', vi.fn());
+        twd.it('Test 2', vi.fn());
+      });
+      render(<TWDSidebar open={true} />);
+      const totalTests = screen.getByText(/Total:\s*3/);
+
+      // The checkmark and cross are Unicode, not HTML entities, so we must match by visible text/glyph
+      // Use regular expressions to match ✓ 0 and ✗ 0 ignoring whitespace
+      const passedTests = screen.getByText((content) => content.replace(/\s/g, '') === '✓0');
+      const failedTests = screen.getByText((content) => content.replace(/\s/g, '') === '✗0');
+
+      expect(passedTests).toBeInTheDocument();
+      expect(failedTests).toBeInTheDocument();
+      expect(totalTests).toBeInTheDocument();
+    });
+
+    it('should run one single test when clicking the run button', async () => {
+      const user = userEvent.setup();
+      const testFn1 = vi.fn();
+      twd.describe('Group test', () => {
+        twd.it('Test 1', testFn1);
+      });
+      render(<TWDSidebar open={true} />);
+      const runTestButton = screen.getByTestId('play-icon');
+      expect(runTestButton).toBeInTheDocument();
+      await user.click(runTestButton);
+      expect(testFn1).toHaveBeenCalled();
+    });
   });
 });

@@ -87,12 +87,12 @@ export const TWDSidebar = ({ open, position = "left" }: TWDSidebarProps) => {
       }}
       data-testid="twd-sidebar"
     >
-      <div style={{ padding: "8px", background: "#f9fafb", position: "sticky", top: 0, zIndex: 1000 }}>
+      <div style={{ padding: "8px", background: "#f9fafb", position: "sticky", top: 0, zIndex: 1000, borderBottom: "1px solid #e5e7eb" }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "14px" }}>
           <button
             onClick={runAll}
             style={{
-              background: "#3b82f6",
+              background: "#1A6EF4",
               color: "white",
               padding: "4px 8px",
               borderRadius: "4px",
@@ -109,11 +109,20 @@ export const TWDSidebar = ({ open, position = "left" }: TWDSidebarProps) => {
               border: "none",
               cursor: "pointer",
               fontSize: "14px",
+              paddingRight: "0",
+              paddingLeft: "0",
             }}
             onClick={() => setIsOpen(false)}
           >
             ✖
           </button>
+        </div>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: "14px", color: "#6b7280", marginBottom: "10px" }}>
+          <span style={{ color: "#374151" }}>Total: {tests.length}</span>
+          <div style={{ display: "flex", gap: "4px" }}>
+            <span style={{ color: "#00c951" }}>&#10003; {tests.filter(test => test.status === "pass").length}</span>
+            <span style={{ color: "#fb2c36" }}>&#10007; {tests.filter(test => test.status === "fail").length}</span>
+          </div>
         </div>
         <MockRulesButton />
       </div>

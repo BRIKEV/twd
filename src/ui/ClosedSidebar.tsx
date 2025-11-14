@@ -28,7 +28,7 @@ export const ClosedSidebar = ({ setOpen, position }: ClosedSidebarProps) => {
         position: "fixed",
         top: "50%",
         transform: "translateY(-50%)",
-        background: "#3b82f6",
+        background: "#1A6EF4",
         color: "white",
         padding: "6px 10px",
         cursor: "pointer",
