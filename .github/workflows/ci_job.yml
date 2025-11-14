@@ -1,0 +1,43 @@
+name: CI - PR Tests
+
+on:
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: 'npm'
+          cache-dependency-path: examples/twd-test-app/package-lock.json
+
+      - name: Install dependencies
+        working-directory: examples/twd-test-app
+        run: npm ci
+
+      - name: Start Vite dev server
+        working-directory: examples/twd-test-app
+        run: |
+          nohup npm run dev:ci > vite.log 2>&1 &
+          npx wait-on http://localhost:5173
+        env:
+          CI: true
+
+      - name: Run Puppeteer tests (test:ci)
+        working-directory: examples/twd-test-app
+        run: npm run test:ci
+        env:
+          CI: true
+      
+      - name: Display coverage
+        working-directory: examples/twd-test-app
+        run: |
+          npm run collect:coverage:text
