@@ -21,7 +21,7 @@ describe("Screen Queries Demo", () => {
     await twd.visit("/screen-queries");
 
     // Query by text content
-    const heading = screenDom.getByText("Screen Queries Demo", { selector: "h1" });
+    const heading = screenDom.getByText("Screen Queries Demo");
     const paragraph = screenDom.getByText(/This page demonstrates/);
     const inlineText = screenDom.getByText("Inline text element");
 
@@ -145,7 +145,7 @@ describe("Screen Queries Demo", () => {
     expect(nonExistent).to.be.null;
 
     // But existing elements still work
-    const existing = screenDom.queryByText("Screen Queries Demo", { selector: "h1" });
+    const existing = screenDom.queryByText("Screen Queries Demo");
     expect(existing).to.exist;
   });
 
