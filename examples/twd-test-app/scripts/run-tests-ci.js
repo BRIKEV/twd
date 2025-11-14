@@ -14,9 +14,13 @@ console.time('Total Test Time');
 try {
   // Navigate to your development server
   console.log('Navigating to http://localhost:5173 ...');
-  await page.goto('http://localhost:5173');
+  await page.goto('http://localhost:5173', { 
+    waitUntil: 'networkidle0',
+    timeout: 60000 
+  });
   // wait to load data-testid="twd-sidebar"
-  await page.waitForSelector('[data-testid="twd-sidebar"]', { timeout: 15000 });
+  console.log('Waiting for sidebar to appear...');
+  await page.waitForSelector('[data-testid="twd-sidebar"]', { timeout: 60000 });
   console.log('Page loaded. Starting tests...');
   // reload page
   // Execute all tests

@@ -25,7 +25,8 @@ jobs:
         working-directory: examples/twd-test-app
         run: |
           nohup npm run dev:ci > vite.log 2>&1 &
-          npx wait-on http://localhost:5173
+          npx wait-on http://localhost:5173 --timeout 60000
+          sleep 3
         env:
           CI: true
 
