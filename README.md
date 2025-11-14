@@ -12,31 +12,7 @@
 
 TWD (Testing Web Development) is a library designed to seamlessly integrate testing into your web development workflow. It streamlines the process of writing, running, and managing tests directly in your application, with a modern UI and powerful mocking capabilities.
 
-Currently, TWD supports React, with plans to add more frameworks soon.
-
-**For complete and updated documentation, tutorials, and examples, visit: [https://brikev.github.io/twd/](https://brikev.github.io/twd/)**
-
-## Table of Contents
-
-- [Features](#features)
-- [Installation](#installation)
-- [Quick Start](#quick-start)
-- [Writing Tests](#writing-tests)
-  - [Test Structure](#test-structure)
-  - [Element Selection](#element-selection)
-  - [Assertions](#assertions)
-  - [User Interactions](#user-interactions)
-- [API Mocking](#api-mocking)
-  - [Setup](#setup)
-  - [Mock Requests](#mock-requests)
-  - [Wait for Requests](#wait-for-requests)
-- [API Reference](#api-reference)
-  - [Test Functions](#test-functions)
-  - [TWD Commands](#twd-commands)
-  - [Assertions](#assertions-1)
-- [Examples](#examples)
-- [Contributing](#contributing)
-- [License](#license)
+**📖 [Full Documentation](https://brikev.github.io/twd/) | 🚀 [Getting Started](https://brikev.github.io/twd/getting-started) | 📚 [API Reference](https://brikev.github.io/twd/api/)**
 
 ## Features
 
@@ -45,475 +21,131 @@ Currently, TWD supports React, with plans to add more frameworks soon.
 - 🔥 **Mock Service Worker** integration for API/request mocking
 - 📝 **Simple, readable test syntax** (inspired by popular test frameworks)
 - 🧩 **Automatic test discovery** with Vite support
+- 🎯 **Testing Library support** - Use `screenDom` for semantic, accessible queries
 - 🛠️ **Works with React** (support for more frameworks coming)
 
 ## Installation
 
-You can install TWD via npm:
-
 ```bash
-# with npm
 npm install twd-js
-
-# with yarn
+# or
 yarn add twd-js
-
-# with pnpm
+# or
 pnpm add twd-js
 ```
 
 ## Quick Start
 
-1. **Add the TWD Sidebar to your React app:**
+1. **Add TWD to your React app:**
 
-   ```tsx
-   import { StrictMode } from "react";
-   import { createRoot } from "react-dom/client";
-   import App from "./App";
-   import "./index.css";
+```tsx
+// src/main.tsx
+import { StrictMode } from "react";
+import { createRoot } from "react-dom/client";
+import App from "./App";
 
-   // Only load the test sidebar and tests in development mode
-    if (import.meta.env.DEV) {
-      // Use Vite's glob import to find all test files
-      const testModules = import.meta.glob("./**/*.twd.test.ts");
-      const { initTests, twd, TWDSidebar } = await import('twd-js');
-      // You need to pass the test modules, the sidebar component, and createRoot function
-      initTests(testModules, <TWDSidebar open={true} position="left" />, createRoot);
-      // if you want to use mock requests, you can initialize it here
-      twd.initRequestMocking()
-        .then(() => {
-          console.log("Request mocking initialized");
-        })
-        .catch((err) => {
-          console.error("Error initializing request mocking:", err);
-        });
-    }
+if (import.meta.env.DEV) {
+  const testModules = import.meta.glob("./**/*.twd.test.ts");
+  const { initTests, twd, TWDSidebar } = await import('twd-js');
+  initTests(testModules, <TWDSidebar open={true} position="left" />, createRoot);
+  twd.initRequestMocking().catch(console.error);
+}
 
-   createRoot(document.getElementById("root")!).render(
-     <StrictMode>
-       <App />
-     </StrictMode>
-   );
-   ```
+createRoot(document.getElementById("root")!).render(
+  <StrictMode><App /></StrictMode>
+);
+```
 
-   **TWDSidebar Props**
-
-    | Prop      | Type                | Default | Description                                 |
-    |-----------|---------------------|---------|---------------------------------------------|
-    | open      | boolean             | true    | Whether the sidebar is open by default       |
-    | position  | "left" \| "right"   | "left" | Sidebar position (left or right side)
-
-2. **Write your tests:**
-
-   Create files ending with `.twd.test.ts` (or any extension you prefer):
-
-   ```ts
-   // src/app.twd.test.ts
-   import { twd, userEvent, screenDom } from "twd-js";
-   import { describe, it } from "twd-js/runner";
-
-   describe("Hello World Page", () => {
-     it("should display the welcome title and counter button", async () => {
-       await twd.visit("/");
-       
-       // Option 1: Use TWD's native selectors
-       const title = await twd.get("h1");
-       title.should("be.visible").should("have.text", "Welcome to TWD");
-       
-       const counterButton = await twd.get("button");
-       counterButton.should("be.visible").should("have.text", "Count is 0");
-       
-       const user = userEvent.setup();
-       await user.click(counterButton.el);
-       counterButton.should("have.text", "Count is 1");
-       
-       // Option 2: Use Testing Library queries (semantic, accessible)
-       // const title = screenDom.getByRole("heading", { name: /welcome to twd/i });
-       // twd.should(title, "be.visible");
-       // twd.should(title, "have.text", "Welcome to TWD");
-       // 
-       // const counterButton = screenDom.getByRole("button", { name: /count is/i });
-       // twd.should(counterButton, "be.visible");
-       // twd.should(counterButton, "have.text", "Count is 0");
-       // 
-       // await user.click(counterButton);
-       // twd.should(counterButton, "have.text", "Count is 1");
-     });
-   });
-   ```
-
-   <p align="center">
-     <img src="./images/twd_side_bar_success.png" alt="TWD Sidebar in action" width="800">
-   </p>
-
-3. **Auto-load your tests:**
-
-
-   - With Vite and the new TWD loader:
-
-     ```ts
-     // src/main.tsx (or your main entry file)
-     import { StrictMode } from 'react';
-     import { createRoot } from 'react-dom/client';
-     import './index.css';
-     import router from './routes.ts';
-     import { RouterProvider } from 'react-router';
-
-     // Only load the test sidebar and tests in development mode
-     if (import.meta.env.DEV) {
-       // Use Vite's glob import to find all test files
-       const testModules = import.meta.glob("./**/*.twd.test.ts");
-       const { initTests, twd, TWDSidebar } = await import('twd-js');
-       // You need to pass the test modules, the sidebar component, and createRoot function
-       initTests(testModules, <TWDSidebar open={true} position="left" />, createRoot);
-       // Optionally initialize request mocking
-       twd.initRequestMocking()
-         .then(() => {
-           console.log("Request mocking initialized");
-         })
-         .catch((err) => {
-           console.error("Error initializing request mocking:", err);
-         });
-     }
-     // ...rest of your app bootstrap
-     createRoot(document.getElementById('root')!).render(
-       <StrictMode>
-         <RouterProvider router={router} />
-       </StrictMode>,
-     );
-     ```
-
-   - Or manually (not recommended):
-
-     ```ts
-     // src/main.tsx
-     if (import.meta.env.DEV) {
-       const testModules = {
-         './app.twd.test.ts': () => import('./app.twd.test'),
-         './another-test-file.twd.test.ts': () => import('./another-test-file.twd.test'),
-       };
-       const { initTests, TWDSidebar } = await import('twd-js');
-       initTests(testModules, <TWDSidebar open={true} position="left" />, createRoot);
-     }
-     ```
-
-4. **Run your app and open the TWD sidebar** to see and run your tests in the browser.
-
-## Writing Tests
-
-### Test Structure
-
-TWD uses a familiar testing structure with `describe`, `it`, `beforeEach`, and other common testing functions:
+2. **Write your first test:**
 
 ```ts
-import { twd, userEvent } from "twd-js";
-import { describe, it, beforeEach } from "twd-js/runner";
+// src/app.twd.test.ts
+import { twd, userEvent, screenDom } from "twd-js";
+import { describe, it } from "twd-js/runner";
 
-describe("User authentication", () => {
-  beforeEach(() => {
-    // Reset state before each test
-  });
-  it("should login successfully", async () => {
-    await twd.visit("/login");
-    // Your test logic here
-  });
-  
-  it.skip("skipped test", () => {
-    // This test will be skipped
-  });
-  
-  it.only("only this test runs", () => {
-    // Only this test will run when .only is present
+describe("Hello World Page", () => {
+  it("should display the welcome title and counter button", async () => {
+    await twd.visit("/");
+    
+    // Option 1: Use TWD's native selectors
+    const title = await twd.get("h1");
+    title.should("be.visible").should("have.text", "Welcome to TWD");
+    
+    const counterButton = await twd.get("button");
+    counterButton.should("be.visible").should("have.text", "Count is 0");
+    
+    const user = userEvent.setup();
+    await user.click(counterButton.el);
+    counterButton.should("have.text", "Count is 1");
+    
+    // Option 2: Use Testing Library queries (semantic, accessible)
+    // const title = screenDom.getByRole("heading", { name: /welcome to twd/i });
+    // twd.should(title, "be.visible");
+    // twd.should(title, "have.text", "Welcome to TWD");
+    // 
+    // const counterButton = screenDom.getByRole("button", { name: /count is/i });
+    // twd.should(counterButton, "be.visible");
+    // await user.click(counterButton);
+    // twd.should(counterButton, "have.text", "Count is 1");
   });
 });
 ```
 
+3. **Run your app** - The TWD sidebar will appear automatically in development mode!
+
+<p align="center">
+  <img src="./images/twd_side_bar_success.png" alt="TWD Sidebar in action" width="800">
+</p>
+
+## Key Concepts
+
 ### Element Selection
 
-TWD provides multiple ways to select elements:
+TWD supports two approaches:
 
-**TWD Native Selectors:**
+**Native Selectors:**
 ```ts
-// Select a single element
 const button = await twd.get("button");
-const input = await twd.get("input#email");
-
-// Select multiple elements
-const items = await twd.getAll(".item");
-items[0].should("be.visible");
+button.should("be.visible");
 ```
 
-**Testing Library Queries (also supported):**
+**Testing Library Queries:**
 ```ts
-import { screenDom, twd } from "twd-js";
-
-// Semantic, accessible queries
 const button = screenDom.getByRole("button", { name: /submit/i });
-const input = screenDom.getByLabelText("Email:");
-const heading = screenDom.getByRole("heading", { name: "Welcome" });
-
-// Use twd.should() for assertions (not .should() method)
 twd.should(button, "be.visible");
-twd.should(input, "have.value", "user@example.com");
-```
-
-Both approaches work together seamlessly. See the [Testing Library docs](/api/react-testing-library) for more details.
-
-### Assertions
-
-TWD includes a comprehensive set of assertions for testing element states:
-
-```ts
-// Text content
-element.should("have.text", "exact text");
-element.should("contain.text", "partial text");
-element.should("be.empty");
-
-// Attributes and values
-element.should("have.attr", "placeholder", "Type here");
-element.should("have.value", "input value");
-element.should("have.class", "active");
-
-// Element state
-element.should("be.disabled");
-element.should("be.enabled");
-element.should("be.checked");
-element.should("be.selected");
-element.should("be.focused");
-element.should("be.visible");
-
-// Negated assertions
-element.should("not.be.disabled");
-element.should("not.have.text", "wrong text");
-
-// URL assertions
-twd.url().should("eq", "http://localhost:3000/contact");
-twd.url().should("contain.url", "/contact");
 ```
 
 ### User Interactions
 
-TWD integrates with `@testing-library/user-event` for realistic user interactions:
-
 ```ts
-import { userEvent, screenDom } from "twd-js";
-
 const user = userEvent.setup();
-
-// With TWD selectors
-const button = await twd.get("button");
-await user.click(button.el);
-
-// With React Testing Library queries
-const input = screenDom.getByLabelText("Email:");
-await user.type(input, "user@example.com");
-
-// Form interactions
-const select = screenDom.getByRole("combobox");
-await user.selectOptions(select, "option-value");
+await user.click(button);
+await user.type(input, "Hello World");
 ```
 
-## API Mocking
-
-### Setup
-
-TWD provides a CLI to easily set up a mock service worker for API/request mocking in your app. You do **not** need to manually register the service worker in your app—TWD handles this automatically when you use `twd.initRequestMocking()` in your tests.
-
-Run the following command in your project root:
-
-```bash
-npx twd-js init <public-dir> [--save]
-```
-
-- Replace `<public-dir>` with the path to your app's public/static directory (e.g., `public/` or `dist/`).
-- Use `--save` to print a registration snippet for your app.
-
-This will copy `mock-sw.js` to your public directory.
-
-**Removing the Service Worker in Production Builds**
-
-The service worker file (`mock-sw.js`) is only needed during development for API mocking. To remove it from production builds, use the `removeMockServiceWorker` Vite plugin:
+### API Mocking
 
 ```ts
-// vite.config.ts
-import { defineConfig } from 'vite';
-import { removeMockServiceWorker } from 'twd-js';
-
-export default defineConfig({
-  plugins: [
-    // ... other plugins
-    removeMockServiceWorker()
-  ]
+twd.mockRequest("getUser", {
+  method: "GET",
+  url: "/api/user",
+  response: { id: 1, name: "John" }
 });
+
+const rule = await twd.waitForRequest("getUser");
 ```
 
-This plugin will automatically remove `mock-sw.js` from your build output during production builds.
+## Learn More
 
-### Mock Requests
-
-Use `twd.mockRequest()` to define API mocks in your tests:
-
-```ts
-import { twd, screenDom, userEvent } from "twd-js";
-
-// Initialize mocking when loading tests
-// await twd.initRequestMocking();
-
-it("fetches user data", async () => {
-  // Mock the API request
-  twd.mockRequest("getUser", {
-    method: "GET",
-    url: "https://api.example.com/user/123",
-    response: {
-      id: 123,
-      name: "John Doe",
-      email: "john@example.com"
-    },
-    status: 200,
-    headers: { "Content-Type": "application/json" }
-  });
-  
-  // Trigger the request in your app
-  const button = screenDom.getByRole("button", { name: /load user/i });
-  const user = userEvent.setup();
-  await user.click(button);
-  
-  // Wait for the mock to be called
-  const rule = await twd.waitForRequest("getUser");
-  console.log("Request body:", rule.request);
-  
-  // Clean up mocks after test
-  twd.clearRequestMockRules();
-});
-```
-
-### Wait for Requests
-
-TWD provides utilities to wait for mocked requests:
-
-```ts
-// Wait for a single request
-const rule = await twd.waitForRequest("getUserData");
-
-// Wait for multiple requests
-const rules = await twd.waitForRequests(["getUser", "getPosts"]);
-
-// Access request data
-console.log("Request body:", rule.request);
-console.log("Response:", rule.response);
-```
-
-## API Reference
-
-### Test Functions
-
-| Function | Description | Example |
-|----------|-------------|---------|
-| `describe(name, fn)` | Groups related tests | `describe("User login", () => {...})` |
-| `it(name, fn)` | Defines a test case | `it("should login", async () => {...})` |
-| `it.only(name, fn)` | Runs only this test | `it.only("focused test", () => {...})` |
-| `it.skip(name, fn)` | Skips this test | `it.skip("broken test", () => {...})` |
-| `beforeEach(fn)` | Runs before each test | `beforeEach(() => {...})` |
-
-### TWD Commands
-
-| Command | Description | Example |
-|---------|-------------|---------|
-| `twd.get(selector)` | Select single element | `await twd.get("button")` |
-| `twd.getAll(selector)` | Select multiple elements | `await twd.getAll(".item")` |
-| `twd.visit(url)` | Navigate to URL | `twd.visit("/contact")` |
-| `twd.wait(ms)` | Wait for specified time | `await twd.wait(500)` |
-| `twd.should(el, assertion, ...args)` | Assert on any element | `twd.should(button, "be.visible")` |
-| `twd.url()` | Get URL API for assertions | `twd.url().should("contain.url", "/home")` |
-| `screenDom` | Testing Library queries | `screenDom.getByRole("button")` |
-| `userEvent` | User interaction library | `userEvent.setup().click(element)` |
-
-### Assertions
-
-#### Element Content
-- `have.text` - Exact text match
-- `contain.text` - Partial text match  
-- `be.empty` - Element has no text content
-
-#### Element Attributes
-- `have.attr` - Has specific attribute value
-- `have.value` - Input/textarea value
-- `have.class` - Has CSS class
-
-#### Element State
-- `be.disabled` / `be.enabled` - Form element state
-- `be.checked` - Checkbox/radio state
-- `be.selected` - Option element state
-- `be.focused` - Element has focus
-- `be.visible` - Element is visible
-
-#### URL Assertions
-- `eq` - Exact URL match
-- `contain.url` - URL contains substring
-
-All assertions can be negated with `not.` prefix (e.g., `not.be.disabled`).
+- 📖 **[Full Documentation](https://brikev.github.io/twd/)** - Complete guides and tutorials
+- 🎯 **[Writing Tests](https://brikev.github.io/twd/writing-tests)** - Learn how to write effective tests
+- 🔥 **[API Mocking](https://brikev.github.io/twd/api-mocking)** - Mock API requests in your tests
+- 📚 **[API Reference](https://brikev.github.io/twd/api/)** - Complete API documentation
+- 🧪 **[Testing Library Support](https://brikev.github.io/twd/api/react-testing-library)** - Use semantic queries
 
 ## Examples
 
-### Basic Form Testing
-
-```ts
-import { twd, userEvent } from "twd-js";
-import { describe, it } from "twd-js/runner";
-
-describe("Contact form", () => {
-  it("submits form data", async () => {
-    await twd.visit("/contact");
-    
-    const user = userEvent.setup();
-    const emailInput = await twd.get("input#email");
-    const messageInput = await twd.get("textarea#message");
-    const submitBtn = await twd.get("button[type='submit']");
-    
-    await user.type(emailInput.el, "test@example.com");
-    await user.type(messageInput.el, "Hello world");
-    
-    emailInput.should("have.value", "test@example.com");
-    messageInput.should("have.value", "Hello world");
-    
-    await user.click(submitBtn.el);
-  });
-});
-```
-
-### API Mocking with Authentication
-
-```ts
-import { twd, userEvent } from "twd-js";
-import { describe, it } from "twd-js/runner";
-
-describe("Protected routes", () => {
-  it("redirects to login when unauthorized", async () => {
-    await twd.visit("/dashboard");
-    await twd.wait(100);
-    twd.url().should("contain.url", "/login");
-  });
-  
-  it("loads dashboard with valid session", async () => {
-    // Mock authentication check
-    await twd.mockRequest("authCheck", {
-      method: "GET", 
-      url: "/api/auth/me",
-      response: { id: 1, name: "John Doe" }
-    });
-    
-    await twd.visit("/dashboard");
-    await twd.waitForRequest("authCheck");
-    
-    const welcome = await twd.get("h1");
-    welcome.should("contain.text", "Welcome, John");
-    
-    twd.clearRequestMockRules();
-  });
-});
-```
-
-For more comprehensive examples, see the [examples](https://github.com/BRIKEV/twd/tree/main/examples) directory in the repository.
+Check out the [examples directory](https://github.com/BRIKEV/twd/tree/main/examples) for complete working examples.
 
 ## Contributing
 
