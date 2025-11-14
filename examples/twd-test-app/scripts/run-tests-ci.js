@@ -8,7 +8,7 @@ let __dirname = path.resolve();
 const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
 const browser = await puppeteer.launch({
-  headless: false,
+  headless: true,
   args: ['--no-sandbox', '--disable-setuid-sandbox'],
 });
 const page = await browser.newPage();

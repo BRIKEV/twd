@@ -25,20 +25,36 @@ jobs:
         working-directory: examples/twd-test-app
         run: |
           echo "Starting Vite dev server..."
-          ls -la
-          nohup npm run dev:ci > vite.log 2>&1 &
-          npx wait-on http://localhost:5173 --timeout 4000
-          sleep 3
-        env:
-          CI: true
+          npm run dev:ci > vite.log 2>&1 &
+          VITE_PID=$!
+          echo "Vite server starting with PID: $VITE_PID"
+          echo "Waiting for server to be ready..."
+          npx -y wait-on http://localhost:5173 --timeout 60000 --interval 1000 || (echo "Server failed to start" && cat vite.log && exit 1)
+          echo "Vite server is ready"
+          sleep 2
+          echo "Performing health check..."
+          curl -f http://localhost:5173 > /dev/null || (echo "Server health check failed" && cat vite.log && exit 1)
+          echo "Server health check passed"
+          ps aux | grep -i vite | grep -v grep || echo "Warning: Vite process not found in process list"
 
       - name: Run Puppeteer tests (test:ci)
         working-directory: examples/twd-test-app
         run: npm run test:ci
         env:
           CI: true
+        if: always()
+      
+      - name: Display Vite server logs (on failure)
+        working-directory: examples/twd-test-app
+        if: failure()
+        run: |
+          echo "=== Vite server logs ==="
+          cat vite.log || echo "No vite.log found"
+          echo "=== Checking if server is running ==="
+          curl -v http://localhost:5173 || echo "Server is not responding"
       
       - name: Display coverage
         working-directory: examples/twd-test-app
+        if: success()
         run: |
           npm run collect:coverage:text
