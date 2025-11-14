@@ -207,69 +207,100 @@ describe("Login Form", () => {
 
 ## Assertions
 
-TWD provides a comprehensive set of assertions for testing element states and content.
+TWD provides a comprehensive set of assertions for testing element states and content. There are two ways to make assertions:
+
+1. **Method style** (`element.should()`) - For elements from `twd.get()` or `twd.getAll()`
+2. **Function style** (`twd.should(element, ...)`) - For any element, especially from Testing Library queries
+
+### Using Assertions
+
+#### Method Style (TWD Elements)
+
+Elements returned from `twd.get()` and `twd.getAll()` have a `.should()` method:
+
+```ts
+const element = await twd.get("h1");
+element.should("have.text", "Welcome");
+element.should("be.visible");
+```
+
+#### Function Style (Any Element)
+
+Use `twd.should()` for elements from Testing Library queries or any raw DOM element:
+
+```ts
+import { twd, screenDom } from "twd-js";
+
+// With Testing Library queries
+const button = screenDom.getByRole("button");
+twd.should(button, "be.visible");
+twd.should(button, "have.text", "Submit");
+
+// With raw DOM elements
+const element = document.querySelector(".my-element");
+twd.should(element, "contain.text", "Hello");
+```
 
 ### Text Content Assertions
 
 ```ts
+// Method style (TWD elements)
 const element = await twd.get("h1");
-
-// Exact text match
 element.should("have.text", "Welcome to TWD");
-
-// Partial text match
 element.should("contain.text", "Welcome");
-
-// Empty content
 element.should("be.empty");
+
+// Function style (Testing Library or raw elements)
+const heading = screenDom.getByRole("heading");
+twd.should(heading, "have.text", "Welcome to TWD");
+twd.should(heading, "contain.text", "Welcome");
 
 // Negated assertions
 element.should("not.have.text", "Goodbye");
-element.should("not.be.empty");
+twd.should(heading, "not.be.empty");
 ```
 
 ### Attribute Assertions
 
 ```ts
+// Method style
 const input = await twd.get("input#email");
-
-// Check attribute value
 input.should("have.attr", "type", "email");
-input.should("have.attr", "placeholder", "Enter your email");
-
-// Check input value
 input.should("have.value", "user@example.com");
-
-// Check CSS classes
 input.should("have.class", "form-control");
-input.should("not.have.class", "error");
+
+// Function style
+const emailInput = screenDom.getByLabelText("Email:");
+twd.should(emailInput, "have.attr", "type", "email");
+twd.should(emailInput, "have.value", "user@example.com");
+twd.should(emailInput, "have.class", "form-control");
 ```
 
 ### Element State Assertions
 
 ```ts
+// Method style
 const button = await twd.get("button");
-const checkbox = await twd.get("input[type='checkbox']");
-
-// Disabled/enabled state
 button.should("be.disabled");
-button.should("not.be.enabled");
+button.should("be.visible");
 
-// Checked state (checkboxes/radios)
-checkbox.should("be.checked");
-checkbox.should("not.be.checked");
+// Function style
+const submitButton = screenDom.getByRole("button", { name: /submit/i });
+twd.should(submitButton, "be.enabled");
+twd.should(submitButton, "be.visible");
 
-// Selected state (select options)
-const option = await twd.get("option[value='admin']");
-option.should("be.selected");
+// Checked state
+const checkbox = screenDom.getByRole("checkbox");
+twd.should(checkbox, "be.checked");
+
+// Selected state
+const option = screenDom.getByRole("option", { selected: true });
+twd.should(option, "be.selected");
 
 // Focus state
-const input = await twd.get("input#username");
-input.should("be.focused");
-
-// Visibility
-button.should("be.visible");
-button.should("not.be.visible");
+const input = screenDom.getByLabelText("Username:");
+input.focus();
+twd.should(input, "be.focused");
 ```
 
 ### URL Assertions

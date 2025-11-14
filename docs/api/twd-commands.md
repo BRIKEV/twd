@@ -447,6 +447,98 @@ await twd.wait(5000); // Why 5 seconds?
 
 ---
 
+### twd.should(element, assertion, ...args)
+
+Makes assertions on any DOM element. This is the standalone function version of assertions, useful for elements from Testing Library queries (`screenDom`) or any raw DOM element.
+
+#### Syntax
+
+```ts
+twd.should(element: Element, assertion: string, ...args: any[]): void
+```
+
+#### Parameters
+
+- **element** (`Element`) - The DOM element to assert on
+- **assertion** (`string`) - The assertion name (e.g., `"be.visible"`, `"have.text"`)
+- **args** (`any[]`) - Additional arguments for the assertion (e.g., expected text value)
+
+#### Returns
+
+`void` - This function doesn't return a value (unlike the `.should()` method on TWD elements)
+
+#### When to Use
+
+- **Use `twd.should()`** for elements from Testing Library queries (`screenDom`)
+- **Use `element.should()`** for elements returned from `twd.get()` or `twd.getAll()`
+
+#### Examples
+
+```ts
+import { twd, screenDom } from "twd-js";
+
+// With Testing Library queries
+const button = screenDom.getByRole("button", { name: /submit/i });
+twd.should(button, "be.visible");
+twd.should(button, "have.text", "Submit");
+
+// With raw DOM elements
+const element = document.querySelector(".my-element");
+twd.should(element, "be.visible");
+twd.should(element, "contain.text", "Hello");
+
+// With TWD elements (alternative to .should() method)
+const input = await twd.get("input#email");
+twd.should(input.el, "have.value", "user@example.com");
+// Or use the method: input.should("have.value", "user@example.com");
+
+// All assertion types are supported
+const heading = screenDom.getByRole("heading");
+twd.should(heading, "have.text", "Welcome");
+twd.should(heading, "be.visible");
+twd.should(heading, "have.class", "main-title");
+
+const checkbox = screenDom.getByRole("checkbox");
+twd.should(checkbox, "be.checked");
+
+const select = screenDom.getByRole("combobox");
+const option = screenDom.getByRole("option", { selected: true });
+twd.should(option, "be.selected");
+```
+
+#### Comparison: Method vs Function
+
+```ts
+// Method style (for twd.get() elements)
+const button = await twd.get("button");
+button.should("be.visible").should("have.text", "Click me");
+
+// Function style (for any element, especially screenDom)
+const button = screenDom.getByRole("button");
+twd.should(button, "be.visible");
+twd.should(button, "have.text", "Click me");
+```
+
+#### Available Assertions
+
+All assertions available on `.should()` method are also available with `twd.should()`:
+
+- `"have.text"` - Exact text match
+- `"contain.text"` - Partial text match
+- `"be.empty"` - Element has no text
+- `"have.attr"` - Has attribute with value
+- `"have.value"` - Input/textarea value
+- `"have.class"` - Has CSS class
+- `"be.disabled"` / `"be.enabled"` - Form element state
+- `"be.checked"` - Checkbox/radio state
+- `"be.selected"` - Option element state
+- `"be.focused"` - Element has focus
+- `"be.visible"` - Element is visible
+
+All assertions can be negated with `"not."` prefix (e.g., `"not.be.visible"`).
+
+---
+
 ## API Mocking
 
 ### twd.mockRequest(alias, options)
