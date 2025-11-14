@@ -54,6 +54,7 @@ const Contact: React.FC = () => {
             name="email"
             value={email}
             required
+            placeholder="Enter your email"
             onChange={e => setEmail(e.target.value)}
             style={{ width: '100%', padding: '0.5rem' }}
           />

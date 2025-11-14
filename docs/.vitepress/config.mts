@@ -77,6 +77,7 @@ export default defineConfig({
           { text: 'Overview', link: '/api/' },
           { text: 'Test Functions', link: '/api/test-functions' },
           { text: 'TWD Commands', link: '/api/twd-commands' },
+          { text: 'Testing Library', link: '/api/react-testing-library' },
           { text: 'Assertions', link: '/api/assertions' },
         ]
       }

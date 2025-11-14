@@ -82,7 +82,7 @@ interface TWDAPI {
    * });
    * ```
    */
-  mockRequest: (alias: string, options: Options) => void;
+  mockRequest: (alias: string, options: Options) => Promise<void>;
   /**
    * Wait for a mocked request to be made.
    * @param alias The alias of the mock rule to wait for
@@ -158,6 +158,22 @@ interface TWDAPI {
    * ```
    */
   wait: (time: number) => Promise<void>;
+  /**
+   * Asserts something about the element.
+   * @param el The element to assert on
+   * @param name The name of the assertion.
+   * @param args Arguments for the assertion.
+   * @returns The same API for chaining.
+   * @example
+   * ```ts
+   * const button = await twd.get("button");
+   * const text = screenDom.getByText("Hello");
+   * twd.should(button.el, "have.text", "Hello");
+   * twd.should(text, "be.empty");
+   * twd.should(button.el, "have.class", "active");
+   * ```
+   */
+  should: (el: Element, name: AnyAssertion, ...args: ArgsFor<AnyAssertion>) => void;
 }
 
 /**
@@ -217,5 +233,9 @@ export const twd: TWDAPI = {
   initRequestMocking,
   clearRequestMockRules,
   getRequestMockRules,
+  should: (el: Element, name: AnyAssertion, ...args: ArgsFor<AnyAssertion>) => {
+    const message = runAssertion(el, name, ...args);
+    log(message);
+  },
   wait,
 };

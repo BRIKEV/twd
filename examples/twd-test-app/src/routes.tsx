@@ -3,6 +3,7 @@ import App from "./pages/App/App";
 import Contact from "./pages/Contact";
 import Assertions from "./pages/Assertions/Assertions";
 import { LoadShows } from "./pages/LoadShows";
+import ScreenQueries from "./pages/ScreenQueries";
 
 const router = createBrowserRouter([
   {
@@ -20,6 +21,10 @@ const router = createBrowserRouter([
   {
     path: '/shows',
     Component: LoadShows,
+  },
+  {
+    path: '/screen-queries',
+    Component: ScreenQueries,
   },
   {
     path: "*",

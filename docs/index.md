@@ -47,21 +47,35 @@ See TWD in action with the test sidebar running tests directly in your browser:
 </p>
 
 ```ts
-import { twd, userEvent } from "twd-js";
+import { twd, userEvent, screenDom } from "twd-js";
 import { describe, it } from "twd-js/runner";
 
 describe("Hello World Page", () => {
   it("should display the welcome title and counter button", async () => {
     await twd.visit("/");
     
-    const title = await twd.get("[data-testid='welcome-title']");
+    // Option 1: Use TWD's native selectors
+    const title = await twd.get("h1");
     title.should("be.visible").should("have.text", "Welcome to TWD");
     
-    const counterButton = await twd.get("[data-testid='counter-button']");
+    const counterButton = await twd.get("button");
     counterButton.should("be.visible").should("have.text", "Count is 0");
     
-    await userEvent.click(counterButton.el);
+    const user = userEvent.setup();
+    await user.click(counterButton.el);
     counterButton.should("have.text", "Count is 1");
+    
+    // Option 2: Use Testing Library queries (semantic, accessible)
+    // const title = screenDom.getByRole("heading", { name: /welcome to twd/i });
+    // twd.should(title, "be.visible");
+    // twd.should(title, "have.text", "Welcome to TWD");
+    // 
+    // const counterButton = screenDom.getByRole("button", { name: /count is/i });
+    // twd.should(counterButton, "be.visible");
+    // twd.should(counterButton, "have.text", "Count is 0");
+    // 
+    // await user.click(counterButton);
+    // twd.should(counterButton, "have.text", "Count is 1");
   });
 });
 ```
