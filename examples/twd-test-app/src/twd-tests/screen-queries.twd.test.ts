@@ -11,10 +11,10 @@ describe("Screen Queries Demo", () => {
     const disabledButton = screenDom.getByRole("button", { name: /disabled button/i });
 
     // Verify buttons exist
-    expect(primaryButton).to.exist;
-    expect(toggleButton).to.exist;
-    expect(disabledButton).to.exist;
-    expect(disabledButton).to.have.property("disabled", true);
+    twd.should(primaryButton, "be.visible");
+    twd.should(toggleButton, "be.visible");
+    twd.should(disabledButton, "be.visible");
+    twd.should(disabledButton, "be.disabled");
   });
 
   it("should query elements using screenDom.getByText", async () => {
