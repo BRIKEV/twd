@@ -82,7 +82,7 @@ interface TWDAPI {
    * });
    * ```
    */
-  mockRequest: (alias: string, options: Options) => void;
+  mockRequest: (alias: string, options: Options) => Promise<void>;
   /**
    * Wait for a mocked request to be made.
    * @param alias The alias of the mock rule to wait for
