@@ -24,8 +24,10 @@ jobs:
       - name: Start Vite dev server
         working-directory: examples/twd-test-app
         run: |
+          echo "Starting Vite dev server..."
+          ls -la
           nohup npm run dev:ci > vite.log 2>&1 &
-          npx wait-on http://localhost:5173 --timeout 60000
+          npx wait-on http://localhost:5173 --timeout 4000
           sleep 3
         env:
           CI: true
