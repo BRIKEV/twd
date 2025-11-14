@@ -17,7 +17,10 @@ jobs:
         with:
           node-version: 24
 
-      - name: Install dependencies
+      - name: Install root dependencies
+        run: npm ci
+
+      - name: Install example app dependencies
         working-directory: examples/twd-test-app
         run: npm i
 
