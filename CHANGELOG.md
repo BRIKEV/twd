@@ -1,3 +1,7 @@
+## <small>1.1.1 (2025-11-14)</small>
+
+* Fix/select testing library (#89) ([7b2ed30](https://github.com/BRIKEV/twd/commit/7b2ed30)), closes [#89](https://github.com/BRIKEV/twd/issues/89)
+
 ## 1.1.0 (2025-11-14)
 
 * Feat/pre release improvements (#87) ([266362e](https://github.com/BRIKEV/twd/commit/266362e)), closes [#87](https://github.com/BRIKEV/twd/issues/87)
