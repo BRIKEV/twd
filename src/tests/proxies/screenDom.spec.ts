@@ -17,6 +17,9 @@ describe('screenDom', () => {
     twd.describe('Screen Queries', () => {
       twd.it('should log getByText', async () => {
         screenDom.getByText('Hello World');
+        screenDom.logTestingPlaygroundURL;
+        // @ts-expect-error - prettyDOM is not a function but we want to test the call within
+        screenDom.prettyDOM;
       });
     });
 
