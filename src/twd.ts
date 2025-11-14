@@ -185,7 +185,7 @@ export const twd: TWDAPI = {
     // Prepend selector to exclude TWD sidebar elements
     const enhancedSelector = `body > div:not(#twd-sidebar-root) ${selector}`;
     log(`Searching get("${selector}")`);
-    const el = await waitForElement(() => document.querySelector(enhancedSelector));
+    const el = await waitForElement(selector, () => document.querySelector(enhancedSelector));
 
     const api: TWDElemAPI = {
       el,
@@ -211,7 +211,7 @@ export const twd: TWDAPI = {
     // Prepend selector to exclude TWD sidebar elements
     const enhancedSelector = `body > div:not(#twd-sidebar-root) ${selector}`;
     log(`Searching getAll("${selector}")`);
-    const els = await waitForElements(() => document.querySelectorAll(enhancedSelector));
+    const els = await waitForElements(selector, () => document.querySelectorAll(enhancedSelector));
 
     return els.map((el) => {
       const api: TWDElemAPI = {

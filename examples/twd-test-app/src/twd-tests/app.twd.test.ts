@@ -27,7 +27,7 @@ describe("App interactions", () => {
     throw new Error("Should not run");
   });
 
-  it("only this one runs if present and long text to check the layout", async () => {
+  it("test button", async () => {
     await twd.visit("/");
     const user = userEvent.setup();
     const btn = await twd.get("button");
