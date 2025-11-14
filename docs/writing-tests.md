@@ -59,9 +59,13 @@ describe("User Management", () => {
 
 ## Element Selection
 
-TWD provides two main methods for selecting DOM elements:
+TWD provides multiple ways to select DOM elements. You can use TWD's native selectors or Testing Library's semantic queries.
 
-### Single Element Selection
+### TWD Native Selectors
+
+TWD's native selectors use CSS selectors for simple, direct element access.
+
+#### Single Element Selection
 
 Use `twd.get()` to select a single element:
 
@@ -85,7 +89,7 @@ const userCard = await twd.get("[data-testid='user-card']");
 const firstListItem = await twd.get("ul > li:first-child");
 ```
 
-### Multiple Element Selection
+#### Multiple Element Selection
 
 Use `twd.getAll()` to select multiple elements:
 
@@ -100,6 +104,106 @@ const listItems = await twd.getAll("li");
 buttons[0].should("be.visible");
 listItems[2].should("contain.text", "Third item");
 ```
+
+### Testing Library Queries
+
+TWD also supports Testing Library's query methods through `screenDom`, providing semantic, accessible queries that follow testing best practices.
+
+#### Import screenDom
+
+```ts
+import { screenDom } from "twd-js";
+```
+
+#### Query by Role (Recommended)
+
+```ts
+// Get button by role and accessible name
+const submitButton = screenDom.getByRole("button", { name: /submit/i });
+const heading = screenDom.getByRole("heading", { name: "Welcome", level: 1 });
+
+// Get form elements
+const emailInput = screenDom.getByRole("textbox", { name: /email/i });
+const checkbox = screenDom.getByRole("checkbox", { name: /terms/i });
+```
+
+#### Query by Label
+
+```ts
+// Get inputs by their labels (most accessible)
+const emailInput = screenDom.getByLabelText("Email Address:");
+const searchInput = screenDom.getByLabelText(/search/i);
+```
+
+#### Query by Text
+
+```ts
+// Get elements by text content
+const title = screenDom.getByText("Welcome to TWD");
+const partialMatch = screenDom.getByText(/welcome/i);
+```
+
+#### Query by Test ID
+
+```ts
+// Get elements by data-testid
+const userCard = screenDom.getByTestId("user-card");
+```
+
+#### Query Methods
+
+- **getBy*** - Returns element or throws if not found
+- **queryBy*** - Returns element or null if not found
+- **findBy*** - Returns promise, waits for element to appear
+- **getAllBy*** / **queryAllBy*** / **findAllBy*** - Returns array of elements
+
+```ts
+// getBy throws if element doesn't exist
+const button = screenDom.getByRole("button");
+
+// queryBy returns null if element doesn't exist
+const error = screenDom.queryByText("Error");
+if (error) {
+  // Handle error
+}
+
+// findBy waits for element to appear
+const successMessage = await screenDom.findByText("Success!");
+
+// getAllBy returns array
+const buttons = screenDom.getAllByRole("button");
+expect(buttons).to.have.length(3);
+```
+
+#### Complete Example with screenDom
+
+```ts
+import { screenDom, userEvent, twd } from "twd-js";
+import { describe, it } from "twd-js/runner";
+
+describe("Login Form", () => {
+  it("should submit login form", async () => {
+    await twd.visit("/login");
+
+    // Use screenDom for semantic queries
+    const emailInput = screenDom.getByLabelText("Email:");
+    const passwordInput = screenDom.getByLabelText("Password:");
+    const submitButton = screenDom.getByRole("button", { name: /sign in/i });
+
+    // Use userEvent for interactions
+    const user = userEvent.setup();
+    await user.type(emailInput, "user@example.com");
+    await user.type(passwordInput, "password123");
+    await user.click(submitButton);
+
+    // Wait for success message
+    const successMessage = await screenDom.findByText("Login successful!");
+    twd.should(successMessage, "be.visible");
+  });
+});
+```
+
+> **Note:** For complete Testing Library documentation, see the [Testing Library API reference](/api/react-testing-library).
 
 ## Assertions
 
@@ -198,7 +302,7 @@ expect(listItems).to.have.length(3);
 
 ## User Interactions
 
-TWD integrates with `@testing-library/user-event` for realistic user interactions:
+TWD integrates with `@testing-library/user-event` for realistic user interactions. All user event methods are available and automatically logged in the TWD sidebar:
 
 ### Click Events
 
@@ -311,19 +415,7 @@ spinner.should("not.be.visible");
 
 ## Best Practices
 
-### 1. Use Data Attributes
-
-Use `data-testid` attributes for reliable element selection:
-
-```tsx
-// In your component
-<button data-testid="submit-button">Submit</button>
-
-// In your test
-const submitButton = await twd.get("[data-testid='submit-button']");
-```
-
-### 2. Group Related Tests
+### 1. Group Related Tests
 
 Organize tests logically with nested describes:
 
@@ -343,7 +435,7 @@ describe("Shopping Cart", () => {
 });
 ```
 
-### 3. Clean Up After Tests
+### 2. Clean Up After Tests
 
 Use `beforeEach` to ensure clean state:
 
@@ -358,7 +450,7 @@ beforeEach(() => {
 });
 ```
 
-### 4. Write Descriptive Test Names
+### 3. Write Descriptive Test Names
 
 ```ts
 // Good ✅
@@ -372,7 +464,7 @@ it("should validate email", async () => {
 });
 ```
 
-### 5. Test User Workflows
+### 4. Test User Workflows
 
 Test complete user workflows rather than isolated functions:
 
@@ -384,60 +476,22 @@ describe("User Registration Flow", () => {
     const user = userEvent.setup();
     
     // Fill registration form
-    await user.type(await twd.get("#email"), "user@example.com");
-    await user.type(await twd.get("#password"), "securePassword123");
-    await user.type(await twd.get("#confirmPassword"), "securePassword123");
-    
+    const emailInput = await twd.get("#email");
+    const passwordInput = await twd.get("#password");
+    const confirmPasswordInput = await twd.get("#confirmPassword");
+    await user.type(emailInput.el, "user@example.com");
+    await user.type(passwordInput.el, "securePassword123");
+    await user.type(confirmPasswordInput.el, "securePassword123");
+
     // Submit form
-    await user.click(await twd.get("button[type='submit']"));
-    
+    const submitButton = await twd.get("button[type='submit']");
+    await user.click(submitButton.el);
+
     // Verify redirect and welcome message
     twd.url().should("contain.url", "/dashboard");
     const welcome = await twd.get("h1");
     welcome.should("contain.text", "Welcome");
   });
-});
-```
-
-## Common Patterns
-
-### Testing Form Validation
-
-**IMAGE HERE** - *Screenshot showing form with validation errors highlighted*
-
-```ts
-it("should show validation errors for empty required fields", async () => {
-  await twd.visit("/contact");
-  
-  const user = userEvent.setup();
-  const submitButton = await twd.get("button[type='submit']");
-  
-  // Try to submit empty form
-  await user.click(submitButton.el);
-  
-  // Check for validation errors
-  const emailError = await twd.get(".error-email");
-  emailError.should("contain.text", "Email is required");
-  
-  const messageError = await twd.get(".error-message");
-  messageError.should("contain.text", "Message is required");
-});
-```
-
-### Testing Conditional Rendering
-
-```ts
-it("should show admin panel for admin users", async () => {
-  // Set up admin user state
-  localStorage.setItem("userRole", "admin");
-  
-  await twd.visit("/dashboard");
-  
-  const adminPanel = await twd.get(".admin-panel");
-  adminPanel.should("be.visible");
-  
-  const adminButton = await twd.get("button[data-testid='admin-settings']");
-  adminButton.should("be.visible");
 });
 ```
 
