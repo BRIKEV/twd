@@ -7,10 +7,14 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "dev:ci": "CI=true VITE_COVERAGE=true vite",
+    "test:ci": "node scripts/run-tests-ci.js",
+    "collect:coverage:html": "npx nyc report --reporter=html --report-dir=coverage",
+    "collect:coverage:lcov": "npx nyc report --reporter=lcov --report-dir=coverage",
+    "collect:coverage:text": "npx nyc report --reporter=text --report-dir=coverage"
   },
   "dependencies": {
-    "puppeteer": "^24.24.0",
     "axios": "^1.12.2",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
@@ -27,8 +31,10 @@
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-react-refresh": "^0.4.20",
     "globals": "^16.3.0",
+    "puppeteer": "^24.30.0",
     "typescript": "~5.8.3",
     "typescript-eslint": "^8.39.1",
-    "vite": "^7.2.2"
+    "vite": "^7.2.2",
+    "vite-plugin-istanbul": "^7.2.1"
   }
 }
