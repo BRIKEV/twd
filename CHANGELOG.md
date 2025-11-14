@@ -1,3 +1,8 @@
+## 1.1.0 (2025-11-14)
+
+* Feat/pre release improvements (#87) ([266362e](https://github.com/BRIKEV/twd/commit/266362e)), closes [#87](https://github.com/BRIKEV/twd/issues/87)
+* Feat/selector rta (#85) ([00f59ef](https://github.com/BRIKEV/twd/commit/00f59ef)), closes [#85](https://github.com/BRIKEV/twd/issues/85)
+
 ## <small>1.0.2 (2025-11-12)</small>
 
 * Fix/types coverage v1 (#82) ([83bebd1](https://github.com/BRIKEV/twd/commit/83bebd1)), closes [#82](https://github.com/BRIKEV/twd/issues/82)
