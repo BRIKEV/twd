@@ -1,3 +1,7 @@
+## <small>1.1.2 (2025-11-15)</small>
+
+* fix: error total tests using describe ([c209d29](https://github.com/BRIKEV/twd/commit/c209d29))
+
 ## <small>1.1.1 (2025-11-14)</small>
 
 * Fix/select testing library (#89) ([7b2ed30](https://github.com/BRIKEV/twd/commit/7b2ed30)), closes [#89](https://github.com/BRIKEV/twd/issues/89)
