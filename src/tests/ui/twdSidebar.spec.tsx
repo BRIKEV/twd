@@ -106,9 +106,11 @@ describe("TWDSidebar", () => {
       twd.describe('Group test', () => {
         twd.it('Test 1', vi.fn());
         twd.it('Test 2', vi.fn());
+        twd.it.skip('Test 2', vi.fn());
+        twd.it.only('Test 2', vi.fn());
       });
       render(<TWDSidebar open={true} />);
-      const totalTests = screen.getByText(/Total:\s*3/);
+      const totalTests = screen.getByText(/Total:\s*4/);
 
       // The checkmark and cross are Unicode, not HTML entities, so we must match by visible text/glyph
       // Use regular expressions to match ✓ 0 and ✗ 0 ignoring whitespace

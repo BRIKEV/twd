@@ -69,6 +69,8 @@ export const TWDSidebar = ({ open, position = "left" }: TWDSidebarProps) => {
     return <ClosedSidebar position={position} setOpen={setIsOpen} />;
   }
 
+  const totalTests = tests.filter(test => test.type === "test").length;
+
   return (
     <div
       style={{
@@ -118,7 +120,7 @@ export const TWDSidebar = ({ open, position = "left" }: TWDSidebarProps) => {
           </button>
         </div>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: "14px", color: "#6b7280", marginBottom: "10px" }}>
-          <span style={{ color: "#374151" }}>Total: {tests.length}</span>
+          <span style={{ color: "#374151" }}>Total: {totalTests}</span>
           <div style={{ display: "flex", gap: "4px" }}>
             <span style={{ color: "#00c951" }}>&#10003; {tests.filter(test => test.status === "pass").length}</span>
             <span style={{ color: "#fb2c36" }}>&#10007; {tests.filter(test => test.status === "fail").length}</span>
