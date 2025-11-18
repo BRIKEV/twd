@@ -850,6 +850,128 @@ expect(userMock?.method).to.equal("GET");
 
 ---
 
+## Component Mocking
+
+### twd.mockComponent(name, component)
+
+Mocks a React component with a custom implementation.
+
+#### Syntax
+
+```ts
+twd.mockComponent(name: string, component: React.ComponentType<any>): void
+```
+
+#### Parameters
+
+- **name** (`string`) - Unique identifier matching the `name` prop in `MockedComponent`
+- **component** (`React.ComponentType<any>`) - The mock component implementation
+
+#### Examples
+
+```ts
+interface ButtonProps {
+  onClick: (count: number) => void;
+  count: number;
+}
+
+const Button = ({ onClick, count }: ButtonProps) => {
+  return <button onClick={() => onClick(count + 1)}>Click me {count}</button>;
+};
+
+// Mock the component to change its behavior
+twd.mockComponent("Button", ({ onClick, count }: ButtonProps) => (
+  <Button onClick={() => onClick(count + 2)} count={count} />
+));
+
+await twd.visit("/counter");
+
+let button = await twd.get("button");
+button.should("have.text", "Click me 0");
+
+await userEvent.click(button.el);
+button = await twd.get("button");
+button.should("have.text", "Click me 2");
+```
+
+```ts
+// Mock with completely different rendering
+twd.mockComponent("ComplexChart", () => (
+  <div data-testid="mock-chart">
+    <p>Chart data would be displayed here</p>
+  </div>
+));
+
+await twd.visit("/dashboard");
+const mockChart = await twd.get("[data-testid='mock-chart']");
+mockChart.should("be.visible");
+```
+
+```ts
+// Conditional mocking based on props
+twd.mockComponent("UserCard", ({ user }: UserCardProps) => {
+  if (user.role === "admin") {
+    return <div data-testid="admin-card">{user.name} (Admin)</div>;
+  }
+  return <div data-testid="user-card">{user.name}</div>;
+});
+```
+
+---
+
+### twd.clearComponentMocks()
+
+Clears all active component mocks.
+
+#### Syntax
+
+```ts
+twd.clearComponentMocks(): void
+```
+
+#### Examples
+
+```ts
+describe("Component Tests", () => {
+  beforeEach(() => {
+    // Clear component mocks before each test
+    twd.clearComponentMocks();
+  });
+
+  it("should test with mock", async () => {
+    twd.mockComponent("Button", () => <button>Mocked</button>);
+    // Test implementation...
+  });
+
+  it("should test without mock", async () => {
+    // This test runs with clean state - no mocks active
+    // Test implementation...
+  });
+});
+```
+
+```ts
+// Clear mocks manually when needed
+describe("Component Behavior", () => {
+  it("should handle changing mock behavior", async () => {
+    // First mock
+    twd.mockComponent("StatusIndicator", () => (
+      <div data-status="loading">Loading...</div>
+    ));
+    // Test with first mock...
+    
+    // Clear and set up second mock
+    twd.clearComponentMocks();
+    twd.mockComponent("StatusIndicator", () => (
+      <div data-status="success">Success!</div>
+    ));
+    // Test with second mock...
+  });
+});
+```
+
+---
+
 ## Best Practices
 
 ### 1. Use Descriptive Selectors
@@ -866,12 +988,24 @@ const button = await twd.get("div > div:nth-child(3) button");
 ### 2. Clean Up Mocks
 
 ```ts
+// Clean up API mocks
 describe("API Tests", () => {
   beforeEach(() => {
     twd.clearRequestMockRules();
   });
 
   it("should handle requests", async () => {
+    // Clean state guaranteed
+  });
+});
+
+// Clean up component mocks
+describe("Component Tests", () => {
+  beforeEach(() => {
+    twd.clearComponentMocks();
+  });
+
+  it("should test components", async () => {
     // Clean state guaranteed
   });
 });
