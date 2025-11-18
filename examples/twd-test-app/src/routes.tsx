@@ -4,6 +4,7 @@ import Contact from "./pages/Contact";
 import Assertions from "./pages/Assertions/Assertions";
 import { LoadShows } from "./pages/LoadShows";
 import ScreenQueries from "./pages/ScreenQueries";
+import MockComponent from "./pages/MockComponent";
 
 const router = createBrowserRouter([
   {
@@ -25,6 +26,10 @@ const router = createBrowserRouter([
   {
     path: '/screen-queries',
     Component: ScreenQueries,
+  },
+  {
+    path: '/mock-component',
+    Component: MockComponent,
   },
   {
     path: "*",
