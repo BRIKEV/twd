@@ -5,7 +5,7 @@ import { mockRequest, Options, Rule, waitForRequest, initRequestMocking, clearRe
 import type { AnyAssertion, ArgsFor, TWDElemAPI } from "./twd-types";
 import urlCommand, { type URLCommandAPI } from "./commands/url";
 import { visit } from "./commands/visit";
-import { mockComponent } from "./ui/componentMocks";
+import { mockComponent, clearComponentMocks } from "./ui/componentMocks";
 
 interface TWDAPI {
   /**
@@ -186,6 +186,15 @@ interface TWDAPI {
    * ```
    */
   mockComponent: (name: string, component: React.ComponentType<any>) => void;
+  /**
+   * Clears all component mocks.
+   *
+   * @example
+   * ```ts
+   * twd.clearComponentMocks();
+   * ```
+   */
+  clearComponentMocks: () => void;
 }
 
 /**
@@ -251,4 +260,5 @@ export const twd: TWDAPI = {
   },
   wait,
   mockComponent,
+  clearComponentMocks,
 };
