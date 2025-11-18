@@ -1,5 +1,9 @@
 # Component Mocking
 
+::: info Available in v1.2.0
+Component mocking will be available in TWD v1.2.0. This feature allows you to replace React components with mock implementations during testing.
+:::
+
 TWD provides powerful component mocking capabilities, allowing you to replace React components with mock implementations during testing. This is especially useful for isolating components, testing edge cases, or replacing complex dependencies with simpler test doubles.
 
 ## Overview
