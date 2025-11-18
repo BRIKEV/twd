@@ -1,4 +1,3 @@
-// componentMocks.ts
 type ComponentMock<T = any> = React.ComponentType<T>;
 
 const componentMocks = new Map<string, ComponentMock>();

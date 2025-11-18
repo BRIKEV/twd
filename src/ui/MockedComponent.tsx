@@ -1,4 +1,3 @@
-// createMockableComponent.tsx
 import { getMockForComponent } from "./componentMocks";
 
 interface MockedComponentProps<TProps = any> {
