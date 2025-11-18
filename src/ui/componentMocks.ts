@@ -3,15 +3,19 @@ type ComponentMock<T = any> = React.ComponentType<T>;
 
 const componentMocks = new Map<string, ComponentMock>();
 
-export function mockComponent<TProps extends Record<string, any>>(
+export const mockComponent = <TProps extends Record<string, any>>(
   id: string,
   component: React.ComponentType<TProps>
-): void {
+): void => {
   componentMocks.set(id, component as ComponentMock);
 }
 
-export function getMockForComponent<TProps = any>(
+export function clearComponentMocks(): void {
+  componentMocks.clear();
+}
+
+export const getMockForComponent = <TProps = any>(
   id: string
-): React.ComponentType<TProps> | undefined {
+): React.ComponentType<TProps> | undefined => {
   return componentMocks.get(id) as React.ComponentType<TProps> | undefined;
 }

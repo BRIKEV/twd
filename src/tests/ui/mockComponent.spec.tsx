@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { describe, it, expect } from "vitest";
-import { mockComponent } from "../../ui/componentMocks";
+import { describe, it, expect, beforeEach } from "vitest";
+import { clearComponentMocks, mockComponent } from "../../ui/componentMocks";
 import { MockedComponent } from "../../ui/MockedComponent";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
@@ -17,6 +17,9 @@ const Button = ({ onClick, count }: ButtonProps) => {
 };
 
 describe("MockedComponent", () => {
+  beforeEach(() => {
+    clearComponentMocks();
+  });
   it("should mock a component", async () => {
     const PageWithButton = () => {
       const [count, setCount] = useState(0);
@@ -34,5 +37,23 @@ describe("MockedComponent", () => {
     const button = screen.getByText("Click me 0");
     await userEvent.click(button);
     expect(button).toHaveTextContent("Click me 2");
+  });
+
+  it("should not mock a component", async () => {
+    const PageWithButton = () => {
+      const [count, setCount] = useState(0);
+      return (
+        <div>
+          <p>Count: {count}</p>
+          <MockedComponent name="Button">
+            <Button onClick={setCount} count={count} />
+          </MockedComponent>
+        </div>
+      );
+    };
+    render(<PageWithButton />);
+    const button = screen.getByText("Click me 0");
+    await userEvent.click(button);
+    expect(button).toHaveTextContent("Click me 1");
   });
 });
