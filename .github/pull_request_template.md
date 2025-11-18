@@ -16,12 +16,6 @@ Please delete options that are not relevant:
 - [ ] Performance improvement
 - [ ] Test addition or update
 
-## Changes Made
-
-- 
-- 
-- 
-
 ## Testing
 
 - [ ] I have added tests that prove my fix is effective or that my feature works
@@ -44,18 +38,6 @@ Describe the tests you've added or updated:
 
 **Note**: If your change affects the public API or adds new features, documentation updates are required.
 
-### Documentation Changes
-
-List any documentation files you've updated:
-- [ ] README.md
-- [ ] docs/...
-- [ ] API documentation
-
 ## Screenshots (if applicable)
 
 If your changes affect the UI or add visual features, please add screenshots:
-
-## Additional Notes
-
-Any additional information that reviewers should know:
-
