@@ -12,7 +12,7 @@
     "@astrojs/react": "^4.4.1",
     "@types/react": "^19.2.2",
     "@types/react-dom": "^19.2.2",
-    "astro": "^5.15.6",
+    "astro": "^5.15.9",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "twd-js": "^1.0.0"
