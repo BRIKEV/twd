@@ -87,4 +87,26 @@ describe('twd Test Runner ci - executeTests', () => {
     expect(testFn3).toHaveBeenCalledTimes(0);
     expect(testFn4).toHaveBeenCalledTimes(1);
   });
+
+  it('should handle nested describes with only and skip', async () => {
+    const testFn1 = vi.fn();
+    const testFn2 = vi.fn();
+    const testFn3 = vi.fn();
+    twd.describe('Outer suite', () => {
+      twd.it('test 1', testFn1);
+      twd.describe.only('Inner suite', () => {
+        twd.it.skip('test 2', testFn2);
+        twd.it('test 3', testFn3);
+      });
+    });
+    const { handlers, testStatus } = await executeTests();
+    expect(handlers).toHaveLength(5); // 2 suites + 2 tests
+    expect(testStatus).toHaveLength(3); // only 3 tests should have status
+    expect(testStatus[0].status).toBe('skip');
+    expect(testStatus[1].status).toBe('skip');
+    expect(testStatus[2].status).toBe('pass');
+    expect(testFn1).toHaveBeenCalledTimes(0);
+    expect(testFn2).toHaveBeenCalledTimes(0);
+    expect(testFn3).toHaveBeenCalledTimes(1);
+  });
 });
