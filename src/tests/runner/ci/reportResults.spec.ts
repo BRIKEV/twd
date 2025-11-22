@@ -103,4 +103,29 @@ describe('twd Test Runner ci - reportResults', () => {
     expect(console.log).toHaveBeenNthCalledWith(5, '    ○ test 3');
     expect(console.log).toHaveBeenNthCalledWith(6, '    ✓ test 4');
   });
+
+  it('should only report tests marked as only', async () => {
+    const testFn1 = vi.fn();
+    const testFn2 = vi.fn();
+    const testFn3 = vi.fn();
+    const testFn4 = vi.fn();
+    twd.describe('Group with only test', () => {
+      twd.it.only('test 1', testFn1);
+      twd.it('test 2', testFn2);
+      twd.it.skip('test no handler');
+      twd.describe.skip('Skipped suite', () => {
+        twd.it('test 3', testFn3);
+        twd.it('test 4', testFn4);
+      });
+    });
+    const { handlers, testStatus } = await executeTests();
+    reportResults(handlers, testStatus);
+    expect(console.log).toHaveBeenNthCalledWith(1, 'Group with only test');
+    expect(console.log).toHaveBeenNthCalledWith(2, '  ✓ test 1');
+    expect(console.log).toHaveBeenNthCalledWith(3, '  ○ test 2');
+    expect(console.log).toHaveBeenNthCalledWith(4, '  ○ test no handler');
+    expect(console.log).toHaveBeenNthCalledWith(5, '  Skipped suite');
+    expect(console.log).toHaveBeenNthCalledWith(6, '    ○ test 3');
+    expect(console.log).toHaveBeenNthCalledWith(7, '    ○ test 4');
+  });
 });

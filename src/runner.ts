@@ -276,17 +276,7 @@ export class TestRunner {
       this.events.onSkip(test);
       return;
     }
-
-    // Only logic: when any .only exists, run only tests marked .only
-    if (hasOnly && !test.only && test.skip) {
-      this.events.onSkip(test);
-      return;
-    }
-
-    if (test.skip) {
-      this.events.onSkip(test);
-      return;
-    }
+    // only logic
     const insideOnlySuite = hasOnlyAbove(test.id);
     if (hasOnly && !test.only && !insideOnlySuite) {
       this.events.onSkip(test);
