@@ -44,6 +44,53 @@ export const describe = (name: string, handler: () => void) => {
   stack.pop();
 };
 
+describe.only = (name: string, handler: () => void) => {
+  const id = generateId();
+  const parent = stack.at(-1);
+
+  handlers.set(id, {
+    id,
+    name,
+    type: 'suite',
+    children: [],
+    logs: [],
+    depth: stack.length,
+    parent,
+    handler,
+    only: true,
+  });
+
+  if (parent) handlers.get(parent)!.children!.push(id);
+
+  stack.push(id);
+  handler();
+  stack.pop();
+};
+
+describe.skip = (name: string, handler: () => void) => {
+  const id = generateId();
+  const parent = stack.at(-1);
+
+  handlers.set(id, {
+    id,
+    name,
+    type: 'suite',
+    children: [],
+    logs: [],
+    depth: stack.length,
+    parent,
+    handler,
+    skip: true,
+  });
+
+  if (parent) handlers.get(parent)!.children!.push(id);
+
+  // still build tree but whole suite + descendants become skipped
+  stack.push(id);
+  handler();
+  stack.pop();
+};
+
 //
 // Test definition
 //
@@ -127,6 +174,27 @@ const collectHooks = (suiteId: string) => {
   return { before, after };
 };
 
+const hasOnlyInTree = (id: string): boolean => {
+  const h = handlers.get(id);
+  if (!h) return false;
+  
+  if (h.only) return true;
+  if (!h.children) return false;
+
+  return h.children.some((childId) => hasOnlyInTree(childId));
+};
+
+const isSuiteSkipped = (id: string): boolean => {
+  let current: Handler | undefined = handlers.get(id);
+
+  while (current) {
+    if (current.skip) return true;
+    if (!current.parent) break;
+    current = handlers.get(current.parent);
+  }
+  return false;
+};
+
 export const clearTests = () => {
   handlers.clear();
   beforeEachHooks.clear();
@@ -168,6 +236,22 @@ export class TestRunner {
   }
 
   private async runSuite(suite: Handler, hasOnly: boolean) {
+    const suiteIsSkipped = isSuiteSkipped(suite.id);
+    // If suite is skipped AND no .only inside → skip whole subtree
+    if (suiteIsSkipped && !hasOnlyInTree(suite.id)) {
+      this.events.onSkip?.(suite);
+      return;
+    }
+
+    // If suite is skipped but contains `.only`, continue traversal.
+    // But mark suite as skipped (optional but good for reporting).
+    if (suiteIsSkipped) {
+      this.events.onSkip?.(suite);
+    }
+
+    // Only logic: skip suite if it's not in the .only tree
+    if (hasOnly && !hasOnlyInTree(suite.id)) return;
+    
     this.events.onSuiteStart?.(suite);
     const children = (suite.children || []).map((id) => handlers.get(id)!);
 
@@ -182,6 +266,18 @@ export class TestRunner {
   }
 
   private async runTest(test: Handler, hasOnly: boolean) {
+    // skip inherited from suite
+    const testIsSkipped = isSuiteSkipped(test.id) || test.skip;
+    if (testIsSkipped && !test.only) {
+      this.events.onSkip(test);
+      return;
+    }
+    
+    // Only logic: run test only if it's inside an .only tree
+    if (hasOnly && !test.only && !hasOnlyInTree(test.parent!)) {
+      return;
+    }
+
     if (test.skip) {
       this.events.onSkip(test);
       return;
