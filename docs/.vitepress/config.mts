@@ -26,14 +26,14 @@ export default defineConfig({
     ['meta', { property: 'og:image:width', content: '512' }],
     ['meta', { property: 'og:image:height', content: '512' }],
     ['meta', { property: 'og:image:alt', content: 'TWD - Test While Developing Logo' }],
-    
+
     // Twitter Card Tags
     ['meta', { name: 'twitter:card', content: 'summary_large_image' }],
     ['meta', { name: 'twitter:title', content: 'TWD - Test While Developing' }],
     ['meta', { name: 'twitter:description', content: 'In-browser testing framework for React applications with instant feedback and beautiful UI.' }],
     ['meta', { name: 'twitter:image', content: 'https://brikev.github.io/twd/web-app-manifest-512x512.png' }],
     ['meta', { name: 'twitter:image:alt', content: 'TWD - Test While Developing Logo' }],
-    
+
     // Additional Meta Tags
     ['meta', { name: 'theme-color', content: '#ffffff' }],
     ['meta', { name: 'viewport', content: 'width=device-width, initial-scale=1.0' }]
@@ -57,6 +57,7 @@ export default defineConfig({
           { text: 'Component Mocking', link: '/component-mocking' },
           { text: 'CI Execution', link: '/ci-execution' },
           { text: 'Framework Integration', link: '/frameworks' },
+          { text: 'Testing Library', link: '/react-testing-library' },
         ]
       },
       {
@@ -78,7 +79,6 @@ export default defineConfig({
           { text: 'Overview', link: '/api/' },
           { text: 'Test Functions', link: '/api/test-functions' },
           { text: 'TWD Commands', link: '/api/twd-commands' },
-          { text: 'Testing Library', link: '/api/react-testing-library' },
           { text: 'Assertions', link: '/api/assertions' },
         ]
       }

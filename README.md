@@ -141,7 +141,7 @@ const rule = await twd.waitForRequest("getUser");
 - 🎯 **[Writing Tests](https://brikev.github.io/twd/writing-tests)** - Learn how to write effective tests
 - 🔥 **[API Mocking](https://brikev.github.io/twd/api-mocking)** - Mock API requests in your tests
 - 📚 **[API Reference](https://brikev.github.io/twd/api/)** - Complete API documentation
-- 🧪 **[Testing Library Support](https://brikev.github.io/twd/api/react-testing-library)** - Use semantic queries
+- 🧪 **[Testing Library Support](https://brikev.github.io/twd/react-testing-library)** - Use semantic queries
 
 ## Examples
 
