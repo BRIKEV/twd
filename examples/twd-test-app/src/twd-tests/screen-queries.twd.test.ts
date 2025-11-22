@@ -25,9 +25,9 @@ describe("Screen Queries Demo", () => {
     const paragraph = screenDom.getByText(/This page demonstrates/);
     const inlineText = screenDom.getByText("Inline text element");
 
-    expect(heading).to.exist;
-    expect(paragraph).to.exist;
-    expect(inlineText).to.exist;
+    twd.should(heading, "be.visible");
+    twd.should(paragraph, "be.visible");
+    twd.should(inlineText, "be.visible");
   });
 
   it("should query elements using screenDom.getByLabelText", async () => {
@@ -38,9 +38,9 @@ describe("Screen Queries Demo", () => {
     const emailInput = screenDom.getByLabelText("Email Address:");
     const selectInput = screenDom.getByLabelText("Choose an option:");
 
-    expect(searchInput).to.exist;
-    expect(emailInput).to.exist;
-    expect(selectInput).to.exist;
+    twd.should(searchInput, "be.visible");
+    twd.should(emailInput, "be.visible");
+    twd.should(selectInput, "be.visible");
   });
 
   it("should query elements using screenDom.getByPlaceholderText", async () => {
@@ -50,8 +50,8 @@ describe("Screen Queries Demo", () => {
     const searchPlaceholder = screenDom.getByPlaceholderText("Enter search term");
     const emailPlaceholder = screenDom.getByPlaceholderText("user@example.com");
 
-    expect(searchPlaceholder).to.exist;
-    expect(emailPlaceholder).to.exist;
+    twd.should(searchPlaceholder, "be.visible");
+    twd.should(emailPlaceholder, "be.visible");
   });
 
   it("should query elements using screenDom.getByTestId", async () => {
@@ -61,8 +61,8 @@ describe("Screen Queries Demo", () => {
     const customParagraph = screenDom.getByTestId("custom-paragraph");
     const conditionalElement = screenDom.getByTestId("conditional-element");
 
-    expect(customParagraph).to.exist;
-    expect(conditionalElement).to.exist;
+    twd.should(customParagraph, "be.visible");
+    twd.should(conditionalElement, "be.visible");
   });
 
   it("should query elements using screenDom.getByAltText", async () => {
@@ -72,8 +72,8 @@ describe("Screen Queries Demo", () => {
     const viteLogo = screenDom.getByAltText("Vite Logo");
     const appLogo = screenDom.getByAltText("Application Logo");
 
-    expect(viteLogo).to.exist;
-    expect(appLogo).to.exist;
+    twd.should(viteLogo, "be.visible");
+    twd.should(appLogo, "be.visible");
   });
 
   it("should query links using screenDom.getByRole", async () => {
@@ -84,9 +84,9 @@ describe("Screen Queries Demo", () => {
     const assertionsLink = screenDom.getByRole("link", { name: /assertions page/i });
     const externalLink = screenDom.getByRole("link", { name: /external link/i });
 
-    expect(contactLink).to.exist;
-    expect(assertionsLink).to.exist;
-    expect(externalLink).to.exist;
+    twd.should(contactLink, "be.visible");
+    twd.should(assertionsLink, "be.visible");
+    twd.should(externalLink, "be.visible");
   });
 
   it("should query headings using screenDom.getByRole", async () => {
@@ -97,9 +97,9 @@ describe("Screen Queries Demo", () => {
     const h2 = screenDom.getByRole("heading", { name: "Buttons and Actions", level: 2 });
     const h3 = screenDom.getByRole("heading", { name: "Heading Level 3", level: 3 });
 
-    expect(h1).to.exist;
-    expect(h2).to.exist;
-    expect(h3).to.exist;
+    twd.should(h1, "be.visible");
+    twd.should(h2, "be.visible");
+    twd.should(h3, "be.visible");
   });
 
   it("should query form elements using screenDom.getByRole", async () => {
@@ -111,13 +111,13 @@ describe("Screen Queries Demo", () => {
     const radio2 = screenDom.getByRole("radio", { name: /option 2/i });
     const combobox = screenDom.getByRole("combobox", { name: /choose an option/i });
 
-    expect(checkbox).to.exist;
-    expect(radio1).to.exist;
-    expect(radio2).to.exist;
-    expect(combobox).to.exist;
+    twd.should(checkbox, "be.visible");
+    twd.should(radio1, "be.visible");
+    twd.should(radio2, "be.visible");
+    twd.should(combobox, "be.visible");
   });
 
-  it("should interact with elements found via screenDom", async () => {
+  it.only("should interact with elements found via screenDom", async () => {
     await twd.visit("/screen-queries");
     const user = userEvent.setup();
 
@@ -146,7 +146,7 @@ describe("Screen Queries Demo", () => {
 
     // But existing elements still work
     const existing = screenDom.queryByText("Screen Queries Demo");
-    expect(existing).to.exist;
+    twd.should(existing as HTMLElement, "be.visible");
   });
 
   it("should use screenDom getAllBy methods for multiple elements", async () => {
