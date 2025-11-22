@@ -49,6 +49,50 @@ describe("Shopping Cart", () => {
 });
 ```
 
+## describe.only(name, fn)
+
+Run only this `describe` block (and its nested describes/tests). When used, other suites and tests that are not within the `.only` tree will be skipped — this is useful for focusing on a group of related tests while debugging.
+
+### Syntax
+
+```ts
+describe.only(name: string, fn: () => void): void
+```
+
+### Example
+
+```ts
+describe.only("Payments", () => {
+  it("should process card payment", async () => {
+    // This test runs (others outside this describe are skipped)
+  });
+});
+```
+
+> Tip: Remember to remove `describe.only` before merging or running full CI, as it will skip other tests.
+
+## describe.skip(name, fn)
+
+Skips this `describe` block and all its descendant tests. Useful for temporarily disabling an entire suite while you work on other areas.
+
+### Syntax
+
+```ts
+describe.skip(name: string, fn: () => void): void
+```
+
+### Example
+
+```ts
+describe.skip("Experimental feature", () => {
+  it("should do something", async () => {
+    // This won't run
+  });
+});
+```
+
+Use `describe.skip` for larger blocks that aren't ready or are flaky in certain environments.
+
 ---
 
 ## it(name, fn)

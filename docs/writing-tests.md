@@ -32,6 +32,8 @@ describe("User Authentication", () => {
 |----------|---------|---------|
 | `describe(name, fn)` | Groups related tests | `describe("Login Form", () => {...})` |
 | `it(name, fn)` | Defines a test case | `it("should submit form", async () => {...})` |
+| `describe.only(name, fn)` | Runs only this suite (and its children) — helpful when debugging a group of tests | `describe.only("Only this suite", () => {...})` |
+| `describe.skip(name, fn)` | Skips this suite and all its descendant tests | `describe.skip("Skipped suite", () => {...})` |
 | `it.only(name, fn)` | Runs only this test | `it.only("debug this test", () => {...})` |
 | `it.skip(name, fn)` | Skips this test | `it.skip("broken test", () => {...})` |
 | `beforeEach(fn)` | Runs before each test | `beforeEach(() => {...})` |
@@ -203,7 +205,7 @@ describe("Login Form", () => {
 });
 ```
 
-> **Note:** For complete Testing Library documentation, see the [Testing Library API reference](/api/react-testing-library).
+> **Note:** For complete Testing Library documentation, see the [Testing Library API reference](/react-testing-library).
 
 ## Assertions
 

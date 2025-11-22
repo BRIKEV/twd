@@ -8,7 +8,6 @@ Complete reference documentation for all TWD functions, methods, and types.
 |---------|-------------|
 | [Test Functions](/api/test-functions) | `describe`, `it`, `beforeEach`, `it.only`, `it.skip`, `afterEach` |
 | [TWD Commands](/api/twd-commands) | `twd.get()`, `twd.visit()`, `twd.mockRequest()`, etc. |
-| [Testing Library](/api/react-testing-library) | `screenDom`, `userEvent` - Full Testing Library support |
 | [Assertions](/api/assertions) | All available assertions and their usage |
 
 ## Import Reference

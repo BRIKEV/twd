@@ -1,5 +1,6 @@
 import Loader from "./Icons/Loader";
 import Play from "./Icons/Play";
+import SkipOnlyName from "./SkipOnlyName";
 
 interface Test {
   name: string;
@@ -100,25 +101,12 @@ export const TestListItem = ({
         <span
           style={{ fontWeight: "500", color: "#374151", maxWidth: "220px" }}
         >
-          {node.name}{" "}
-          {node.only && (
-            <span
-              style={{ color: "#2563eb" }}
-              data-testid={`only-indicator-${id}`}
-            >
-              {" "}
-              (only)
-            </span>
-          )}
-          {node.skip && (
-            <span
-              style={{ color: "#6b7280" }}
-              data-testid={`skip-indicator-${id}`}
-            >
-              {" "}
-              (skipped)
-            </span>
-          )}
+          <SkipOnlyName
+            id={id}
+            name={node.name}
+            skip={node.skip}
+            only={node.only}
+          />
         </span>
         <button
           onClick={() => runTest(id)}
