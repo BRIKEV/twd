@@ -8,5 +8,3 @@ export { userEvent } from './proxies/userEvent';
 export { screenDom, configureScreenDom } from './proxies/screenDom';
 
 config.truncateThreshold = 0;
-
-export type { Chai };
