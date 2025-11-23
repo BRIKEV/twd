@@ -55,6 +55,7 @@ describe("App interactions", () => {
     });
     await twd.visit("/");
     const btn = await twd.get("button[data-twd='joke-button']");
+    await twd.notExists("p[data-twd='joke-text']");
     await userEvent.click(btn.el);
     // Wait for the mock fetch to fire
     await twd.waitForRequest("joke");
