@@ -1,3 +1,10 @@
+## 1.2.0 (2025-11-23)
+
+* docs: change selector importance to testing library ones ([31d9580](https://github.com/BRIKEV/twd/commit/31d9580))
+* Feat/describe improvements (#99) ([fb8d635](https://github.com/BRIKEV/twd/commit/fb8d635)), closes [#99](https://github.com/BRIKEV/twd/issues/99)
+* Feat/exists command (#100) ([94a893b](https://github.com/BRIKEV/twd/commit/94a893b)), closes [#100](https://github.com/BRIKEV/twd/issues/100)
+* Feat/mock component (#94) ([112a4f3](https://github.com/BRIKEV/twd/commit/112a4f3)), closes [#94](https://github.com/BRIKEV/twd/issues/94)
+
 ## <small>1.1.2 (2025-11-15)</small>
 
 * fix: error total tests using describe ([c209d29](https://github.com/BRIKEV/twd/commit/c209d29))
