@@ -80,28 +80,29 @@ Create your first test file:
 
 ```ts
 // src/App.twd.test.ts
-import { twd, userEvent } from "twd-js";
+import { twd, userEvent, screenDom } from "twd-js";
 import { describe, it } from "twd-js/runner";
 
 describe("App Component", () => {
   it("should render the main heading", async () => {
     await twd.visit("/");
     
-    const heading = await twd.get("h1");
-    heading.should("be.visible");
+    // Use screenDom for testing library queries
+    const heading = screenDom.getByRole("heading", { level: 1 });
+    twd.should(heading, "be.visible");
   });
 
   it("should handle button clicks", async () => {
     await twd.visit("/");
     
     const user = userEvent.setup();
-    const button = await twd.get("button");
+    const button = screenDom.getByRole("button");
     
-    await user.click(button.el);
+    await user.click(button);
     
     // Add your assertions here
-    const result = await twd.get("#result");
-    result.should("have.text", "Button clicked!");
+    const result = screenDom.getByText("Button clicked!");
+    twd.should(result, "be.visible");
   });
 });
 ```

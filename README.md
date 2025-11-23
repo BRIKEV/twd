@@ -67,26 +67,22 @@ describe("Hello World Page", () => {
   it("should display the welcome title and counter button", async () => {
     await twd.visit("/");
     
-    // Option 1: Use TWD's native selectors
-    const title = await twd.get("h1");
-    title.should("be.visible").should("have.text", "Welcome to TWD");
+    // Use Testing Library queries (Recommended - semantic & accessible)
+    const title = screenDom.getByRole("heading", { name: /welcome to twd/i });
+    twd.should(title, "be.visible");
+    twd.should(title, "have.text", "Welcome to TWD");
     
-    const counterButton = await twd.get("button");
-    counterButton.should("be.visible").should("have.text", "Count is 0");
+    const counterButton = screenDom.getByRole("button", { name: /count is/i });
+    twd.should(counterButton, "be.visible");
+    twd.should(counterButton, "have.text", "Count is 0");
     
     const user = userEvent.setup();
-    await user.click(counterButton.el);
-    counterButton.should("have.text", "Count is 1");
-    
-    // Option 2: Use Testing Library queries (semantic, accessible)
-    // const title = screenDom.getByRole("heading", { name: /welcome to twd/i });
-    // twd.should(title, "be.visible");
-    // twd.should(title, "have.text", "Welcome to TWD");
-    // 
-    // const counterButton = screenDom.getByRole("button", { name: /count is/i });
-    // twd.should(counterButton, "be.visible");
-    // await user.click(counterButton);
-    // twd.should(counterButton, "have.text", "Count is 1");
+    await user.click(counterButton);
+    twd.should(counterButton, "have.text", "Count is 1");
+
+    // Alternative: Use TWD's native selectors for direct element access
+    // const title = await twd.get("h1");
+    // title.should("be.visible").should("have.text", "Welcome to TWD");
   });
 });
 ```
@@ -103,16 +99,16 @@ describe("Hello World Page", () => {
 
 TWD supports two approaches:
 
+**Testing Library Queries (Recommended):**
+```ts
+const button = screenDom.getByRole("button", { name: /submit/i });
+twd.should(button, "be.visible");
+```
+
 **Native Selectors:**
 ```ts
 const button = await twd.get("button");
 button.should("be.visible");
-```
-
-**Testing Library Queries:**
-```ts
-const button = screenDom.getByRole("button", { name: /submit/i });
-twd.should(button, "be.visible");
 ```
 
 ### User Interactions
