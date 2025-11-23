@@ -447,6 +447,37 @@ await twd.wait(5000); // Why 5 seconds?
 
 ---
 
+### twd.notExists(selector)
+
+Asserts that an element matching the provided selector does not exist in the DOM. Resolves when no matching element is found and rejects if the element exists.
+
+#### Syntax
+
+```ts
+twd.notExists(selector: string): Promise<void>
+```
+
+#### Parameters
+
+- **selector** (`string`) - CSS selector of the element to check
+
+#### Returns
+
+`Promise<void>` - Resolves if the element is not present, rejects with an Error if it is found
+
+#### Examples
+
+```ts
+// Assert that a specific element is not present
+await twd.notExists('.non-existent');
+
+// Will reject when an element exists
+const el = document.createElement('div');
+el.className = 'maybe';
+document.body.appendChild(el);
+await expect(twd.notExists('.maybe')).rejects.toThrow();
+```
+
 ### twd.should(element, assertion, ...args)
 
 Makes assertions on any DOM element. This is the standalone function version of assertions, useful for elements from Testing Library queries (`screenDom`) or any raw DOM element.

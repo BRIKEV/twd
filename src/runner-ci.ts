@@ -1,4 +1,4 @@
-import chalk from 'chalk';
+import pc from 'picocolors';
 import { Handler } from "./runner";
 
 interface TestResult {
@@ -18,12 +18,12 @@ export const reportResults = (handlers: Handler[], testResults: TestResult[]) =>
     let errorMsg = '';
     if (handler.type !== 'suite') {
       if (entry?.status === 'pass') {
-        icon = chalk.green('✓');
+        icon = pc.green('✓');
       } else if (entry?.status === 'fail') {
-        icon = chalk.red('✗');
+        icon = pc.red('✗');
         errorMsg = ` - Error: ${entry.error}`;
       } else {
-        icon = chalk.yellow('○');
+        icon = pc.yellow('○');
       }
     }
 
@@ -34,7 +34,7 @@ export const reportResults = (handlers: Handler[], testResults: TestResult[]) =>
     console.log(label);
 
     if (errorMsg) {
-      console.log(chalk.red(`${prefix}${errorMsg}`));
+      console.log(pc.red(`${prefix}${errorMsg}`));
     }
 
     if (handler.children) {

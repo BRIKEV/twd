@@ -1,8 +1,13 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import pc from 'picocolors';
 import { reportResults, executeTests } from '../../../runner-ci';
 import * as twd from '../../../runner';
 
 describe('twd Test Runner ci - reportResults', () => {
+  const ICON_PASS = pc.green('✓');
+  const ICON_FAIL = pc.red('✗');
+  const ICON_SKIP = pc.yellow('○');
+
   let originalConsoleLog = console.log;
   beforeEach(() => {
     // Clear all handlers before each test
@@ -27,8 +32,8 @@ describe('twd Test Runner ci - reportResults', () => {
     const { handlers, testStatus } = await executeTests();
     reportResults(handlers, testStatus);
     expect(console.log).toHaveBeenNthCalledWith(1, 'Group with afterEach');
-    expect(console.log).toHaveBeenNthCalledWith(2, '  ✓ test 1');
-    expect(console.log).toHaveBeenNthCalledWith(3, '  ✓ test 2');
+    expect(console.log).toHaveBeenNthCalledWith(2, `  ${ICON_PASS} test 1`);
+    expect(console.log).toHaveBeenNthCalledWith(3, `  ${ICON_PASS} test 2`);
   });
 
   it('should handle test failures correctly', async () => {
@@ -43,8 +48,8 @@ describe('twd Test Runner ci - reportResults', () => {
     const { handlers, testStatus } = await executeTests();
     reportResults(handlers, testStatus);
     expect(console.log).toHaveBeenNthCalledWith(1, 'Group with a failing test');
-    expect(console.log).toHaveBeenNthCalledWith(2, '  ✓ test 1');
-    expect(console.log).toHaveBeenNthCalledWith(3, '  ✗ test 2');
+    expect(console.log).toHaveBeenNthCalledWith(2, `  ${ICON_PASS} test 1`);
+    expect(console.log).toHaveBeenNthCalledWith(3, `  ${ICON_FAIL} test 2`);
   });
 
   it('should skip tests marked as skip', async () => {
@@ -57,8 +62,8 @@ describe('twd Test Runner ci - reportResults', () => {
     const { handlers, testStatus } = await executeTests();
     reportResults(handlers, testStatus);
     expect(console.log).toHaveBeenNthCalledWith(1, 'Group with a skipped test');
-    expect(console.log).toHaveBeenNthCalledWith(2, '  ✓ test 1');
-    expect(console.log).toHaveBeenNthCalledWith(3, '  ○ test 2');
+    expect(console.log).toHaveBeenNthCalledWith(2, `  ${ICON_PASS} test 1`);
+    expect(console.log).toHaveBeenNthCalledWith(3, `  ${ICON_SKIP} test 2`);
   });
 
   it('should handle nested describes with only and skip', async () => {
@@ -75,10 +80,10 @@ describe('twd Test Runner ci - reportResults', () => {
     const { handlers, testStatus } = await executeTests();
     reportResults(handlers, testStatus);
     expect(console.log).toHaveBeenNthCalledWith(1, 'Outer suite');
-    expect(console.log).toHaveBeenNthCalledWith(2, '  ○ test 1');
+    expect(console.log).toHaveBeenNthCalledWith(2, `  ${ICON_SKIP} test 1`);
     expect(console.log).toHaveBeenNthCalledWith(3, '  Inner suite');
-    expect(console.log).toHaveBeenNthCalledWith(4, '    ○ test 2');
-    expect(console.log).toHaveBeenNthCalledWith(5, '    ✓ test 3');
+    expect(console.log).toHaveBeenNthCalledWith(4, `    ${ICON_SKIP} test 2`);
+    expect(console.log).toHaveBeenNthCalledWith(5, `    ${ICON_PASS} test 3`);
   });
 
   it('should only report tests marked as only', async () => {
@@ -97,11 +102,11 @@ describe('twd Test Runner ci - reportResults', () => {
     const { handlers, testStatus } = await executeTests();
     reportResults(handlers, testStatus);
     expect(console.log).toHaveBeenNthCalledWith(1, 'Group with only test');
-    expect(console.log).toHaveBeenNthCalledWith(2, '  ✓ test 1');
-    expect(console.log).toHaveBeenNthCalledWith(3, '  ○ test 2');
+    expect(console.log).toHaveBeenNthCalledWith(2, `  ${ICON_PASS} test 1`);
+    expect(console.log).toHaveBeenNthCalledWith(3, `  ${ICON_SKIP} test 2`);
     expect(console.log).toHaveBeenNthCalledWith(4, '  Skipped suite');
-    expect(console.log).toHaveBeenNthCalledWith(5, '    ○ test 3');
-    expect(console.log).toHaveBeenNthCalledWith(6, '    ✓ test 4');
+    expect(console.log).toHaveBeenNthCalledWith(5, `    ${ICON_SKIP} test 3`);
+    expect(console.log).toHaveBeenNthCalledWith(6, `    ${ICON_PASS} test 4`);
   });
 
   it('should only report tests marked as only', async () => {
@@ -121,11 +126,11 @@ describe('twd Test Runner ci - reportResults', () => {
     const { handlers, testStatus } = await executeTests();
     reportResults(handlers, testStatus);
     expect(console.log).toHaveBeenNthCalledWith(1, 'Group with only test');
-    expect(console.log).toHaveBeenNthCalledWith(2, '  ✓ test 1');
-    expect(console.log).toHaveBeenNthCalledWith(3, '  ○ test 2');
-    expect(console.log).toHaveBeenNthCalledWith(4, '  ○ test no handler');
+    expect(console.log).toHaveBeenNthCalledWith(2, `  ${ICON_PASS} test 1`);
+    expect(console.log).toHaveBeenNthCalledWith(3, `  ${ICON_SKIP} test 2`);
+    expect(console.log).toHaveBeenNthCalledWith(4, `  ${ICON_SKIP} test no handler`);
     expect(console.log).toHaveBeenNthCalledWith(5, '  Skipped suite');
-    expect(console.log).toHaveBeenNthCalledWith(6, '    ○ test 3');
-    expect(console.log).toHaveBeenNthCalledWith(7, '    ○ test 4');
+    expect(console.log).toHaveBeenNthCalledWith(6, `    ${ICON_SKIP} test 3`);
+    expect(console.log).toHaveBeenNthCalledWith(7, `    ${ICON_SKIP} test 4`);
   });
 });

@@ -117,7 +117,7 @@ describe("Screen Queries Demo", () => {
     twd.should(combobox, "be.visible");
   });
 
-  it.only("should interact with elements found via screenDom", async () => {
+  it("should interact with elements found via screenDom", async () => {
     await twd.visit("/screen-queries");
     const user = userEvent.setup();
 
