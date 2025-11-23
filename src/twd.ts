@@ -195,6 +195,17 @@ interface TWDAPI {
    * ```
    */
   clearComponentMocks: () => void;
+  /**
+   * Asserts that an element does not exist in the DOM.
+   * @param selector CSS selector of the element to check
+   * @returns A promise that resolves if the element does not exist, or rejects if it does
+   * 
+   * @example
+   * ```ts
+   * await twd.notExists(".non-existent");
+   * ```
+   */
+  notExists: (selector: string) => Promise<void>;
 }
 
 /**
@@ -261,4 +272,14 @@ export const twd: TWDAPI = {
   wait,
   mockComponent,
   clearComponentMocks,
+  notExists: async (selector: string): Promise<void> => {
+    // Prepend selector to exclude TWD sidebar elements
+    const enhancedSelector = `body > div:not(#twd-sidebar-root) ${selector}`;
+    log(`Checking notExists("${selector}")`);
+    const existingElement = document.querySelector(enhancedSelector);
+    if (existingElement) {
+      throw new Error(`Element "${selector}" exists in the DOM.`);
+    }
+    log(`Assertion passed: Element "${selector}" does not exist in the DOM.`);
+  },
 };
