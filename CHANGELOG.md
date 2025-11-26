@@ -1,3 +1,7 @@
+## <small>1.2.1 (2025-11-26)</small>
+
+* feat: add new bundle for mocking component (#102) ([9f0fd7a](https://github.com/BRIKEV/twd/commit/9f0fd7a)), closes [#102](https://github.com/BRIKEV/twd/issues/102)
+
 ## 1.2.0 (2025-11-23)
 
 * docs: change selector importance to testing library ones ([31d9580](https://github.com/BRIKEV/twd/commit/31d9580))
