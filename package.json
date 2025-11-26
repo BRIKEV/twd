@@ -38,6 +38,11 @@
       "types": "./dist/runner-ci.d.ts",
       "import": "./dist/runner-ci.es.js",
       "require": "./dist/runner-ci.cjs.js"
+    },
+    "./ui": {
+      "types": "./dist/ui.d.ts",
+      "import": "./dist/ui.es.js",
+      "require": "./dist/ui.cjs.js"
     }
   },
   "files": [
