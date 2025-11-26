@@ -18,7 +18,7 @@ Component mocking in TWD allows you to:
 To make a component mockable, wrap it with the `MockedComponent` component and provide a unique name:
 
 ```tsx
-import { MockedComponent } from "twd-js";
+import { MockedComponent } from "twd-js/ui";
 
 interface ButtonProps {
   onClick: (count: number) => void;
