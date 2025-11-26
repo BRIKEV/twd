@@ -1,0 +1,2 @@
+export { MockedComponent } from './MockedComponent';
+

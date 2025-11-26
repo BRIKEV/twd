@@ -20,6 +20,7 @@ export default defineConfig({
         runner: 'src/runner.ts',
         'vite-plugin': 'src/vite-plugin.ts',
         'runner-ci': 'src/runner-ci.ts',
+        ui: 'src/ui/index.ts',
       },
       name: 'TWD',
       fileName: (format, entryName) => `${entryName}.${format}.js`,
