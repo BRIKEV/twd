@@ -1,3 +1,7 @@
+## <small>1.2.2 (2025-11-28)</small>
+
+* Fix/add path initmocking (#103) ([2ef73c1](https://github.com/BRIKEV/twd/commit/2ef73c1)), closes [#103](https://github.com/BRIKEV/twd/issues/103)
+
 ## <small>1.2.1 (2025-11-26)</small>
 
 * feat: add new bundle for mocking component (#102) ([9f0fd7a](https://github.com/BRIKEV/twd/commit/9f0fd7a)), closes [#102](https://github.com/BRIKEV/twd/issues/102)
