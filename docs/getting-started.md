@@ -24,14 +24,9 @@ pnpm add twd-js
 
 ## Quick Setup
 
-**VIDEO HERE** - *Step-by-step setup walkthrough from installation to first test*
-
-
 ### 1. Add TWD Sidebar and Load Tests Automatically
 
 To enable the TWD sidebar and automatically load your tests, use the `initTests` utility in your main entry file. This is the standard way to set up TWD in your application: the sidebar will be injected and tests loaded automatically in development mode.
-
-**IMAGE HERE** - *Screenshot showing main.tsx file with the new TWD loader usage*
 
 ```tsx{7-23}
 // src/main.tsx
@@ -117,9 +112,9 @@ npm run dev
 
 You should now see the TWD sidebar in your browser automatically in development mode. Click on it to view and run your tests!
 
-**IMAGE HERE** - *Screenshot of browser showing the TWD sidebar closed*
-
-**IMAGE HERE** - *Screenshot of browser showing the TWD sidebar open with test results*
+<p align="center">
+  <img src="/images/twd_side_bar_success.png" alt="TWD Sidebar showing test execution" width="800">
+</p>
 
 
 ## File Naming Convention

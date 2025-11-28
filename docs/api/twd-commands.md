@@ -752,8 +752,12 @@ Initializes the mock service worker for request interception.
 #### Syntax
 
 ```ts
-twd.initRequestMocking(): Promise<void>
+twd.initRequestMocking(path?: string): Promise<void>
 ```
+
+#### Parameters
+
+- **path** (`string`, optional) - Service worker absolute path
 
 #### Returns
 
@@ -773,16 +777,14 @@ twd.initRequestMocking()
     console.error("Error initializing request mocking:", err);
   });
 
-// In individual test (if needed)
-describe("API Tests", () => {
-  beforeEach(async () => {
-    await twd.initRequestMocking();
+// init with custom service worker path
+twd.initRequestMocking('/test-path/mock-sw.js')
+  .then(() => {
+    console.log("Request mocking initialized with custom path");
+  })
+  .catch((err) => {
+    console.error("Error initializing request mocking with custom path:", err);
   });
-
-  it("should mock API calls", async () => {
-    // Mocking is now available
-  });
-});
 ```
 
 ---
@@ -1081,17 +1083,6 @@ await twd.mockRequest("getUser", {
   url: "/api/user/123", 
   response: { name: "test" }
 });
-```
-
-### Service Worker Issues
-
-```ts
-try {
-  await twd.initRequestMocking();
-} catch (error) {
-  console.error("Service worker failed:", error.message);
-  // Check if mock-sw.js exists in public directory
-}
 ```
 
 ## Next Steps
