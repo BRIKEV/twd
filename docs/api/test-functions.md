@@ -274,10 +274,7 @@ describe("User Dashboard", () => {
 
 ```ts
 describe("API Integration", () => {
-  beforeEach(async () => {
-    // Initialize mocking
-    await twd.initRequestMocking();
-    
+  beforeEach(async () => {    
     // Set up common mocks
     await twd.mockRequest("getUser", {
       method: "GET",
@@ -398,7 +395,6 @@ describe("User Management", () => {
 describe("Authentication Flow", () => {
   beforeEach(async () => {
     // Common setup for all auth tests
-    await twd.initRequestMocking();
     await twd.visit("/login");
   });
 
@@ -508,25 +504,6 @@ describe("Error Handling", () => {
       console.error("Element not found:", error.message);
       throw error; // Re-throw to fail the test
     }
-  });
-});
-```
-
-### beforeEach Errors
-
-```ts
-describe("Setup Errors", () => {
-  beforeEach(async () => {
-    try {
-      await twd.initRequestMocking();
-    } catch (error) {
-      console.error("Failed to initialize mocking:", error);
-      throw error; // This will fail all tests in the describe block
-    }
-  });
-
-  it("should run with proper setup", async () => {
-    // This won't run if beforeEach fails
   });
 });
 ```
