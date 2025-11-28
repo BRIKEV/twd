@@ -120,15 +120,16 @@ interface TWDAPI {
   url: () => URLCommandAPI;
   /**
    * Initializes request mocking (registers the service worker).
-   * Must be called before using `twd.mockRequest()`.
+   * @param [path] service worker absolute path (optional)
    *
    * @example
    * ```ts
    * await twd.initRequestMocking();
-   * 
+   * // init with custom service worker path
+   * await twd.initRequestMocking('/test-path/mock-sw.js');
    * ```
    */
-  initRequestMocking: () => Promise<void>;
+  initRequestMocking: (path?: string) => Promise<void>;
   /**
    * Clears all request mock rules.
    *

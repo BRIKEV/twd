@@ -80,6 +80,39 @@ describe('initRequestMocking', () => {
     });
   });
 
+  it('registers the service worker and sets up message listener when version matches and custom path config is sent', async () => {
+    // Set current version in localStorage
+    localStorage.setItem('twd-sw-version', TWD_VERSION);
+    
+    // Mock navigator.serviceWorker
+    const registerMock = vi.fn().mockResolvedValue({});
+    const addEventListenerMock = vi.fn();
+    const getRegistrationsMock = vi.fn().mockResolvedValue([]);
+    const originalSW = navigator.serviceWorker;
+    Object.defineProperty(navigator, 'serviceWorker', {
+      configurable: true,
+      value: {
+        register: registerMock,
+        addEventListener: addEventListenerMock,
+        getRegistrations: getRegistrationsMock,
+        controller: { postMessage: vi.fn() }, // Controller exists
+      },
+    });
+
+    await initRequestMocking('/test-path/mock-sw.js');
+    
+    expect(registerMock).toHaveBeenCalledWith(`/test-path/mock-sw.js?v=${TWD_VERSION}`);
+    expect(addEventListenerMock).toHaveBeenCalledWith('message', expect.any(Function));
+    expect(getRegistrationsMock).not.toHaveBeenCalled(); // No update needed
+    expect(consoleLogSpy).not.toHaveBeenCalledWith("[TWD] Updating service worker to version", TWD_VERSION);
+
+    // Restore
+    Object.defineProperty(navigator, 'serviceWorker', {
+      configurable: true,
+      value: originalSW,
+    }); 
+  });
+
   it('handles first install when no version is stored', async () => {    
     const registerMock = vi.fn().mockResolvedValue({});
     const addEventListenerMock = vi.fn();

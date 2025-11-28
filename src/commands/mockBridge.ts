@@ -31,9 +31,10 @@ const SW_DELAY = 100;
  * Initialize the mocking service worker.
  * Call this once before using `mockRequest` or `waitFor`.
  */
-export const initRequestMocking = async () => {
+export const initRequestMocking = async (path?: string) => {
   if ("serviceWorker" in navigator) {
-    await navigator.serviceWorker.register(`/mock-sw.js?v=${TWD_VERSION}`);
+    const workerPath = path ?? '/mock-sw.js';
+    await navigator.serviceWorker.register(`${workerPath}?v=${TWD_VERSION}`);
     // ADD THIS: Wait for the service worker to actually control the page
     if (!navigator.serviceWorker.controller) {
       await new Promise(resolve => {
