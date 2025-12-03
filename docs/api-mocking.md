@@ -288,7 +288,7 @@ it("should handle authentication states", async () => {
 
   // Should redirect to login
   await twd.wait(100);
-  twd.url().should("contain.url", "/login");
+  await twd.url().should("contain.url", "/login");
 
   // Now mock successful login
   await twd.mockRequest("login", {

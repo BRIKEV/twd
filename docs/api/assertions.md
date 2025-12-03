@@ -520,7 +520,7 @@ Verifies that the current URL matches exactly.
 #### Syntax
 
 ```ts
-twd.url().should("eq", expectedUrl: string): URLCommandAPI
+await twd.url().should("eq", expectedUrl: string, retries?: number): Promise<string>
 ```
 
 #### Examples
@@ -528,26 +528,26 @@ twd.url().should("eq", expectedUrl: string): URLCommandAPI
 ```ts
 // Exact URL matching
 twd.visit("/");
-twd.url().should("eq", "http://localhost:3000/");
+await twd.url().should("eq", "http://localhost:3000/");
 
 twd.visit("/products");
-twd.url().should("eq", "http://localhost:3000/products");
+await twd.url().should("eq", "http://localhost:3000/products");
 
 // With query parameters
 twd.visit("/search?q=laptop&sort=price");
-twd.url().should("eq", "http://localhost:3000/search?q=laptop&sort=price");
+await twd.url().should("eq", "http://localhost:3000/search?q=laptop&sort=price");
 
 // After navigation
 const user = userEvent.setup();
 const loginLink = await twd.get("a[href='/login']");
 await user.click(loginLink.el);
-twd.url().should("eq", "http://localhost:3000/login");
+await twd.url().should("eq", "http://localhost:3000/login");
 ```
 
 #### Negation
 
 ```ts
-twd.url().should("not.eq", "http://localhost:3000/wrong-page");
+await twd.url().should("not.eq", "http://localhost:3000/wrong-page");
 ```
 
 ---
@@ -559,7 +559,7 @@ Verifies that the current URL contains a substring.
 #### Syntax
 
 ```ts
-twd.url().should("contain.url", substring: string): URLCommandAPI
+await twd.url().should("contain.url", substring: string, retries?: number): Promise<string>
 ```
 
 #### Examples
@@ -567,30 +567,30 @@ twd.url().should("contain.url", substring: string): URLCommandAPI
 ```ts
 // Path matching
 twd.visit("/products/category/electronics");
-twd.url().should("contain.url", "/products");
-twd.url().should("contain.url", "electronics");
-twd.url().should("contain.url", "category");
+await twd.url().should("contain.url", "/products");
+await twd.url().should("contain.url", "electronics");
+await twd.url().should("contain.url", "category");
 
 // Domain matching
-twd.url().should("contain.url", "localhost");
-twd.url().should("contain.url", "3000");
+await twd.url().should("contain.url", "localhost");
+await twd.url().should("contain.url", "3000");
 
 // Query parameters
 twd.visit("/search?q=laptop");
-twd.url().should("contain.url", "q=laptop");
-twd.url().should("contain.url", "search");
+await twd.url().should("contain.url", "q=laptop");
+await twd.url().should("contain.url", "search");
 
 // After navigation
 const categoryLink = await twd.get("a[href*='clothing']");
 await userEvent.click(categoryLink.el);
-twd.url().should("contain.url", "clothing");
+await twd.url().should("contain.url", "clothing");
 ```
 
 #### Negation
 
 ```ts
-twd.url().should("not.contain.url", "/admin");
-twd.url().should("not.contain.url", "error");
+await twd.url().should("not.contain.url", "/admin");
+await twd.url().should("not.contain.url", "error");
 ```
 
 ---

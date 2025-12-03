@@ -128,6 +128,6 @@ describe("App interactions", () => {
     const rules = await twd.waitForRequests(["contactSubmit"]);
     const request = rules[0].request;
     expect(request).to.deep.equal({ email: "test@example.com", message: "Hello, this is a test message.", date: "2023-01-01", month: "2023-01", time: "12:00", color: "#ff0000", range: "75", hour: "14:30", week: "2023-W15" });
-    twd.url().should("contain.url", "/contact");
+    await twd.url().should("contain.url", "/contact");
   });
 });

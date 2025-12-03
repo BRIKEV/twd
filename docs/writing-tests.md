@@ -309,14 +309,14 @@ twd.should(input, "be.focused");
 
 ```ts
 // Exact URL match
-twd.url().should("eq", "http://localhost:3000/dashboard");
+await twd.url().should("eq", "http://localhost:3000/dashboard");
 
 // URL contains substring
-twd.url().should("contain.url", "/dashboard");
-twd.url().should("contain.url", "localhost");
+await twd.url().should("contain.url", "/dashboard");
+await twd.url().should("contain.url", "localhost");
 
 // Negated URL assertions
-twd.url().should("not.contain.url", "/login");
+await twd.url().should("not.contain.url", "/login");
 ```
 
 ### chai expect assertions
@@ -521,7 +521,7 @@ describe("User Registration Flow", () => {
     await user.click(submitButton.el);
 
     // Verify redirect and welcome message
-    twd.url().should("contain.url", "/dashboard");
+    await twd.url().should("contain.url", "/dashboard");
     const welcome = await twd.get("h1");
     welcome.should("contain.text", "Welcome");
   });
