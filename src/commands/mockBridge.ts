@@ -111,13 +111,34 @@ export const waitForRequests = async (aliases: string[]): Promise<Rule[]> => {
 /**
  * Wait for a mocked request to be made.
  * @param alias The alias of the mock rule to wait for
+ * @param retries The number of retries to make
+ * @param retryDelay The delay between retries
  * @returns The matched rule (with body if applicable)
  */
-export const waitForRequest = async (alias: string): Promise<Rule> => {
-  await wait(SW_DELAY);
-  const rule = rules.find((r) => r.alias === alias && r.executed);
-  if (!rule) throw new Error(`Rule ${alias} not found or not executed`);
-  return Promise.resolve(rule);
+export const waitForRequest = async (
+  alias: string,
+  retries = 10,
+  retryDelay = 100,
+): Promise<Rule> => {
+  // First, check if the rule exists at all
+  const ruleExists = rules.find((r) => r.alias === alias);
+  if (!ruleExists) {
+    throw new Error(`Rule ${alias} not found`);
+  }
+  // Poll for execution with retries
+  for (let i = 0; i < retries; i++) {
+    const rule = rules.find((r) => r.alias === alias && r.executed);
+    if (rule) {
+      return Promise.resolve(rule);
+    }
+    // Wait before next retry (except on last iteration)
+    if (i < retries - 1) {
+      await new Promise(resolve => setTimeout(resolve, retryDelay));
+    }
+  }
+  console.log(`Rule ${alias} was not executed within ${retries * retryDelay}ms`);
+  // If we get here, the rule was never executed
+  throw new Error(`Rule ${alias} was not executed within ${retries * retryDelay}ms`);
 };
 
 /**
