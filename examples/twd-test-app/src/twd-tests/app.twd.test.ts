@@ -5,6 +5,7 @@ import { describe, it, beforeEach } from "../../../../src/runner";
 describe("App interactions", () => {
   beforeEach(() => {
     console.log("Reset state before each test");
+    twd.clearRequestMockRules();
   });
 
   describe("nested level 1", () => {
@@ -45,7 +46,11 @@ describe("App interactions", () => {
     });
   });
 
-  it("fetches a joke", async () => {
+  it("fetches a joke and also tests retries in the waitForRequest command as we remove mocks and define it again before the wait", async () => {
+    twd.clearRequestMockRules();
+    await twd.visit("/");
+    const btn = await twd.get("button[data-twd='joke-button']");
+    await twd.notExists("p[data-twd='joke-text']");
     await twd.mockRequest("joke", {
       method: "GET",
       url: "https://api.chucknorris.io/jokes/random",
@@ -53,9 +58,6 @@ describe("App interactions", () => {
         value: "Mocked joke!",
       },
     });
-    await twd.visit("/");
-    const btn = await twd.get("button[data-twd='joke-button']");
-    await twd.notExists("p[data-twd='joke-text']");
     await userEvent.click(btn.el);
     // Wait for the mock fetch to fire
     await twd.waitForRequest("joke");
