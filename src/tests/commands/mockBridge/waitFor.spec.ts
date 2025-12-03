@@ -71,7 +71,7 @@ describe('waitForRequest', () => {
       rule.executed = true;
       rule.request = { delayed: true };
     }
-    
+
     // Now await the waitForRequest - it should succeed immediately
     const result = await waitForRequest(alias, 1, 10);
     expect(result.alias).toBe(alias);
