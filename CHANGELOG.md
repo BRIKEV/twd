@@ -1,3 +1,10 @@
+## <small>1.2.3 (2025-12-03)</small>
+
+* Feat/add retry wait request (#108) ([b36861e](https://github.com/BRIKEV/twd/commit/b36861e)), closes [#108](https://github.com/BRIKEV/twd/issues/108)
+* Feat/url retry command (#106) ([54564e0](https://github.com/BRIKEV/twd/commit/54564e0)), closes [#106](https://github.com/BRIKEV/twd/issues/106)
+* chore(deps): bump mdast-util-to-hast in /examples/astro-example (#104) ([e0e3b73](https://github.com/BRIKEV/twd/commit/e0e3b73)), closes [#104](https://github.com/BRIKEV/twd/issues/104)
+
+
 ## <small>1.2.2 (2025-11-28)</small>
 
 * Fix/add path initmocking (#103) ([2ef73c1](https://github.com/BRIKEV/twd/commit/2ef73c1)), closes [#103](https://github.com/BRIKEV/twd/issues/103)

@@ -1,6 +1,6 @@
 {
   "name": "twd-js",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "description": "Test While Developing (TWD) - in-browser testing",
   "license": "MIT",
   "author": "BRIKEV",
@@ -96,7 +96,6 @@
     "@testing-library/dom": "^10.4.1",
     "@testing-library/user-event": "^14.6.1",
     "@types/chai": "^5.2.3",
-    "chai": "^6.2.1",
-    "picocolors": "^1.1.1"
+    "chai": "^6.2.1"
   }
 }

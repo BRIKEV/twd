@@ -1,12 +1,17 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import pc from 'picocolors';
 import { reportResults, executeTests } from '../../../runner-ci';
 import * as twd from '../../../runner';
 
+// ANSI color codes
+const RESET = '\x1b[0m';
+const GREEN = '\x1b[32m';
+const RED = '\x1b[31m';
+const YELLOW = '\x1b[33m';
+
 describe('twd Test Runner ci - reportResults', () => {
-  const ICON_PASS = pc.green('✓');
-  const ICON_FAIL = pc.red('✗');
-  const ICON_SKIP = pc.yellow('○');
+  const ICON_PASS = `${GREEN}✓${RESET}`;
+  const ICON_FAIL = `${RED}✗${RESET}`;
+  const ICON_SKIP = `${YELLOW}○${RESET}`;
 
   let originalConsoleLog = console.log;
   beforeEach(() => {
