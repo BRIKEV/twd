@@ -23,7 +23,7 @@ export type AnyURLAssertion = Negatable<URLAssertionName>;
 
 export type URLCommandAPI = {
   location: Location;
-  should: (name: AnyURLAssertion, value: string) => Promise<string>;
+  should: (name: AnyURLAssertion, value: string, retries?: number) => Promise<string>;
 }
 
 /**
@@ -65,10 +65,10 @@ const should = (name: AnyURLAssertion, value: string) => {
 const urlCommand = (): URLCommandAPI => {
   return {
     location: window.location,
-    should: async (name: AnyURLAssertion, value: string) => {
+    should: async (name: AnyURLAssertion, value: string, retries = 5) => {
       let result = '';
       let error: Error | undefined;
-      for (let i = 0; i < 5; i++) {
+      for (let i = 0; i < retries; i++) {
         try {
           result = should(name, value);
           break;

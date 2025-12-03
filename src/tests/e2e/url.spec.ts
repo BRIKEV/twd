@@ -69,13 +69,13 @@ describe('twd url command', () => {
   
   it('should fail containment assertion with incorrect substring', async () => {
     const urlCmd = twd.url();
-    await expect(urlCmd.should('contain.url', '/about')).rejects.toThrow('Assertion failed: Expected URL to contain /about, but got http://localhost:3000/home');
+    await expect(urlCmd.should('contain.url', '/about', 1)).rejects.toThrow('Assertion failed: Expected URL to contain /about, but got http://localhost:3000/home');
   });
 
   it('should fail invalid assertion name', async () => {
     const urlCmd = twd.url();
     // @ts-expect-error
-    await expect(urlCmd.should('invalid.assertion', 'http://localhost:3000/home')).rejects.toThrow('Unknown assertion: invalid.assertion');
+    await expect(urlCmd.should('invalid.assertion', 'http://localhost:3000/home', 1)).rejects.toThrow('Unknown assertion: invalid.assertion');
   });
 
   it('should retry assertion when it fails', async () => {
