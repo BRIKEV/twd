@@ -650,12 +650,14 @@ Waits for a mocked request to be made.
 #### Syntax
 
 ```ts
-twd.waitForRequest(alias: string): Promise<Rule>
+twd.waitForRequest(alias: string, retries?: number, retryDelay?: number): Promise<Rule>
 ```
 
 #### Parameters
 
 - **alias** (`string`) - The alias of the mock to wait for
+- **retries** (`number`, optional) - Maximum number of retry attempts (default: `10`)
+- **retryDelay** (`number`, optional) - Delay between retries in milliseconds (default: `100`)
 
 #### Returns
 

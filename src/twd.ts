@@ -87,16 +87,20 @@ interface TWDAPI {
   /**
    * Wait for a mocked request to be made.
    * @param alias The alias of the mock rule to wait for
+   * @param retries The number of retries to make
+   * @param retryDelay The delay between retries
    * @return The matched rule (with body if applicable)
    * 
    * @example
    * ```ts
    * const rule = await twd.waitFor("aliasId");
    * console.log(rule.body);
+   * const rule = await twd.waitFor("aliasId", 5, 100);
+   * console.log(rule.body);
    * 
    * ```
    */
-  waitForRequest: (alias: string) => Promise<Rule>;
+  waitForRequest: (alias: string, retries?: number, retryDelay?: number) => Promise<Rule>;
   /**
    * wait for a list of mocked requests to be made.
    * @param aliases The aliases of the mock rules to wait for
