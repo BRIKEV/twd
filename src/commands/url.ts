@@ -71,6 +71,7 @@ const urlCommand = (): URLCommandAPI => {
       for (let i = 0; i < retries; i++) {
         try {
           result = should(name, value);
+          log(result);
           break;
         } catch (e) {
           await new Promise(resolve => setTimeout(resolve, 100));

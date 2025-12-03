@@ -158,28 +158,28 @@ twd.url(): URLCommandAPI
 
 #### Methods
 
-- `should(assertion, value)` - Make URL assertions
+- `should(assertion, value, retries?)` - Make URL assertions (async, retries with 100ms delay between attempts, default: 5 retries)
 
 #### Examples
 
 ```ts
 // Exact URL matching
-twd.url().should("eq", "http://localhost:3000/products");
+await twd.url().should("eq", "http://localhost:3000/products");
 
 // URL contains substring
-twd.url().should("contain.url", "/products");
-twd.url().should("contain.url", "localhost");
+await twd.url().should("contain.url", "/products");
+await twd.url().should("contain.url", "localhost");
 
 // Negated assertions
-twd.url().should("not.contain.url", "/admin");
+await twd.url().should("not.contain.url", "/admin");
 
 // After navigation
 twd.visit("/login");
-twd.url().should("contain.url", "/login");
+await twd.url().should("contain.url", "/login");
 
 const loginButton = await twd.get("button[type='submit']");
 await userEvent.click(loginButton.el);
-twd.url().should("contain.url", "/dashboard");
+await twd.url().should("contain.url", "/dashboard");
 ```
 
 ---
