@@ -57,6 +57,31 @@ describe('waitForRequest', () => {
 
   it('throws if the rule is not found or not executed', async () => {
     const alias = 'nonExistentAlias';
-    await expect(waitForRequest(alias)).rejects.toThrow(`Rule ${alias} not found or not executed`);
+    await expect(waitForRequest(alias)).rejects.toThrow(`Rule ${alias} not found`);
+  });
+
+  it('checks if the rule is executed within the given time', async () => {
+    const alias = 'delayedAlias';
+    await mockRequest(alias, { method: 'GET', url: '/bar', response: {} });
+    
+    // Mark the rule as executed immediately
+    const rules = getRequestMockRules();
+    const rule = rules.find((r) => r.alias === alias);
+    if (rule) {
+      rule.executed = true;
+      rule.request = { delayed: true };
+    }
+
+    // Now await the waitForRequest - it should succeed immediately
+    const result = await waitForRequest(alias, 1, 10);
+    expect(result.alias).toBe(alias);
+    expect(result.executed).toBe(true);
+    expect(result.request).toEqual({ delayed: true });
+  });
+
+  it('throws if the rule is not executed within the given time', async () => {
+    const alias = 'notExecutedAlias';
+    await mockRequest(alias, { method: 'GET', url: '/not-executed', response: {} });
+    await expect(waitForRequest(alias, 1, 10)).rejects.toThrow(`Rule ${alias} was not executed within 10ms`);
   });
 });

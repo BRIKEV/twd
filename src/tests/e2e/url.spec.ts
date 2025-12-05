@@ -32,51 +32,56 @@ describe('twd url command', () => {
   });
 
   it('should get the current URL', async () => {
-    const urlCmd = await twd.url();
+    const urlCmd = twd.url();
     expect(urlCmd.location.href).toBe('http://localhost:3000/home');
   });
 
   it('should assert URL equality', async () => {
-    const urlCmd = await twd.url();
-    const result = urlCmd.should('eq', 'http://localhost:3000/home');
+    const urlCmd = twd.url();
+    const result = await urlCmd.should('eq', 'http://localhost:3000/home');
     expect(typeof result).toBe('string');
     expect(result).toContain('Assertion passed');
   });
 
   it('should assert URL containment', async () => {
-    const urlCmd = await twd.url();
-    const result = urlCmd.should('contain.url', '/home');
+    const result = await twd.url().should('contain.url', '/home');
     expect(typeof result).toBe('string');
     expect(result).toContain('Assertion passed');
   });
 
   it('should handle negated equality assertion', async () => {
-    const urlCmd = await twd.url();
-    const result = urlCmd.should('not.eq', 'http://localhost:3000/about');
+    const urlCmd = twd.url();
+    const result = await urlCmd.should('not.eq', 'http://localhost:3000/about');
     expect(typeof result).toBe('string');
     expect(result).toContain('Assertion passed');
   });
 
   it('should handle negated containment assertion', async () => {
-    const urlCmd = await twd.url();
-    const result = urlCmd.should('not.contain.url', '/about');
+    const result = await twd.url().should('not.contain.url', '/about');
     expect(typeof result).toBe('string');
     expect(result).toContain('Assertion passed');
   });
 
   it('should fail equality assertion with incorrect URL', async () => {
-    const urlCmd = await twd.url();
-    expect(() => urlCmd.should('eq', 'http://localhost:3000/about')).toThrowError('Assertion failed: Expected URL to be http://localhost:3000/about, but got http://localhost:3000/home');
+    const urlCmd = twd.url();
+    await expect(urlCmd.should('eq', 'http://localhost:3000/about')).rejects.toThrow('Assertion failed: Expected URL to be http://localhost:3000/about, but got http://localhost:3000/home');
   });
-
+  
   it('should fail containment assertion with incorrect substring', async () => {
-    const urlCmd = await twd.url();
-    expect(() => urlCmd.should('contain.url', '/about')).toThrowError('Assertion failed: Expected URL to contain /about, but got http://localhost:3000/home');
+    const urlCmd = twd.url();
+    await expect(urlCmd.should('contain.url', '/about', 1)).rejects.toThrow('Assertion failed: Expected URL to contain /about, but got http://localhost:3000/home');
   });
 
   it('should fail invalid assertion name', async () => {
-    const urlCmd = await twd.url();
+    const urlCmd = twd.url();
     // @ts-expect-error
-    expect(() => urlCmd.should('invalid.assertion', 'http://localhost:3000/home')).toThrowError('Unknown assertion: invalid.assertion');
+    await expect(urlCmd.should('invalid.assertion', 'http://localhost:3000/home', 1)).rejects.toThrow('Unknown assertion: invalid.assertion');
+  });
+
+  it('should retry assertion when it fails', async () => {
+    const urlCmd = twd.url();
+    // this should not fail as it retries
+    urlCmd.should('eq', 'http://localhost:3000/about');
+    window.location.href = 'http://localhost:3000/about';
   });
 });

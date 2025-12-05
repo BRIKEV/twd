@@ -3,7 +3,9 @@
 In the [previous tutorial](./api-mocking), we explored one of TWD's core features — **network mocking** — and completed our first full set of tests.
 Now, it's time to take the next step: **running those tests in the terminal** so we can integrate them into a **CI workflow**.
 
-To do this, we'll use Puppeteer and one of TWD's utilities, `reportResults`, to display test results directly in the console.
+> Looking for the quickest path? Install `twd-cli` (`npx twd-cli run`) and you’ll have a ready-made CI runner that handles Puppeteer setup, config, coverage, and exit codes for you. The rest of this guide shows how to build the same flow yourself so you can customize every step. Check the updated [CI Execution docs](/ci-execution) for the latest CLI options and ready-to-copy workflow snippets.
+
+To roll your own runner, we’ll still use Puppeteer and one of TWD's utilities, `reportResults`, to display test results directly in the console.
 
 ## Before You Start
 
@@ -143,7 +145,12 @@ And you should see something like this:
 
 ## GitHub Actions Integration
 
-We're still working on a built-in CI solution, but for now you can easily integrate TWD with GitHub Actions using Puppeteer.
+You now have two equally valid paths:
+
+- **Use `twd-cli`** for a batteries-included workflow (see [`/ci-execution`](/ci-execution) for full YAML).
+- **Use your custom script** (`npm run test:ci`) when you need bespoke orchestration.
+
+Below is an example that wires the script from this tutorial into Actions:
 
 Create a file at `.github/workflows/ci.yml`:
 

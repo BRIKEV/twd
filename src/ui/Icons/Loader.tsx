@@ -11,7 +11,7 @@ const Loader = () => (
     height="24"
     viewBox="0 0 24 24"
     fill="none"
-    stroke="currentColor"
+    stroke="#364153"
     strokeWidth="2"
     strokeLinecap="round"
     strokeLinejoin="round"
@@ -24,7 +24,7 @@ const Loader = () => (
 );
 
 // Add keyframes for spin animation
-const styleSheet = typeof document !== 'undefined' ? document.createElement('style') : null;
+const styleSheet = document.createElement('style');
 if (styleSheet && !document.getElementById('loader-spin-keyframes')) {
   styleSheet.id = 'loader-spin-keyframes';
   styleSheet.innerHTML = `

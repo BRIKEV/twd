@@ -16,16 +16,6 @@ Please delete options that are not relevant:
 - [ ] Performance improvement
 - [ ] Test addition or update
 
-## Related Issue
-
-Closes # (issue number)
-
-## Changes Made
-
-- 
-- 
-- 
-
 ## Testing
 
 - [ ] I have added tests that prove my fix is effective or that my feature works
@@ -39,14 +29,6 @@ Closes # (issue number)
 
 Describe the tests you've added or updated:
 
-```typescript
-// Example of test added
-describe("New feature", () => {
-  it("should work correctly", () => {
-    // ...
-  });
-});
-```
 
 ## Documentation
 
@@ -56,29 +38,6 @@ describe("New feature", () => {
 
 **Note**: If your change affects the public API or adds new features, documentation updates are required.
 
-### Documentation Changes
-
-List any documentation files you've updated:
-- [ ] README.md
-- [ ] docs/...
-- [ ] API documentation
-
-## Checklist
-
-- [ ] My code follows the project's style guidelines
-- [ ] I have performed a self-review of my own code
-- [ ] I have commented my code, particularly in hard-to-understand areas
-- [ ] I have made corresponding changes to the documentation
-- [ ] My changes generate no new warnings
-- [ ] I have added tests that prove my fix is effective or that my feature works
-- [ ] New and existing unit tests pass locally with my changes
-- [ ] Any dependent changes have been merged and published
-
 ## Screenshots (if applicable)
 
 If your changes affect the UI or add visual features, please add screenshots:
-
-## Additional Notes
-
-Any additional information that reviewers should know:
-

@@ -5,6 +5,7 @@ import { describe, it, beforeEach } from "../../../../src/runner";
 describe("App interactions", () => {
   beforeEach(() => {
     console.log("Reset state before each test");
+    twd.clearRequestMockRules();
   });
 
   describe("nested level 1", () => {
@@ -16,6 +17,7 @@ describe("App interactions", () => {
         console.log("Reset state before each test 2");
       });
       it("clicks the button", async () => {
+        await twd.visit("/");
         const btn = await twd.get("button");
         userEvent.click(btn.el);
       });
@@ -26,15 +28,17 @@ describe("App interactions", () => {
     throw new Error("Should not run");
   });
 
-  it.only("only this one runs if present and long text to check the layout", async () => {
+  it("test button", async () => {
+    await twd.visit("/");
     const user = userEvent.setup();
     const btn = await twd.get("button");
     await user.click(btn.el);
     await userEvent.click(btn.el);
-    console.log("Ran only test");
   });
+
   describe("Nested describe", () => {
     it("checks text content", async () => {
+      await twd.visit("/");
       let input = await twd.get("input#simple-input");
       await userEvent.type(input.el, "hola");
       input = await twd.get("input#simple-input");
@@ -42,7 +46,11 @@ describe("App interactions", () => {
     });
   });
 
-  it("fetches a joke", async () => {
+  it("fetches a joke and also tests retries in the waitForRequest command as we remove mocks and define it again before the wait", async () => {
+    twd.clearRequestMockRules();
+    await twd.visit("/");
+    const btn = await twd.get("button[data-twd='joke-button']");
+    await twd.notExists("p[data-twd='joke-text']");
     await twd.mockRequest("joke", {
       method: "GET",
       url: "https://api.chucknorris.io/jokes/random",
@@ -50,7 +58,6 @@ describe("App interactions", () => {
         value: "Mocked joke!",
       },
     });
-    const btn = await twd.get("button[data-twd='joke-button']");
     await userEvent.click(btn.el);
     // Wait for the mock fetch to fire
     await twd.waitForRequest("joke");
@@ -82,6 +89,7 @@ describe("App interactions", () => {
         value: "Third Mocked joke!",
       },
     });
+    await twd.visit("/");
     const btn = await twd.get("button[data-twd='joke-button']");
     await userEvent.click(btn.el);
     // Wait for the mock fetch to fire
@@ -122,6 +130,6 @@ describe("App interactions", () => {
     const rules = await twd.waitForRequests(["contactSubmit"]);
     const request = rules[0].request;
     expect(request).to.deep.equal({ email: "test@example.com", message: "Hello, this is a test message.", date: "2023-01-01", month: "2023-01", time: "12:00", color: "#ff0000", range: "75", hour: "14:30", week: "2023-W15" });
-    twd.url().should("contain.url", "/contact");
+    await twd.url().should("contain.url", "/contact");
   });
 });

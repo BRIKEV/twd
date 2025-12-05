@@ -49,6 +49,50 @@ describe("Shopping Cart", () => {
 });
 ```
 
+## describe.only(name, fn)
+
+Run only this `describe` block (and its nested describes/tests). When used, other suites and tests that are not within the `.only` tree will be skipped — this is useful for focusing on a group of related tests while debugging.
+
+### Syntax
+
+```ts
+describe.only(name: string, fn: () => void): void
+```
+
+### Example
+
+```ts
+describe.only("Payments", () => {
+  it("should process card payment", async () => {
+    // This test runs (others outside this describe are skipped)
+  });
+});
+```
+
+> Tip: Remember to remove `describe.only` before merging or running full CI, as it will skip other tests.
+
+## describe.skip(name, fn)
+
+Skips this `describe` block and all its descendant tests. Useful for temporarily disabling an entire suite while you work on other areas.
+
+### Syntax
+
+```ts
+describe.skip(name: string, fn: () => void): void
+```
+
+### Example
+
+```ts
+describe.skip("Experimental feature", () => {
+  it("should do something", async () => {
+    // This won't run
+  });
+});
+```
+
+Use `describe.skip` for larger blocks that aren't ready or are flaky in certain environments.
+
 ---
 
 ## it(name, fn)
@@ -230,10 +274,7 @@ describe("User Dashboard", () => {
 
 ```ts
 describe("API Integration", () => {
-  beforeEach(async () => {
-    // Initialize mocking
-    await twd.initRequestMocking();
-    
+  beforeEach(async () => {    
     // Set up common mocks
     await twd.mockRequest("getUser", {
       method: "GET",
@@ -354,7 +395,6 @@ describe("User Management", () => {
 describe("Authentication Flow", () => {
   beforeEach(async () => {
     // Common setup for all auth tests
-    await twd.initRequestMocking();
     await twd.visit("/login");
   });
 
@@ -464,25 +504,6 @@ describe("Error Handling", () => {
       console.error("Element not found:", error.message);
       throw error; // Re-throw to fail the test
     }
-  });
-});
-```
-
-### beforeEach Errors
-
-```ts
-describe("Setup Errors", () => {
-  beforeEach(async () => {
-    try {
-      await twd.initRequestMocking();
-    } catch (error) {
-      console.error("Failed to initialize mocking:", error);
-      throw error; // This will fail all tests in the describe block
-    }
-  });
-
-  it("should run with proper setup", async () => {
-    // This won't run if beforeEach fails
   });
 });
 ```

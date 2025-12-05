@@ -3,6 +3,7 @@ import { buildTreeFromHandlers, Node } from "./buildTreeFromHandlers";
 import { TestListItem } from "./TestListItem";
 import ChevronDown from "./Icons/ChevronDown";
 import ChevronRight from "./Icons/ChevronRight";
+import SkipOnlyName from "./SkipOnlyName";
 
 interface Test {
   name: string;
@@ -40,9 +41,10 @@ export const TestList = ({ tests, runTest }: TestListProps) => {
     }
 
     const isCollapsed = collapsed[node.id];
+    
     return (
       <li key={node.id} style={{ marginLeft: depth * 12 }}>
-        <div
+        <span
           style={{
             fontWeight: "bold",
             cursor: "pointer",
@@ -59,9 +61,9 @@ export const TestList = ({ tests, runTest }: TestListProps) => {
           aria-expanded={!isCollapsed}
           onClick={() => toggle(node.id)}
         >
-          {node.name}
+          <SkipOnlyName id={node.id} name={node.name} skip={node.skip} only={node.only} />
           {isCollapsed ? <ChevronRight /> : <ChevronDown />}
-        </div>
+        </span>
 
         {!isCollapsed && node.childrenNodes && node.childrenNodes.length > 0 && (
           <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>

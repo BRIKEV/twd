@@ -21,6 +21,7 @@ import {
   afterEach,
   twd, 
   userEvent,
+  screenDom,
   expect
 } from "twd-js";
 
@@ -121,17 +122,22 @@ describe("Test Suite", () => {
 ### Element Selection and Interaction
 
 ```ts
-// Select elements
+// TWD native selectors
 const element = await twd.get("selector");
 const elements = await twd.getAll("selector");
 
+// Testing Library queries (also available)
+const button = screenDom.getByRole("button", { name: /submit/i });
+const input = screenDom.getByLabelText("Email:");
+
 // Make assertions
-element.should("assertion", ...args);
+element.should("assertion", ...args); // For twd.get() elements
+twd.should(button, "be.visible"); // For screenDom elements
 
 // User interactions
 const user = userEvent.setup();
 await user.click(element.el);
-await user.type(element.el, "text");
+await user.type(input, "text");
 ```
 
 ### API Mocking
@@ -226,13 +232,22 @@ message.should('contain.text', 'Success');
 
 #### From Testing Library
 
+TWD now supports Testing Library queries directly! You can use the same `screenDom` API:
+
 ```ts
 // Testing Library
 const button = screen.getByTestId('button');
 fireEvent.click(button);
 expect(screen.getByTestId('message')).toHaveTextContent('Success');
 
-// TWD
+// TWD - Same API!
+import { screenDom, userEvent, twd } from 'twd-js';
+const button = screenDom.getByTestId('button');
+await userEvent.click(button);
+const message = screenDom.getByTestId('message');
+twd.should(message, 'contain.text', 'Success');
+
+// Or use TWD's native selectors
 const button = await twd.get('[data-testid="button"]');
 await userEvent.click(button.el);
 const message = await twd.get('[data-testid="message"]');

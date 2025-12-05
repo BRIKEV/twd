@@ -5,6 +5,7 @@ import { mockRequest, Options, Rule, waitForRequest, initRequestMocking, clearRe
 import type { AnyAssertion, ArgsFor, TWDElemAPI } from "./twd-types";
 import urlCommand, { type URLCommandAPI } from "./commands/url";
 import { visit } from "./commands/visit";
+import { mockComponent, clearComponentMocks } from "./ui/componentMocks";
 
 interface TWDAPI {
   /**
@@ -82,20 +83,24 @@ interface TWDAPI {
    * });
    * ```
    */
-  mockRequest: (alias: string, options: Options) => void;
+  mockRequest: (alias: string, options: Options) => Promise<void>;
   /**
    * Wait for a mocked request to be made.
    * @param alias The alias of the mock rule to wait for
+   * @param retries The number of retries to make
+   * @param retryDelay The delay between retries
    * @return The matched rule (with body if applicable)
    * 
    * @example
    * ```ts
    * const rule = await twd.waitFor("aliasId");
    * console.log(rule.body);
+   * const rule = await twd.waitFor("aliasId", 5, 100);
+   * console.log(rule.body);
    * 
    * ```
    */
-  waitForRequest: (alias: string) => Promise<Rule>;
+  waitForRequest: (alias: string, retries?: number, retryDelay?: number) => Promise<Rule>;
   /**
    * wait for a list of mocked requests to be made.
    * @param aliases The aliases of the mock rules to wait for
@@ -119,15 +124,16 @@ interface TWDAPI {
   url: () => URLCommandAPI;
   /**
    * Initializes request mocking (registers the service worker).
-   * Must be called before using `twd.mockRequest()`.
+   * @param [path] service worker absolute path (optional)
    *
    * @example
    * ```ts
    * await twd.initRequestMocking();
-   * 
+   * // init with custom service worker path
+   * await twd.initRequestMocking('/test-path/mock-sw.js');
    * ```
    */
-  initRequestMocking: () => Promise<void>;
+  initRequestMocking: (path?: string) => Promise<void>;
   /**
    * Clears all request mock rules.
    *
@@ -158,6 +164,53 @@ interface TWDAPI {
    * ```
    */
   wait: (time: number) => Promise<void>;
+  /**
+   * Asserts something about the element.
+   * @param el The element to assert on
+   * @param name The name of the assertion.
+   * @param args Arguments for the assertion.
+   * @returns The same API for chaining.
+   * @example
+   * ```ts
+   * const button = await twd.get("button");
+   * const text = screenDom.getByText("Hello");
+   * twd.should(button.el, "have.text", "Hello");
+   * twd.should(text, "be.empty");
+   * twd.should(button.el, "have.class", "active");
+   * ```
+   */
+  should: (el: Element, name: AnyAssertion, ...args: ArgsFor<AnyAssertion>) => void;
+  /**
+   * Mock a component.
+   * @param name The name of the component to mock
+   * @param component The component to mock
+   * @returns The mocked component
+   * @example
+   * ```ts
+   * twd.mockComponent("Button", Button);
+   * ```
+   */
+  mockComponent: (name: string, component: React.ComponentType<any>) => void;
+  /**
+   * Clears all component mocks.
+   *
+   * @example
+   * ```ts
+   * twd.clearComponentMocks();
+   * ```
+   */
+  clearComponentMocks: () => void;
+  /**
+   * Asserts that an element does not exist in the DOM.
+   * @param selector CSS selector of the element to check
+   * @returns A promise that resolves if the element does not exist, or rejects if it does
+   * 
+   * @example
+   * ```ts
+   * await twd.notExists(".non-existent");
+   * ```
+   */
+  notExists: (selector: string) => Promise<void>;
 }
 
 /**
@@ -169,7 +222,7 @@ export const twd: TWDAPI = {
     // Prepend selector to exclude TWD sidebar elements
     const enhancedSelector = `body > div:not(#twd-sidebar-root) ${selector}`;
     log(`Searching get("${selector}")`);
-    const el = await waitForElement(() => document.querySelector(enhancedSelector));
+    const el = await waitForElement(selector, () => document.querySelector(enhancedSelector));
 
     const api: TWDElemAPI = {
       el,
@@ -195,7 +248,7 @@ export const twd: TWDAPI = {
     // Prepend selector to exclude TWD sidebar elements
     const enhancedSelector = `body > div:not(#twd-sidebar-root) ${selector}`;
     log(`Searching getAll("${selector}")`);
-    const els = await waitForElements(() => document.querySelectorAll(enhancedSelector));
+    const els = await waitForElements(selector, () => document.querySelectorAll(enhancedSelector));
 
     return els.map((el) => {
       const api: TWDElemAPI = {
@@ -217,5 +270,21 @@ export const twd: TWDAPI = {
   initRequestMocking,
   clearRequestMockRules,
   getRequestMockRules,
+  should: (el: Element, name: AnyAssertion, ...args: ArgsFor<AnyAssertion>) => {
+    const message = runAssertion(el, name, ...args);
+    log(message);
+  },
   wait,
+  mockComponent,
+  clearComponentMocks,
+  notExists: async (selector: string): Promise<void> => {
+    // Prepend selector to exclude TWD sidebar elements
+    const enhancedSelector = `body > div:not(#twd-sidebar-root) ${selector}`;
+    log(`Checking notExists("${selector}")`);
+    const existingElement = document.querySelector(enhancedSelector);
+    if (existingElement) {
+      throw new Error(`Element "${selector}" exists in the DOM.`);
+    }
+    log(`Assertion passed: Element "${selector}" does not exist in the DOM.`);
+  },
 };

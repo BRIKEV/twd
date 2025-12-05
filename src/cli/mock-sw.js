@@ -1,7 +1,7 @@
 import { findRule } from './utils/findRule.js';
 import { notifyClients } from './utils/notifyClients.js';
 import { mockResponse } from './utils/mockResponse.js';
-import { TWD_VERSION } from '../constants/version.js';
+import { TWD_VERSION } from '../constants/version_cli.js';
 
 /**
  * List of currently active mock rules.
@@ -69,8 +69,28 @@ export const handleFetch = async (event) => {
   }
 };
 
+const isValidVersion = (version) => {
+  if (version !== TWD_VERSION) {
+    console.warn(
+      `[TWD] ⚠️ Version mismatch detected:
+Client version: ${version}
+Service Worker version: ${TWD_VERSION}
+
+This may lead to unexpected behavior.
+Please unregister the Service Worker and reload the page to ensure compatibility.
+
+To reinstall:
+  npx twd-js init public --save
+
+Docs: https://brikev.github.io/twd/api-mocking.html#_1-install-mock-service-worker`
+    );
+  }
+};
+
+
 export const handleMessage = (event) => {
-  const { type, rule } = event.data || {};
+  const { type, rule, version } = event.data || {};
+  isValidVersion(version);
   if (type === "ADD_RULE") {
     rules = rules.filter((r) => r.alias !== rule.alias);
     rules.push(rule);

@@ -6,6 +6,8 @@ interface Test {
   id: string;
   parent?: string;
   type: "test" | "suite";
+  only?: boolean;
+  skip?: boolean;
 }
 
 export type Node = Test & { childrenNodes?: Node[] };

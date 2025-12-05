@@ -1,3 +1,48 @@
+## <small>1.2.3 (2025-12-03)</small>
+
+* Feat/add retry wait request (#108) ([b36861e](https://github.com/BRIKEV/twd/commit/b36861e)), closes [#108](https://github.com/BRIKEV/twd/issues/108)
+* Feat/url retry command (#106) ([54564e0](https://github.com/BRIKEV/twd/commit/54564e0)), closes [#106](https://github.com/BRIKEV/twd/issues/106)
+* chore(deps): bump mdast-util-to-hast in /examples/astro-example (#104) ([e0e3b73](https://github.com/BRIKEV/twd/commit/e0e3b73)), closes [#104](https://github.com/BRIKEV/twd/issues/104)
+
+
+## <small>1.2.2 (2025-11-28)</small>
+
+* Fix/add path initmocking (#103) ([2ef73c1](https://github.com/BRIKEV/twd/commit/2ef73c1)), closes [#103](https://github.com/BRIKEV/twd/issues/103)
+
+## <small>1.2.1 (2025-11-26)</small>
+
+* feat: add new bundle for mocking component (#102) ([9f0fd7a](https://github.com/BRIKEV/twd/commit/9f0fd7a)), closes [#102](https://github.com/BRIKEV/twd/issues/102)
+
+## 1.2.0 (2025-11-23)
+
+* docs: change selector importance to testing library ones ([31d9580](https://github.com/BRIKEV/twd/commit/31d9580))
+* Feat/describe improvements (#99) ([fb8d635](https://github.com/BRIKEV/twd/commit/fb8d635)), closes [#99](https://github.com/BRIKEV/twd/issues/99)
+* Feat/exists command (#100) ([94a893b](https://github.com/BRIKEV/twd/commit/94a893b)), closes [#100](https://github.com/BRIKEV/twd/issues/100)
+* Feat/mock component (#94) ([112a4f3](https://github.com/BRIKEV/twd/commit/112a4f3)), closes [#94](https://github.com/BRIKEV/twd/issues/94)
+
+## <small>1.1.2 (2025-11-15)</small>
+
+* fix: error total tests using describe ([c209d29](https://github.com/BRIKEV/twd/commit/c209d29))
+
+## <small>1.1.1 (2025-11-14)</small>
+
+* Fix/select testing library (#89) ([7b2ed30](https://github.com/BRIKEV/twd/commit/7b2ed30)), closes [#89](https://github.com/BRIKEV/twd/issues/89)
+
+## 1.1.0 (2025-11-14)
+
+* Feat/pre release improvements (#87) ([266362e](https://github.com/BRIKEV/twd/commit/266362e)), closes [#87](https://github.com/BRIKEV/twd/issues/87)
+* Feat/selector rta (#85) ([00f59ef](https://github.com/BRIKEV/twd/commit/00f59ef)), closes [#85](https://github.com/BRIKEV/twd/issues/85)
+
+## <small>1.0.2 (2025-11-12)</small>
+
+* Fix/types coverage v1 (#82) ([83bebd1](https://github.com/BRIKEV/twd/commit/83bebd1)), closes [#82](https://github.com/BRIKEV/twd/issues/82)
+
+
+## <small>1.0.1 (2025-11-11)</small>
+
+* fix: error chai types ([524d298](https://github.com/BRIKEV/twd/commit/524d298))
+
+
 ## 1.0.0 (2025-11-10)
 
 * chore(deps-dev): bump vite from 7.1.4 to 7.2.2 in /examples/twd-test-app (#78) ([87a50af](https://github.com/BRIKEV/twd/commit/87a50af)), closes [#78](https://github.com/BRIKEV/twd/issues/78)

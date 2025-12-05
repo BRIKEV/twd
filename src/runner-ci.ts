@@ -1,5 +1,10 @@
-import chalk from 'chalk';
 import { Handler } from "./runner";
+
+// ANSI color codes
+const RESET = '\x1b[0m';
+const GREEN = '\x1b[32m';
+const RED = '\x1b[31m';
+const YELLOW = '\x1b[33m';
 
 interface TestResult {
   id: string;
@@ -18,12 +23,12 @@ export const reportResults = (handlers: Handler[], testResults: TestResult[]) =>
     let errorMsg = '';
     if (handler.type !== 'suite') {
       if (entry?.status === 'pass') {
-        icon = chalk.green('✓');
+        icon = `${GREEN}✓${RESET}`;
       } else if (entry?.status === 'fail') {
-        icon = chalk.red('✗');
+        icon = `${RED}✗${RESET}`;
         errorMsg = ` - Error: ${entry.error}`;
       } else {
-        icon = chalk.yellow('○');
+        icon = `${YELLOW}○${RESET}`;
       }
     }
 
@@ -34,7 +39,7 @@ export const reportResults = (handlers: Handler[], testResults: TestResult[]) =>
     console.log(label);
 
     if (errorMsg) {
-      console.log(chalk.red(`${prefix}${errorMsg}`));
+      console.log(`${RED}${prefix}${errorMsg}${RESET}`);
     }
 
     if (handler.children) {

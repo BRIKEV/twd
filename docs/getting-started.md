@@ -24,14 +24,9 @@ pnpm add twd-js
 
 ## Quick Setup
 
-**VIDEO HERE** - *Step-by-step setup walkthrough from installation to first test*
-
-
 ### 1. Add TWD Sidebar and Load Tests Automatically
 
 To enable the TWD sidebar and automatically load your tests, use the `initTests` utility in your main entry file. This is the standard way to set up TWD in your application: the sidebar will be injected and tests loaded automatically in development mode.
-
-**IMAGE HERE** - *Screenshot showing main.tsx file with the new TWD loader usage*
 
 ```tsx{7-23}
 // src/main.tsx
@@ -80,28 +75,29 @@ Create your first test file:
 
 ```ts
 // src/App.twd.test.ts
-import { twd, userEvent } from "twd-js";
+import { twd, userEvent, screenDom } from "twd-js";
 import { describe, it } from "twd-js/runner";
 
 describe("App Component", () => {
   it("should render the main heading", async () => {
     await twd.visit("/");
     
-    const heading = await twd.get("h1");
-    heading.should("be.visible");
+    // Use screenDom for testing library queries
+    const heading = screenDom.getByRole("heading", { level: 1 });
+    twd.should(heading, "be.visible");
   });
 
   it("should handle button clicks", async () => {
     await twd.visit("/");
     
     const user = userEvent.setup();
-    const button = await twd.get("button");
+    const button = screenDom.getByRole("button");
     
-    await user.click(button.el);
+    await user.click(button);
     
     // Add your assertions here
-    const result = await twd.get("#result");
-    result.should("have.text", "Button clicked!");
+    const result = screenDom.getByText("Button clicked!");
+    twd.should(result, "be.visible");
   });
 });
 ```
@@ -116,9 +112,9 @@ npm run dev
 
 You should now see the TWD sidebar in your browser automatically in development mode. Click on it to view and run your tests!
 
-**IMAGE HERE** - *Screenshot of browser showing the TWD sidebar closed*
-
-**IMAGE HERE** - *Screenshot of browser showing the TWD sidebar open with test results*
+<p align="center">
+  <img src="/images/twd_side_bar_success.png" alt="TWD Sidebar showing test execution" width="800">
+</p>
 
 
 ## File Naming Convention

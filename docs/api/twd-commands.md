@@ -158,28 +158,28 @@ twd.url(): URLCommandAPI
 
 #### Methods
 
-- `should(assertion, value)` - Make URL assertions
+- `should(assertion, value, retries?)` - Make URL assertions (async, retries with 100ms delay between attempts, default: 5 retries)
 
 #### Examples
 
 ```ts
 // Exact URL matching
-twd.url().should("eq", "http://localhost:3000/products");
+await twd.url().should("eq", "http://localhost:3000/products");
 
 // URL contains substring
-twd.url().should("contain.url", "/products");
-twd.url().should("contain.url", "localhost");
+await twd.url().should("contain.url", "/products");
+await twd.url().should("contain.url", "localhost");
 
 // Negated assertions
-twd.url().should("not.contain.url", "/admin");
+await twd.url().should("not.contain.url", "/admin");
 
 // After navigation
 twd.visit("/login");
-twd.url().should("contain.url", "/login");
+await twd.url().should("contain.url", "/login");
 
 const loginButton = await twd.get("button[type='submit']");
 await userEvent.click(loginButton.el);
-twd.url().should("contain.url", "/dashboard");
+await twd.url().should("contain.url", "/dashboard");
 ```
 
 ---
@@ -447,6 +447,129 @@ await twd.wait(5000); // Why 5 seconds?
 
 ---
 
+### twd.notExists(selector)
+
+Asserts that an element matching the provided selector does not exist in the DOM. Resolves when no matching element is found and rejects if the element exists.
+
+#### Syntax
+
+```ts
+twd.notExists(selector: string): Promise<void>
+```
+
+#### Parameters
+
+- **selector** (`string`) - CSS selector of the element to check
+
+#### Returns
+
+`Promise<void>` - Resolves if the element is not present, rejects with an Error if it is found
+
+#### Examples
+
+```ts
+// Assert that a specific element is not present
+await twd.notExists('.non-existent');
+
+// Will reject when an element exists
+const el = document.createElement('div');
+el.className = 'maybe';
+document.body.appendChild(el);
+await expect(twd.notExists('.maybe')).rejects.toThrow();
+```
+
+### twd.should(element, assertion, ...args)
+
+Makes assertions on any DOM element. This is the standalone function version of assertions, useful for elements from Testing Library queries (`screenDom`) or any raw DOM element.
+
+#### Syntax
+
+```ts
+twd.should(element: Element, assertion: string, ...args: any[]): void
+```
+
+#### Parameters
+
+- **element** (`Element`) - The DOM element to assert on
+- **assertion** (`string`) - The assertion name (e.g., `"be.visible"`, `"have.text"`)
+- **args** (`any[]`) - Additional arguments for the assertion (e.g., expected text value)
+
+#### Returns
+
+`void` - This function doesn't return a value (unlike the `.should()` method on TWD elements)
+
+#### When to Use
+
+- **Use `twd.should()`** for elements from Testing Library queries (`screenDom`)
+- **Use `element.should()`** for elements returned from `twd.get()` or `twd.getAll()`
+
+#### Examples
+
+```ts
+import { twd, screenDom } from "twd-js";
+
+// With Testing Library queries
+const button = screenDom.getByRole("button", { name: /submit/i });
+twd.should(button, "be.visible");
+twd.should(button, "have.text", "Submit");
+
+// With raw DOM elements
+const element = document.querySelector(".my-element");
+twd.should(element, "be.visible");
+twd.should(element, "contain.text", "Hello");
+
+// With TWD elements (alternative to .should() method)
+const input = await twd.get("input#email");
+twd.should(input.el, "have.value", "user@example.com");
+// Or use the method: input.should("have.value", "user@example.com");
+
+// All assertion types are supported
+const heading = screenDom.getByRole("heading");
+twd.should(heading, "have.text", "Welcome");
+twd.should(heading, "be.visible");
+twd.should(heading, "have.class", "main-title");
+
+const checkbox = screenDom.getByRole("checkbox");
+twd.should(checkbox, "be.checked");
+
+const select = screenDom.getByRole("combobox");
+const option = screenDom.getByRole("option", { selected: true });
+twd.should(option, "be.selected");
+```
+
+#### Comparison: Method vs Function
+
+```ts
+// Method style (for twd.get() elements)
+const button = await twd.get("button");
+button.should("be.visible").should("have.text", "Click me");
+
+// Function style (for any element, especially screenDom)
+const button = screenDom.getByRole("button");
+twd.should(button, "be.visible");
+twd.should(button, "have.text", "Click me");
+```
+
+#### Available Assertions
+
+All assertions available on `.should()` method are also available with `twd.should()`:
+
+- `"have.text"` - Exact text match
+- `"contain.text"` - Partial text match
+- `"be.empty"` - Element has no text
+- `"have.attr"` - Has attribute with value
+- `"have.value"` - Input/textarea value
+- `"have.class"` - Has CSS class
+- `"be.disabled"` / `"be.enabled"` - Form element state
+- `"be.checked"` - Checkbox/radio state
+- `"be.selected"` - Option element state
+- `"be.focused"` - Element has focus
+- `"be.visible"` - Element is visible
+
+All assertions can be negated with `"not."` prefix (e.g., `"not.be.visible"`).
+
+---
+
 ## API Mocking
 
 ### twd.mockRequest(alias, options)
@@ -527,12 +650,14 @@ Waits for a mocked request to be made.
 #### Syntax
 
 ```ts
-twd.waitForRequest(alias: string): Promise<Rule>
+twd.waitForRequest(alias: string, retries?: number, retryDelay?: number): Promise<Rule>
 ```
 
 #### Parameters
 
 - **alias** (`string`) - The alias of the mock to wait for
+- **retries** (`number`, optional) - Maximum number of retry attempts (default: `10`)
+- **retryDelay** (`number`, optional) - Delay between retries in milliseconds (default: `100`)
 
 #### Returns
 
@@ -629,8 +754,12 @@ Initializes the mock service worker for request interception.
 #### Syntax
 
 ```ts
-twd.initRequestMocking(): Promise<void>
+twd.initRequestMocking(path?: string): Promise<void>
 ```
+
+#### Parameters
+
+- **path** (`string`, optional) - Service worker absolute path
 
 #### Returns
 
@@ -650,16 +779,14 @@ twd.initRequestMocking()
     console.error("Error initializing request mocking:", err);
   });
 
-// In individual test (if needed)
-describe("API Tests", () => {
-  beforeEach(async () => {
-    await twd.initRequestMocking();
+// init with custom service worker path
+twd.initRequestMocking('/test-path/mock-sw.js')
+  .then(() => {
+    console.log("Request mocking initialized with custom path");
+  })
+  .catch((err) => {
+    console.error("Error initializing request mocking with custom path:", err);
   });
-
-  it("should mock API calls", async () => {
-    // Mocking is now available
-  });
-});
 ```
 
 ---
@@ -758,6 +885,128 @@ expect(userMock?.method).to.equal("GET");
 
 ---
 
+## Component Mocking
+
+### twd.mockComponent(name, component)
+
+Mocks a React component with a custom implementation.
+
+#### Syntax
+
+```ts
+twd.mockComponent(name: string, component: React.ComponentType<any>): void
+```
+
+#### Parameters
+
+- **name** (`string`) - Unique identifier matching the `name` prop in `MockedComponent`
+- **component** (`React.ComponentType<any>`) - The mock component implementation
+
+#### Examples
+
+```ts
+interface ButtonProps {
+  onClick: (count: number) => void;
+  count: number;
+}
+
+const Button = ({ onClick, count }: ButtonProps) => {
+  return <button onClick={() => onClick(count + 1)}>Click me {count}</button>;
+};
+
+// Mock the component to change its behavior
+twd.mockComponent("Button", ({ onClick, count }: ButtonProps) => (
+  <Button onClick={() => onClick(count + 2)} count={count} />
+));
+
+await twd.visit("/counter");
+
+let button = await twd.get("button");
+button.should("have.text", "Click me 0");
+
+await userEvent.click(button.el);
+button = await twd.get("button");
+button.should("have.text", "Click me 2");
+```
+
+```ts
+// Mock with completely different rendering
+twd.mockComponent("ComplexChart", () => (
+  <div data-testid="mock-chart">
+    <p>Chart data would be displayed here</p>
+  </div>
+));
+
+await twd.visit("/dashboard");
+const mockChart = await twd.get("[data-testid='mock-chart']");
+mockChart.should("be.visible");
+```
+
+```ts
+// Conditional mocking based on props
+twd.mockComponent("UserCard", ({ user }: UserCardProps) => {
+  if (user.role === "admin") {
+    return <div data-testid="admin-card">{user.name} (Admin)</div>;
+  }
+  return <div data-testid="user-card">{user.name}</div>;
+});
+```
+
+---
+
+### twd.clearComponentMocks()
+
+Clears all active component mocks.
+
+#### Syntax
+
+```ts
+twd.clearComponentMocks(): void
+```
+
+#### Examples
+
+```ts
+describe("Component Tests", () => {
+  beforeEach(() => {
+    // Clear component mocks before each test
+    twd.clearComponentMocks();
+  });
+
+  it("should test with mock", async () => {
+    twd.mockComponent("Button", () => <button>Mocked</button>);
+    // Test implementation...
+  });
+
+  it("should test without mock", async () => {
+    // This test runs with clean state - no mocks active
+    // Test implementation...
+  });
+});
+```
+
+```ts
+// Clear mocks manually when needed
+describe("Component Behavior", () => {
+  it("should handle changing mock behavior", async () => {
+    // First mock
+    twd.mockComponent("StatusIndicator", () => (
+      <div data-status="loading">Loading...</div>
+    ));
+    // Test with first mock...
+    
+    // Clear and set up second mock
+    twd.clearComponentMocks();
+    twd.mockComponent("StatusIndicator", () => (
+      <div data-status="success">Success!</div>
+    ));
+    // Test with second mock...
+  });
+});
+```
+
+---
+
 ## Best Practices
 
 ### 1. Use Descriptive Selectors
@@ -774,12 +1023,24 @@ const button = await twd.get("div > div:nth-child(3) button");
 ### 2. Clean Up Mocks
 
 ```ts
+// Clean up API mocks
 describe("API Tests", () => {
   beforeEach(() => {
     twd.clearRequestMockRules();
   });
 
   it("should handle requests", async () => {
+    // Clean state guaranteed
+  });
+});
+
+// Clean up component mocks
+describe("Component Tests", () => {
+  beforeEach(() => {
+    twd.clearComponentMocks();
+  });
+
+  it("should test components", async () => {
     // Clean state guaranteed
   });
 });
@@ -824,17 +1085,6 @@ await twd.mockRequest("getUser", {
   url: "/api/user/123", 
   response: { name: "test" }
 });
-```
-
-### Service Worker Issues
-
-```ts
-try {
-  await twd.initRequestMocking();
-} catch (error) {
-  console.error("Service worker failed:", error.message);
-  // Check if mock-sw.js exists in public directory
-}
 ```
 
 ## Next Steps
