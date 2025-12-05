@@ -14,10 +14,40 @@ export interface Handler {
 
 type HookFn = () => void | Promise<void>;
 
-export const handlers = new Map<string, Handler>();
-const beforeEachHooks = new Map<string, HookFn[]>();
-const afterEachHooks = new Map<string, HookFn[]>();
-const stack: string[] = [];
+interface RunnerState {
+  handlers: Map<string, Handler>;
+  beforeEachHooks: Map<string, HookFn[]>;
+  afterEachHooks: Map<string, HookFn[]>;
+  stack: string[];
+}
+
+const getRunnerState = (): RunnerState => {
+  if (typeof window !== 'undefined') {
+    if (!window.__TWD_STATE__) {
+      window.__TWD_STATE__ = {
+        handlers: new Map(),
+        beforeEachHooks: new Map(),
+        afterEachHooks: new Map(),
+        stack: [],
+      };
+    }
+    return window.__TWD_STATE__ as RunnerState;
+  }
+  
+  return {
+    handlers: new Map(),
+    beforeEachHooks: new Map(),
+    afterEachHooks: new Map(),
+    stack: [],
+  };
+};
+
+const state = getRunnerState();
+
+export const handlers = state.handlers;
+const beforeEachHooks = state.beforeEachHooks;
+const afterEachHooks = state.afterEachHooks;
+const stack = state.stack;
 
 const generateId = () => Math.random().toString(36).substr(2, 9);
 

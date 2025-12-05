@@ -1,4 +1,5 @@
-import { twd, userEvent, describe, it  } from '../dist/bundled.es.js';
+import { twd, userEvent } from '../dist/index.es.js';
+import { describe, it } from '../dist/runner.es.js';
 
 describe('Hello World', () => {
   it('should display the welcome title and counter button', async () => {

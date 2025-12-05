@@ -3,6 +3,7 @@ export {};
 
 declare global {
   interface Window {
-    __testRunner?: TestRunner;
+    __testRunner?: any;
+    __TWD_STATE__?: any;
   }
 }
