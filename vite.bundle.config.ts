@@ -19,6 +19,7 @@ export default defineConfig({
   ],
 
   build: {
+    emptyOutDir: false,
     lib: {
       entry: "src/bundled.tsx", // 👈 your entry file
       name: "TWD",
@@ -28,7 +29,7 @@ export default defineConfig({
 
     // ✅ We DO NOT externalize React or ReactDOM here — bundle them in
     rollupOptions: {
-      external: ["fs", "path", "vite", "chalk"], // keep only Node deps external
+      external: ["fs", "path", "vite"], // keep only Node deps external
       output: {
         globals: {
           // used only for UMD build
