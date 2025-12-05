@@ -27,7 +27,8 @@
     },
     "./bundled": {
       "types": "./dist/bundled.d.ts",
-      "import": "./dist/bundled.es.js"
+      "import": "./dist/bundled.es.js",
+      "require": "./dist/bundled.umd.js"
     },
     "./runner": {
       "types": "./dist/runner.d.ts",

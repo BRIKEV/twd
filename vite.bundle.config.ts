@@ -7,24 +7,18 @@ export default defineConfig({
   plugins: [
     react(),
     dts({
-      insertTypesEntry: true,
-      copyDtsFiles: true,
-      exclude: [
-        "src/tests",
-        "src/**/tests",
-        "**/*.spec.ts",
-        "**/*.test.ts",
-      ],
+      include: ["src/bundled.tsx", "src/global.d.ts"],
+      insertTypesEntry: false, // We handle package.json manually
     }),
   ],
 
   build: {
     emptyOutDir: false,
     lib: {
-      entry: "src/bundled.tsx", // 👈 your entry file
+      entry: { bundled: "src/bundled.tsx" },
       name: "TWD",
-      fileName: (format) => `bundled.${format}.js`,
-      formats: ["es", "umd"], // you can emit both if you want
+      fileName: (format, entryName) => `${entryName}.${format}.js`,
+      formats: ["es", "umd"],
     },
 
     // ✅ We DO NOT externalize React or ReactDOM here — bundle them in
