@@ -7,8 +7,14 @@ interface TestModule {
   [key: string]: () => Promise<unknown>;
 }
 
-export const initTWD = (files: TestModule) => {
-  initTests(files, <TWDSidebar open={true} position="left" />, createRoot);
+interface InitTWDOptions {
+  open?: boolean;
+  position?: "left" | "right";
+}
+
+export const initTWD = (files: TestModule, options?: InitTWDOptions) => {
+  const { open = true, position = "left" } = options || {};
+  initTests(files, <TWDSidebar open={open} position={position} />, createRoot);
   twd.initRequestMocking()
     .then(() => {
       console.log("Request mocking initialized");
