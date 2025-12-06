@@ -76,10 +76,18 @@
   "devDependencies": {
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.0",
+<<<<<<< HEAD
     "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^5.1.1",
     "@vitest/coverage-v8": "^4.0.15",
+=======
+    "@types/chai": "^5.2.3",
+    "@types/react": "^19.2.3",
+    "@types/react-dom": "^19.2.2",
+    "@vitejs/plugin-react": "^5.1.0",
+    "@vitest/coverage-v8": "^4.0.8",
+>>>>>>> c8e0a76200cb76a60a66c390687d57f34b6b7652
     "conventional-changelog": "^7.1.1",
     "jsdom": "^27.2.0",
     "typescript": "^5.9.3",
@@ -99,9 +107,15 @@
     "typescript"
   ],
   "dependencies": {
+<<<<<<< HEAD
     "@testing-library/dom": "^10.4.1",
     "@testing-library/user-event": "^14.6.1",
     "@types/chai": "^5.2.3",
     "chai": "^6.2.1"
+=======
+    "@testing-library/user-event": "^14.6.1",
+    "chai": "^6.2.1",
+    "chalk": "^5.6.2"
+>>>>>>> c8e0a76200cb76a60a66c390687d57f34b6b7652
   }
 }
