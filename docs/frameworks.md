@@ -26,7 +26,7 @@ if (import.meta.env.DEV) {
 
 ### Simplified Setup (Bundled)
 
-You can also use the simplified bundled setup, which handles React dependencies internally. This is great for keeping your main entry file clean.
+You can also use the simplified bundled setup, which handles React dependencies internally and automatically initializes request mocking. This is great for keeping your main entry file clean.
 
 ```tsx
 // src/main.tsx
@@ -35,13 +35,14 @@ if (import.meta.env.DEV) {
   const tests = import.meta.glob("./**/*.twd.test.ts")
   
   // Initialize TWD with tests and optional configuration
+  // Request mocking is automatically initialized
   initTWD(tests, { open: true, position: 'left' });
 }
 ```
 
 ## Vue
 
-For Vue applications, use the bundled version of TWD. This ensures that the React runtime required by TWD's UI is handled correctly without conflicting with your Vue app.
+For Vue applications, use the bundled version of TWD. This ensures that the React runtime required by TWD's UI is handled correctly without conflicting with your Vue app. Request mocking is automatically initialized.
 
 ```ts
 // src/main.ts
@@ -53,6 +54,7 @@ if (import.meta.env.DEV) {
   const { initTWD } = await import('twd-js/bundled');
   const tests = import.meta.glob("./**/*.twd.test.ts")
   
+  // Request mocking is automatically initialized
   initTWD(tests);
 }
 
@@ -61,7 +63,7 @@ createApp(App).mount('#app')
 
 ## Angular
 
-Angular applications can also use the bundled version. Note that you might need to manually construct the `tests` object if your build tool doesn't support glob imports in the same way.
+Angular applications can also use the bundled version. Note that you might need to manually construct the `tests` object if your build tool doesn't support glob imports in the same way. Request mocking is automatically initialized.
 
 ```ts
 // src/main.ts
@@ -79,6 +81,7 @@ if (isDevMode()) {
     './twd-tests/todoList.twd.test.ts': () => import('./twd-tests/todoList.twd.test'),
   };
   
+  // Request mocking is automatically initialized
   initTWD(tests);
 }
 

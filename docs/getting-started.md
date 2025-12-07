@@ -24,9 +24,39 @@ pnpm add twd-js
 
 ## Quick Setup
 
-### 1. Add TWD Sidebar and Load Tests Automatically
+TWD offers two setup options: the **Standard Setup** for full control, and the **Simplified Setup (Bundled)** for a cleaner, easier configuration.
 
-To enable the TWD sidebar and automatically load your tests, use the `initTests` utility in your main entry file. This is the standard way to set up TWD in your application: the sidebar will be injected and tests loaded automatically in development mode.
+### Option 1: Simplified Setup (Bundled) - Recommended
+
+The bundled setup is the easiest way to get started. It handles React dependencies internally and automatically initializes request mocking, keeping your main entry file clean and simple.
+
+```tsx{7-15}
+// src/main.tsx
+import { StrictMode } from 'react';
+import { createRoot } from 'react-dom/client';
+import './index.css';
+import App from './App';
+
+// Only load the test sidebar and tests in development mode
+if (import.meta.env.DEV) {
+  const { initTWD } = await import('twd-js/bundled');
+  const tests = import.meta.glob("./**/*.twd.test.ts");
+  
+  // Initialize TWD with tests and optional configuration
+  // Request mocking is automatically initialized
+  initTWD(tests, { open: true, position: 'left' });
+}
+
+createRoot(document.getElementById('root')!).render(
+  <StrictMode>
+    <App />
+  </StrictMode>,
+);
+```
+
+### Option 2: Standard Setup
+
+The standard setup gives you full control over the initialization and allows you to customize the sidebar component directly. You'll need to manually initialize request mocking if you plan to use API mocking.
 
 ```tsx{7-23}
 // src/main.tsx
@@ -42,7 +72,7 @@ if (import.meta.env.DEV) {
   const { initTests, twd, TWDSidebar } = await import('twd-js');
   // You need to pass the test modules, the sidebar component, and createRoot function
   initTests(testModules, <TWDSidebar open={true} position="left" />, createRoot);
-  // Optionally initialize request mocking
+  // Initialize request mocking (optional)
   twd.initRequestMocking()
     .then(() => {
       console.log("Request mocking initialized");
@@ -59,7 +89,7 @@ createRoot(document.getElementById('root')!).render(
 );
 ```
 
-### 2. Set Up Mock Service Worker (Optional)
+### 2. Set Up Mock Service Worker (Optional / recommended)
 
 If you plan to use API mocking, set up the mock service worker:
 
@@ -157,7 +187,7 @@ Make sure you:
 
 If API mocking isn't working:
 1. Run `npx twd-js init public` to install the service worker
-2. Make sure you called `twd.initRequestMocking()` in your main entry file (inside the `import.meta.env.DEV` block)
+2. If using the standard setup, make sure you called `twd.initRequestMocking()` in your main entry file (inside the `import.meta.env.DEV` block). Note: The bundled setup automatically initializes request mocking.
 3. Check the browser console for service worker registration errors
 
 ## Getting Help
