@@ -23,7 +23,27 @@ export interface Options {
   urlRegex?: boolean;
 }
 
-const rules: Rule[] = [];
+interface MockState {
+  rules: Rule[];
+}
+
+const getMockState = (): MockState => {
+  if (typeof window !== 'undefined') {
+    if (!window.__TWD_MOCK_STATE__) {
+      window.__TWD_MOCK_STATE__ = {
+        rules: [],
+      };
+    }
+    return window.__TWD_MOCK_STATE__ as MockState;
+  }
+  
+  return {
+    rules: [],
+  };
+};
+
+const state = getMockState();
+const rules = state.rules;
 const SW_DELAY = 100;
 // Add version checking to prevent conflicts
 
