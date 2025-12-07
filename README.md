@@ -36,27 +36,34 @@ pnpm add twd-js
 
 ## Quick Start
 
-1. **Add TWD to your React app:**
+### React (Standard)
+
+Add this to your entry file (e.g., `src/main.tsx`):
 
 ```tsx
-// src/main.tsx
-import { StrictMode } from "react";
-import { createRoot } from "react-dom/client";
-import App from "./App";
-
 if (import.meta.env.DEV) {
   const testModules = import.meta.glob("./**/*.twd.test.ts");
   const { initTests, twd, TWDSidebar } = await import('twd-js');
   initTests(testModules, <TWDSidebar open={true} position="left" />, createRoot);
   twd.initRequestMocking().catch(console.error);
 }
-
-createRoot(document.getElementById("root")!).render(
-  <StrictMode><App /></StrictMode>
-);
 ```
 
-2. **Write your first test:**
+### Vue / Angular / Other Frameworks (Bundled)
+
+TWD now supports any framework via its bundled version.
+
+```ts
+if (import.meta.env.DEV) {
+  const { initTWD } = await import('twd-js/bundled');
+  const tests = import.meta.glob("./**/*.twd.test.ts");
+  initTWD(tests);
+}
+```
+
+Check the [Framework Integration Guide](https://brikev.github.io/twd/frameworks) for more details.
+
+## Writing Tests
 
 ```ts
 // src/app.twd.test.ts
@@ -131,15 +138,16 @@ twd.mockRequest("getUser", {
 const rule = await twd.waitForRequest("getUser");
 ```
 
-## Learn More
+## Documentation
 
-- 📖 **[Full Documentation](https://brikev.github.io/twd/)** - Complete guides and tutorials
-- 🎯 **[Writing Tests](https://brikev.github.io/twd/writing-tests)** - Learn how to write effective tests
-- 🔥 **[API Mocking](https://brikev.github.io/twd/api-mocking)** - Mock API requests in your tests
-- 📚 **[API Reference](https://brikev.github.io/twd/api/)** - Complete API documentation
-- 🧪 **[Testing Library Support](https://brikev.github.io/twd/react-testing-library)** - Use semantic queries
+Full documentation is available at [twd.dev](https://twd.dev) (coming soon) or in the `docs` folder.
 
-## Examples
+- [Getting Started](docs/getting-started.md)
+- [Framework Integration](docs/frameworks.md)
+- [Writing Tests](docs/writing-tests.md)
+- [API Mocking](docs/api-mocking.md)
+
+## Why TWD?
 
 Check out the [examples directory](https://github.com/BRIKEV/twd/tree/main/examples) for complete working examples.
 

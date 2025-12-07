@@ -1,10 +1,5 @@
 import { initSidebar } from "./initSidebar";
 
-interface Options {
-  Component: React.ReactNode;
-  createRoot: (el: HTMLElement) => { render: (el: React.ReactNode) => void };
-}
-
 /**
  * A record of test module paths to their loader functions.
  * Each function returns a promise that resolves when the module is loaded.
