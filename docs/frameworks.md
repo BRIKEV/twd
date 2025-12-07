@@ -2,30 +2,89 @@
 
 TWD is designed to work with any Vite-based application. Currently, **React is the only supported framework**, but the library can be adapted to work with other build tools and frameworks.
 
-## Vite-Based Applications
+## React
 
-TWD works seamlessly with any Vite-based React application. The standard setup using `import.meta.glob()` works out of the box:
+TWD works seamlessly with any Vite-based React application. You can use the standard setup or the bundled setup for a simpler configuration.
 
-```ts
+### Standard Setup
+
+The standard setup gives you full control over the initialization and allows you to customize the sidebar component directly.
+
+```tsx
 // src/main.tsx
 if (import.meta.env.DEV) {
   const testModules = import.meta.glob("./**/*.twd.test.ts");
   const { initTests, twd, TWDSidebar } = await import('twd-js');
+  
+  // You need to pass the test modules, the sidebar component, and createRoot function
   initTests(testModules, <TWDSidebar open={true} position="left" />, createRoot);
-  twd.initRequestMocking()
-    .then(() => {
-      console.log("Request mocking initialized");
-    })
-    .catch((err) => {
-      console.error("Error initializing request mocking:", err);
-    });
+  
+  // Initialize request mocking (optional)
+  twd.initRequestMocking().catch(console.error);
 }
 ```
 
-This setup works for:
-- Vite + React
-- Remix (with Vite)
-- Any other Vite-based React setup
+### Simplified Setup (Bundled)
+
+You can also use the simplified bundled setup, which handles React dependencies internally. This is great for keeping your main entry file clean.
+
+```tsx
+// src/main.tsx
+if (import.meta.env.DEV) {
+  const { initTWD } = await import('twd-js/bundled');
+  const tests = import.meta.glob("./**/*.twd.test.ts")
+  
+  // Initialize TWD with tests and optional configuration
+  initTWD(tests, { open: true, position: 'left' });
+}
+```
+
+## Vue
+
+For Vue applications, use the bundled version of TWD. This ensures that the React runtime required by TWD's UI is handled correctly without conflicting with your Vue app.
+
+```ts
+// src/main.ts
+import { createApp } from 'vue'
+import App from './App.vue'
+
+if (import.meta.env.DEV) {
+  // Use the bundled version
+  const { initTWD } = await import('twd-js/bundled');
+  const tests = import.meta.glob("./**/*.twd.test.ts")
+  
+  initTWD(tests);
+}
+
+createApp(App).mount('#app')
+```
+
+## Angular
+
+Angular applications can also use the bundled version. Note that you might need to manually construct the `tests` object if your build tool doesn't support glob imports in the same way.
+
+```ts
+// src/main.ts
+import { bootstrapApplication } from '@angular/platform-browser';
+import { appConfig } from './app/app.config';
+import { App } from './app/app';
+import { isDevMode } from '@angular/core';
+
+if (isDevMode()) {
+  const { initTWD } = await import('twd-js/bundled');
+  
+  // Define your test files manually or use a compatible glob importer
+  const tests = {
+    './twd-tests/helloWorld.twd.test.ts': () => import('./twd-tests/helloWorld.twd.test'),
+    './twd-tests/todoList.twd.test.ts': () => import('./twd-tests/todoList.twd.test'),
+  };
+  
+  initTWD(tests);
+}
+
+bootstrapApplication(App, appConfig)
+  .catch((err) => console.error(err));
+```
 
 ## Create React App (CRA)
 
@@ -144,8 +203,8 @@ We're actively working on adding more framework recipes and integrations. If you
 
 We plan to add official support and documentation for:
 
-- **Vue** - Framework support in development
-- **Angular** - Framework support in development
+- **Svelte** - Framework support in development
+- **Solid** - Framework support in development
 
 ## Getting Help
 
