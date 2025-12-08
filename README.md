@@ -147,9 +147,16 @@ Full documentation is available at [twd.dev](https://twd.dev) (coming soon) or i
 - [Writing Tests](docs/writing-tests.md)
 - [API Mocking](docs/api-mocking.md)
 
-## Why TWD?
+## Examples
 
-Check out the [examples directory](https://github.com/BRIKEV/twd/tree/main/examples) for complete working examples.
+Check out our working examples for various frameworks:
+
+- **[Examples Directory](./examples)** - Local examples for React, Vue, and Astro
+- **[Vue Example](https://github.com/BRIKEV/twd-vue-example)** - Vue 3 with advanced scenarios
+- **[Solid Example](https://github.com/BRIKEV/twd-solid-example)** - Solid.js integration
+- **[Angular Example](https://github.com/BRIKEV/twd-angular-example)** - Angular setup
+
+Each example includes a complete setup guide and demonstrates best practices for testing with TWD including ci integration.
 
 ## Contributing
 

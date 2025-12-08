@@ -6,6 +6,8 @@ TWD is designed to work with any Vite-based application. Currently, **React and 
 
 TWD works seamlessly with any Vite-based React application. You can use the standard setup or the bundled setup for a simpler configuration.
 
+**[View React Examples](https://github.com/BRIKEV/twd/tree/main/examples)** - Multiple React examples available in the repository.
+
 ### Standard Setup
 
 The standard setup gives you full control over the initialization and allows you to customize the sidebar component directly.
@@ -44,6 +46,8 @@ if (import.meta.env.DEV) {
 
 For Vue applications, use the bundled version of TWD. This ensures that the React runtime required by TWD's UI is handled correctly without conflicting with your Vue app. Request mocking is automatically initialized.
 
+**[Vue Example Repository](https://github.com/BRIKEV/twd-vue-example)** - Complete working example with advanced scenarios.
+
 ```ts
 // src/main.ts
 import { createApp } from 'vue'
@@ -64,6 +68,8 @@ createApp(App).mount('#app')
 ## Solid
 
 For Solid.js applications, use the bundled version of TWD. This ensures that the React runtime required by TWD's UI is handled correctly without conflicting with your Solid app. Request mocking is automatically initialized.
+
+**[Solid Example Repository](https://github.com/BRIKEV/twd-solid-example)** - Complete Solid.js integration example.
 
 ```tsx
 // src/main.tsx
@@ -100,6 +106,8 @@ render(() => <App />, root!);
 ## Angular
 
 Angular applications can also use the bundled version. Note that you might need to manually construct the `tests` object if your build tool doesn't support glob imports in the same way. Request mocking is automatically initialized.
+
+**[Angular Example Repository](https://github.com/BRIKEV/twd-angular-example)** - Working Angular integration example.
 
 ```ts
 // src/main.ts
@@ -169,6 +177,8 @@ if (process.env.NODE_ENV === "development") {
 
 TWD works with Astro when using React components. Create a React component to initialize the test sidebar:
 
+**[Astro Example](https://github.com/BRIKEV/twd/tree/main/examples/astro-example)** - Astro + React integration example.
+
 ```tsx
 // src/components/TestSidebar.tsx
 import { useEffect } from 'react';
@@ -236,7 +246,8 @@ We're actively working on adding more framework recipes and integrations. If you
 
 1. **Check if it's Vite-based** - If so, the standard Vite setup should work
 2. **Check if it uses Webpack** - Adapt the CRA setup above
-3. **Share your setup** - We'd love to hear about your integration! [Open an issue](https://github.com/BRIKEV/twd/issues) or [start a discussion](https://github.com/BRIKEV/twd/discussions)
+3. **Browse our [examples directory](https://github.com/BRIKEV/twd/tree/main/examples)** - See working examples for multiple frameworks
+4. **Share your setup** - We'd love to hear about your integration! [Open an issue](https://github.com/BRIKEV/twd/issues) or [start a discussion](https://github.com/BRIKEV/twd/discussions)
 
 ## Framework Support Roadmap
 
