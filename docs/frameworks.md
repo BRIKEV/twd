@@ -1,6 +1,6 @@
 # Framework Integration
 
-TWD is designed to work with any Vite-based application. Currently, **React and Solid.js are officially supported**, and the library can be adapted to work with other build tools and frameworks.
+TWD is designed to work with any Vite-based application. Currently, **react, vue, angular and solid.js are supported**, and the library can be adapted to work with other build tools and frameworks.
 
 ## React
 
