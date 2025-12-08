@@ -1,3 +1,9 @@
+## 1.3.0 (2025-12-08)
+
+* docs: improve documentation about framework integration ([66eeb9a](https://github.com/BRIKEV/twd/commit/66eeb9a))
+* Feat/frameworks integration (#109) ([f6550f3](https://github.com/BRIKEV/twd/commit/f6550f3)), closes [#109](https://github.com/BRIKEV/twd/issues/109)
+
+
 ## <small>1.2.3 (2025-12-03)</small>
 
 * Feat/add retry wait request (#108) ([b36861e](https://github.com/BRIKEV/twd/commit/b36861e)), closes [#108](https://github.com/BRIKEV/twd/issues/108)

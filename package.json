@@ -1,6 +1,6 @@
 {
   "name": "twd-js",
-  "version": "1.3.0-beta.2",
+  "version": "1.3.0",
   "description": "Test While Developing (TWD) - in-browser testing",
   "license": "MIT",
   "author": "BRIKEV",
