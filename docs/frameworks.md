@@ -1,6 +1,6 @@
 # Framework Integration
 
-TWD is designed to work with any Vite-based application. Currently, **React is the only supported framework**, but the library can be adapted to work with other build tools and frameworks.
+TWD is designed to work with any Vite-based application. Currently, **React and Solid.js are officially supported**, and the library can be adapted to work with other build tools and frameworks.
 
 ## React
 
@@ -60,6 +60,42 @@ if (import.meta.env.DEV) {
 
 createApp(App).mount('#app')
 ```
+
+## Solid
+
+For Solid.js applications, use the bundled version of TWD. This ensures that the React runtime required by TWD's UI is handled correctly without conflicting with your Solid app. Request mocking is automatically initialized.
+
+```tsx
+// src/main.tsx
+/* @refresh reload */
+import { render } from 'solid-js/web';
+import 'solid-devtools';
+
+import App from './App';
+
+if (import.meta.env.DEV) {
+  const { initTWD } = await import('twd-js/bundled');
+  const tests = import.meta.glob("./**/*.twd.test.ts");
+  
+  // Request mocking is automatically initialized
+  initTWD(tests);
+}
+
+const root = document.getElementById('root');
+
+if (import.meta.env.DEV && !(root instanceof HTMLElement)) {
+  throw new Error(
+    'Root element not found. Did you forget to add it to your index.html? Or maybe the id attribute got misspelled?',
+  );
+}
+
+render(() => <App />, root!);
+```
+
+### Notes for Solid
+
+- This setup works with **Solid + Vite** applications
+- Solid Start compatibility has not been tested yet, but may work with similar configuration
 
 ## Angular
 
@@ -207,7 +243,6 @@ We're actively working on adding more framework recipes and integrations. If you
 We plan to add official support and documentation for:
 
 - **Svelte** - Framework support in development
-- **Solid** - Framework support in development
 
 ## Getting Help
 
