@@ -1,8 +1,8 @@
-import { twd } from "../";
+import { getRequestMockRules } from "../commands/mockBridge";
 import MockRequestIcon from "./Icons/MockRequestIcon";
 
 export const MockRulesButton = () => {
-  const rules = twd.getRequestMockRules();
+  const rules = getRequestMockRules();
   const triggeredRules = rules.filter(rule => rule.executed);
   
   const handleShowRules = () => {
