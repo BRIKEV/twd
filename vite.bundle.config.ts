@@ -1,13 +1,13 @@
 /// <reference types="vitest/config" />
 import { defineConfig } from "vite";
-import react from "@vitejs/plugin-react";
+import preact from "@preact/preset-vite";
 import dts from "vite-plugin-dts";
 
 export default defineConfig({
   plugins: [
-    react({
+    preact({
       // Use automatic JSX runtime to reduce bundle size
-      jsxRuntime: 'automatic',
+      devToolsEnabled: false,
     }),
     dts({
       include: ["src/bundled.tsx", "src/global.d.ts"],
@@ -29,7 +29,7 @@ export default defineConfig({
       external: ["fs", "path", "vite"], // keep only Node deps external
       output: {
         globals: {
-          // used only for UMD build
+          // used only for UMD build (Preact compat)
           react: "React",
           "react-dom": "ReactDOM",
         },
