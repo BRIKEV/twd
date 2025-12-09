@@ -1,4 +1,4 @@
-import { createRoot } from 'react-dom/client';
+import { render } from 'preact';
 import { initTests } from './initializers/initTests';
 import { TWDSidebar } from './ui/TWDSidebar';
 import { initRequestMocking } from './commands/mockBridge';
@@ -11,6 +11,13 @@ interface InitTWDOptions {
   open?: boolean;
   position?: "left" | "right";
 }
+
+// Create a compatibility wrapper for Preact's render to match React's createRoot API
+const createRoot = (el: HTMLElement) => ({
+  render: (component: any) => {
+    render(component, el);
+  },
+});
 
 export const initTWD = (files: TestModule, options?: InitTWDOptions) => {
   const { open = true, position = "left" } = options || {};
