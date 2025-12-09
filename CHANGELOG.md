@@ -1,3 +1,10 @@
+## <small>1.3.1 (2025-12-09)</small>
+
+* feat: add preact for bundle version (#112) ([d1a19c2](https://github.com/BRIKEV/twd/commit/d1a19c2)), closes [#112](https://github.com/BRIKEV/twd/issues/112)
+* Feat/frameworks integration (#109) ([f6550f3](https://github.com/BRIKEV/twd/commit/f6550f3)), closes [#109](https://github.com/BRIKEV/twd/issues/109)
+* Fix/bundle improvements (#111) ([8b4947c](https://github.com/BRIKEV/twd/commit/8b4947c)), closes [#111](https://github.com/BRIKEV/twd/issues/111)
+
+
 ## 1.3.0 (2025-12-08)
 
 * docs: improve documentation about framework integration ([66eeb9a](https://github.com/BRIKEV/twd/commit/66eeb9a))
