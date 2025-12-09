@@ -60,7 +60,7 @@
     "node": ">=16"
   },
   "scripts": {
-    "build": "vite build && vite build -c vite.sw.config.js && vite build -c vite.bundle.config.ts && cp src/cli/installsw.js dist/cli.js",
+    "build": "vite build && vite build -c vite.sw.config.js && NODE_ENV=production vite build -c vite.bundle.config.ts && cp src/cli/installsw.js dist/cli.js",
     "test": "vitest",
     "test:ci": "vitest --run --coverage",
     "conventional-changelog": "conventional-changelog -i CHANGELOG.md",
