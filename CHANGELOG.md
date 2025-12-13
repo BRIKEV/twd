@@ -1,3 +1,7 @@
+## <small>1.3.2 (2025-12-13)</small>
+
+* feat: add bundle options to use or not service worker and path option (#113) ([927e7c8](https://github.com/BRIKEV/twd/commit/927e7c8)), closes [#113](https://github.com/BRIKEV/twd/issues/113)
+
 ## <small>1.3.1 (2025-12-09)</small>
 
 * feat: add preact for bundle version (#112) ([d1a19c2](https://github.com/BRIKEV/twd/commit/d1a19c2)), closes [#112](https://github.com/BRIKEV/twd/issues/112)
