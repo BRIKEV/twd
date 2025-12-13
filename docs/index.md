@@ -34,8 +34,8 @@ features:
     title: Automatic Test Discovery
     details: Works seamlessly with Vite to automatically discover and load your test files.
   - icon: 🛠️
-    title: React Ready
-    details: Built specifically for React applications with plans to support more frameworks soon.
+    title: Multi-Framework Support
+    details: Works with React, Vue, Angular, Solid.js, and other Vite-based frameworks. The bundled setup makes integration seamless across frameworks.
 ---
 
 ## Quick Example
@@ -81,7 +81,7 @@ TWD bridges the gap between development and testing by bringing tests directly i
 Perfect for:
 - **Frontend developers** who want immediate test feedback
 - **Teams** practicing Testing while Developing (TWD)
-- **React applications** that need comprehensive UI testing
+- **React, Vue, Angular, and Solid.js applications** that need comprehensive UI testing
 - **Projects** requiring API mocking and integration testing
 
 ## Community

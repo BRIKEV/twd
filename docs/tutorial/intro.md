@@ -1,6 +1,6 @@
 # Welcome to TWD
 
-Welcome to the TWD (Testing While Developing) tutorial! This comprehensive guide will walk you through everything you need to know to start testing your React applications with TWD.
+Welcome to the TWD (Testing While Developing) tutorial! This comprehensive guide will walk you through everything you need to know to start testing your applications with TWD. While the examples use React, TWD works with React, Vue, Angular, Solid.js, and other Vite-based frameworks.
 
 ## What is TWD?
 
@@ -38,10 +38,9 @@ This tutorial series will guide you through:
 Before starting, make sure you have:
 
 - Basic knowledge of JavaScript/TypeScript
-- Familiarity with React
 - Understanding of web development concepts (DOM, HTTP requests)
 - Node.js and npm/yarn installed
-- A React project set up (we'll help you add TWD to it!)
+- A Vite-based project set up (React, Vue, Angular, Solid.js, etc. - we'll help you add TWD to it!)
 
 ## Getting Help
 

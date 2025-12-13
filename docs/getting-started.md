@@ -1,6 +1,6 @@
 # Getting Started
 
-Welcome to TWD (Test While Developing)! This guide will help you set up TWD in your React application and write your first test.
+Welcome to TWD (Test While Developing)! This guide will help you set up TWD in your application and write your first test. TWD works with React, Vue, Angular, Solid.js, and other Vite-based frameworks.
 
 ## Installation
 
@@ -28,9 +28,9 @@ TWD offers two setup options: the **Standard Setup** for full control, and the *
 
 ### Option 1: Simplified Setup (Bundled) - Recommended
 
-The bundled setup is the easiest way to get started. It handles React dependencies internally and automatically initializes request mocking, keeping your main entry file clean and simple.
+The bundled setup is the easiest way to get started and works with all supported frameworks (React, Vue, Angular, Solid.js). It handles React dependencies internally and automatically initializes request mocking, keeping your main entry file clean and simple.
 
-```tsx{7-15}
+```tsx{7-18}
 // src/main.tsx
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
@@ -43,8 +43,13 @@ if (import.meta.env.DEV) {
   const tests = import.meta.glob("./**/*.twd.test.ts");
   
   // Initialize TWD with tests and optional configuration
-  // Request mocking is automatically initialized
-  initTWD(tests, { open: true, position: 'left' });
+  // Request mocking is automatically initialized by default
+  initTWD(tests, { 
+    open: true, 
+    position: 'left',
+    serviceWorker: true,           // Enable request mocking (default: true)
+    serviceWorkerUrl: '/mock-sw.js' // Custom service worker path (default: '/mock-sw.js')
+  });
 }
 
 createRoot(document.getElementById('root')!).render(
@@ -54,9 +59,9 @@ createRoot(document.getElementById('root')!).render(
 );
 ```
 
-### Option 2: Standard Setup
+### Option 2: Standard Setup (React Only)
 
-The standard setup gives you full control over the initialization and allows you to customize the sidebar component directly. You'll need to manually initialize request mocking if you plan to use API mocking.
+The standard setup gives you full control over the initialization and allows you to customize the sidebar component directly. This setup is **only available for React applications**. For Vue, Angular, Solid.js, and other frameworks, use the bundled setup above. You'll need to manually initialize request mocking if you plan to use API mocking.
 
 ```tsx{7-23}
 // src/main.tsx
