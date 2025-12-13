@@ -4,13 +4,67 @@ TWD is designed to work with any Vite-based application. Currently, **react, vue
 
 ## React
 
-TWD works seamlessly with any Vite-based React application. You can use the standard setup or the bundled setup for a simpler configuration.
+TWD works seamlessly with any Vite-based React application. **We recommend using the bundled setup** for all frameworks, including React, as it's simpler and handles dependencies automatically. The standard setup is available for React applications that need more control.
 
 **[View React Examples](https://github.com/BRIKEV/twd/tree/main/examples)** - Multiple React examples available in the repository.
 
-### Standard Setup
+### Recommended: Bundled Setup
 
-The standard setup gives you full control over the initialization and allows you to customize the sidebar component directly.
+The bundled setup is the recommended approach for all frameworks, including React. It handles React dependencies internally, automatically initializes request mocking, and keeps your main entry file clean and simple.
+
+```tsx
+// src/main.tsx
+if (import.meta.env.DEV) {
+  const { initTWD } = await import('twd-js/bundled');
+  const tests = import.meta.glob("./**/*.twd.test.ts")
+  
+  // Initialize TWD with tests and optional configuration
+  // Request mocking is automatically initialized by default
+  initTWD(tests, { 
+    open: true, 
+    position: 'left',
+    serviceWorker: true,           // Enable request mocking (default: true)
+    serviceWorkerUrl: '/mock-sw.js' // Custom service worker path (default: '/mock-sw.js')
+  });
+}
+```
+
+#### initTWD Options
+
+The `initTWD` function accepts the following options:
+
+- **`open`** (`boolean`, optional) - Whether the sidebar is open by default. Default: `true`
+- **`position`** (`"left" | "right"`, optional) - Sidebar position. Default: `"left"`
+- **`serviceWorker`** (`boolean`, optional) - Whether to initialize request mocking. Default: `true`
+- **`serviceWorkerUrl`** (`string`, optional) - Custom path to the service worker file. Default: `'/mock-sw.js'`
+
+**Examples:**
+
+```tsx
+// Minimal setup - uses all defaults
+initTWD(tests);
+
+// Custom sidebar configuration
+initTWD(tests, { open: false, position: 'right' });
+
+// Disable request mocking
+initTWD(tests, { serviceWorker: false });
+
+// Custom service worker path
+initTWD(tests, { serviceWorkerUrl: '/custom-path/mock-sw.js' });
+
+// All options together
+initTWD(tests, { 
+  open: true, 
+  position: 'right',
+  serviceWorker: true,
+  serviceWorkerUrl: '/my-mock-sw.js'
+});
+```
+
+### Alternative: Standard Setup (React Only)
+
+The standard setup is available for React applications that need full control over the initialization. This setup requires you to manually handle React dependencies and initialize request mocking.
 
 ```tsx
 // src/main.tsx
@@ -26,25 +80,13 @@ if (import.meta.env.DEV) {
 }
 ```
 
-### Simplified Setup (Bundled)
-
-You can also use the simplified bundled setup, which handles React dependencies internally and automatically initializes request mocking. This is great for keeping your main entry file clean.
-
-```tsx
-// src/main.tsx
-if (import.meta.env.DEV) {
-  const { initTWD } = await import('twd-js/bundled');
-  const tests = import.meta.glob("./**/*.twd.test.ts")
-  
-  // Initialize TWD with tests and optional configuration
-  // Request mocking is automatically initialized
-  initTWD(tests, { open: true, position: 'left' });
-}
-```
+::: warning
+The standard setup is **React-only**. For Vue, Angular, Solid.js, and other frameworks, you must use the bundled setup.
+:::
 
 ## Vue
 
-For Vue applications, use the bundled version of TWD. This ensures that the React runtime required by TWD's UI is handled correctly without conflicting with your Vue app. Request mocking is automatically initialized.
+For Vue applications, use the bundled version of TWD. This ensures that the React runtime required by TWD's UI is handled correctly without conflicting with your Vue app.
 
 **[Vue Example Repository](https://github.com/BRIKEV/twd-vue-example)** - Complete working example with advanced scenarios.
 
@@ -58,8 +100,8 @@ if (import.meta.env.DEV) {
   const { initTWD } = await import('twd-js/bundled');
   const tests = import.meta.glob("./**/*.twd.test.ts")
   
-  // Request mocking is automatically initialized
-  initTWD(tests);
+  // Initialize TWD - request mocking is automatically initialized by default
+  initTWD(tests, { open: true, position: 'left' });
 }
 
 createApp(App).mount('#app')
@@ -67,7 +109,7 @@ createApp(App).mount('#app')
 
 ## Solid
 
-For Solid.js applications, use the bundled version of TWD. This ensures that the React runtime required by TWD's UI is handled correctly without conflicting with your Solid app. Request mocking is automatically initialized.
+For Solid.js applications, use the bundled version of TWD. This ensures that the React runtime required by TWD's UI is handled correctly without conflicting with your Solid app.
 
 **[Solid Example Repository](https://github.com/BRIKEV/twd-solid-example)** - Complete Solid.js integration example.
 
@@ -83,8 +125,8 @@ if (import.meta.env.DEV) {
   const { initTWD } = await import('twd-js/bundled');
   const tests = import.meta.glob("./**/*.twd.test.ts");
   
-  // Request mocking is automatically initialized
-  initTWD(tests);
+  // Initialize TWD - request mocking is automatically initialized by default
+  initTWD(tests, { open: true, position: 'left' });
 }
 
 const root = document.getElementById('root');
@@ -105,7 +147,7 @@ render(() => <App />, root!);
 
 ## Angular
 
-Angular applications can also use the bundled version. Note that you might need to manually construct the `tests` object if your build tool doesn't support glob imports in the same way. Request mocking is automatically initialized.
+Angular applications can also use the bundled version. Note that you might need to manually construct the `tests` object if your build tool doesn't support glob imports in the same way.
 
 **[Angular Example Repository](https://github.com/BRIKEV/twd-angular-example)** - Working Angular integration example.
 
@@ -125,8 +167,8 @@ if (isDevMode()) {
     './twd-tests/todoList.twd.test.ts': () => import('./twd-tests/todoList.twd.test'),
   };
   
-  // Request mocking is automatically initialized
-  initTWD(tests);
+  // Initialize TWD - request mocking is automatically initialized by default
+  initTWD(tests, { open: true, position: 'left' });
 }
 
 bootstrapApplication(App, appConfig)

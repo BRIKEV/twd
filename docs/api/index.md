@@ -6,6 +6,7 @@ Complete reference documentation for all TWD functions, methods, and types.
 
 | Section | Description |
 |---------|-------------|
+| [Initialization](/api/#initialization) | `initTWD()` - Bundled setup for all frameworks |
 | [Test Functions](/api/test-functions) | `describe`, `it`, `beforeEach`, `it.only`, `it.skip`, `afterEach` |
 | [TWD Commands](/api/twd-commands) | `twd.get()`, `twd.visit()`, `twd.mockRequest()`, etc. |
 | [Assertions](/api/assertions) | All available assertions and their usage |
@@ -25,7 +26,10 @@ import {
   expect
 } from "twd-js";
 
-// UI Component (for React apps)
+// Bundled Setup (Recommended - works with all frameworks)
+import { initTWD } from "twd-js/bundled";
+
+// UI Component (for React apps using standard setup)
 import { TWDSidebar } from "twd-js";
 
 // Vite Plugin (for production builds)
@@ -34,10 +38,115 @@ import { removeMockServiceWorker } from "twd-js";
 // CI Integration (for test execution)
 import { reportResults } from "twd-js";
 
-// TWDSidebar props:
+// initTWD options:
+//   open?: boolean                    // Whether the sidebar is open by default (default: true)
+//   position?: "left" | "right"       // Sidebar position (default: "left")
+//   serviceWorker?: boolean           // Enable request mocking (default: true)
+//   serviceWorkerUrl?: string         // Custom service worker path (default: '/mock-sw.js')
+
+// TWDSidebar props (for standard setup):
 //   open?: boolean        // Whether the sidebar is open by default (default: true)
 //   position?: "left" | "right" // Sidebar position (default: "left")
 ```
+
+## Initialization
+
+### initTWD(files, options?)
+
+Initializes TWD with test files and optional configuration. This is the **recommended setup** for all frameworks (React, Vue, Angular, Solid.js, etc.). It handles React dependencies internally and automatically initializes request mocking.
+
+#### Syntax
+
+```ts
+import { initTWD } from "twd-js/bundled";
+
+initTWD(files: TestModule, options?: InitTWDOptions): void
+```
+
+#### Parameters
+
+- **files** (`TestModule`) - Object mapping test file paths to async import functions (typically from `import.meta.glob()`)
+- **options** (`InitTWDOptions`, optional) - Configuration options
+
+#### InitTWDOptions
+
+```ts
+interface InitTWDOptions {
+  open?: boolean;              // Whether the sidebar is open by default (default: true)
+  position?: "left" | "right";  // Sidebar position (default: "left")
+  serviceWorker?: boolean;      // Enable request mocking (default: true)
+  serviceWorkerUrl?: string;    // Custom service worker path (default: '/mock-sw.js')
+}
+```
+
+#### Returns
+
+`void`
+
+#### Examples
+
+```ts
+// Minimal setup - uses all defaults
+const tests = import.meta.glob("./**/*.twd.test.ts");
+initTWD(tests);
+
+// Custom sidebar configuration
+initTWD(tests, { open: false, position: 'right' });
+
+// Disable request mocking
+initTWD(tests, { serviceWorker: false });
+
+// Custom service worker path
+initTWD(tests, { serviceWorkerUrl: '/custom-path/mock-sw.js' });
+
+// All options together
+initTWD(tests, { 
+  open: true, 
+  position: 'right',
+  serviceWorker: true,
+  serviceWorkerUrl: '/my-mock-sw.js'
+});
+```
+
+#### Framework Examples
+
+**React:**
+```tsx
+if (import.meta.env.DEV) {
+  const { initTWD } = await import('twd-js/bundled');
+  const tests = import.meta.glob("./**/*.twd.test.ts");
+  initTWD(tests, { open: true, position: 'left' });
+}
+```
+
+**Vue:**
+```ts
+if (import.meta.env.DEV) {
+  const { initTWD } = await import('twd-js/bundled');
+  const tests = import.meta.glob("./**/*.twd.test.ts");
+  initTWD(tests);
+}
+```
+
+**Angular:**
+```ts
+if (isDevMode()) {
+  const { initTWD } = await import('twd-js/bundled');
+  const tests = {
+    './tests/example.twd.test.ts': () => import('./tests/example.twd.test'),
+  };
+  initTWD(tests);
+}
+```
+
+#### Notes
+
+- The bundled setup automatically handles React dependencies internally
+- Request mocking is initialized automatically by default (`serviceWorker: true`)
+- Works with all supported frameworks (React, Vue, Angular, Solid.js)
+- Test files are not included in production builds when wrapped in `import.meta.env.DEV` checks
+
+---
 
 ## Type Definitions
 
