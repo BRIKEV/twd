@@ -58,6 +58,7 @@ export default defineConfig({
           { text: 'CI Execution', link: '/ci-execution' },
           { text: 'Framework Integration', link: '/frameworks' },
           { text: 'Testing Library', link: '/react-testing-library' },
+          { text: 'AI Context', link: '/agents' },
         ]
       },
       {
