@@ -71,7 +71,8 @@ export default defineConfig({
           { text: 'API Mocking', link: '/tutorial/api-mocking' },
           { text: 'CI Integration', link: '/tutorial/ci-integration' },
           { text: 'Code Coverage', link: '/tutorial/coverage' },
-          { text: 'Production Builds', link: '/tutorial/production-builds' }
+          { text: 'Production Builds', link: '/tutorial/production-builds' },
+          { text: 'Using Testing Library Selectors', link: '/tutorial/testing-library-selectors' }
         ]
       },
       {

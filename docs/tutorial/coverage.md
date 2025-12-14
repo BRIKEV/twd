@@ -1,6 +1,5 @@
 # Collecting Code Coverage
 
-We've reached the final part of this tutorial series!
 TWD still has many more advanced features — such as function mocking — but with what we've covered so far, you already have everything a solid testing tool needs.
 In this last step, we'll see how to collect code coverage from your TWD tests and visualize it locally or in CI.
 
@@ -261,6 +260,8 @@ Throughout these five parts, we've built a complete workflow from zero to produc
 - Code coverage collection and reporting
 
 With this foundation, you can now test your apps as you develop them, keeping your environment close to what your users actually see — which is what TWD (**Test While Developing**) is all about.
+
+Check out the integration with Testing Library selectors in the next tutorial page [Using Testing Library Selectors](./testing-library-selectors).
 
 Thanks for following along, and happy testing!
 You can always explore more in our [official docs](/getting-started).
