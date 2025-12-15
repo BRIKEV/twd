@@ -23,6 +23,7 @@ import {
   twd, 
   userEvent,
   screenDom,
+  screenDomGlobal,
   expect
 } from "twd-js";
 
@@ -236,8 +237,13 @@ const element = await twd.get("selector");
 const elements = await twd.getAll("selector");
 
 // Testing Library queries (also available)
+// screenDom - for regular content (excludes sidebar)
 const button = screenDom.getByRole("button", { name: /submit/i });
 const input = screenDom.getByLabelText("Email:");
+
+// screenDomGlobal - for portal-rendered elements (modals, dialogs)
+// ⚠️ Use specific queries to avoid matching sidebar elements
+const modal = screenDomGlobal.getByRole("dialog", { name: "Confirm" });
 
 // Make assertions
 element.should("assertion", ...args); // For twd.get() elements
@@ -341,7 +347,7 @@ message.should('contain.text', 'Success');
 
 #### From Testing Library
 
-TWD now supports Testing Library queries directly! You can use the same `screenDom` API:
+TWD now supports Testing Library queries directly! You can use the same `screenDom` and `screenDomGlobal` APIs:
 
 ```ts
 // Testing Library
@@ -350,11 +356,17 @@ fireEvent.click(button);
 expect(screen.getByTestId('message')).toHaveTextContent('Success');
 
 // TWD - Same API!
-import { screenDom, userEvent, twd } from 'twd-js';
+import { screenDom, screenDomGlobal, userEvent, twd } from 'twd-js';
+
+// screenDom - for regular content (excludes sidebar)
 const button = screenDom.getByTestId('button');
 await userEvent.click(button);
 const message = screenDom.getByTestId('message');
 twd.should(message, 'contain.text', 'Success');
+
+// screenDomGlobal - for portal-rendered elements (modals, dialogs)
+// ⚠️ Use specific queries to avoid matching sidebar elements
+const modal = screenDomGlobal.getByRole('dialog', { name: 'Confirm' });
 
 // Or use TWD's native selectors
 const button = await twd.get('[data-testid="button"]');

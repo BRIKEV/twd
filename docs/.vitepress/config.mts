@@ -57,7 +57,7 @@ export default defineConfig({
           { text: 'Component Mocking', link: '/component-mocking' },
           { text: 'CI Execution', link: '/ci-execution' },
           { text: 'Framework Integration', link: '/frameworks' },
-          { text: 'Testing Library', link: '/react-testing-library' },
+          { text: 'Testing Library', link: '/testing-library' },
           { text: 'AI Context', link: '/agents' },
         ]
       },
