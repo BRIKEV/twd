@@ -11,19 +11,55 @@ TWD provides two ways to select elements:
 
 Both approaches work seamlessly together, and you can choose the one that best fits your needs.
 
-## Screen Queries (screenDom)
+## Screen Queries
 
-TWD exports `screenDom` which provides all the query methods from `@testing-library/dom`. This gives you access to semantic, accessible queries that follow Testing Library best practices.
+TWD provides two screen query APIs that give you access to all query methods from `@testing-library/dom`:
+
+1. **`screenDom`** - Scoped queries that exclude the TWD sidebar (recommended for most use cases)
+2. **`screenDomGlobal`** - Global queries that search the entire document.body (for portals/modals)
 
 ### Import
 
 ```ts
-import { screenDom } from "twd-js";
+import { screenDom, screenDomGlobal } from "twd-js";
+```
+
+## screenDom (Scoped Queries)
+
+`screenDom` searches only within the main app container (typically `#root`), automatically excluding the TWD sidebar. This is the recommended option for most queries.
+
+**Use `screenDom` when:**
+- Querying elements within your main application
+- You want to avoid accidentally matching sidebar elements
+- Working with regular page content
+
+**Note:** `screenDom` will NOT find portal-rendered elements (modals, dialogs) that are rendered outside the root container. For portals, use `screenDomGlobal` instead.
+
+### screenDomGlobal (Global Queries)
+
+`screenDomGlobal` searches all elements in `document.body`, including portal-rendered elements (modals, dialogs, tooltips, etc.).
+
+**Use `screenDomGlobal` when:**
+- Querying portal-rendered elements (modals, dialogs, tooltips)
+- You need to search outside the root container
+- Working with elements rendered via React portals or similar mechanisms
+
+⚠️ **WARNING:** `screenDomGlobal` may also match elements inside the TWD sidebar if your selectors are not specific enough. Always use specific queries (e.g., `getByRole` with `name` option) to avoid matching sidebar elements.
+
+**Example:**
+```ts
+// ✅ Good - Specific query that won't match sidebar
+const modal = screenDomGlobal.getByRole('dialog', { name: 'Confirm Action' });
+const modalTitle = screenDomGlobal.getByText('Are you sure?');
+
+// ❌ Avoid - Too generic, might match sidebar elements
+const button = screenDomGlobal.getByRole('button'); // Could match sidebar buttons!
+const text = screenDomGlobal.getByText('Submit'); // Could match sidebar text!
 ```
 
 ### Query Methods
 
-All Testing Library query methods are available:
+All Testing Library query methods are available for both `screenDom` and `screenDomGlobal`:
 
 #### getBy* Methods (Throws if not found)
 
@@ -88,14 +124,14 @@ twd.should(buttons[0], "be.visible");
 ### Complete Example
 
 ```ts
-import { screenDom, userEvent, twd } from "twd-js";
+import { screenDom, screenDomGlobal, userEvent, twd } from "twd-js";
 import { describe, it } from "twd-js/runner";
 
 describe("User Profile", () => {
   it("should display user information", async () => {
     await twd.visit("/profile");
 
-    // Query by role (most accessible)
+    // Query by role (most accessible) - using screenDom for regular content
     const heading = screenDom.getByRole("heading", { name: "User Profile" });
     expect(heading).to.exist;
 
@@ -136,6 +172,23 @@ describe("User Profile", () => {
     // Get all posts once loaded
     const posts = screenDom.getAllByTestId(/^post-/);
     expect(posts.length).to.be.greaterThan(0);
+  });
+
+  it("should interact with modal dialog", async () => {
+    await twd.visit("/settings");
+    
+    // Open modal using screenDom (regular button in app)
+    const deleteButton = screenDom.getByRole("button", { name: /delete account/i });
+    const user = userEvent.setup();
+    await user.click(deleteButton);
+    
+    // Query modal using screenDomGlobal (modal is rendered via portal)
+    const confirmModal = await screenDomGlobal.findByRole("dialog", { name: "Confirm Deletion" });
+    twd.should(confirmModal, "be.visible");
+    
+    // Use specific queries to avoid matching sidebar
+    const confirmButton = screenDomGlobal.getByRole("button", { name: "Yes, Delete" });
+    await user.click(confirmButton);
   });
 });
 ```
@@ -270,7 +323,7 @@ const item = await twd.get("ul > li:nth-child(3) button");
 const cards = await twd.getAll("[data-testid='product-card']");
 ```
 
-### Use Testing Library (`screenDom`) When:
+### Use Testing Library (`screenDom` or `screenDomGlobal`) When:
 
 - You want accessible, semantic queries
 - You're following Testing Library best practices
@@ -278,9 +331,13 @@ const cards = await twd.getAll("[data-testid='product-card']");
 - You need role-based queries (recommended for accessibility)
 
 ```ts
-// Semantic, accessible queries
+// Semantic, accessible queries - use screenDom for regular content
 const button = screenDom.getByRole("button", { name: /submit/i });
 const form = screenDom.getByLabelText("Email:");
+
+// Use screenDomGlobal for portal-rendered elements (modals, dialogs)
+const modal = screenDomGlobal.getByRole("dialog", { name: "Confirm" });
+const tooltip = screenDomGlobal.getByRole("tooltip");
 ```
 
 ## Best Practices
@@ -334,5 +391,5 @@ All Testing Library queries and user events are automatically logged in the TWD 
 
 - Learn about [TWD Commands](/api/twd-commands) for native selectors
 - Explore [User Interactions](/writing-tests#user-interactions) in detail
-- Check the [Testing Library docs](https://testing-library.com/docs/react-testing-library/intro/) for more query options
+- Check the [Testing Library docs](https://testing-library.com/docs/testing-library/intro/) for more query options
 

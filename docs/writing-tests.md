@@ -109,13 +109,28 @@ listItems[2].should("contain.text", "Third item");
 
 ### Testing Library Queries
 
-TWD also supports Testing Library's query methods through `screenDom`, providing semantic, accessible queries that follow testing best practices.
+TWD supports Testing Library's query methods through two APIs:
 
-#### Import screenDom
+1. **`screenDom`** - Scoped queries that exclude the TWD sidebar (recommended for most cases)
+2. **`screenDomGlobal`** - Global queries for portal-rendered elements (modals, dialogs)
+
+#### Import
 
 ```ts
-import { screenDom } from "twd-js";
+import { screenDom, screenDomGlobal } from "twd-js";
 ```
+
+#### When to Use screenDom vs screenDomGlobal
+
+**Use `screenDom` (default):**
+- For regular page content within your app
+- Automatically excludes sidebar elements
+- Recommended for most queries
+
+**Use `screenDomGlobal`:**
+- For portal-rendered elements (modals, dialogs, tooltips)
+- When you need to search outside the root container
+- ⚠️ **Important:** Use specific selectors (e.g., `getByRole` with `name`) to avoid matching sidebar elements
 
 #### Query by Role (Recommended)
 
@@ -180,14 +195,14 @@ expect(buttons).to.have.length(3);
 #### Complete Example with screenDom
 
 ```ts
-import { screenDom, userEvent, twd } from "twd-js";
+import { screenDom, screenDomGlobal, userEvent, twd } from "twd-js";
 import { describe, it } from "twd-js/runner";
 
 describe("Login Form", () => {
   it("should submit login form", async () => {
     await twd.visit("/login");
 
-    // Use screenDom for semantic queries
+    // Use screenDom for semantic queries (regular page content)
     const emailInput = screenDom.getByLabelText("Email:");
     const passwordInput = screenDom.getByLabelText("Password:");
     const submitButton = screenDom.getByRole("button", { name: /sign in/i });
@@ -202,10 +217,30 @@ describe("Login Form", () => {
     const successMessage = await screenDom.findByText("Login successful!");
     twd.should(successMessage, "be.visible");
   });
+
+  it("should handle modal confirmation", async () => {
+    await twd.visit("/settings");
+    
+    // Use screenDom for regular button
+    const deleteButton = screenDom.getByRole("button", { name: /delete/i });
+    const user = userEvent.setup();
+    await user.click(deleteButton);
+    
+    // Use screenDomGlobal for modal (rendered via portal)
+    // ⚠️ Use specific queries to avoid matching sidebar elements
+    const confirmModal = await screenDomGlobal.findByRole("dialog", { 
+      name: "Confirm Deletion" 
+    });
+    const confirmButton = screenDomGlobal.getByRole("button", { 
+      name: "Yes, Delete Account" 
+    });
+    
+    await user.click(confirmButton);
+  });
 });
 ```
 
-> **Note:** For complete Testing Library documentation, see the [Testing Library API reference](/react-testing-library).
+> **Note:** For complete Testing Library documentation, see the [Testing Library API reference](/testing-library).
 
 ## Assertions
 

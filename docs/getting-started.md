@@ -30,7 +30,7 @@ TWD offers two setup options: the **Standard Setup** for full control, and the *
 
 The bundled setup is the easiest way to get started and works with all supported frameworks (React, Vue, Angular, Solid.js). It handles React dependencies internally and automatically initializes request mocking, keeping your main entry file clean and simple.
 
-```tsx{7-18}
+```tsx{7-20}
 // src/main.tsx
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';

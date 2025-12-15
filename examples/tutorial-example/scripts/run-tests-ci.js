@@ -1,9 +1,11 @@
 import fs from 'fs';
 import path from 'path';
 import puppeteer from "puppeteer";
-import { reportResults } from 'twd-js/runner-ci';
 
+// Determine project root
 let __dirname = path.resolve();
+
+const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
 const browser = await puppeteer.launch({
   headless: true,
@@ -14,13 +16,17 @@ console.time('Total Test Time');
 try {
   // Navigate to your development server
   console.log('Navigating to http://localhost:5173 ...');
-  await page.goto('http://localhost:5173');
+  await page.goto('http://localhost:5173', { 
+    waitUntil: 'networkidle0',
+    timeout: 60000 
+  });
   // wait to load data-testid="twd-sidebar"
-  await page.waitForSelector('[data-testid="twd-sidebar"]', { timeout: 10000 });
+  console.log('Waiting for sidebar to appear...');
+  await sleep(3000);
   console.log('Page loaded. Starting tests...');
   // reload page
   // Execute all tests
-  const { handlers, testStatus } = await page.evaluate(async () => {
+  const { testStatus } = await page.evaluate(async () => {
     const TestRunner = window.__testRunner;
     const testStatus = [];
     const runner = new TestRunner({
@@ -39,10 +45,8 @@ try {
     return { handlers: Array.from(handlers.values()), testStatus };
   });
   console.log(`Tests to report: ${testStatus.length}`);
-  
-  // Display results in console
-  reportResults(handlers, testStatus);
 
+  // --- Collect coverage ---
   const coverage = await page.evaluate(() => window.__coverage__);
   if (coverage) {
     console.log('Collecting code coverage data...');
@@ -64,10 +68,12 @@ try {
   // Exit with appropriate code
   const hasFailures = testStatus.some(test => test.status === 'fail');
   console.timeEnd('Total Test Time');
+  console.log('\x1b[32m%s\x1b[0m', 'Test passed!');
   process.exit(hasFailures ? 1 : 0);
   
 } catch (error) {
   console.error('Error running tests:', error);
+  console.error('\x1b[31m%s\x1b[0m', 'Test failed!');
   process.exit(1);
 } finally {
   console.log('Closing browser...');

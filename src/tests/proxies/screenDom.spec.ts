@@ -1,12 +1,44 @@
 import { describe, it, beforeEach, vi, expect } from 'vitest';
 import * as twd from '../../runner';
-import { screenDom } from '../../proxies/screenDom';
+import { screenDom, screenDomGlobal } from '../../proxies/screenDom';
 
 describe('screenDom', () => {
   beforeEach(() => {
     twd.clearTests();
     vi.clearAllMocks();
     document.body.innerHTML = '';
+  });
+
+  it('should not select buton in sidebar', () => {
+    const sidebar = document.createElement('div');
+    sidebar.id = 'twd-sidebar-root';
+    document.body.appendChild(sidebar);
+    const sidebarContent = document.createElement('div');
+    sidebarContent.id = 'twd-sidebar-content';
+    sidebar.appendChild(sidebarContent);
+    const sideBarButton = document.createElement('button');
+    sideBarButton.textContent = 'Click me';
+    sidebarContent.appendChild(sideBarButton);
+    const button = document.createElement('button');
+    button.textContent = 'Click me';
+    document.body.appendChild(button);
+    expect(screenDom.getByText('Click me')).toBeInTheDocument();
+  });
+
+  it('should throw an error if we have two buttons one in sidebar and one in the body using global screen selector', () => {
+    const sidebar = document.createElement('div');
+    sidebar.id = 'twd-sidebar-root';
+    document.body.appendChild(sidebar);
+    const sidebarContent = document.createElement('div');
+    sidebarContent.id = 'twd-sidebar-content';
+    sidebar.appendChild(sidebarContent);
+    const sideBarButton = document.createElement('button');
+    sideBarButton.textContent = 'Click me';
+    sidebarContent.appendChild(sideBarButton);
+    const button = document.createElement('button');
+    button.textContent = 'Click me';
+    document.body.appendChild(button);
+    expect(() => screenDomGlobal.getByText('Click me')).toThrow();
   });
 
   it('should log query messages for getBy methods', async () => {

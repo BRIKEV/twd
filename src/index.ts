@@ -4,6 +4,6 @@ export { TWDSidebar } from './ui/TWDSidebar';
 export { initTests } from './initializers/initTests';
 export { expect } from 'chai';
 export { userEvent } from './proxies/userEvent';
-export { screenDom, configureScreenDom } from './proxies/screenDom';
+export { screenDom, screenDomGlobal, configureScreenDom } from './proxies/screenDom';
 
 config.truncateThreshold = 0;
