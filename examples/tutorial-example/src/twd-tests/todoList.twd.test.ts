@@ -1,5 +1,5 @@
-import { twd, expect, userEvent } from "twd-js";
-import { describe, it, beforeEach } from "twd-js/runner";
+import { twd, expect, userEvent } from "../../../../src/index.ts";
+import { describe, it, beforeEach } from "../../../../src/runner.ts";
 import todoListMock from "./mocks/todoList.json";
 
 describe("Todo List Page", () => {

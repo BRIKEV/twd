@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
+import DialogExample from '@/components/DialogExample';
 
 export default function Helloworld() {
   const [count, setCount] = useState(0);
@@ -44,6 +45,7 @@ export default function Helloworld() {
             Click the button to test TWD features
           </p>
         </div>
+        <DialogExample />
       </div>
     </div>
   );
