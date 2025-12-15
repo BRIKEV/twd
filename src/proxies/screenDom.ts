@@ -30,20 +30,31 @@ const callWithin = (prop: string | symbol, args: any[]) => {
     return orig(...args);
   }
 
-  // Otherwise it’s a value (like screen.config) — return it
+  // Otherwise it's a value (like screen.config) — return it
   return orig;
 };
 
+// Call screen directly without filtering (for global queries)
+const callGlobal = (prop: string | symbol, args: any[]) => {
+  const orig = (screen as any)[prop];
+  
+  if (typeof orig !== 'function') {
+    return orig;
+  }
+  
+  return orig(...args);
+};
 
-function createLoggedProxy(obj: any, prefix = 'screen') {
+
+function createLoggedProxy(obj: any, prefix = 'screen', useWithin = false) {
   return new Proxy(obj, {
     get(target, prop, receiver) {
       const orig = Reflect.get(target, prop, receiver);
       if (typeof orig !== 'function') return orig;
 
-      // We need to wrap the query so it uses filtered container
+      // We need to wrap the query so it uses filtered container or global search
       return (...args: any[]) => {
-        const result = callWithin(prop, args);
+        const result = useWithin ? callWithin(prop, args) : callGlobal(prop, args);
         log(domMessage(prefix, prop, args));
         return result;
       };
@@ -51,7 +62,38 @@ function createLoggedProxy(obj: any, prefix = 'screen') {
   });
 }
 
-export const screenDom: ScreenDom = createLoggedProxy(screen);
+/**
+ * screenDom - Scoped queries that exclude the TWD sidebar
+ * 
+ * Searches only within the main app container (typically #root).
+ * Use this for most queries to avoid matching elements in the sidebar.
+ * 
+ * Note: This will NOT find portal-rendered elements (modals, dialogs) that are
+ * rendered outside the root container. For portals, use `screenDomGlobal` instead.
+ */
+export const screenDom: ScreenDom = createLoggedProxy(screen, 'screen', true);
+
+/**
+ * screenDomGlobal - Global queries that search the entire document.body
+ * 
+ * Searches all elements in document.body, including portal-rendered elements
+ * (modals, dialogs, tooltips, etc.).
+ * 
+ * ⚠️ WARNING: This may also match elements inside the TWD sidebar if your selectors
+ * are not specific enough. Use more specific queries (e.g., getByRole with name)
+ * to avoid matching sidebar elements.
+ * 
+ * Use this when:
+ * - Querying portal-rendered elements (modals, dialogs)
+ * - You need to search outside the root container
+ * 
+ * Example:
+ * ```ts
+ * // For a modal rendered via portal
+ * const modal = screenDomGlobal.getByRole('dialog', { name: 'Confirm' });
+ * ```
+ */
+export const screenDomGlobal: ScreenDom = createLoggedProxy(screen, 'screen', false);
 
 configure({
   getElementError(message) {
