@@ -195,6 +195,24 @@ If API mocking isn't working:
 2. If using the standard setup, make sure you called `twd.initRequestMocking()` in your main entry file (inside the `import.meta.env.DEV` block). Note: The bundled setup automatically initializes request mocking.
 3. Check the browser console for service worker registration errors
 
+### Test Duplication on HMR
+
+If you notice test entries duplicating when you edit test files during development (this typically happens when you have components initialized in your `main.tsx`), add the TWD HMR plugin to your Vite config:
+
+```ts
+// vite.config.ts
+import { twdHmr } from 'twd-js/vite-plugin';
+
+export default defineConfig({
+  plugins: [
+    // ... other plugins
+    twdHmr(),
+  ],
+});
+```
+
+This plugin forces a full page reload when TWD test files change, preventing duplicate test entries.
+
 ## Getting Help
 
 - 📖 [Browse the documentation](/api/)
