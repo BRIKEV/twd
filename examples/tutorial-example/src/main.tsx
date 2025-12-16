@@ -20,8 +20,16 @@ if (import.meta.env.DEV) {
     });
 }
 
-createRoot(document.getElementById('root')!).render(
+const App = () => {
+  return (
+    <div>
+      <RouterProvider router={router} />
+    </div>
+  );
+};
+
+createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <RouterProvider router={router} />
-  </StrictMode>,
-)
+    <App />
+  </StrictMode>
+);
