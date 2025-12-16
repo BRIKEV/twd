@@ -250,19 +250,13 @@ Configure Astro's Vite plugin to handle test file hot reload:
 
 ```js
 // astro.config.mjs
+import { twdHmr } from 'twd-js/vite-plugin';
+
 export default defineConfig({
   integrations: [react()],
   vite: {
     plugins: [
-      {
-        name: "force-full-reload-on-tests",
-        handleHotUpdate({ file, server }) {
-          if (file.endsWith(".twd.test.ts")) {
-            server.ws.send({ type: "full-reload", path: "*" });
-            return [];
-          }
-        },
-      },
+      twdHmr(), // Prevents test duplication on HMR
     ],
   },
 });
