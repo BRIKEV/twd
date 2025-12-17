@@ -276,6 +276,110 @@ const isDev = import.meta.env.DEV
 </Layout>
 ```
 
+## React Router (Framework Mode)
+
+TWD works with React Router Framework mode applications. Use the bundled setup with a `clientLoader` in your root route. Note that TWD is designed for **frontend testing only** - React Router server-side features (loaders, actions, server components, etc.) are not supported.
+
+::: warning
+**Important Limitations:**
+- TWD tests **frontend components only** - React Router server-side features (loaders, actions, server components) cannot be tested with TWD
+- TWD is a frontend testing library and focuses on client-side behavior
+:::
+
+Add the initialization code to your root route file:
+
+```tsx
+// app/root.tsx
+let twdInitialized = false;
+
+export async function clientLoader() {
+  if (import.meta.env.DEV) {
+    const testModules = import.meta.glob("./**/*.twd.test.ts");
+    if (!twdInitialized) {
+      const { initTWD } = await import('twd-js/bundled');
+      initTWD(testModules);
+      twdInitialized = true;
+    }
+    return {};
+  } else {
+    return {};
+  }
+}
+```
+
+## Next.js
+
+TWD can work with Next.js applications using Webpack's `require.context` to load test files. Note that TWD is designed for **frontend testing only** - Next.js backend features (API routes, server components, etc.) are not supported. Next.js adds a layer of complexity to the testing and development experience, so we recommend using a standard Vite-based React application instead.
+
+::: warning
+**Important Limitations:**
+- Test changes require a **full page reload** - Next.js hot module replacement doesn't work with TWD test files
+- TWD tests **frontend components only** - Next.js backend features (API routes, server components, middleware) cannot be tested with TWD
+- For a simpler testing experience, consider using a standard Vite-based React application instead
+:::
+
+Create a client component to initialize the test sidebar:
+
+```tsx
+// app/components/TestSidebar.tsx
+'use client';
+import { useEffect } from 'react';
+import { createRoot } from 'react-dom/client';
+
+export default function TestSidebar() {
+  useEffect(() => {
+    const initializeTests = async () => {
+      const context = require.context("./", true, /\.twd\.test\.ts$/);      
+      // Build a Vite-like object of async importers
+      const testModules = {};
+      context.keys().forEach((key) => {
+        testModules[key] = async () => {
+          // Webpack requires modules synchronously, so wrap in Promise.resolve
+          return Promise.resolve(context(key));
+        };
+      });
+      const { initTests, twd, TWDSidebar } = await import('twd-js');
+      initTests(testModules, <TWDSidebar open={true} position="left" />, createRoot);
+      // Initialize request mocking (optional)
+      twd.initRequestMocking()
+        .then(() => {
+          console.log("Request mocking initialized");
+        })
+        .catch((err) => {
+          console.error("Error initializing request mocking:", err);
+        });
+    };
+    initializeTests();
+  }, []);
+
+  return <></>;
+}
+```
+
+Include the component in your root layout:
+
+```tsx
+// app/layout.tsx
+import TestSidebar from './components/TestSidebar';
+
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode
+}>) {
+  return (
+    <html lang="en">
+      <body>
+        {children}
+        {process.env.NODE_ENV === "development" && (
+          <TestSidebar />
+        )}
+      </body>
+    </html>
+  )
+}
+```
+
 ## Other Frameworks
 
 We're actively working on adding more framework recipes and integrations. If you're using a framework not listed here:
