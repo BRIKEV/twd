@@ -307,78 +307,21 @@ export async function clientLoader() {
 }
 ```
 
-## Next.js
+## Framework Support Philosophy
 
-TWD can work with Next.js applications using Webpack's `require.context` to load test files. Note that TWD is designed for **frontend testing only** - Next.js backend features (API routes, server components, etc.) are not supported. Next.js adds a layer of complexity to the testing and development experience, so we recommend using a standard Vite-based React application instead.
+TWD is designed for **deterministic, client-side UI testing** in Single Page Application (SPA) environments. It focuses on frameworks that provide:
 
-::: warning
-**Important Limitations:**
-- Test changes require a **full page reload** - Next.js hot module replacement doesn't work with TWD test files
-- TWD tests **frontend components only** - Next.js backend features (API routes, server components, middleware) cannot be tested with TWD
-- For a simpler testing experience, consider using a standard Vite-based React application instead
-:::
+- **Explicit execution** - Clear control over when and how components render
+- **Deterministic behavior** - Predictable rendering and state management
+- **Fast feedback loops** - Quick test execution and hot module replacement
 
-Create a client component to initialize the test sidebar:
+Frameworks that use Server-Side Rendering (SSR) with implicit execution patterns (like Next.js App Router) mix rendering, data loading, and infrastructure in ways that make behavior-level testing unreliable. For this reason, TWD does not provide official support for SSR-first architectures like Next.js.
 
-```tsx
-// app/components/TestSidebar.tsx
-'use client';
-import { useEffect } from 'react';
-import { createRoot } from 'react-dom/client';
-
-export default function TestSidebar() {
-  useEffect(() => {
-    const initializeTests = async () => {
-      const context = require.context("./", true, /\.twd\.test\.ts$/);      
-      // Build a Vite-like object of async importers
-      const testModules = {};
-      context.keys().forEach((key) => {
-        testModules[key] = async () => {
-          // Webpack requires modules synchronously, so wrap in Promise.resolve
-          return Promise.resolve(context(key));
-        };
-      });
-      const { initTests, twd, TWDSidebar } = await import('twd-js');
-      initTests(testModules, <TWDSidebar open={true} position="left" />, createRoot);
-      // Initialize request mocking (optional)
-      twd.initRequestMocking()
-        .then(() => {
-          console.log("Request mocking initialized");
-        })
-        .catch((err) => {
-          console.error("Error initializing request mocking:", err);
-        });
-    };
-    initializeTests();
-  }, []);
-
-  return <></>;
-}
-```
-
-Include the component in your root layout:
-
-```tsx
-// app/layout.tsx
-import TestSidebar from './components/TestSidebar';
-
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode
-}>) {
-  return (
-    <html lang="en">
-      <body>
-        {children}
-        {process.env.NODE_ENV === "development" && (
-          <TestSidebar />
-        )}
-      </body>
-    </html>
-  )
-}
-```
+TWD officially supports:
+- **React (SPA)** - Standard Vite-based React applications
+- **React Router (Framework Mode)** - Client-side routing with explicit loaders
+- **Vue, Angular, Solid.js** - Other SPA frameworks
+- **Astro** - When used with client-driven components
 
 ## Other Frameworks
 
