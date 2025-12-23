@@ -84,6 +84,12 @@ if (import.meta.env.DEV) {
 The standard setup is **React-only**. For Vue, Angular, Solid.js, and other frameworks, you must use the bundled setup.
 :::
 
+## Testing shadcn Components
+
+If you're using shadcn/ui components in your React application, we've created a comprehensive guide with TWD patterns specifically for testing shadcn components:
+
+**[shadcn Testing Guide](https://brikev.github.io/twd-shadcn/)** - Patterns and best practices for testing shadcn/ui components with TWD.
+
 ## Vue
 
 For Vue applications, use the bundled version of TWD. This ensures that the React runtime required by TWD's UI is handled correctly without conflicting with your Vue app.
