@@ -8,7 +8,7 @@ type ScreenDom = typeof screen;
 const getFilteredContainer = () => {
   // Generic strategy: Find the first direct child of body that isn't the TWD sidebar
   // This works for <div id="root">, <app-root>, <main>, etc.
-  return document.querySelector("body > :not(#twd-sidebar-root):not(script):not(style)") ?? document.body;
+  return document.querySelector("body > :not(#twd-sidebar-root):not(script):not(style):not(svg):not(path):not(noscript):not(link):not(meta):not(iframe):not(template)") ?? document.body;
 };
 
 // It takes whatever RTL query the user calls (like getByText) and calls the same function from within(filteredContainer), so the search happens only inside the allowed part of the DOM.

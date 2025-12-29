@@ -36,29 +36,33 @@ pnpm add twd-js
 
 ## Quick Start
 
-### React (Standard)
-
-Add this to your entry file (e.g., `src/main.tsx`):
-
-```tsx
-if (import.meta.env.DEV) {
-  const testModules = import.meta.glob("./**/*.twd.test.ts");
-  const { initTests, twd, TWDSidebar } = await import('twd-js');
-  initTests(testModules, <TWDSidebar open={true} position="left" />, createRoot);
-  twd.initRequestMocking().catch(console.error);
-}
-```
-
-### Vue / Angular / Other Frameworks (Bundled)
+### React / Vue / Angular / Other Frameworks (Bundled / recommended)
 
 TWD now supports any framework via its bundled version.
 
 ```ts
+// Only load the test sidebar and tests in development mode
 if (import.meta.env.DEV) {
   const { initTWD } = await import('twd-js/bundled');
   const tests = import.meta.glob("./**/*.twd.test.ts");
-  initTWD(tests);
+  
+  // Initialize TWD with tests and optional configuration
+  // Request mocking is automatically initialized by default
+  initTWD(tests, { 
+    open: true, 
+    position: 'left',
+    serviceWorker: true,           // Enable request mocking (default: true)
+    serviceWorkerUrl: '/mock-sw.js' // Custom service worker path (default: '/mock-sw.js')
+  });
 }
+```
+
+### Set Up Mock Service Worker
+
+If you plan to use API mocking, set up the mock service worker:
+
+```bash
+npx twd-js init public
 ```
 
 Check the [Framework Integration Guide](https://brikev.github.io/twd/frameworks) for more details.
