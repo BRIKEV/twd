@@ -35,6 +35,72 @@ import { screenDom, screenDomGlobal } from "twd-js";
 
 **Note:** `screenDom` will NOT find portal-rendered elements (modals, dialogs) that are rendered outside the root container. For portals, use `screenDomGlobal` instead.
 
+### How screenDom Works
+
+`screenDom` automatically finds your app's root container by searching for the **first direct child of `<body>`** that is not excluded. This works for common patterns like:
+- `<div id="root"></div>`
+- `<app-root></app-root>`
+- `<main></main>`
+- Any other container element
+
+**Excluded elements:** The following tags are automatically excluded from container selection (as they're not app content):
+- `script` - JavaScript files
+- `style` - CSS stylesheets
+- `svg` - SVG graphics
+- `path` - SVG path elements
+- `noscript` - Fallback content (e.g., Google Tag Manager)
+- `link` - Stylesheet links, favicons
+- `iframe` - Embedded content, analytics widgets
+- `template` - Web component templates
+- `meta` - Metadata tags
+
+### Troubleshooting: When screenDom Can't Find Your Container
+
+If `screenDom` queries fail or return unexpected results, it might be because:
+
+1. **Your app root is not the first non-excluded element in `<body>`**
+   
+   ```html
+   <!-- ❌ Problem: Analytics container comes before #root -->
+   <body>
+     <div id="analytics-container"></div>
+     <div id="root"></div>
+   </body>
+   ```
+   
+   **Solution:** Use `screenDomGlobal` instead, or ensure your app root is the first element:
+   
+   ```html
+   <!-- ✅ Good: #root is first -->
+   <body>
+     <div id="root"></div>
+     <div id="analytics-container"></div>
+   </body>
+   ```
+
+2. **You have other elements before your app root**
+   
+   ```html
+   <!-- ❌ Problem: Header or other wrapper before #root -->
+   <body>
+     <header>Site Header</header>
+     <div id="root"></div>
+   </body>
+   ```
+   
+   **Solution:** Use `screenDomGlobal` for queries, or move your app root to be first.
+
+3. **Your app uses a non-standard structure**
+   
+   If your app doesn't follow the standard pattern, `screenDom` will fall back to searching `document.body` (which includes the sidebar). In this case, use `screenDomGlobal` and make your queries more specific to avoid matching sidebar elements.
+
+**When to use `screenDomGlobal` instead:**
+- Your app root is not the first element in `<body>`
+- You need to query portal-rendered elements (modals, dialogs)
+- Your HTML structure doesn't match the expected pattern
+
+⚠️ **Remember:** When using `screenDomGlobal`, make your queries specific (e.g., `getByRole('button', { name: 'Submit' })`) to avoid accidentally matching elements in the TWD sidebar.
+
 ### screenDomGlobal (Global Queries)
 
 `screenDomGlobal` searches all elements in `document.body`, including portal-rendered elements (modals, dialogs, tooltips, etc.).
