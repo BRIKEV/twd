@@ -1,3 +1,21 @@
+## <small>1.3.4 (2025-12-29)</small>
+
+* docs: add ai agent document ([b2b86ea](https://github.com/BRIKEV/twd/commit/b2b86ea))
+* docs: add better info for react router framework mode apps ([4123037](https://github.com/BRIKEV/twd/commit/4123037))
+* docs: add testing guide for shadcn components in React applications ([792dcc2](https://github.com/BRIKEV/twd/commit/792dcc2))
+* docs: add tutorial docs about react testing library ([92dce2d](https://github.com/BRIKEV/twd/commit/92dce2d))
+* docs: enhance documentation for React Router and Next.js integration with TWD ([0d30644](https://github.com/BRIKEV/twd/commit/0d30644))
+* docs: improve documentation about framework integration ([66eeb9a](https://github.com/BRIKEV/twd/commit/66eeb9a))
+* fix: add better screendom selector (#119) ([9b66ff8](https://github.com/BRIKEV/twd/commit/9b66ff8)), closes [#119](https://github.com/BRIKEV/twd/issues/119)
+
+
+## <small>1.3.3 (2025-12-16)</small>
+
+* Fix/error hmr (#117) ([67fbef6](https://github.com/BRIKEV/twd/commit/67fbef6)), closes [#117](https://github.com/BRIKEV/twd/issues/117)
+* Fix/screendom modals example (#115) ([d080ba1](https://github.com/BRIKEV/twd/commit/d080ba1)), closes [#115](https://github.com/BRIKEV/twd/issues/115)
+
+
+
 ## <small>1.3.2 (2025-12-13)</small>
 
 * feat: add bundle options to use or not service worker and path option (#113) ([927e7c8](https://github.com/BRIKEV/twd/commit/927e7c8)), closes [#113](https://github.com/BRIKEV/twd/issues/113)
