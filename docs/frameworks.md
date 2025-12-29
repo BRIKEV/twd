@@ -284,7 +284,7 @@ const isDev = import.meta.env.DEV
 
 ## React Router (Framework Mode)
 
-TWD works with React Router Framework mode applications. Use the bundled setup with a `clientLoader` in your root route. Note that TWD is designed for **frontend testing only** - React Router server-side features (loaders, actions, server components, etc.) are not supported.
+TWD works with React Router Framework mode applications. Note that TWD is designed for **frontend testing only** - React Router server-side features (loaders, actions, server components, etc.) are not supported.
 
 ::: warning
 **Important Limitations:**
@@ -292,18 +292,47 @@ TWD works with React Router Framework mode applications. Use the bundled setup w
 - TWD is a frontend testing library and focuses on client-side behavior
 :::
 
-Add the initialization code to your root route file:
+### Recommended: Testing Routes with createRoutesStub
+
+The best way to test React Router Framework Mode applications is using React Router's `createRoutesStub` API. This approach allows you to:
+
+- Mock routes with loaders and actions
+- Create different scenarios per test
+- Test frontend behavior realistically
+- Test loaders and actions separately as pure functions
+
+This separation of concerns makes testing straightforward, explicit, and predictable.
+
+**[React Router + TWD Example](https://github.com/BRIKEV/twd-react-router)** - Complete working example with this approach.
+
+#### Setup
+
+1. **Add a dedicated testing route** to your route configuration:
+
+```ts
+import { type RouteConfig, index, route } from "@react-router/dev/routes";
+
+export default [
+  index("routes/home.tsx"),
+  route("todos", "routes/todolist.tsx"),
+  route("testing", "routes/testing-page.tsx"), // Add this route
+] satisfies RouteConfig;
+```
+
+2. **Create the testing page**:
 
 ```tsx
-// app/root.tsx
+// app/routes/testing-page.tsx
 let twdInitialized = false;
 
 export async function clientLoader() {
   if (import.meta.env.DEV) {
-    const testModules = import.meta.glob("./**/*.twd.test.ts");
+    const testModules = import.meta.glob("../**/*.twd.test.{ts,tsx}");
     if (!twdInitialized) {
       const { initTWD } = await import('twd-js/bundled');
-      initTWD(testModules);
+      initTWD(testModules, {
+        serviceWorker: false, // Disable service worker if not needed
+      });
       twdInitialized = true;
     }
     return {};
@@ -311,7 +340,91 @@ export async function clientLoader() {
     return {};
   }
 }
+
+export default function TestPage() {
+  return (
+    <div data-testid="testing-page">
+      <h1 style={{ opacity: 0.5, fontFamily: 'system-ui, sans-serif' }}>TWD Test Page</h1>
+      <p style={{ opacity: 0.5, fontFamily: 'system-ui, sans-serif' }}>
+        This page is used as a mounting point for TWD tests.
+      </p>
+    </div>
+  );
+}
 ```
+
+3. **Create a test helper** to set up the React root:
+
+```tsx
+// test-utils/setup-react-root.tsx
+import { createRoot } from "react-dom/client";
+import { twd, screenDomGlobal } from "twd-js";
+
+let root: ReturnType<typeof createRoot> | undefined;
+
+export async function setupReactRoot() {
+  if (root) {
+    root.unmount();
+    root = undefined;
+  }
+
+  // Navigate to the empty test page
+  await twd.visit('/testing');
+  
+  // Get the container from the test page
+  const container = await screenDomGlobal.findByTestId('testing-page');
+  root = createRoot(container);
+  return root;
+}
+```
+
+#### Example Test
+
+```tsx
+import { createRoutesStub } from "@react-router/dev/routes";
+import { useLoaderData, useParams, useMatches } from "react-router";
+import { createRoot } from "react-dom/client";
+import { setupReactRoot } from "../test-utils/setup-react-root";
+import { twd, screenDom } from "twd-js";
+import { describe, it, beforeEach } from "twd-js/runner";
+import Home from "../routes/home";
+
+describe("Home Page Test", () => {
+  let root: ReturnType<typeof createRoot> | undefined;
+
+  beforeEach(async () => {
+    root = await setupReactRoot();
+  });
+
+  it("should render home page with loader data", async () => {
+    // Create a route stub with mocked loader
+    const Stub = createRoutesStub([
+      {
+        path: "/",
+        Component: () => {
+          const loaderData = useLoaderData();
+          const params = useParams();
+          const matches = useMatches() as any;
+          return <Home loaderData={loaderData} params={params} matches={matches} />;
+        },
+        loader() {
+          return { title: "Home Page test" };
+        },
+      },
+    ]);
+
+    // Render the stub
+    root!.render(<Stub />);
+    await twd.wait(300);
+    
+    // Assert the rendered content
+    const h1 = await screenDom.findByRole('heading', { level: 1 });
+    twd.should(h1, 'have.text', 'Home Page test');
+  });
+});
+```
+
+This approach provides a powerful way to test React Router routes in isolation while still running within your real application context, making it easier to test complex routing scenarios and loader/action behavior.
 
 ## Framework Support Philosophy
 
