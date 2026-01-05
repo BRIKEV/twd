@@ -4,13 +4,13 @@ import { defineConfig } from 'vitepress'
 export default defineConfig({
   title: "TWD",
   description: "Test While Developing (TWD) - in-browser testing for React applications",
-  base: '/twd/',
+  base: '/',
   head: [
     // Favicon and app icons
-    ['link', { rel: 'icon', href: '/twd/favicon.ico' }],
-    ['link', { rel: 'icon', type: 'image/svg+xml', href: '/twd/favicon.svg' }],
-    ['link', { rel: 'apple-touch-icon', href: '/twd/apple-touch-icon.png' }],
-    ['link', { rel: 'manifest', href: '/twd/site.webmanifest' }],
+    ['link', { rel: 'icon', href: '/favicon.ico' }],
+    ['link', { rel: 'icon', type: 'image/svg+xml', href: '/favicon.svg' }],
+    ['link', { rel: 'apple-touch-icon', href: '/apple-touch-icon.png' }],
+    ['link', { rel: 'manifest', href: '/site.webmanifest' }],
     
     // SEO Meta Tags
     ['meta', { name: 'description', content: 'TWD (Test While Developing) - In-browser testing framework for React applications with instant feedback, Mock Service Worker integration, and beautiful UI.' }],
@@ -20,9 +20,9 @@ export default defineConfig({
     ['meta', { property: 'og:type', content: 'website' }],
     ['meta', { property: 'og:title', content: 'TWD - Test While Developing' }],
     ['meta', { property: 'og:description', content: 'In-browser testing framework for React applications with instant feedback, Mock Service Worker integration, and beautiful UI. Because testing isn\'t a phase, it\'s part of the flow.' }],
-    ['meta', { property: 'og:url', content: 'https://brikev.github.io/twd/' }],
+    ['meta', { property: 'og:url', content: 'https://twd.dev/' }],
     ['meta', { property: 'og:site_name', content: 'TWD Documentation' }],
-    ['meta', { property: 'og:image', content: 'https://brikev.github.io/twd/web-app-manifest-512x512.png' }],
+    ['meta', { property: 'og:image', content: 'https://twd.dev/web-app-manifest-512x512.png' }],
     ['meta', { property: 'og:image:width', content: '512' }],
     ['meta', { property: 'og:image:height', content: '512' }],
     ['meta', { property: 'og:image:alt', content: 'TWD - Test While Developing Logo' }],
@@ -31,7 +31,7 @@ export default defineConfig({
     ['meta', { name: 'twitter:card', content: 'summary_large_image' }],
     ['meta', { name: 'twitter:title', content: 'TWD - Test While Developing' }],
     ['meta', { name: 'twitter:description', content: 'In-browser testing framework for React applications with instant feedback and beautiful UI.' }],
-    ['meta', { name: 'twitter:image', content: 'https://brikev.github.io/twd/web-app-manifest-512x512.png' }],
+    ['meta', { name: 'twitter:image', content: 'https://twd.dev/web-app-manifest-512x512.png' }],
     ['meta', { name: 'twitter:image:alt', content: 'TWD - Test While Developing Logo' }],
 
     // Additional Meta Tags
