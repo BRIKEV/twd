@@ -62,7 +62,7 @@ Once configured, you can ask your AI assistant to generate TWD tests from browse
 Here are some example prompts you can try in Cursor or Claude Desktop:
 
 **Generate a test from a user flow:**
-> "Use Playwright to navigate to my app at http://localhost:5173, click the login button, fill the email field with test@example.com, fill the password field with password123, click submit, then generate a TWD test from those actions"
+> "Use Playwright to navigate to my app at `http://localhost:5173`, click the login button, fill the email field with test@example.com, fill the password field with password123, click submit, then generate a TWD test from those actions"
 
 **Test a specific interaction:**
 > "Use Playwright to navigate to example.com, click the 'Get Started' button, then generate a TWD test for that interaction"
