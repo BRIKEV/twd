@@ -59,6 +59,7 @@ export default defineConfig({
           { text: 'Framework Integration', link: '/frameworks' },
           { text: 'Testing Library', link: '/testing-library' },
           { text: 'AI Context', link: '/agents' },
+          { text: 'MCP Integration', link: '/mcp-integration' },
         ]
       },
       {
