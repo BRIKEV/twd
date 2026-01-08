@@ -9,6 +9,7 @@ describe("TWDSidebar", () => {
     // Clear all registered tests before each test case
     twd.clearTests();
     vi.clearAllMocks();
+    sessionStorage.clear();
   });
 
   describe("component" , () => {
@@ -29,6 +30,13 @@ describe("TWDSidebar", () => {
       expect(sidebarElement).toBeInTheDocument();
     });
 
+    it("should render based on the sessionStorage property if exists", async () => {
+      sessionStorage.setItem('twd-sidebar-open', 'true');
+      render(<TWDSidebar open={false} />);
+      const sidebarElement = screen.getByText("Run All");
+      expect(sidebarElement).toBeInTheDocument();
+    });
+
     it("should render TWDSidebar component open", async () => {
       render(<TWDSidebar open={true} />);
       const sidebarElement = screen.getByText("Run All");
@@ -44,12 +52,14 @@ describe("TWDSidebar", () => {
       await user.click(closedSidebarElement);
       const openSidebarElement = screen.getByText("Run All");
       expect(openSidebarElement).toBeInTheDocument();
+      expect(sessionStorage.getItem('twd-sidebar-open')).toBe('true');
       // simulate a click event to close the sidebar
       const closeButton = screen.getByText("✖");
       await user.click(closeButton);
       expect(screen.getByText("TWD")).toBeInTheDocument();
       // Run all not visible
       expect(screen.queryByText("Run All")).not.toBeInTheDocument();
+      expect(sessionStorage.getItem('twd-sidebar-open')).toBe('false');
     });
 
     it('execute test when clicking the run button', async () => {

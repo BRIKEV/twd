@@ -10,7 +10,7 @@ if (import.meta.env.DEV) {
   const testModules = import.meta.glob("./**/*.twd.test.{ts,tsx}");
   const { initTests, twd, TWDSidebar } = await import('../../../src/index.ts');
   // You need to pass the test modules, the sidebar component, and createRoot function
-  initTests(testModules, <TWDSidebar open={true} position="left" />, createRoot);
+  initTests(testModules, <TWDSidebar open={false} position="left" />, createRoot);
   // if you want to use mock requests, you can initialize it here
   twd.initRequestMocking()
     .then(() => {

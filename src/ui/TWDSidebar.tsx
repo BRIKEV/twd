@@ -27,9 +27,16 @@ const positionStyles = {
 
 const fontFamily = `-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"`;
 
+const getOpenState = (open: boolean) => {
+  if (!sessionStorage.getItem('twd-sidebar-open')) {
+    return open;
+  }
+  return sessionStorage.getItem('twd-sidebar-open') === 'true';
+};
+
 export const TWDSidebar = ({ open, position = "left" }: TWDSidebarProps) => {
   const [_, setRefresh] = useState(0);
-  const [isOpen, setIsOpen] = useState(open);
+  const [isOpen, setIsOpen] = useState(getOpenState(open));
   useLayout({ isOpen, position });
 
   const runner = new TestRunner({
@@ -53,6 +60,11 @@ export const TWDSidebar = ({ open, position = "left" }: TWDSidebarProps) => {
     },
   });
 
+  const handleSetIsOpen = (open: boolean) => {
+    setIsOpen(open);
+    sessionStorage.setItem('twd-sidebar-open', open.toString());
+  };
+
   const runAll = async () => {
     await runner.runAll();
   };
@@ -66,7 +78,7 @@ export const TWDSidebar = ({ open, position = "left" }: TWDSidebarProps) => {
   const tests = Array.from(handlers.values());
 
     if (!isOpen) {
-    return <ClosedSidebar position={position} setOpen={setIsOpen} />;
+    return <ClosedSidebar position={position} setOpen={handleSetIsOpen} />;
   }
 
   const totalTests = tests.filter(test => test.type === "test").length;
@@ -114,7 +126,7 @@ export const TWDSidebar = ({ open, position = "left" }: TWDSidebarProps) => {
               paddingRight: "0",
               paddingLeft: "0",
             }}
-            onClick={() => setIsOpen(false)}
+            onClick={() => handleSetIsOpen(false)}
           >
             ✖
           </button>
