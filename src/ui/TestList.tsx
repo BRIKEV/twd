@@ -43,17 +43,17 @@ export const TestList = ({ tests, runTest }: TestListProps) => {
     const isCollapsed = collapsed[node.id];
     
     return (
-      <li key={node.id} style={{ marginLeft: depth * 12 }}>
+      <li key={node.id} style={{ marginLeft: `calc(${depth} * var(--twd-spacing-lg))` }}>
         <span
           style={{
-            fontWeight: "bold",
+            fontWeight: "var(--twd-font-weight-bold)",
             cursor: "pointer",
-            color: "#374151",
+            color: "var(--twd-text)",
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
-            marginBottom: "4px",
-            gap: "6px",
+            marginBottom: "var(--twd-spacing-xs)",
+            gap: "var(--twd-spacing-sm)",
           }}
           data-testid={`test-group-${node.name}`}
           tabIndex={0}

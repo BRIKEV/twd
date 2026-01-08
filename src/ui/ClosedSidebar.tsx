@@ -6,15 +6,15 @@ interface ClosedSidebarProps {
 const positionStyles = {
   left: {
     left: 0,
-    borderTopRightRadius: "6px",
-    borderBottomRightRadius: "6px",
+    borderTopRightRadius: "var(--twd-border-radius-lg)",
+    borderBottomRightRadius: "var(--twd-border-radius-lg)",
     borderTopLeftRadius: "0",
     borderBottomLeftRadius: "0",
   },
   right: {
     right: 0,
-    borderTopLeftRadius: "6px",
-    borderBottomLeftRadius: "6px",
+    borderTopLeftRadius: "var(--twd-border-radius-lg)",
+    borderBottomLeftRadius: "var(--twd-border-radius-lg)",
     borderTopRightRadius: "0",
     borderBottomRightRadius: "0",
   },
@@ -28,11 +28,11 @@ export const ClosedSidebar = ({ setOpen, position }: ClosedSidebarProps) => {
         position: "fixed",
         top: "50%",
         transform: "translateY(-50%)",
-        background: "#1A6EF4",
-        color: "white",
-        padding: "6px 10px",
+        background: "var(--twd-button-primary)",
+        color: "var(--twd-button-primary-text)",
+        padding: "var(--twd-spacing-sm) 10px",
         cursor: "pointer",
-        fontSize: "12px",
+        fontSize: "var(--twd-font-size-sm)",
         ...positionStyles[position]
       }}
       onClick={() => setOpen(true)}

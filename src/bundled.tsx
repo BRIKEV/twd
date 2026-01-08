@@ -2,6 +2,7 @@ import { render } from 'preact';
 import { initTests } from './initializers/initTests';
 import { TWDSidebar } from './ui/TWDSidebar';
 import { initRequestMocking } from './commands/mockBridge';
+import type { TWDTheme } from './ui/theme';
 
 interface TestModule {
   [key: string]: () => Promise<unknown>;
@@ -12,6 +13,7 @@ interface InitTWDOptions {
   position?: "left" | "right";
   serviceWorker?: boolean;
   serviceWorkerUrl?: string;
+  theme?: Partial<TWDTheme>;
 }
 
 // Create a compatibility wrapper for Preact's render to match React's createRoot API
@@ -29,6 +31,7 @@ const createRoot = (el: HTMLElement) => ({
  * @param options.position The position of the sidebar
  * @param options.serviceWorker Whether to use the service worker
  * @param options.serviceWorkerUrl The URL of the service worker
+ * @param options.theme Optional theme customization
  * @returns void
  * @example
  * initTWD(testModules, { open: true, position: 'left' });
@@ -36,10 +39,12 @@ const createRoot = (el: HTMLElement) => ({
  * initTWD(testModules, { open: true, position: 'left', serviceWorker: false });
  * @example
  * initTWD(testModules, { open: true, position: 'left', serviceWorker: true, serviceWorkerUrl: '/mock-sw.js' });
+ * @example
+ * initTWD(testModules, { open: true, position: 'left', theme: { primary: '#ff0000', background: '#ffffff' } });
  */
 export const initTWD = (files: TestModule, options?: InitTWDOptions) => {
-  const { open = true, position = "left", serviceWorker = true, serviceWorkerUrl = '/mock-sw.js' } = options || {};
-  initTests(files, <TWDSidebar open={open} position={position} />, createRoot);
+  const { open = true, position = "left", serviceWorker = true, serviceWorkerUrl = '/mock-sw.js', theme } = options || {};
+  initTests(files, <TWDSidebar open={open} position={position} />, createRoot, theme);
   if (serviceWorker) {
   initRequestMocking(serviceWorkerUrl)
     .then(() => {
