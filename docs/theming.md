@@ -12,6 +12,10 @@ TWD uses CSS variables for theming, which means you can customize the entire UI 
 
 ## Basic Usage
 
+Here's a quick preview of the default theme:
+
+![Default TWD Sidebar](/images/twd_side_bar_success.png)
+
 With the bundled setup, you can pass a `theme` option to `initTWD`:
 
 ```tsx
@@ -126,39 +130,41 @@ The theme object accepts the following properties (all optional):
 
 A complete dark theme for those who prefer dark mode:
 
+![Dark Theme Preview](/images/dark_theme.png)
+
 ```tsx
 if (import.meta.env.DEV) {
   const { initTWD } = await import('twd-js/bundled');
   const tests = import.meta.glob("./**/*.twd.test.ts");
   
   const darkTheme = {
-    primary: '#3b82f6',
-    background: '#1e293b',
-    backgroundSecondary: '#334155',
-    border: '#475569',
-    borderLight: '#64748b',
-    text: '#f1f5f9',
-    textSecondary: '#cbd5e1',
-    textMuted: '#94a3b8',
+    primary: '#2dd4bf',
+    buttonPrimary: '#2dd4bf',
+    buttonPrimaryText: '#042f2e',
+    background: '#0b0f14',
+    backgroundSecondary: '#111827',
+    skipBg: '#111827',
+    border: 'rgba(255, 255, 255, 0.08)',
+    borderLight: 'rgba(255, 255, 255, 0.12)',
+    buttonBorder: 'rgba(255, 255, 255, 0.12)',
+    text: '#e5e7eb',
+    textSecondary: '#9ca3af',
+    textMuted: '#6b7280',
     success: '#22c55e',
-    successBg: '#14532d',
-    error: '#ef4444',
-    errorBg: '#7f1d1d',
-    warning: '#fbbf24',
-    warningBg: '#78350f',
-    skip: '#475569',
-    skipBg: '#334155',
-    buttonPrimary: '#3b82f6',
-    buttonPrimaryText: '#ffffff',
-    buttonSecondary: '#334155',
-    buttonSecondaryText: '#f1f5f9',
-    buttonBorder: '#475569',
+    successBg: 'rgba(34, 197, 94, 0.15)',
+    error: '#f87171',
+    errorBg: 'rgba(248, 113, 113, 0.15)',
+    warning: '#facc15',
+    warningBg: 'rgba(250, 204, 21, 0.15)',
+    skip: '#6b7280',
+    buttonSecondary: '#111827',
+    buttonSecondaryText: '#e5e7eb',
     sidebarWidth: '320px',
-    borderRadius: '8px',
-    shadow: '2px 0 8px rgba(0,0,0,0.3)',
-    shadowSm: '0 2px 4px rgba(0, 0, 0, 0.2)',
-    iconColor: '#f1f5f9',
-    iconColorSecondary: '#cbd5e1',
+    borderRadius: '10px',
+    shadow: '0 0 0 1px rgba(255,255,255,0.05), 0 8px 24px rgba(0,0,0,0.6)',
+    shadowSm: '0 1px 2px rgba(0,0,0,0.4)',
+    iconColor: '#e5e7eb',
+    iconColorSecondary: '#9ca3af',
   };
   
   initTWD(tests, { 
@@ -171,6 +177,8 @@ if (import.meta.env.DEV) {
 ### Minimal Theme
 
 A clean, minimal theme with subtle colors and increased spacing:
+
+![Minimal Theme Preview](/images/theme_minimal.png)
 
 ```tsx
 if (import.meta.env.DEV) {
