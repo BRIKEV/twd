@@ -1,3 +1,4 @@
+import { useRef, useEffect } from "react";
 import Loader from "./Icons/Loader";
 import Play from "./Icons/Play";
 import SkipOnlyName from "./SkipOnlyName";
@@ -78,6 +79,34 @@ export const TestListItem = ({
   runTest,
 }: TestListItemProps) => {
   const styles = statusStyles(node);
+  const logsContainerRef = useRef<HTMLUListElement>(null);
+  const previousStatusRef = useRef<typeof node.status>(node.status);
+  const previousLogsLengthRef = useRef<number>(node.logs?.length || 0);
+
+  // Auto-scroll to bottom when test finishes (pass/fail) or when new logs are added
+  useEffect(() => {
+    const logsContainer = logsContainerRef.current;
+    if (!logsContainer || !node.logs || node.logs.length === 0) return;
+
+    const testJustFinished = 
+      previousStatusRef.current === "running" && 
+      (node.status === "pass" || node.status === "fail");
+    
+    const newLogsAdded = node.logs.length > previousLogsLengthRef.current;
+
+    // Scroll to bottom if test just finished or new logs were added
+    if (testJustFinished || newLogsAdded) {
+      // Use setTimeout to ensure DOM has updated
+      setTimeout(() => {
+        logsContainer.scrollTop = logsContainer.scrollHeight;
+      }, 0);
+    }
+
+    // Update refs for next render
+    previousStatusRef.current = node.status;
+    previousLogsLengthRef.current = node.logs.length;
+  }, [node.status, node.logs]);
+
   return (
     <li
       key={node.name}
@@ -137,6 +166,7 @@ export const TestListItem = ({
       </div>
       {node.logs && node.logs.length > 0 && (
         <ul
+          ref={logsContainerRef}
           style={{
             borderRadius: "var(--twd-border-radius)",
             maxHeight: "260px",
