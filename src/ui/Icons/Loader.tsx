@@ -11,7 +11,7 @@ const Loader = () => (
     height="24"
     viewBox="0 0 24 24"
     fill="none"
-    stroke="#364153"
+    stroke="var(--twd-icon-color-secondary)"
     strokeWidth="2"
     strokeLinecap="round"
     strokeLinejoin="round"

@@ -19,21 +19,21 @@ export const MockRulesButton = () => {
       onClick={handleShowRules}
       aria-label="View mock rules details in console"
       style={{
-        background: "#f8fafc",
-        border: "1px solid #cbd5e1",
-        borderRadius: "6px",
-        padding: "8px 12px",
+        background: "var(--twd-button-secondary)",
+        border: "1px solid var(--twd-button-border)",
+        borderRadius: "var(--twd-border-radius-lg)",
+        padding: "var(--twd-spacing-md) var(--twd-spacing-lg)",
         cursor: "pointer",
-        fontSize: "12px",
-        color: "#475569",
+        fontSize: "var(--twd-font-size-sm)",
+        color: "var(--twd-button-secondary-text)",
         display: "flex",
         alignItems: "center",
-        gap: "8px",
+        gap: "var(--twd-spacing-md)",
         marginBottom: "10px",
         width: "100%",
         textAlign: "left",
-        transition: "all 0.2s ease",
-        boxShadow: "0 1px 2px rgba(0, 0, 0, 0.05)",
+        transition: `all var(--twd-animation-duration) ease`,
+        boxShadow: "var(--twd-shadow-sm)",
       }}
     >
       <MockRequestIcon />
@@ -41,9 +41,9 @@ export const MockRulesButton = () => {
         Rules: {triggeredRules.length}/{rules.length} triggered
       </span>
       <span style={{ 
-        fontSize: "10px", 
-        color: "#1E293B",
-        fontWeight: "500"
+        fontSize: "var(--twd-font-size-xs)", 
+        color: "var(--twd-text)",
+        fontWeight: "var(--twd-font-weight-medium)"
       }}>
         View rules in console
       </span>

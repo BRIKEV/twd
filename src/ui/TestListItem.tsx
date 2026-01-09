@@ -1,3 +1,4 @@
+import { useRef, useEffect } from "react";
 import Loader from "./Icons/Loader";
 import Play from "./Icons/Play";
 import SkipOnlyName from "./SkipOnlyName";
@@ -26,31 +27,31 @@ export const statusStyles = (node: Test) => {
     case "pass":
       return {
         item: {
-          background: "#dcfce7",
+          background: "var(--twd-success-bg)",
         },
         container: {
-          borderLeft: "3px solid #00c951",
+          borderLeft: "3px solid var(--twd-success)",
         },
       };
     case "fail":
       return {
         item: {
-          background: "#fee2e2",
+          background: "var(--twd-error-bg)",
         },
         container: {
-          borderLeft: "3px solid #fb2c36",
+          borderLeft: "3px solid var(--twd-error)",
         },
       };
     case "skip":
       return {
         item: {
-          background: "#f3f4f6",
+          background: "var(--twd-skip-bg)",
         },
       };
     case "running":
       return {
         item: {
-          background: "#fef9c3",
+          background: "var(--twd-warning-bg)",
         },
       };
     default:
@@ -64,9 +65,9 @@ export const statusStyles = (node: Test) => {
 
 export const assertStyles = (text: string) => {
   if (text.startsWith("Assertion passed") || text.startsWith("Event fired")) {
-    return { color: "#0d542b", fontWeight: "700" };
+    return { color: "var(--twd-success)", fontWeight: "var(--twd-font-weight-bold)" };
   } else if (text.startsWith("Test failed")) {
-    return { color: "#fb2c36", fontWeight: "700" };
+    return { color: "var(--twd-error)", fontWeight: "var(--twd-font-weight-bold)" };
   }
   return {};
 };
@@ -78,28 +79,85 @@ export const TestListItem = ({
   runTest,
 }: TestListItemProps) => {
   const styles = statusStyles(node);
+  const logsContainerRef = useRef<HTMLUListElement>(null);
+  const previousStatusRef = useRef<typeof node.status>(node.status);
+  const previousLogsLengthRef = useRef<number>(node.logs?.length || 0);
+  
+  // Check if this is the previously run test (for visual indicator)
+  const isPreviouslyRunTest = typeof window !== 'undefined' && 
+    sessionStorage.getItem('twd-last-run-test-name') === node.name;
+
+  // Auto-scroll to bottom when test finishes (pass/fail) or when new logs are added
+  useEffect(() => {
+    const logsContainer = logsContainerRef.current;
+    if (!logsContainer || !node.logs || node.logs.length === 0) return;
+
+    const testJustFinished = 
+      previousStatusRef.current === "running" && 
+      (node.status === "pass" || node.status === "fail");
+    
+    const newLogsAdded = node.logs.length > previousLogsLengthRef.current;
+
+    // Scroll to bottom if test just finished or new logs were added
+    if (testJustFinished || newLogsAdded) {
+      // Use setTimeout to ensure DOM has updated
+      setTimeout(() => {
+        logsContainer.scrollTop = logsContainer.scrollHeight;
+      }, 0);
+    }
+
+    // Update refs for next render
+    previousStatusRef.current = node.status;
+    previousLogsLengthRef.current = node.logs.length;
+  }, [node.status, node.logs]);
+
+  const getStatusLabel = () => {
+    switch (node.status) {
+      case "pass":
+        return "passed";
+      case "fail":
+        return "failed";
+      case "running":
+        return "running";
+      case "skip":
+        return "skipped";
+      default:
+        return "not run";
+    }
+  };
+
   return (
     <li
       key={node.name}
       style={{
-        marginBottom: "4px",
-        marginLeft: depth * 6,
+        marginBottom: "var(--twd-spacing-xs)",
+        marginLeft: `calc(${depth} * var(--twd-spacing-sm))`,
         ...styles.container,
       }}
       data-testid={`test-list-item-${id}`}
+      data-test-name={node.name}
+      role="listitem"
+      aria-label={`Test ${node.name}, status: ${getStatusLabel()}`}
     >
       <div
         style={{
           display: "flex",
           alignItems: "left",
           justifyContent: "space-between",
-          padding: "4px 6px",
-          borderRadius: "4px",
+          padding: "var(--twd-spacing-xs) var(--twd-spacing-sm)",
+          borderRadius: "var(--twd-border-radius)",
           ...styles.item,
+          ...(isPreviouslyRunTest && {
+            border: "1px dashed var(--twd-border)",
+          }),
         }}
       >
         <span
-          style={{ fontWeight: "500", color: "#374151", maxWidth: "220px" }}
+          style={{ 
+            fontWeight: "var(--twd-font-weight-medium)", 
+            color: "var(--twd-text)", 
+            maxWidth: "220px" 
+          }}
         >
           <SkipOnlyName
             id={id}
@@ -113,12 +171,12 @@ export const TestListItem = ({
           aria-label={`Run ${node.name} test`}
           style={{
             background: "transparent",
-            border: "1px solid #d1d5db",
-            borderRadius: "4px",
+            border: "1px solid var(--twd-border-light)",
+            borderRadius: "var(--twd-border-radius)",
             padding: "0",
             cursor: "pointer",
             verticalAlign: "middle",
-            fontSize: "12px",
+            fontSize: "var(--twd-font-size-sm)",
             width: "24px",
             height: "24px",
             display: "flex",
@@ -133,14 +191,15 @@ export const TestListItem = ({
       </div>
       {node.logs && node.logs.length > 0 && (
         <ul
+          ref={logsContainerRef}
           style={{
-            borderRadius: "4px",
+            borderRadius: "var(--twd-border-radius)",
             maxHeight: "260px",
             overflowY: "auto",
             padding: 0,
-            background: "#f3f4f6",
+            background: "var(--twd-background-secondary)",
             listStyle: "none",
-            marginTop: "4px",
+            marginTop: "var(--twd-spacing-xs)",
             textAlign: "left",
           }}
         >
@@ -148,10 +207,10 @@ export const TestListItem = ({
             <li
               key={idx}
               style={{
-                fontSize: "12px",
-                padding: "4px 6px",
-                borderBottom: "1px solid #d1d5db",
-                color: "#374151",
+                fontSize: "var(--twd-font-size-sm)",
+                padding: "var(--twd-spacing-xs) var(--twd-spacing-sm)",
+                borderBottom: "1px solid var(--twd-border-light)",
+                color: "var(--twd-text)",
                 ...assertStyles(log),
               }}
             >

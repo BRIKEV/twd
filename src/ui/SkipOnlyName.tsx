@@ -12,7 +12,7 @@ const SkipOnlyName = ({ id, name, skip, only }: SkipOnlyNameProps) => {
       {name}{" "}
       {only && (
         <span
-          style={{ color: "#2563eb" }}
+          style={{ color: "var(--twd-primary)" }}
           data-testid={`only-indicator-${id}`}
         >
           {" "}
@@ -21,7 +21,7 @@ const SkipOnlyName = ({ id, name, skip, only }: SkipOnlyNameProps) => {
       )}
       {skip && (
         <span
-          style={{ color: "#6b7280" }}
+          style={{ color: "var(--twd-text-secondary)" }}
           data-testid={`skip-indicator-${id}`}
         >
           {" "}

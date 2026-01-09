@@ -21,15 +21,22 @@ interface TWDSidebarProps {
 }
 
 const positionStyles = {
-  left: { left: 0, borderRight: "1px solid #e5e7eb" },
-  right: { right: 0, borderLeft: "1px solid #e5e7eb" },
+  left: { left: 0, borderRight: "1px solid var(--twd-border)" },
+  right: { right: 0, borderLeft: "1px solid var(--twd-border)" },
 };
 
 const fontFamily = `-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"`;
 
+const getOpenState = (open: boolean) => {
+  if (!sessionStorage.getItem('twd-sidebar-open')) {
+    return open;
+  }
+  return sessionStorage.getItem('twd-sidebar-open') === 'true';
+};
+
 export const TWDSidebar = ({ open, position = "left" }: TWDSidebarProps) => {
   const [_, setRefresh] = useState(0);
-  const [isOpen, setIsOpen] = useState(open);
+  const [isOpen, setIsOpen] = useState(getOpenState(open));
   useLayout({ isOpen, position });
 
   const runner = new TestRunner({
@@ -53,20 +60,29 @@ export const TWDSidebar = ({ open, position = "left" }: TWDSidebarProps) => {
     },
   });
 
+  const handleSetIsOpen = (open: boolean) => {
+    setIsOpen(open);
+    sessionStorage.setItem('twd-sidebar-open', open.toString());
+  };
+
   const runAll = async () => {
+    // Clear the last run test name when running all tests
+    sessionStorage.removeItem('twd-last-run-test-name');
     await runner.runAll();
   };
 
   const runTest = async (id: string) => {
     const test = Array.from(handlers.values()).filter(h => h.type === "test").find(t => t.id === id);
     if (!test) return;
+    // Save test name to session storage for scroll persistence
+    sessionStorage.setItem('twd-last-run-test-name', test.name);
     await runner.runSingle(test.id);
   };
   
   const tests = Array.from(handlers.values());
 
     if (!isOpen) {
-    return <ClosedSidebar position={position} setOpen={setIsOpen} />;
+    return <ClosedSidebar position={position} setOpen={handleSetIsOpen} />;
   }
 
   const totalTests = tests.filter(test => test.type === "test").length;
@@ -78,26 +94,40 @@ export const TWDSidebar = ({ open, position = "left" }: TWDSidebarProps) => {
         position: "fixed",
         top: 0,
         bottom: 0,
-        width: "280px",
-        background: "#f9fafb",
-        fontSize: "14px",
+        width: "var(--twd-sidebar-width)",
+        background: "var(--twd-background)",
+        fontSize: "var(--twd-font-size-md)",
         overflowY: "auto",
-        boxShadow: "2px 0 6px rgba(0,0,0,0.1)",
+        boxShadow: "var(--twd-shadow)",
         textAlign: "left",
-        zIndex: 1000,
+        zIndex: "var(--twd-z-index-sidebar)",
         ...positionStyles[position]
       }}
       data-testid="twd-sidebar"
+      role="complementary"
+      aria-label="Test While Developing sidebar"
     >
-      <div style={{ padding: "8px", background: "#f9fafb", position: "sticky", top: 0, zIndex: 1000, borderBottom: "1px solid #e5e7eb" }}>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "14px" }}>
+      <div style={{ 
+        padding: "var(--twd-spacing-md)", 
+        background: "var(--twd-background)", 
+        position: "sticky", 
+        top: 0, 
+        zIndex: "var(--twd-z-index-sticky)", 
+        borderBottom: "1px solid var(--twd-border)" 
+      }}>
+        <div style={{ 
+          display: "flex", 
+          justifyContent: "space-between", 
+          alignItems: "center", 
+          marginBottom: "var(--twd-spacing-xl)" 
+        }}>
           <button
             onClick={runAll}
             style={{
-              background: "#1A6EF4",
-              color: "white",
-              padding: "4px 8px",
-              borderRadius: "4px",
+              background: "var(--twd-button-primary)",
+              color: "var(--twd-button-primary-text)",
+              padding: "var(--twd-spacing-xs) var(--twd-spacing-md)",
+              borderRadius: "var(--twd-border-radius)",
               border: "none",
               cursor: "pointer",
             }}
@@ -110,25 +140,32 @@ export const TWDSidebar = ({ open, position = "left" }: TWDSidebarProps) => {
               background: "transparent",
               border: "none",
               cursor: "pointer",
-              fontSize: "14px",
+              fontSize: "var(--twd-font-size-md)",
               paddingRight: "0",
               paddingLeft: "0",
             }}
-            onClick={() => setIsOpen(false)}
+            onClick={() => handleSetIsOpen(false)}
           >
             ✖
           </button>
         </div>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: "14px", color: "#6b7280", marginBottom: "10px" }}>
-          <span style={{ color: "#374151" }}>Total: {totalTests}</span>
-          <div style={{ display: "flex", gap: "4px" }}>
-            <span style={{ color: "#00c951" }}>&#10003; {tests.filter(test => test.status === "pass").length}</span>
-            <span style={{ color: "#fb2c36" }}>&#10007; {tests.filter(test => test.status === "fail").length}</span>
+        <div style={{ 
+          display: "flex", 
+          justifyContent: "space-between", 
+          alignItems: "center", 
+          fontSize: "var(--twd-font-size-md)", 
+          color: "var(--twd-text-secondary)", 
+          marginBottom: "10px" 
+        }}>
+          <span style={{ color: "var(--twd-text)" }}>Total: {totalTests}</span>
+          <div style={{ display: "flex", gap: "var(--twd-spacing-xs)" }}>
+            <span style={{ color: "var(--twd-success)" }}>&#10003; {tests.filter(test => test.status === "pass").length}</span>
+            <span style={{ color: "var(--twd-error)" }}>&#10007; {tests.filter(test => test.status === "fail").length}</span>
           </div>
         </div>
         <MockRulesButton />
       </div>
-      <div style={{ padding: "8px" }}>
+      <div style={{ padding: "var(--twd-spacing-md)" }}>
         <TestList
           tests={tests.map(test => ({
             name: test.name,

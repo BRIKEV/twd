@@ -37,6 +37,7 @@ The `initTWD` function accepts the following options:
 - **`position`** (`"left" | "right"`, optional) - Sidebar position. Default: `"left"`
 - **`serviceWorker`** (`boolean`, optional) - Whether to initialize request mocking. Default: `true`
 - **`serviceWorkerUrl`** (`string`, optional) - Custom path to the service worker file. Default: `'/mock-sw.js'`
+- **`theme`** (`Partial<TWDTheme>`, optional) - Custom theme configuration. See [Theming](/theming) for details.
 
 **Examples:**
 
@@ -58,9 +59,14 @@ initTWD(tests, {
   open: true, 
   position: 'right',
   serviceWorker: true,
-  serviceWorkerUrl: '/my-mock-sw.js'
+  serviceWorkerUrl: '/my-mock-sw.js',
+  theme: { primary: '#3b82f6', background: '#ffffff' }
 });
 ```
+
+::: tip Theming
+Learn more about customizing the TWD sidebar appearance in the [Theming](/theming) guide.
+:::
 
 ### Alternative: Standard Setup (React Only)
 

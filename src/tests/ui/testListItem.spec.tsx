@@ -1,10 +1,14 @@
-import { describe, it, expect, vi } from "vitest";
+import { describe, it, expect, vi, beforeEach } from "vitest";
 import userEvent from '@testing-library/user-event';
 import { render, screen } from '@testing-library/react'
 import { TestListItem, assertStyles, statusStyles } from "../../ui/TestListItem";
 
 
 describe("TestListItem", () => {
+  beforeEach(() => {
+    sessionStorage.clear();
+  });
+
   describe('component' , () => {
     it("should render TestListItem component", async () => {
       const testId = 'test-1';
@@ -87,7 +91,7 @@ describe("TestListItem", () => {
       }} depth={depth} id={testId} runTest={mockRunTest} />);
       const listItem = screen.getByTestId(`test-list-item-${testId}`);
       expect(listItem).toBeInTheDocument();
-      expect(listItem).toHaveStyle(`margin-left: ${depth * 6}px`);
+      expect(listItem).toHaveStyle('margin-left: calc(3 * var(--twd-spacing-sm))');
     });
   
     it("should disable run button when test is running", () => {
@@ -134,22 +138,66 @@ describe("TestListItem", () => {
       }} depth={0} id={testId} runTest={mockRunTest} />);
       const log1 = screen.getByText('Assertion passed: Value is true');
       expect(log1).toBeInTheDocument();
-      expect(log1).toHaveStyle('color: #0d542b; font-weight: 700;');
+      expect(log1).toHaveStyle('color: var(--twd-success); font-weight: var(--twd-font-weight-bold);');
       const log2 = screen.getByText('Test failed: Value is false');
       expect(log2).toBeInTheDocument();
-      expect(log2).toHaveStyle('color: #fb2c36; font-weight: 700;');
+      expect(log2).toHaveStyle('color: var(--twd-error); font-weight: var(--twd-font-weight-bold);');
+    });
+
+    it('should show dashed border when test name matches sessionStorage', () => {
+      const testId = 'test-1';
+      const test = {
+        name: 'My Test',
+        only: false,
+        skip: false,
+        status: 'idle',
+        logs: [],
+        id: 'test-1',
+        type: 'test',
+        depth: 1,
+      };
+      const mockRunTest = vi.fn();
+      
+      sessionStorage.setItem('twd-last-run-test-name', 'My Test');
+      render(<TestListItem node={{ ...test, status: 'idle', type: 'test' }} depth={1} id={testId} runTest={mockRunTest} />);
+      
+      const testItem = screen.getByTestId(`test-list-item-${testId}`);
+      const innerDiv = testItem.querySelector('div');
+      expect(innerDiv?.style.border).toBe('1px dashed var(--twd-border)');
+    });
+
+    it('should not show dashed border when test name does not match sessionStorage', () => {
+      const testId = 'test-1';
+      const test = {
+        name: 'My Test',
+        only: false,
+        skip: false,
+        status: 'idle',
+        logs: [],
+        id: 'test-1',
+        type: 'test',
+        depth: 1,
+      };
+      const mockRunTest = vi.fn();
+      
+      sessionStorage.setItem('twd-last-run-test-name', 'Different Test');
+      render(<TestListItem node={{ ...test, status: 'idle', type: 'test' }} depth={1} id={testId} runTest={mockRunTest} />);
+      
+      const testItem = screen.getByTestId(`test-list-item-${testId}`);
+      const innerDiv = testItem.querySelector('div');
+      expect(innerDiv).not.toHaveStyle('border: 1px dashed var(--twd-border)');
     });
   });
 
   describe('assertStyles methods', () => {
     it("should return correct styles for 'Assertion passed' text", () => {
       const styles = assertStyles("Assertion passed: All good");
-      expect(styles).toEqual({ color: "#0d542b", fontWeight: "700" });
+      expect(styles).toEqual({ color: "var(--twd-success)", fontWeight: "var(--twd-font-weight-bold)" });
     });
     
     it("should return correct styles for 'Test failed' text", () => {
       const styles = assertStyles("Test failed: Something went wrong");
-      expect(styles).toEqual({ color: "#fb2c36", fontWeight: "700" });
+      expect(styles).toEqual({ color: "var(--twd-error)", fontWeight: "var(--twd-font-weight-bold)" });
     });
 
     it("should return empty styles for other text", () => {
@@ -176,8 +224,8 @@ describe("TestListItem", () => {
         type: 'test',
       });
       expect(styles).toEqual({
-        item: { background: "#dcfce7" },
-        container: { borderLeft: "3px solid #00c951" },
+        item: { background: "var(--twd-success-bg)" },
+        container: { borderLeft: "3px solid var(--twd-success)" },
       });
     });
 
@@ -188,8 +236,8 @@ describe("TestListItem", () => {
         type: 'test',
       });
       expect(styles).toEqual({
-        item: { background: "#fee2e2" },
-        container: { borderLeft: "3px solid #fb2c36" },
+        item: { background: "var(--twd-error-bg)" },
+        container: { borderLeft: "3px solid var(--twd-error)" },
       });
     });
 
@@ -200,7 +248,7 @@ describe("TestListItem", () => {
         type: 'test',
       });
       expect(styles).toEqual({
-        item: { background: "#f3f4f6" },
+        item: { background: "var(--twd-skip-bg)" },
       });
     });
 
@@ -211,7 +259,7 @@ describe("TestListItem", () => {
         type: 'test',
       });
       expect(styles).toEqual({
-        item: { background: "#fef9c3" },
+        item: { background: "var(--twd-warning-bg)" },
       });
     });
 
