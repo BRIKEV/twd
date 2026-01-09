@@ -144,5 +144,29 @@ describe("TWDSidebar", () => {
       await user.click(runTestButton);
       expect(testFn1).toHaveBeenCalled();
     });
+
+    it('should save test name to sessionStorage when running a single test', async () => {
+      const user = userEvent.setup();
+      const testFn1 = vi.fn();
+      twd.describe('Group test', () => {
+        twd.it('My Test Name', testFn1);
+      });
+      render(<TWDSidebar open={true} />);
+      const runTestButton = screen.getByTestId('play-icon');
+      await user.click(runTestButton);
+      expect(sessionStorage.getItem('twd-last-run-test-name')).toBe('My Test Name');
+    });
+
+    it('should remove test name from sessionStorage when running all tests', async () => {
+      const user = userEvent.setup();
+      sessionStorage.setItem('twd-last-run-test-name', 'Previous Test');
+      twd.describe('Group test', () => {
+        twd.it('Test 1', vi.fn());
+      });
+      render(<TWDSidebar open={true} />);
+      const runAllButton = screen.getByText("Run All");
+      await user.click(runAllButton);
+      expect(sessionStorage.getItem('twd-last-run-test-name')).toBeNull();
+    });
   });
 });

@@ -1,10 +1,14 @@
-import { describe, it, expect, vi } from "vitest";
+import { describe, it, expect, vi, beforeEach } from "vitest";
 import userEvent from '@testing-library/user-event';
 import { render, screen } from '@testing-library/react'
 import * as twd from '../../runner';
 import { TestList } from "../../ui/TestList";
 
 describe("TestList", () => {
+  beforeEach(() => {
+    twd.clearTests();
+    sessionStorage.clear();
+  });
   it("should render TestList component with tests", async () => {
     twd.describe('Group 1', () => {
       twd.it('Test 1.1', () => {});
@@ -37,5 +41,20 @@ describe("TestList", () => {
     // Simulate a click event to expand
     await user.click(TestgroupB);
     expect(TestgroupB).toHaveAttribute('aria-expanded', 'false');
+  });
+
+  it('should have data-test-name attribute on test items', () => {
+    twd.describe('Group 1', () => {
+      twd.it('Test 1.1', () => {});
+    });
+    const mockRunTest = vi.fn();
+    const tests = twd.handlers;
+    const testArray = Array.from(tests.values());
+
+    render(<TestList tests={testArray} runTest={mockRunTest} />);
+    
+    const testItem = screen.getByText('Test 1.1').closest('[data-test-name]');
+    expect(testItem).toBeInTheDocument();
+    expect(testItem).toHaveAttribute('data-test-name', 'Test 1.1');
   });
 });

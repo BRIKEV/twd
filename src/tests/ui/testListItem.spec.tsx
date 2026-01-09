@@ -1,10 +1,14 @@
-import { describe, it, expect, vi } from "vitest";
+import { describe, it, expect, vi, beforeEach } from "vitest";
 import userEvent from '@testing-library/user-event';
 import { render, screen } from '@testing-library/react'
 import { TestListItem, assertStyles, statusStyles } from "../../ui/TestListItem";
 
 
 describe("TestListItem", () => {
+  beforeEach(() => {
+    sessionStorage.clear();
+  });
+
   describe('component' , () => {
     it("should render TestListItem component", async () => {
       const testId = 'test-1';
@@ -138,6 +142,50 @@ describe("TestListItem", () => {
       const log2 = screen.getByText('Test failed: Value is false');
       expect(log2).toBeInTheDocument();
       expect(log2).toHaveStyle('color: var(--twd-error); font-weight: var(--twd-font-weight-bold);');
+    });
+
+    it('should show dashed border when test name matches sessionStorage', () => {
+      const testId = 'test-1';
+      const test = {
+        name: 'My Test',
+        only: false,
+        skip: false,
+        status: 'idle',
+        logs: [],
+        id: 'test-1',
+        type: 'test',
+        depth: 1,
+      };
+      const mockRunTest = vi.fn();
+      
+      sessionStorage.setItem('twd-last-run-test-name', 'My Test');
+      render(<TestListItem node={{ ...test, status: 'idle', type: 'test' }} depth={1} id={testId} runTest={mockRunTest} />);
+      
+      const testItem = screen.getByTestId(`test-list-item-${testId}`);
+      const innerDiv = testItem.querySelector('div');
+      expect(innerDiv?.style.border).toBe('1px dashed var(--twd-border)');
+    });
+
+    it('should not show dashed border when test name does not match sessionStorage', () => {
+      const testId = 'test-1';
+      const test = {
+        name: 'My Test',
+        only: false,
+        skip: false,
+        status: 'idle',
+        logs: [],
+        id: 'test-1',
+        type: 'test',
+        depth: 1,
+      };
+      const mockRunTest = vi.fn();
+      
+      sessionStorage.setItem('twd-last-run-test-name', 'Different Test');
+      render(<TestListItem node={{ ...test, status: 'idle', type: 'test' }} depth={1} id={testId} runTest={mockRunTest} />);
+      
+      const testItem = screen.getByTestId(`test-list-item-${testId}`);
+      const innerDiv = testItem.querySelector('div');
+      expect(innerDiv).not.toHaveStyle('border: 1px dashed var(--twd-border)');
     });
   });
 
