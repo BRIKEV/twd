@@ -1,3 +1,12 @@
+## 1.4.0 (2026-01-09)
+
+* chore: update dependencies ([628d4fb](https://github.com/BRIKEV/twd/commit/628d4fb))
+* Feat/improve sidebar ux (#126) ([e36f435](https://github.com/BRIKEV/twd/commit/e36f435)), closes [#126](https://github.com/BRIKEV/twd/issues/126)
+* docs: add new domain to vitepress docs ([aad1d35](https://github.com/BRIKEV/twd/commit/aad1d35))
+* fix: error with broken links in the mcp docs ([a7b98b9](https://github.com/BRIKEV/twd/commit/a7b98b9))
+* docs: add twd-mcp guide ([6a866ec](https://github.com/BRIKEV/twd/commit/6a866ec))
+
+
 ## <small>1.3.4 (2025-12-29)</small>
 
 * docs: add ai agent document ([b2b86ea](https://github.com/BRIKEV/twd/commit/b2b86ea))
