@@ -8,8 +8,8 @@
  * 
  * ```css
  * :root {
- *   --twd-primary-color: #1A6EF4;
- *   --twd-background: #f9fafb;
+ *   --twd-primary: #3b82f6;
+ *   --twd-background: #1e293b;
  *    ... other variables 
  * }
  *
@@ -82,31 +82,31 @@ export interface TWDTheme {
 
 export const defaultTheme: TWDTheme = {
   // Colors
-  primary: '#1A6EF4',
-  background: '#f9fafb',
-  backgroundSecondary: '#f3f4f6',
-  border: '#e5e7eb',
-  borderLight: '#d1d5db',
-  text: '#374151',
-  textSecondary: '#6b7280',
-  textMuted: '#475569',
+  primary: '#3b82f6',
+  background: '#1e293b',
+  backgroundSecondary: '#334155',
+  border: '#475569',
+  borderLight: '#64748b',
+  text: '#f1f5f9',
+  textSecondary: '#cbd5e1',
+  textMuted: '#94a3b8',
   
   // Status colors
-  success: '#00c951',
-  successBg: '#dcfce7',
-  error: '#fb2c36',
-  errorBg: '#fee2e2',
-  warning: '#fef9c3',
-  warningBg: '#fef9c3',
-  skip: '#f3f4f6',
-  skipBg: '#f3f4f6',
+  success: '#22c55e',
+  successBg: '#14532d',
+  error: '#ef4444',
+  errorBg: '#7f1d1d',
+  warning: '#fbbf24',
+  warningBg: '#78350f',
+  skip: '#475569',
+  skipBg: '#334155',
   
   // Interactive elements
-  buttonPrimary: '#1A6EF4',
+  buttonPrimary: '#3b82f6',
   buttonPrimaryText: '#ffffff',
-  buttonSecondary: '#f8fafc',
-  buttonSecondaryText: '#475569',
-  buttonBorder: '#cbd5e1',
+  buttonSecondary: '#334155',
+  buttonSecondaryText: '#f1f5f9',
+  buttonBorder: '#475569',
   
   // Spacing
   spacingXs: '4px',
@@ -125,13 +125,13 @@ export const defaultTheme: TWDTheme = {
   fontWeightBold: '700',
   
   // Layout
-  sidebarWidth: '280px',
-  borderRadius: '4px',
+  sidebarWidth: '320px',
+  borderRadius: '8px',
   borderRadiusLg: '6px',
   
   // Effects
-  shadow: '2px 0 6px rgba(0,0,0,0.1)',
-  shadowSm: '0 1px 2px rgba(0, 0, 0, 0.05)',
+  shadow: '2px 0 8px rgba(0,0,0,0.3)',
+  shadowSm: '0 2px 4px rgba(0, 0, 0, 0.2)',
   
   // Z-index
   zIndexSidebar: '1000',
@@ -141,8 +141,8 @@ export const defaultTheme: TWDTheme = {
   animationDuration: '0.2s',
   
   // Icon colors
-  iconColor: '#000000',
-  iconColorSecondary: '#364153',
+  iconColor: '#f1f5f9',
+  iconColorSecondary: '#cbd5e1',
 };
 
 /**
