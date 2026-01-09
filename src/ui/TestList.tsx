@@ -95,6 +95,7 @@ export const TestList = ({ tests, runTest }: TestListProps) => {
           tabIndex={0}
           role="button"
           aria-expanded={!isCollapsed}
+          aria-label={`${isCollapsed ? "Expand" : "Collapse"} test suite ${node.name}`}
           onClick={() => toggle(node.id)}
         >
           <SkipOnlyName id={node.id} name={node.name} skip={node.skip} only={node.only} />
@@ -113,7 +114,12 @@ export const TestList = ({ tests, runTest }: TestListProps) => {
   const roots = buildTreeFromHandlers(tests);
 
   return (
-    <ul ref={listContainerRef} style={{ listStyle: "none", padding: 0, margin: 0 }}>
+    <ul 
+      ref={listContainerRef} 
+      style={{ listStyle: "none", padding: 0, margin: 0 }}
+      role="list"
+      aria-label="Test list"
+    >
       {roots.map((n) => renderNode(n))}
     </ul>
   );

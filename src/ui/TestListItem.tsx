@@ -111,6 +111,21 @@ export const TestListItem = ({
     previousLogsLengthRef.current = node.logs.length;
   }, [node.status, node.logs]);
 
+  const getStatusLabel = () => {
+    switch (node.status) {
+      case "pass":
+        return "passed";
+      case "fail":
+        return "failed";
+      case "running":
+        return "running";
+      case "skip":
+        return "skipped";
+      default:
+        return "not run";
+    }
+  };
+
   return (
     <li
       key={node.name}
@@ -121,6 +136,8 @@ export const TestListItem = ({
       }}
       data-testid={`test-list-item-${id}`}
       data-test-name={node.name}
+      role="listitem"
+      aria-label={`Test ${node.name}, status: ${getStatusLabel()}`}
     >
       <div
         style={{

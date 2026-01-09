@@ -104,6 +104,8 @@ export const TWDSidebar = ({ open, position = "left" }: TWDSidebarProps) => {
         ...positionStyles[position]
       }}
       data-testid="twd-sidebar"
+      role="complementary"
+      aria-label="Test While Developing sidebar"
     >
       <div style={{ 
         padding: "var(--twd-spacing-md)", 
