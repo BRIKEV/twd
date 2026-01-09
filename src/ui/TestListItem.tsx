@@ -82,6 +82,10 @@ export const TestListItem = ({
   const logsContainerRef = useRef<HTMLUListElement>(null);
   const previousStatusRef = useRef<typeof node.status>(node.status);
   const previousLogsLengthRef = useRef<number>(node.logs?.length || 0);
+  
+  // Check if this is the previously run test (for visual indicator)
+  const isPreviouslyRunTest = typeof window !== 'undefined' && 
+    sessionStorage.getItem('twd-last-run-test-name') === node.name;
 
   // Auto-scroll to bottom when test finishes (pass/fail) or when new logs are added
   useEffect(() => {
@@ -116,6 +120,7 @@ export const TestListItem = ({
         ...styles.container,
       }}
       data-testid={`test-list-item-${id}`}
+      data-test-name={node.name}
     >
       <div
         style={{
@@ -125,6 +130,9 @@ export const TestListItem = ({
           padding: "var(--twd-spacing-xs) var(--twd-spacing-sm)",
           borderRadius: "var(--twd-border-radius)",
           ...styles.item,
+          ...(isPreviouslyRunTest && {
+            border: "1px dashed var(--twd-border)",
+          }),
         }}
       >
         <span

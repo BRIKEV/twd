@@ -66,12 +66,16 @@ export const TWDSidebar = ({ open, position = "left" }: TWDSidebarProps) => {
   };
 
   const runAll = async () => {
+    // Clear the last run test name when running all tests
+    sessionStorage.removeItem('twd-last-run-test-name');
     await runner.runAll();
   };
 
   const runTest = async (id: string) => {
     const test = Array.from(handlers.values()).filter(h => h.type === "test").find(t => t.id === id);
     if (!test) return;
+    // Save test name to session storage for scroll persistence
+    sessionStorage.setItem('twd-last-run-test-name', test.name);
     await runner.runSingle(test.id);
   };
   
