@@ -1,7 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import userEvent from '@testing-library/user-event';
 import { render, screen } from '@testing-library/react'
-import { TestListItem, assertStyles, statusStyles } from "../../ui/TestListItem";
+import { TestListItem, statusStyles } from "../../ui/TestListItem";
+import { assertStyles } from "../../ui/utils/formatLogs";
 
 
 describe("TestListItem", () => {
