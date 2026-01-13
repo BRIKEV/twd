@@ -29,4 +29,19 @@ const formatChaiError = (error: ChaiAssertionError) => {
   };
 };
 
-export { isChaiAssertionError, formatChaiError };
+const printChaiError = (error: ChaiAssertionError) => {
+  const formattedError = formatChaiError(error);
+  if (formattedError.type === "diff") {
+    console.error("Assertion failed with operator:", formattedError.operator || "unknown");
+    console.group("Expected:");
+    console.log(formattedError.expected);
+    console.groupEnd();
+    console.group("Actual:");
+    console.log(formattedError.actual);
+    console.groupEnd();
+  } else {
+    console.error(formattedError.message);
+  }
+};
+
+export { isChaiAssertionError, formatChaiError, printChaiError };
