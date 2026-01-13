@@ -237,7 +237,8 @@ Alternatively, you can override theme variables directly in your CSS without usi
   --twd-background: #1e293b;
   --twd-text: #f1f5f9;
   --twd-success: #22c55e;
-  --twd-error: #f87171;
+  --twd-error: #ff5252;
+  --twd-background-secondary: #182130;
   /* ... other variables */
 }
 ```

@@ -4,6 +4,8 @@ import { ClosedSidebar } from "./ClosedSidebar";
 import { useLayout } from "./hooks/useLayout";
 import { handlers, TestRunner } from "../runner";
 import { MockRulesButton } from "./MockRulesButton";
+import { AssertionError } from "chai";
+import { formatChaiError, isChaiAssertionError } from "./utils/chaiErrorFormat";
 
 interface TWDSidebarProps {
   /**
@@ -50,7 +52,27 @@ export const TWDSidebar = ({ open, position = "left" }: TWDSidebarProps) => {
     },
     onFail: (test, err) => {
       test.status = "fail";
-      console.error("Test failed:", test.name, err);
+      console.group(`%c❌ Test failed: ${test.name}`, "color: red; font-weight: bold;");
+      if (isChaiAssertionError(err)) {
+        const formattedError = formatChaiError(err);
+        if (formattedError.type === "diff") {
+          console.error("Assertion failed with operator:", formattedError.operator || "unknown");
+          console.group("Expected:");
+          console.log(formattedError.expected);
+          console.groupEnd();
+          console.group("Actual:");
+          console.log(formattedError.actual);
+          console.groupEnd();
+        } else {
+          console.error(formattedError.message);
+        }
+      } else {
+        console.error(err.message);
+        if (err.stack) {
+          console.error(err.stack);
+        }
+      }
+      console.groupEnd();
       test.logs.push(`Test failed: ${err.message}`);
       setRefresh((n) => n + 1);
     },
