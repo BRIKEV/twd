@@ -4,7 +4,7 @@ import { ClosedSidebar } from "./ClosedSidebar";
 import { useLayout } from "./hooks/useLayout";
 import { handlers, TestRunner } from "../runner";
 import { MockRulesButton } from "./MockRulesButton";
-import { isChaiAssertionError, printChaiError } from "./utils/chaiErrorFormat";
+import { isChaiAssertionError, printChaiError, formatChaiError } from "./utils/chaiErrorFormat";
 
 interface TWDSidebarProps {
   /**
@@ -54,11 +54,28 @@ export const TWDSidebar = ({ open, position = "left" }: TWDSidebarProps) => {
       console.group(`%c❌ Test failed: ${test.name}`, "color: red; font-weight: bold;");
       if (isChaiAssertionError(err)) {
         printChaiError(err);
+        const formattedError = formatChaiError(err);
+        if (formattedError.type === "diff") {
+          // Store structured error data as JSON string with prefix
+          test.logs.push(JSON.stringify({
+            type: "chai-diff",
+            expected: formattedError.expected,
+            actual: formattedError.actual,
+          }));
+        } else {
+          test.logs.push(JSON.stringify({
+            type: "chai-message",
+            message: `Test failed: ${formattedError.message}`,
+          }));
+        }
       } else {
         console.error(err.message);
+        test.logs.push(JSON.stringify({
+          type: "error",
+          message: `Test failed: ${err.message}`,
+        }));
       }
       console.groupEnd();
-      test.logs.push(`Test failed: ${err.message}`);
       setRefresh((n) => n + 1);
     },
     onSkip: (test) => {
