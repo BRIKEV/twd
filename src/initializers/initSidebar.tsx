@@ -1,4 +1,4 @@
-import { injectTheme, TWDTheme } from "../ui/theme";
+import { injectTheme, TWDTheme } from "../ui/utils/theme";
 
 interface Options {
   Component: React.ReactNode;

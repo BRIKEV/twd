@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { buildTreeFromHandlers, Node } from "./buildTreeFromHandlers";
+import { buildTreeFromHandlers, Node } from "./utils/buildTreeFromHandlers";
 import { TestListItem } from "./TestListItem";
 import ChevronDown from "./Icons/ChevronDown";
 import ChevronRight from "./Icons/ChevronRight";

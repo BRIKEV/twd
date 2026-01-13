@@ -1,5 +1,5 @@
 import { initSidebar } from "./initSidebar";
-import { TWDTheme } from "../ui/theme";
+import { TWDTheme } from "../ui/utils/theme";
 
 /**
  * A record of test module paths to their loader functions.

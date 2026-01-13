@@ -4,7 +4,6 @@ import { ClosedSidebar } from "./ClosedSidebar";
 import { useLayout } from "./hooks/useLayout";
 import { handlers, TestRunner } from "../runner";
 import { MockRulesButton } from "./MockRulesButton";
-import { AssertionError } from "chai";
 import { formatChaiError, isChaiAssertionError } from "./utils/chaiErrorFormat";
 
 interface TWDSidebarProps {
@@ -68,9 +67,6 @@ export const TWDSidebar = ({ open, position = "left" }: TWDSidebarProps) => {
         }
       } else {
         console.error(err.message);
-        if (err.stack) {
-          console.error(err.stack);
-        }
       }
       console.groupEnd();
       test.logs.push(`Test failed: ${err.message}`);

@@ -5,7 +5,7 @@ export { initTests } from './initializers/initTests';
 export { expect } from 'chai';
 export { userEvent } from './proxies/userEvent';
 export { screenDom, screenDomGlobal, configureScreenDom } from './proxies/screenDom';
-export type { TWDTheme } from './ui/theme';
-export { defaultTheme, injectTheme } from './ui/theme';
+export type { TWDTheme } from './ui/utils/theme';
+export { defaultTheme, injectTheme } from './ui/utils/theme';
 
 config.truncateThreshold = 0;
