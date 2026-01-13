@@ -8,7 +8,7 @@
  * 
  * ```css
  * :root {
- *   --twd-primary: #3b82f6;
+ *   --twd-primary: #2563eb;
  *   --twd-background: #1e293b;
  *    ... other variables 
  * }
@@ -82,9 +82,9 @@ export interface TWDTheme {
 
 export const defaultTheme: TWDTheme = {
   // Colors
-  primary: '#3b82f6',
+  primary: '#2563eb', // Darker blue for AA contrast with white text (4.5:1)
   background: '#1e293b',
-  backgroundSecondary: '#334155',
+  backgroundSecondary: '#182130', // Darker background for AA contrast with error text (4.5:1)
   border: '#475569',
   borderLight: '#64748b',
   text: '#f1f5f9',
@@ -94,7 +94,7 @@ export const defaultTheme: TWDTheme = {
   // Status colors
   success: '#22c55e',
   successBg: '#14532d',
-  error: '#ef4444',
+  error: '#ff5252', // Strong red for AA contrast on darker backgroundSecondary (4.5:1)
   errorBg: '#7f1d1d',
   warning: '#fbbf24',
   warningBg: '#78350f',
@@ -102,7 +102,7 @@ export const defaultTheme: TWDTheme = {
   skipBg: '#334155',
   
   // Interactive elements
-  buttonPrimary: '#3b82f6',
+  buttonPrimary: '#2563eb', // Darker blue for AA contrast with white text (4.5:1)
   buttonPrimaryText: '#ffffff',
   buttonSecondary: '#334155',
   buttonSecondaryText: '#f1f5f9',

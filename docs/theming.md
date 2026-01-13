@@ -25,7 +25,7 @@ if (import.meta.env.DEV) {
   const tests = import.meta.glob("./**/*.twd.test.ts");
   
   const customTheme = {
-    primary: '#3b82f6',
+    primary: '#2563eb',
     background: '#ffffff',
     // ... more theme properties
   };
@@ -233,11 +233,11 @@ Alternatively, you can override theme variables directly in your CSS without usi
 ```css
 /* In your global CSS file */
 :root {
-  --twd-primary: #3b82f6;
+  --twd-primary: #2563eb;
   --twd-background: #1e293b;
   --twd-text: #f1f5f9;
   --twd-success: #22c55e;
-  --twd-error: #ef4444;
+  --twd-error: #f87171;
   /* ... other variables */
 }
 ```
@@ -255,7 +255,7 @@ For full TypeScript support and autocomplete, import the `TWDTheme` type:
 import type { TWDTheme } from 'twd-js/bundled';
 
 const myTheme: Partial<TWDTheme> = {
-  primary: '#3b82f6',
+  primary: '#2563eb',
   background: '#ffffff',
   // TypeScript will autocomplete all available properties
 };
