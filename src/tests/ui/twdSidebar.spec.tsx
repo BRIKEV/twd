@@ -184,7 +184,11 @@ describe("TWDSidebar", () => {
       expect(runAllButton).toBeInTheDocument();
       // Simulate a click event
       await user.click(runAllButton);
-      const errorLog = screen.getByText(/Test failed: expected 1 to equal 2/);
+      const errorLog = screen.getByText(/Assertion failed/);
+      const expectedLog = screen.getByText(/Expected:/);
+      expect(expectedLog).toBeInTheDocument();
+      const actualLog = screen.getByText(/Actual:/);
+      expect(actualLog).toBeInTheDocument();
       expect(errorLog).toBeInTheDocument();
     });
   });
