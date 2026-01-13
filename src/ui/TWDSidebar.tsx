@@ -5,6 +5,7 @@ import { useLayout } from "./hooks/useLayout";
 import { handlers, TestRunner } from "../runner";
 import { MockRulesButton } from "./MockRulesButton";
 import { isChaiAssertionError, printChaiError, formatChaiError } from "./utils/chaiErrorFormat";
+import { LogType } from "./utils/formatLogs";
 
 interface TWDSidebarProps {
   /**
@@ -58,20 +59,20 @@ export const TWDSidebar = ({ open, position = "left" }: TWDSidebarProps) => {
         if (formattedError.type === "diff") {
           // Store structured error data as JSON string with prefix
           test.logs.push(JSON.stringify({
-            type: "chai-diff",
+            type: LogType.CHAI_DIFF,
             expected: formattedError.expected,
             actual: formattedError.actual,
           }));
         } else {
           test.logs.push(JSON.stringify({
-            type: "chai-message",
+            type: LogType.CHAI_MESSAGE,
             message: `Test failed: ${formattedError.message}`,
           }));
         }
       } else {
         console.error(err.message);
         test.logs.push(JSON.stringify({
-          type: "error",
+          type: LogType.ERROR,
           message: `Test failed: ${err.message}`,
         }));
       }

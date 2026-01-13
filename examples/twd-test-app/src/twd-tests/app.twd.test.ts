@@ -123,13 +123,13 @@ describe("App interactions", () => {
     twd.setInputValue(colorInput.el, '#ff0000');
     const rangeInput = await twd.get("input#range");
     twd.setInputValue(rangeInput.el, '75');
-    const hourInput = await twd.get('input[name="hur"]');
+    const hourInput = await twd.get('input[name="hour"]');
     twd.setInputValue(hourInput.el, '14:30');
     const submitBtn = await twd.get("button[type='submit']");
     await user.click(submitBtn.el);
     const rules = await twd.waitForRequests(["contactSubmit"]);
     const request = rules[0].request;
-    expect(request).to.deep.equal({ email: "tst@example.com", message: "Hello, this is a test message.", date: "2023-01-01", month: "2023-01", time: "12:00", color: "#ff0000", range: "75", hour: "14:30", week: "2023-W15" });
+    expect(request).to.deep.equal({ email: "test@example.com", message: "Hello, this is a test message.", date: "2023-01-01", month: "2023-01", time: "12:00", color: "#ff0000", range: "75", hour: "14:30", week: "2023-W15" });
     await twd.url().should("contain.url", "/contact");
   });
 });

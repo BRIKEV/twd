@@ -2,7 +2,7 @@ import { useRef, useEffect } from "react";
 import Loader from "./Icons/Loader";
 import Play from "./Icons/Play";
 import SkipOnlyName from "./SkipOnlyName";
-import { parseLogEntry, formatValue } from "./utils/formatLogs";
+import { LogItem } from "./LogItem";
 
 interface Test {
   name: string;
@@ -64,14 +64,6 @@ export const statusStyles = (node: Test) => {
   }
 };
 
-export const assertStyles = (text: string) => {
-  if (text.startsWith("Assertion passed") || text.startsWith("Event fired")) {
-    return { color: "var(--twd-success)", fontWeight: "var(--twd-font-weight-bold)" };
-  } else if (text.startsWith("Test failed")) {
-    return { color: "var(--twd-error)", fontWeight: "var(--twd-font-weight-bold)" };
-  }
-  return {};
-};
 
 export const TestListItem = ({
   node,
@@ -204,104 +196,9 @@ export const TestListItem = ({
             textAlign: "left",
           }}
         >
-          {node.logs.map((log, idx) => {
-            const parsedLog = parseLogEntry(log);
-            
-            // If it's a structured error, render it nicely
-            if (parsedLog && parsedLog.type === "chai-diff") {
-              return (
-                <li
-                  key={idx}
-                  style={{
-                    fontSize: "var(--twd-font-size-sm)",
-                    padding: "var(--twd-spacing-sm)",
-                    borderBottom: "1px solid var(--twd-border-light)",
-                    color: "var(--twd-text)",
-                  }}
-                >
-                  <div style={{ 
-                    color: "var(--twd-error)", 
-                    fontWeight: "var(--twd-font-weight-bold)",
-                    marginBottom: "var(--twd-spacing-xs)",
-                  }}>
-                    ❌ Assertion failed with operator: {parsedLog.operator}
-                  </div>
-                  <div style={{ 
-                    marginTop: "var(--twd-spacing-xs)",
-                    paddingLeft: "var(--twd-spacing-sm)",
-                    borderLeft: "2px solid var(--twd-success)",
-                  }}>
-                    <div style={{ 
-                      color: "var(--twd-success)", 
-                      fontWeight: "var(--twd-font-weight-medium)",
-                      marginBottom: "var(--twd-spacing-xs)",
-                    }}>
-                      Expected:
-                    </div>
-                    <pre style={{
-                      margin: 0,
-                      padding: "var(--twd-spacing-xs)",
-                      background: "var(--twd-background)",
-                      borderRadius: "var(--twd-border-radius)",
-                      fontSize: "var(--twd-font-size-xs)",
-                      overflowX: "auto",
-                      whiteSpace: "pre-wrap",
-                      wordBreak: "break-word",
-                    }}>
-                      {formatValue(parsedLog.expected)}
-                    </pre>
-                  </div>
-                  <div style={{ 
-                    marginTop: "var(--twd-spacing-xs)",
-                    paddingLeft: "var(--twd-spacing-sm)",
-                    borderLeft: "2px solid var(--twd-error)",
-                  }}>
-                    <div style={{ 
-                      color: "var(--twd-error)", 
-                      fontWeight: "var(--twd-font-weight-medium)",
-                      marginBottom: "var(--twd-spacing-xs)",
-                    }}>
-                      Actual:
-                    </div>
-                    <pre style={{
-                      margin: 0,
-                      padding: "var(--twd-spacing-xs)",
-                      background: "var(--twd-background)",
-                      borderRadius: "var(--twd-border-radius)",
-                      fontSize: "var(--twd-font-size-xs)",
-                      overflowX: "auto",
-                      whiteSpace: "pre-wrap",
-                      wordBreak: "break-word",
-                    }}>
-                      {formatValue(parsedLog.actual)}
-                    </pre>
-                  </div>
-                </li>
-              );
-            }
-            
-            // For other structured errors or plain text
-            const displayText = parsedLog
-              ? (parsedLog.type === "chai-message" || parsedLog.type === "error" 
-                  ? parsedLog.message 
-                  : log)
-              : log;
-            
-            return (
-              <li
-                key={idx}
-                style={{
-                  fontSize: "var(--twd-font-size-sm)",
-                  padding: "var(--twd-spacing-xs) var(--twd-spacing-sm)",
-                  borderBottom: "1px solid var(--twd-border-light)",
-                  color: "var(--twd-text)",
-                  ...assertStyles(displayText),
-                }}
-              >
-                {displayText}
-              </li>
-            );
-          })}
+          {node.logs.map((log, idx) => (
+            <LogItem key={idx} log={log} index={idx} />
+          ))}
         </ul>
       )}
     </li>
