@@ -14,7 +14,8 @@ const isChaiAssertionError = (error: unknown): error is ChaiAssertionError => {
 };
 
 const formatChaiError = (error: ChaiAssertionError) => {
-  if (error.showDiff && error.actual !== undefined && error.expected !== undefined) {
+  // Check if we have actual and expected values (even if showDiff is not set)
+  if (error.actual !== undefined && error.expected !== undefined) {
     return {
       type: "diff",
       actual: error.actual,
@@ -32,7 +33,8 @@ const formatChaiError = (error: ChaiAssertionError) => {
 const printChaiError = (error: ChaiAssertionError) => {
   const formattedError = formatChaiError(error);
   if (formattedError.type === "diff") {
-    console.error("Assertion failed with operator:", formattedError.operator || "unknown");
+    const operator = formattedError.operator || "unknown";
+    console.error(`Assertion failed with operator: ${operator}`);
     console.group("Expected:");
     console.log(formattedError.expected);
     console.groupEnd();
