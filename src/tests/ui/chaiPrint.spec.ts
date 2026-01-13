@@ -39,6 +39,17 @@ describe('chaiPrint', () => {
     }
   });
 
+  it('should format a chai assertion error with no actual and no expected values', () => {
+    try {
+      chaiExpect(undefined).to.exist;
+    } catch (error) {
+      if (isChaiAssertionError(error)) {
+        printChaiError(error);
+      }
+      expect(consoleErrorSpy).toHaveBeenCalledWith('expected undefined to exist');
+    }
+  }); 
+
   it('should format a chai assertion deep equal error', () => {
     try {
       chaiExpect({ a: 1 }).to.deep.equal({ a: 2 });
