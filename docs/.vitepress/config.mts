@@ -55,6 +55,7 @@ export default defineConfig({
           { text: 'Writing Tests', link: '/writing-tests' },
           { text: 'API Mocking', link: '/api-mocking' },
           { text: 'Component Mocking', link: '/component-mocking' },
+          { text: 'Module Mocking', link: '/module-mocking' },
           { text: 'Theming', link: '/theming' },
           { text: 'CI Execution', link: '/ci-execution' },
           { text: 'Framework Integration', link: '/frameworks' },
