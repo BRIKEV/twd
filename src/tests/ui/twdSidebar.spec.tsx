@@ -1,4 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
+import { expect as chaiExpect } from 'chai';
 import userEvent from '@testing-library/user-event';
 import { render, screen } from '@testing-library/react'
 import * as twd from '../../runner';
@@ -96,22 +97,6 @@ describe("TWDSidebar", () => {
       expect(secondTest).toHaveBeenCalled();
     });
 
-    it('should handle throw exceptions in tests', async () => {
-      const errorTest = vi.fn().mockRejectedValue(new Error("Test error"));
-      twd.describe('Group test error', () => {
-        twd.it('Test error', errorTest);
-      });
-      const user = userEvent.setup()
-      render(<TWDSidebar open={true} />);
-      const runAllButton = screen.getByText("Run All");
-      expect(runAllButton).toBeInTheDocument();
-      // Simulate a click event
-      await user.click(runAllButton);
-      expect(errorTest).toHaveBeenCalled();
-      const errorLog = screen.getByText(/Test failed: Test error/);
-      expect(errorLog).toBeInTheDocument();
-    });
-
     it('should render the total number of tests', async () => {
       twd.describe('Group test', () => {
         twd.it('Test 1', vi.fn());
@@ -167,6 +152,44 @@ describe("TWDSidebar", () => {
       const runAllButton = screen.getByText("Run All");
       await user.click(runAllButton);
       expect(sessionStorage.getItem('twd-last-run-test-name')).toBeNull();
+    });
+  });
+
+  describe("fail scenarios", () => {
+    it('should handle throw exceptions in tests', async () => {
+      const errorTest = vi.fn().mockRejectedValue(new Error("Test error"));
+      twd.describe('Group test error', () => {
+        twd.it('Test error', errorTest);
+      });
+      const user = userEvent.setup()
+      render(<TWDSidebar open={true} />);
+      const runAllButton = screen.getByText("Run All");
+      expect(runAllButton).toBeInTheDocument();
+      // Simulate a click event
+      await user.click(runAllButton);
+      expect(errorTest).toHaveBeenCalled();
+      const errorLog = screen.getByText(/Test failed: Test error/);
+      expect(errorLog).toBeInTheDocument();
+    });
+
+    it('should handle chai assertion errors', async () => {
+      twd.describe('Group test error', () => {
+        twd.it('Test error', () => {
+          chaiExpect(1).to.equal(2);
+        });
+      });
+      const user = userEvent.setup()
+      render(<TWDSidebar open={true} />);
+      const runAllButton = screen.getByText("Run All");
+      expect(runAllButton).toBeInTheDocument();
+      // Simulate a click event
+      await user.click(runAllButton);
+      const errorLog = screen.getByText(/Assertion failed/);
+      const expectedLog = screen.getByText(/Expected:/);
+      expect(expectedLog).toBeInTheDocument();
+      const actualLog = screen.getByText(/Actual:/);
+      expect(actualLog).toBeInTheDocument();
+      expect(errorLog).toBeInTheDocument();
     });
   });
 });

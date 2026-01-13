@@ -2,6 +2,7 @@ import { useRef, useEffect } from "react";
 import Loader from "./Icons/Loader";
 import Play from "./Icons/Play";
 import SkipOnlyName from "./SkipOnlyName";
+import { LogItem } from "./LogItem";
 
 interface Test {
   name: string;
@@ -63,14 +64,6 @@ export const statusStyles = (node: Test) => {
   }
 };
 
-export const assertStyles = (text: string) => {
-  if (text.startsWith("Assertion passed") || text.startsWith("Event fired")) {
-    return { color: "var(--twd-success)", fontWeight: "var(--twd-font-weight-bold)" };
-  } else if (text.startsWith("Test failed")) {
-    return { color: "var(--twd-error)", fontWeight: "var(--twd-font-weight-bold)" };
-  }
-  return {};
-};
 
 export const TestListItem = ({
   node,
@@ -204,18 +197,7 @@ export const TestListItem = ({
           }}
         >
           {node.logs.map((log, idx) => (
-            <li
-              key={idx}
-              style={{
-                fontSize: "var(--twd-font-size-sm)",
-                padding: "var(--twd-spacing-xs) var(--twd-spacing-sm)",
-                borderBottom: "1px solid var(--twd-border-light)",
-                color: "var(--twd-text)",
-                ...assertStyles(log),
-              }}
-            >
-              {log}
-            </li>
+            <LogItem key={idx} log={log} index={idx} />
           ))}
         </ul>
       )}

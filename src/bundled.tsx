@@ -2,7 +2,7 @@ import { render } from 'preact';
 import { initTests } from './initializers/initTests';
 import { TWDSidebar } from './ui/TWDSidebar';
 import { initRequestMocking } from './commands/mockBridge';
-import type { TWDTheme } from './ui/theme';
+import type { TWDTheme } from './ui/utils/theme';
 
 interface TestModule {
   [key: string]: () => Promise<unknown>;

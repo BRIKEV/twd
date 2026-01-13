@@ -60,7 +60,7 @@ initTWD(tests, {
   position: 'right',
   serviceWorker: true,
   serviceWorkerUrl: '/my-mock-sw.js',
-  theme: { primary: '#3b82f6', background: '#ffffff' }
+  theme: { primary: '#2563eb', background: '#ffffff' }
 });
 ```
 
