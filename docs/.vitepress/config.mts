@@ -64,6 +64,13 @@ export default defineConfig({
         ]
       },
       {
+        text: 'Philosophy',
+        items: [
+          { text: 'TWD Manifesto', link: '/twd-manifesto' },
+          { text: 'Why Test While Developing', link: '/motivation' },
+        ]
+      },
+      {
         text: 'Tutorial',
         items: [
           { text: 'Overview', link: '/tutorial/' },

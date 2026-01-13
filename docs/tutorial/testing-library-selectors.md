@@ -203,5 +203,3 @@ As you can see, TWD is flexible enough to support both styles of selectors.
 And remember: these tests run inside your actual application, so anything your app can access—stores, utilities, helpers—can be used to set up your scenarios.
 
 TWD is all about keeping testing close to development, while staying simple, flexible, and intuitive.
-
-More posts coming soon. More info in our [official docs](https://brikev.github.io/twd/).
