@@ -1,3 +1,7 @@
+## <small>1.4.1 (2026-01-13)</small>
+
+* Fix/error messages format (#128) ([9527af9](https://github.com/BRIKEV/twd/commit/9527af9)), closes [#128](https://github.com/BRIKEV/twd/issues/128)
+
 ## 1.4.0 (2026-01-09)
 
 * chore: update dependencies ([628d4fb](https://github.com/BRIKEV/twd/commit/628d4fb))

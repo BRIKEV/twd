@@ -1,6 +1,6 @@
 {
   "name": "twd-js",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "description": "Test While Developing (TWD) - in-browser testing",
   "license": "MIT",
   "author": "BRIKEV",
@@ -68,7 +68,7 @@
     "docs:dev": "vitepress dev docs",
     "docs:build": "vitepress build docs",
     "docs:preview": "vitepress preview docs",
-    "copy:mock-sw": "cp src/dist/mock-sw.js examples/twd-test-app/public/mock-sw.js && cp src/dist/mock-sw.js examples/tutorial-example/public/mock-sw.js && cp src/dist/mock-sw.js examples/vue-twd-example/public/mock-sw.js",
+    "copy:mock-sw": "cp dist/mock-sw.js examples/twd-test-app/public/mock-sw.js && cp dist/mock-sw.js examples/tutorial-example/public/mock-sw.js && cp dist/mock-sw.js examples/vue-twd-example/public/mock-sw.js",
     "copy:dist:vue-twd-example": "cp -r dist examples/vue-twd-example/src"
   },
   "peerDependencies": {
