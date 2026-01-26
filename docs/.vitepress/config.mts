@@ -58,6 +58,7 @@ export default defineConfig({
           { text: 'Module Mocking', link: '/module-mocking' },
           { text: 'Theming', link: '/theming' },
           { text: 'CI Execution', link: '/ci-execution' },
+          { text: 'Coverage', link: '/coverage' },
           { text: 'Framework Integration', link: '/frameworks' },
           { text: 'Testing Library', link: '/testing-library' },
           { text: 'AI Context', link: '/agents' },

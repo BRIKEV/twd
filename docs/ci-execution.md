@@ -162,6 +162,7 @@ try {
 
 ## Next Steps
 
+- Coverage Reporting: Learn how to collect and report code coverage with TWD in [Code Coverage](/coverage)
 - Learn about [Writing Tests](/writing-tests) for creating testable components
 - Explore [API Mocking](/api-mocking) for testing with network requests
 - Check the [API Reference](/api/) for complete function documentation
