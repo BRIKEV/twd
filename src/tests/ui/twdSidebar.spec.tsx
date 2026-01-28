@@ -212,9 +212,10 @@ describe("TWDSidebar", () => {
 
     it('should announce when a single test fails with error message', async () => {
       const user = userEvent.setup();
-      const errorTest = vi.fn().mockRejectedValue(new Error("Something went wrong"));
       twd.describe('Group test', () => {
-        twd.it('My Failing Test', errorTest);
+        twd.it('My Failing Test', () => {
+          throw new Error("Something went wrong");
+        });
       });
       render(<TWDSidebar open={true} />);
       const runTestButton = screen.getByTestId('play-icon');
@@ -243,6 +244,23 @@ describe("TWDSidebar", () => {
       });
     });
 
+    it('should announce when a single test fails with chai deep equality (JSON diff)', async () => {
+      const user = userEvent.setup();
+      twd.describe('Group test', () => {
+        twd.it('Chai Deep Equal Test', () => {
+          chaiExpect({ name: 'John', age: 30 }).to.deep.equal({ name: 'Jane', age: 25 });
+        });
+      });
+      render(<TWDSidebar open={true} />);
+      const runTestButton = screen.getByTestId('play-icon');
+      await user.click(runTestButton);
+      
+      await waitFor(() => {
+        const liveRegion = screen.getByText(/Test "Chai Deep Equal Test" failed.*Expected value does not match actual value/);
+        expect(liveRegion).toBeInTheDocument();
+      });
+    });
+
     it('should announce summary when running all tests with all passing', async () => {
       const user = userEvent.setup();
       twd.describe('Group test', () => {
@@ -264,8 +282,12 @@ describe("TWDSidebar", () => {
       const user = userEvent.setup();
       twd.describe('Group test', () => {
         twd.it('Pass Test', vi.fn());
-        twd.it('Fail Test 1', vi.fn().mockRejectedValue(new Error("Error 1")));
-        twd.it('Fail Test 2', vi.fn().mockRejectedValue(new Error("Error 2")));
+        twd.it('Fail Test 1', () => {
+          chaiExpect({ status: 'error' }).to.deep.equal({ status: 'success' });
+        });
+        twd.it('Fail Test 2', () => {
+          chaiExpect([1, 2, 3]).to.deep.equal([1, 2, 4]);
+        });
       });
       render(<TWDSidebar open={true} />);
       const runAllButton = screen.getByText("Run All");
