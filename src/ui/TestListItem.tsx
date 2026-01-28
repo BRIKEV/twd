@@ -137,7 +137,7 @@ export const TestListItem = ({
           display: "flex",
           alignItems: "left",
           justifyContent: "space-between",
-          padding: "var(--twd-spacing-xs) var(--twd-spacing-sm)",
+          padding: "var(--twd-spacing-sm) var(--twd-spacing-sm)",
           borderRadius: "var(--twd-border-radius)",
           ...styles.item,
           ...(isPreviouslyRunTest && {
@@ -148,6 +148,7 @@ export const TestListItem = ({
         <span
           style={{ 
             fontWeight: "var(--twd-font-weight-medium)", 
+            fontSize: "var(--twd-font-size-md)",
             color: "var(--twd-text)", 
             maxWidth: "220px" 
           }}

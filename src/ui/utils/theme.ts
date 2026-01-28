@@ -26,6 +26,11 @@ export interface TWDTheme {
   textSecondary: string;
   textMuted: string;
   
+  // Describe blocks
+  describeBg: string;
+  describeText: string;
+  describeBorder: string;
+  
   // Status colors
   success: string;
   successBg: string;
@@ -90,6 +95,11 @@ export const defaultTheme: TWDTheme = {
   text: '#f1f5f9',
   textSecondary: '#cbd5e1',
   textMuted: '#94a3b8',
+  
+  // Describe blocks
+  describeBg: '#0f172a',
+  describeText: '#94a3b8',
+  describeBorder: '#334155',
   
   // Status colors
   success: '#22c55e',
