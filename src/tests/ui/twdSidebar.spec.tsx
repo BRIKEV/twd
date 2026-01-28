@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { expect as chaiExpect } from 'chai';
 import userEvent from '@testing-library/user-event';
-import { render, screen } from '@testing-library/react'
+import { render, screen, waitFor } from '@testing-library/react'
 import * as twd from '../../runner';
 import { TWDSidebar } from "../../ui/TWDSidebar";
 
@@ -190,6 +190,152 @@ describe("TWDSidebar", () => {
       const actualLog = screen.getByText(/Actual:/);
       expect(actualLog).toBeInTheDocument();
       expect(errorLog).toBeInTheDocument();
+    });
+  });
+
+  describe("accessibility - screen reader announcements", () => {
+    it('should announce when a single test passes', async () => {
+      const user = userEvent.setup();
+      const testFn1 = vi.fn();
+      twd.describe('Group test', () => {
+        twd.it('My Passing Test', testFn1);
+      });
+      render(<TWDSidebar open={true} />);
+      const runTestButton = screen.getByTestId('play-icon');
+      await user.click(runTestButton);
+      
+      await waitFor(() => {
+        const liveRegion = screen.getByText(/Test "My Passing Test" passed/);
+        expect(liveRegion).toBeInTheDocument();
+      });
+    });
+
+    it('should announce when a single test fails with error message', async () => {
+      const user = userEvent.setup();
+      twd.describe('Group test', () => {
+        twd.it('My Failing Test', () => {
+          throw new Error("Something went wrong");
+        });
+      });
+      render(<TWDSidebar open={true} />);
+      const runTestButton = screen.getByTestId('play-icon');
+      await user.click(runTestButton);
+      
+      await waitFor(() => {
+        const liveRegion = screen.getByText(/Test "My Failing Test" failed.*Something went wrong/);
+        expect(liveRegion).toBeInTheDocument();
+      });
+    });
+
+    it('should announce when a single test fails with chai assertion', async () => {
+      const user = userEvent.setup();
+      twd.describe('Group test', () => {
+        twd.it('Chai Assertion Test', () => {
+          chaiExpect(1).to.equal(2);
+        });
+      });
+      render(<TWDSidebar open={true} />);
+      const runTestButton = screen.getByTestId('play-icon');
+      await user.click(runTestButton);
+      
+      await waitFor(() => {
+        const liveRegion = screen.getByText(/Test "Chai Assertion Test" failed/);
+        expect(liveRegion).toBeInTheDocument();
+      });
+    });
+
+    it('should announce when a single test fails with chai deep equality (JSON diff)', async () => {
+      const user = userEvent.setup();
+      twd.describe('Group test', () => {
+        twd.it('Chai Deep Equal Test', () => {
+          chaiExpect({ name: 'John', age: 30 }).to.deep.equal({ name: 'Jane', age: 25 });
+        });
+      });
+      render(<TWDSidebar open={true} />);
+      const runTestButton = screen.getByTestId('play-icon');
+      await user.click(runTestButton);
+      
+      await waitFor(() => {
+        const liveRegion = screen.getByText(/Test "Chai Deep Equal Test" failed.*Expected value does not match actual value/);
+        expect(liveRegion).toBeInTheDocument();
+      });
+    });
+
+    it('should announce summary when running all tests with all passing', async () => {
+      const user = userEvent.setup();
+      twd.describe('Group test', () => {
+        twd.it('Test 1', vi.fn());
+        twd.it('Test 2', vi.fn());
+        twd.it('Test 3', vi.fn());
+      });
+      render(<TWDSidebar open={true} />);
+      const runAllButton = screen.getByText("Run All");
+      await user.click(runAllButton);
+      
+      await waitFor(() => {
+        const liveRegion = screen.getByText(/All tests passed.*3 tests completed/);
+        expect(liveRegion).toBeInTheDocument();
+      });
+    });
+
+    it('should announce summary when running all tests with failures', async () => {
+      const user = userEvent.setup();
+      twd.describe('Group test', () => {
+        twd.it('Pass Test', vi.fn());
+        twd.it('Fail Test 1', () => {
+          chaiExpect({ status: 'error' }).to.deep.equal({ status: 'success' });
+        });
+        twd.it('Fail Test 2', () => {
+          chaiExpect([1, 2, 3]).to.deep.equal([1, 2, 4]);
+        });
+      });
+      render(<TWDSidebar open={true} />);
+      const runAllButton = screen.getByText("Run All");
+      await user.click(runAllButton);
+      
+      await waitFor(() => {
+        const liveRegion = screen.getByText(/Test run completed.*1 test passed.*2 tests failed/);
+        expect(liveRegion).toBeInTheDocument();
+      });
+    });
+
+    it('should announce summary including skipped tests', async () => {
+      const user = userEvent.setup();
+      twd.describe('Group test', () => {
+        twd.it('Pass Test', vi.fn());
+        twd.it.skip('Skip Test 1', vi.fn());
+        twd.it.skip('Skip Test 2', vi.fn());
+      });
+      render(<TWDSidebar open={true} />);
+      const runAllButton = screen.getByText("Run All");
+      await user.click(runAllButton);
+      
+      await waitFor(() => {
+        const liveRegion = screen.getByText(/All tests passed.*1 test completed.*2 tests skipped/);
+        expect(liveRegion).toBeInTheDocument();
+      });
+    });
+
+    it('should clear previous announcement before running new test', async () => {
+      const user = userEvent.setup();
+      twd.describe('Group test', () => {
+        twd.it('Test 1', vi.fn());
+      });
+      render(<TWDSidebar open={true} />);
+      const runTestButton = screen.getByTestId('play-icon');
+      
+      // Run first time
+      await user.click(runTestButton);
+      await waitFor(() => {
+        expect(screen.getByText(/Test "Test 1" passed/)).toBeInTheDocument();
+      });
+      
+      // Clear and run again
+      await user.click(runTestButton);
+      // The message should still appear (may be same text, but it should re-announce)
+      await waitFor(() => {
+        expect(screen.getByText(/Test "Test 1" passed/)).toBeInTheDocument();
+      });
     });
   });
 });

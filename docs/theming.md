@@ -54,6 +54,14 @@ The theme object accepts the following properties (all optional):
 | `textSecondary` | Secondary text color | `#6b7280` |
 | `textMuted` | Muted text color | `#475569` |
 
+### Describe Blocks
+
+| Property | Description | Default |
+|----------|-------------|----------|
+| `describeBg` | Background for describe/suite blocks | `#0f172a` |
+| `describeText` | Text color for describe/suite headers | `#94a3b8` |
+| `describeBorder` | Left border accent for describe blocks | `#334155` |
+
 ### Status Colors
 
 | Property | Description | Default |
@@ -150,6 +158,9 @@ if (import.meta.env.DEV) {
     text: '#e5e7eb',
     textSecondary: '#9ca3af',
     textMuted: '#6b7280',
+    describeBg: '#0f172a',
+    describeText: '#94a3b8',
+    describeBorder: '#334155',
     success: '#22c55e',
     successBg: 'rgba(34, 197, 94, 0.15)',
     error: '#f87171',
@@ -194,6 +205,9 @@ if (import.meta.env.DEV) {
     text: '#1e293b',
     textSecondary: '#64748b',
     textMuted: '#94a3b8',
+    describeBg: '#f8fafc',
+    describeText: '#64748b',
+    describeBorder: '#cbd5e1',
     success: '#10b981',
     successBg: '#ecfdf5',
     error: '#f43f5e',
@@ -239,6 +253,9 @@ Alternatively, you can override theme variables directly in your CSS without usi
   --twd-success: #22c55e;
   --twd-error: #ff5252;
   --twd-background-secondary: #182130;
+  --twd-describe-bg: #0f172a;
+  --twd-describe-text: #94a3b8;
+  --twd-describe-border: #334155;
   /* ... other variables */
 }
 ```

@@ -26,6 +26,11 @@ export interface TWDTheme {
   textSecondary: string;
   textMuted: string;
   
+  // Describe blocks
+  describeBg: string;
+  describeText: string;
+  describeBorder: string;
+  
   // Status colors
   success: string;
   successBg: string;
@@ -91,6 +96,11 @@ export const defaultTheme: TWDTheme = {
   textSecondary: '#cbd5e1',
   textMuted: '#94a3b8',
   
+  // Describe blocks
+  describeBg: '#0f172a',
+  describeText: '#94a3b8',
+  describeBorder: '#334155',
+  
   // Status colors
   success: '#22c55e',
   successBg: '#14532d',
@@ -134,8 +144,8 @@ export const defaultTheme: TWDTheme = {
   shadowSm: '0 2px 4px rgba(0, 0, 0, 0.2)',
   
   // Z-index
-  zIndexSidebar: '1000',
-  zIndexSticky: '1000',
+  zIndexSidebar: '99999',
+  zIndexSticky: '100000',
   
   // Animation
   animationDuration: '0.2s',

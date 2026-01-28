@@ -80,27 +80,39 @@ export const TestList = ({ tests, runTest }: TestListProps) => {
     
     return (
       <li key={node.id} style={{ marginLeft: `calc(${depth} * var(--twd-spacing-lg))` }}>
-        <span
+        <div
           style={{
-            fontWeight: "var(--twd-font-weight-bold)",
-            cursor: "pointer",
-            color: "var(--twd-text)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            marginBottom: "var(--twd-spacing-xs)",
-            gap: "var(--twd-spacing-sm)",
+            background: "var(--twd-describe-bg)",
+            borderLeft: "3px solid var(--twd-describe-border)",
+            borderRadius: "var(--twd-border-radius)",
+            padding: "var(--twd-spacing-xs) var(--twd-spacing-sm)",
+            marginBottom: "var(--twd-spacing-sm)",
           }}
-          data-testid={`test-group-${node.name}`}
-          tabIndex={0}
-          role="button"
-          aria-expanded={!isCollapsed}
-          aria-label={`${isCollapsed ? "Expand" : "Collapse"} test suite ${node.name}`}
-          onClick={() => toggle(node.id)}
         >
-          <SkipOnlyName id={node.id} name={node.name} skip={node.skip} only={node.only} />
-          {isCollapsed ? <ChevronRight /> : <ChevronDown />}
-        </span>
+          <span
+            style={{
+              fontWeight: "var(--twd-font-weight-medium)",
+              fontSize: "var(--twd-font-size-sm)",
+              cursor: "pointer",
+              color: "var(--twd-describe-text)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              gap: "var(--twd-spacing-sm)",
+              textTransform: "uppercase",
+              letterSpacing: "0.05em",
+            }}
+            data-testid={`test-group-${node.name}`}
+            tabIndex={0}
+            role="button"
+            aria-expanded={!isCollapsed}
+            aria-label={`${isCollapsed ? "Expand" : "Collapse"} test suite ${node.name}`}
+            onClick={() => toggle(node.id)}
+          >
+            <SkipOnlyName id={node.id} name={node.name} skip={node.skip} only={node.only} />
+            {isCollapsed ? <ChevronRight /> : <ChevronDown />}
+          </span>
+        </div>
 
         {!isCollapsed && node.childrenNodes && node.childrenNodes.length > 0 && (
           <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>

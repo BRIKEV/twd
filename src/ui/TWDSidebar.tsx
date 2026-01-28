@@ -2,10 +2,11 @@ import { useState } from "react";
 import { TestList } from "./TestList";
 import { ClosedSidebar } from "./ClosedSidebar";
 import { useLayout } from "./hooks/useLayout";
-import { handlers, TestRunner } from "../runner";
+import { handlers, TestRunner, type Handler } from "../runner";
 import { MockRulesButton } from "./MockRulesButton";
 import { isChaiAssertionError, printChaiError, formatChaiError } from "./utils/chaiErrorFormat";
 import { LogType } from "./utils/formatLogs";
+import { displaySRMessageSpecificTest, displaySRMessageAllTests } from "./utils/screenReaderMessages";
 
 interface TWDSidebarProps {
   /**
@@ -40,6 +41,7 @@ export const TWDSidebar = ({ open, position = "left" }: TWDSidebarProps) => {
   const [_, setRefresh] = useState(0);
   const [isOpen, setIsOpen] = useState(getOpenState(open));
   useLayout({ isOpen, position });
+  const [message, setMessage] = useState<string>('');
 
   const runner = new TestRunner({
     onStart: (test) => {
@@ -92,16 +94,22 @@ export const TWDSidebar = ({ open, position = "left" }: TWDSidebarProps) => {
 
   const runAll = async () => {
     // Clear the last run test name when running all tests
+    setMessage('');
     sessionStorage.removeItem('twd-last-run-test-name');
     await runner.runAll();
+    const srMessage = displaySRMessageAllTests(tests);
+    setMessage(srMessage);
   };
 
   const runTest = async (id: string) => {
     const test = Array.from(handlers.values()).filter(h => h.type === "test").find(t => t.id === id);
     if (!test) return;
     // Save test name to session storage for scroll persistence
+    setMessage('');
     sessionStorage.setItem('twd-last-run-test-name', test.name);
     await runner.runSingle(test.id);
+    const srMessage = displaySRMessageSpecificTest(test);
+    setMessage(srMessage);
   };
   
   const tests = Array.from(handlers.values());
@@ -126,12 +134,15 @@ export const TWDSidebar = ({ open, position = "left" }: TWDSidebarProps) => {
         boxShadow: "var(--twd-shadow)",
         textAlign: "left",
         zIndex: "var(--twd-z-index-sidebar)",
+        pointerEvents: "all",
+        isolation: "isolate",
         ...positionStyles[position]
       }}
       data-testid="twd-sidebar"
       role="complementary"
       aria-label="Test While Developing sidebar"
     >
+      <div aria-live="polite" aria-atomic="true" style={{ position: "absolute", width: "1px", height: "1px", margin: "-1px", border: "0", padding: "0", overflow: "hidden", clip: "rect(0 0 0 0)" }}>{message}</div>
       <div style={{ 
         padding: "var(--twd-spacing-md)", 
         background: "var(--twd-background)", 
