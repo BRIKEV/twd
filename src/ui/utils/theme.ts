@@ -144,8 +144,8 @@ export const defaultTheme: TWDTheme = {
   shadowSm: '0 2px 4px rgba(0, 0, 0, 0.2)',
   
   // Z-index
-  zIndexSidebar: '1000',
-  zIndexSticky: '1000',
+  zIndexSidebar: '99999',
+  zIndexSticky: '100000',
   
   // Animation
   animationDuration: '0.2s',

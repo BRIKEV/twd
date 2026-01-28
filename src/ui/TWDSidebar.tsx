@@ -126,6 +126,8 @@ export const TWDSidebar = ({ open, position = "left" }: TWDSidebarProps) => {
         boxShadow: "var(--twd-shadow)",
         textAlign: "left",
         zIndex: "var(--twd-z-index-sidebar)",
+        pointerEvents: "all",
+        isolation: "isolate",
         ...positionStyles[position]
       }}
       data-testid="twd-sidebar"
