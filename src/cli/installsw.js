@@ -8,7 +8,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const [, , command, targetDir, ...flags] = process.argv;
 
 if (command !== "init") {
-  console.error("Usage: npx twd-mock init <public-dir> [--save]");
+  console.error("Usage: npx twd-js init <public-dir> [--save]");
   process.exit(1);
 }
 

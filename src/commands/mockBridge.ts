@@ -93,7 +93,7 @@ export const initRequestMocking = async (path?: string) => {
  *   url: /\/api\/user\/\d+/,
  *   response: { id: 1, name: "Kevin" },
  *   status: 200,
- *   headers: { "x-mock": "true" }
+ *   responseHeaders: { "x-mock": "true" }
  * });
  * ```
  */

@@ -70,7 +70,7 @@ interface TWDAPI {
    *  - `url`: URL string or RegExp to match
    *  - `response`: Body of the mocked response
    *  - `status`: (optional) HTTP status code (default: 200)
-   *  - `headers`: (optional) Response headers
+   *  - `responseHeaders`: (optional) Response headers
    *
    * @example
    * ```ts
@@ -79,7 +79,7 @@ interface TWDAPI {
    *   url: /\/api\/user\/\d+/,
    *   response: { id: 1, name: "Kevin" },
    *   status: 200,
-   *   headers: { "x-mock": "true" }
+   *   responseHeaders: { "x-mock": "true" }
    * });
    * ```
    */

@@ -49,7 +49,7 @@ const beforeEachHooks = state.beforeEachHooks;
 const afterEachHooks = state.afterEachHooks;
 const stack = state.stack;
 
-const generateId = () => Math.random().toString(36).substr(2, 9);
+const generateId = () => Math.random().toString(36).slice(2, 11);
 
 //
 // Suite definition
