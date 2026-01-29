@@ -50,8 +50,8 @@ export default defineConfig({
     // Target modern browsers for smaller output
     target: "es2020",
     minify: "esbuild",
-    // Reduce polyfills
-    polyfillModulePreload: false,
+    // Reduce polyfills (Vite 7+ API)
+    modulePreload: { polyfill: false },
     // Don't include source maps
     sourcemap: false,
     // Optimize chunk size

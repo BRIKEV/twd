@@ -35,10 +35,8 @@ export default defineConfig({
         exports: 'named',
         compact: true,
       },
-      treeshake: {
-        moduleSideEffects: false,
-        propertyReadSideEffects: false,
-      },
+      // Do NOT use aggressive treeshake here: it can remove code @testing-library/user-event
+      // relies on (e.g. side-effectful init), which breaks userEvent.type() in the bundled app.
     },
     minify: 'esbuild',
     target: 'es2020',

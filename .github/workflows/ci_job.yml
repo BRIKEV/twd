@@ -20,6 +20,12 @@ jobs:
       - name: Install root dependencies
         run: npm ci
 
+      - name: Build twd-js
+        run: npm run build
+
+      - name: Copy sw
+        run: npm run copy:mock-sw
+
       - name: Install example app dependencies
         working-directory: examples/twd-test-app
         run: npm i
