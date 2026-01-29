@@ -4,20 +4,19 @@ import './index.css'
 import { RouterProvider } from "react-router";
 import router from './AppRoutes';
 
+// Only load the test sidebar and tests in development mode
 if (import.meta.env.DEV) {
-  // You choose how to load the tests; this example uses Vite's glob import
-  const testModules = import.meta.glob("./**/*.twd.test.ts");
-  const { initTests, twd, TWDSidebar } = await import('../../../src/index.ts');
-  // You need to pass the test modules, the sidebar component, and createRoot function
-  initTests(testModules, <TWDSidebar open={true} position="left" />, createRoot);
-  // if you want to use mock requests, you can initialize it here
-  twd.initRequestMocking()
-    .then(() => {
-      console.log("Request mocking initialized");
-    })
-    .catch((err) => {
-      console.error("Error initializing request mocking:", err);
-    });
+  const { initTWD } = await import('./dist/bundled.es.js');
+  const tests = import.meta.glob("./**/*.twd.test.ts");
+  
+  // Initialize TWD with tests and optional configuration
+  // Request mocking is automatically initialized by default
+  initTWD(tests, { 
+    open: true, 
+    position: 'left',
+    serviceWorker: true,           // Enable request mocking (default: true)
+    serviceWorkerUrl: '/mock-sw.js' // Custom service worker path (default: '/mock-sw.js')
+  });
 }
 
 const App = () => {

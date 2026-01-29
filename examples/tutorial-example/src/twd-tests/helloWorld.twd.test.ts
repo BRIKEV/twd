@@ -1,5 +1,5 @@
-import { twd, userEvent, screenDom, screenDomGlobal, expect } from "../../../../src/index.ts";
-import { describe, it } from "../../../../src/runner.ts";
+import { twd, userEvent, screenDom, screenDomGlobal, expect } from '../dist/index.es.js';
+import { describe, it } from '../dist/runner.es.js';
 
 describe("Hello World Page", () => {
   it("should display the welcome title and counter button", async () => {

@@ -28,7 +28,7 @@
     "./bundled": {
       "types": "./dist/bundled.d.ts",
       "import": "./dist/bundled.es.js",
-      "require": "./dist/bundled.umd.js"
+      "default": "./dist/bundled.es.js"
     },
     "./runner": {
       "types": "./dist/runner.d.ts",
@@ -69,7 +69,8 @@
     "docs:build": "vitepress build docs",
     "docs:preview": "vitepress preview docs",
     "copy:mock-sw": "cp dist/mock-sw.js examples/twd-test-app/public/mock-sw.js && cp dist/mock-sw.js examples/tutorial-example/public/mock-sw.js && cp dist/mock-sw.js examples/vue-twd-example/public/mock-sw.js",
-    "copy:dist:vue-twd-example": "cp -r dist examples/vue-twd-example/src"
+    "copy:dist:vue-twd-example": "cp -r dist examples/vue-twd-example/src",
+    "copy:dist:tutorial-example": "cp -r dist examples/tutorial-example/src"
   },
   "peerDependencies": {
     "react": ">=17.0.0",
