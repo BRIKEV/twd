@@ -32,8 +32,16 @@ export default defineConfig({
           react: 'React',
           'react-dom': 'ReactDOM',
         },
+        exports: 'named',
+        compact: true,
+      },
+      treeshake: {
+        moduleSideEffects: false,
+        propertyReadSideEffects: false,
       },
     },
+    minify: 'esbuild',
+    target: 'es2020',
   },
   test: {
     environment: 'jsdom',

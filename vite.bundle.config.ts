@@ -21,7 +21,7 @@ export default defineConfig({
       entry: { bundled: "src/bundled.tsx" },
       name: "TWD",
       fileName: (format, entryName) => `${entryName}.${format}.js`,
-      formats: ["es", "umd"],
+      formats: ["es"],
     },
 
     // We DO NOT externalize React or ReactDOM here — bundle them in
@@ -48,7 +48,7 @@ export default defineConfig({
       },
     },
     // Target modern browsers for smaller output
-    target: "esnext",
+    target: "es2020",
     minify: "esbuild",
     // Reduce polyfills
     polyfillModulePreload: false,
