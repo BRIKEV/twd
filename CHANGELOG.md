@@ -1,3 +1,16 @@
+## <small>1.4.2 (2026-01-29)</small>
+
+* Fix/improve execution (#136) ([7503805](https://github.com/BRIKEV/twd/commit/7503805)), closes [#136](https://github.com/BRIKEV/twd/issues/136)
+* Fix/performance (#137) ([8843ca4](https://github.com/BRIKEV/twd/commit/8843ca4)), closes [#137](https://github.com/BRIKEV/twd/issues/137)
+* docs: add coverage documentation and link in CI execution ([970f9d5](https://github.com/BRIKEV/twd/commit/970f9d5))
+* chore(deps-dev): bump lodash from 4.17.21 to 4.17.23 (#132) ([ad5e056](https://github.com/BRIKEV/twd/commit/ad5e056)), closes [#132](https://github.com/BRIKEV/twd/issues/132)
+* chore(deps): bump devalue from 5.5.0 to 5.6.2 in /examples/astro-example (#129) ([8e9dbb5](https://github.com/BRIKEV/twd/commit/8e9dbb5)), closes [#129](https://github.com/BRIKEV/twd/issues/129)
+* chore(deps): bump diff and astro in /examples/astro-example (#131) ([4895ef8](https://github.com/BRIKEV/twd/commit/4895ef8)), closes [#131](https://github.com/BRIKEV/twd/issues/131)
+* chore(deps): bump h3 from 1.15.4 to 1.15.5 in /examples/astro-example (#130) ([5e39564](https://github.com/BRIKEV/twd/commit/5e39564)), closes [#130](https://github.com/BRIKEV/twd/issues/130)
+* chore(deps): bump lodash in /examples/tutorial-example (#133) ([5f5addd](https://github.com/BRIKEV/twd/commit/5f5addd)), closes [#133](https://github.com/BRIKEV/twd/issues/133)
+
+
+
 ## <small>1.4.1 (2026-01-13)</small>
 
 * Fix/error messages format (#128) ([9527af9](https://github.com/BRIKEV/twd/commit/9527af9)), closes [#128](https://github.com/BRIKEV/twd/issues/128)
