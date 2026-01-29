@@ -5,6 +5,7 @@ export default defineConfig({
   title: "TWD",
   description: "Test While Developing (TWD) - in-browser testing for React applications",
   base: '/',
+  appearance: { initialValue: 'dark' },
   head: [
     // Favicon and app icons
     ['link', { rel: 'icon', href: '/favicon.ico' }],
@@ -34,8 +35,8 @@ export default defineConfig({
     ['meta', { name: 'twitter:image', content: 'https://twd.dev/web-app-manifest-512x512.png' }],
     ['meta', { name: 'twitter:image:alt', content: 'TWD - Test While Developing Logo' }],
 
-    // Additional Meta Tags
-    ['meta', { name: 'theme-color', content: '#ffffff' }],
+    // Additional Meta Tags (TWD brand: darker teal for light theme)
+    ['meta', { name: 'theme-color', content: '#123956' }],
     ['meta', { name: 'viewport', content: 'width=device-width, initial-scale=1.0' }]
   ],
   themeConfig: {
