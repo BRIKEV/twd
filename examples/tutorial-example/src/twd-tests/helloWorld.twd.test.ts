@@ -1,7 +1,15 @@
-import { twd, userEvent, screenDom, screenDomGlobal, expect } from "../../../../src/index.ts";
-import { describe, it } from "../../../../src/runner.ts";
+import { twd, userEvent, screenDom, screenDomGlobal, expect } from '../dist/index.es.js';
+import { describe, it } from '../dist/runner.es.js';
 
 describe("Hello World Page", () => {
+  // uncomment to load testing multiple tests
+  // for (let i = 0; i < 100; i++) {
+  //   it(`should display the welcome title and counter button ${i}`, async () => {
+  //     await twd.visit("/");
+  //     const title = await twd.get("[data-testid='welcome-title']");
+  //     title.should("be.visible").should("have.text", "Welcome to TWD");
+  //   });
+  // }
   it("should display the welcome title and counter button", async () => {
     await twd.visit("/");
     

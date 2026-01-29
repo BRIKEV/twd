@@ -32,8 +32,14 @@ export default defineConfig({
           react: 'React',
           'react-dom': 'ReactDOM',
         },
+        exports: 'named',
+        compact: true,
       },
+      // Do NOT use aggressive treeshake here: it can remove code @testing-library/user-event
+      // relies on (e.g. side-effectful init), which breaks userEvent.type() in the bundled app.
     },
+    minify: 'esbuild',
+    target: 'es2020',
   },
   test: {
     environment: 'jsdom',
