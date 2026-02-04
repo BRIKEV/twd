@@ -91,4 +91,64 @@ describe('findRule', () => {
     expect(findRule('GET', 'http://localhost/api.xml', rules)).toBeUndefined();
     expect(findRule('GET', 'http://localhost/api.html', rules)).toBeUndefined();
   });
+
+  it('should match API paths with version numbers containing dots', () => {
+    const rules = [
+      { method: 'GET', url: '/api.v2/users', alias: 'a' },
+    ];
+    // Version in middle of path - should match
+    expect(findRule('GET', 'http://localhost/api.v2/users', rules)).toEqual(rules[0]);
+  });
+
+  it('should match versioned API endpoints (e.g., /api.v2)', () => {
+    const rules = [
+      { method: 'GET', url: '/api.v2', alias: 'a' },
+    ];
+    // Version at end of path - should NOT be treated as file
+    expect(findRule('GET', 'http://localhost/api.v2', rules)).toEqual(rules[0]);
+    expect(findRule('GET', 'http://localhost/api.v2?param=1', rules)).toEqual(rules[0]);
+  });
+
+  it('should match semantic version paths (e.g., /v1.2.3/endpoint)', () => {
+    const rules = [
+      { method: 'GET', url: '/v1.2.3/endpoint', alias: 'a' },
+    ];
+    expect(findRule('GET', 'http://localhost/v1.2.3/endpoint', rules)).toEqual(rules[0]);
+  });
+
+  it('should match paths ending with version-like patterns', () => {
+    const rules = [
+      { method: 'GET', url: '/service.v1', alias: 'a' },
+      { method: 'GET', url: '/api.2', alias: 'b' },
+      { method: 'GET', url: '/endpoint.0', alias: 'c' },
+    ];
+    expect(findRule('GET', 'http://localhost/service.v1', rules)).toEqual(rules[0]);
+    expect(findRule('GET', 'http://localhost/api.2', rules)).toEqual(rules[1]);
+    expect(findRule('GET', 'http://localhost/endpoint.0', rules)).toEqual(rules[2]);
+  });
+
+  it('should still correctly identify actual files vs versioned APIs', () => {
+    const rules = [
+      { method: 'GET', url: '/api/data', alias: 'api' },
+    ];
+    // These are actual files - should NOT match the /api/data rule
+    expect(findRule('GET', 'http://localhost/api/data.json', rules)).toBeUndefined();
+    expect(findRule('GET', 'http://localhost/api/data.js', rules)).toBeUndefined();
+    expect(findRule('GET', 'http://localhost/api/data.css', rules)).toBeUndefined();
+
+    // These are API endpoints - should match
+    expect(findRule('GET', 'http://localhost/api/data', rules)).toEqual(rules[0]);
+    expect(findRule('GET', 'http://localhost/api/data?query=1', rules)).toEqual(rules[0]);
+  });
+
+  it('should match general rule when request URL has version suffix', () => {
+    // BUG: /api.v2 was incorrectly treated as a file, blocking the match
+    const rules = [
+      { method: 'GET', url: '/api', alias: 'a' },
+    ];
+    // /api.v2 is a versioned API, not a file - should match /api rule
+    expect(findRule('GET', 'http://localhost/api.v2', rules)).toEqual(rules[0]);
+    expect(findRule('GET', 'http://localhost/api.v1', rules)).toEqual(rules[0]);
+    expect(findRule('GET', 'http://localhost/api.2', rules)).toEqual(rules[0]);
+  });
 });
