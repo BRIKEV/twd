@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { clearRequestMockRules, getRequestMockRules, initRequestMocking, mockRequest, waitForRequest } from '../../../commands/mockBridge';
+import { clearRequestMockRules, getRequestMockRules, initRequestMocking, mockRequest, waitForRequest, resetMockingState } from '../../../commands/mockBridge';
 import { TWD_VERSION } from '../../../constants/version';
 
 // Fake service worker API
@@ -39,6 +39,7 @@ describe('initRequestMocking', () => {
     // @ts-ignore
     navigator.serviceWorker = fakeSW;
     clearRequestMockRules();
+    resetMockingState();
     localStorage.clear();
     consoleLogSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
   });
@@ -296,5 +297,75 @@ describe('initRequestMocking', () => {
       configurable: true,
       value: originalSW,
     });
+  });
+
+});
+
+describe('initRequestMocking - multiple calls protection', () => {
+  let originalSW: any;
+
+  beforeEach(() => {
+    originalSW = navigator.serviceWorker;
+    clearRequestMockRules();
+    resetMockingState();
+    localStorage.clear();
+  });
+
+  afterEach(() => {
+    Object.defineProperty(navigator, 'serviceWorker', {
+      configurable: true,
+      value: originalSW,
+    });
+  });
+
+  it('should not add duplicate message listeners on multiple init calls', async () => {
+    localStorage.setItem('twd-sw-version', TWD_VERSION);
+
+    const addEventListenerMock = vi.fn();
+
+    Object.defineProperty(navigator, 'serviceWorker', {
+      configurable: true,
+      value: {
+        register: vi.fn().mockResolvedValue({}),
+        addEventListener: addEventListenerMock,
+        getRegistrations: vi.fn().mockResolvedValue([]),
+        controller: { postMessage: vi.fn() },
+      },
+    });
+
+    // Call init multiple times
+    await initRequestMocking();
+    await initRequestMocking();
+    await initRequestMocking();
+
+    // Count message listener registrations
+    const messageListenerCalls = addEventListenerMock.mock.calls
+      .filter((call: any[]) => call[0] === 'message');
+
+    // Should only have 1 message listener, not 3
+    expect(messageListenerCalls.length).toBe(1);
+  });
+
+  it('should warn when init is called multiple times', async () => {
+    localStorage.setItem('twd-sw-version', TWD_VERSION);
+
+    const consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+
+    Object.defineProperty(navigator, 'serviceWorker', {
+      configurable: true,
+      value: {
+        register: vi.fn().mockResolvedValue({}),
+        addEventListener: vi.fn(),
+        getRegistrations: vi.fn().mockResolvedValue([]),
+        controller: { postMessage: vi.fn() },
+      },
+    });
+
+    await initRequestMocking();
+    await initRequestMocking(); // Second call should warn
+
+    expect(consoleWarnSpy).toHaveBeenCalledWith('[TWD] Request mocking already initialized');
+
+    consoleWarnSpy.mockRestore();
   });
 });

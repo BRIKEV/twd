@@ -45,17 +45,23 @@ const getMockState = (): MockState => {
 const state = getMockState();
 const rules = state.rules;
 const SW_DELAY = 100;
-// Add version checking to prevent conflicts
+let initialized = false;
 
 /**
  * Initialize the mocking service worker.
  * Call this once before using `mockRequest` or `waitFor`.
  */
 export const initRequestMocking = async (path?: string) => {
+  if (initialized) {
+    console.warn('[TWD] Request mocking already initialized');
+    return;
+  }
+
   if ("serviceWorker" in navigator) {
+    initialized = true;
     const workerPath = path ?? '/mock-sw.js';
     await navigator.serviceWorker.register(`${workerPath}?v=${TWD_VERSION}`);
-    // ADD THIS: Wait for the service worker to actually control the page
+    // Wait for the service worker to actually control the page
     if (!navigator.serviceWorker.controller) {
       await new Promise(resolve => {
         navigator.serviceWorker.addEventListener('controllerchange', resolve, { once: true });
@@ -177,4 +183,12 @@ export const clearRequestMockRules = () => {
     version: TWD_VERSION,
   });
   rules.length = 0;
+};
+
+/**
+ * Reset the initialized state. Only use in tests.
+ * @internal
+ */
+export const resetMockingState = () => {
+  initialized = false;
 };
