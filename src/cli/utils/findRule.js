@@ -21,7 +21,34 @@ const validRegex = (pattern) => {
 };
 
 /**
- * Check if the url is a file with extension
+ * Known file extensions that should be detected as files.
+ * This prevents versioned API paths like /api.v2 from being treated as files.
+ */
+const FILE_EXTENSIONS = new Set([
+  // JavaScript/TypeScript
+  'js', 'mjs', 'cjs', 'ts', 'tsx', 'jsx', 'mts', 'cts',
+  // Styles
+  'css', 'scss', 'sass', 'less', 'styl',
+  // Markup
+  'html', 'htm', 'xml', 'xhtml', 'vue', 'svelte',
+  // Data
+  'json', 'yaml', 'yml', 'toml', 'csv',
+  // Documents
+  'txt', 'md', 'mdx', 'pdf', 'doc', 'docx',
+  // Images
+  'png', 'jpg', 'jpeg', 'gif', 'svg', 'webp', 'ico', 'bmp', 'avif',
+  // Fonts
+  'woff', 'woff2', 'ttf', 'eot', 'otf',
+  // Media
+  'mp3', 'mp4', 'webm', 'ogg', 'wav',
+  // Archives
+  'zip', 'tar', 'gz', 'rar',
+  // Maps
+  'map',
+]);
+
+/**
+ * Check if the url is a file with a known extension
  * (handles query params, e.g. /api.twd.test.ts?t=12345)
  * @param {string} url
  * @returns {boolean}
@@ -29,8 +56,9 @@ const validRegex = (pattern) => {
 const isFile = (url) => {
   // Remove query string before checking for file extension
   const urlWithoutQuery = url.split('?')[0];
-  const regex = /\.([a-zA-Z0-9]+)$/;
-  return regex.test(urlWithoutQuery);
+  const match = urlWithoutQuery.match(/\.([a-zA-Z0-9]+)$/);
+  if (!match) return false;
+  return FILE_EXTENSIONS.has(match[1].toLowerCase());
 };
 
 /**
