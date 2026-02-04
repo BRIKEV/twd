@@ -175,7 +175,7 @@ it("should handle API errors", async () => {
       code: "USER_NOT_FOUND"
     },
     status: 404,
-    headers: {
+    responseHeaders: {
       "Content-Type": "application/json",
       "X-Error-Code": "USER_NOT_FOUND"
     }
