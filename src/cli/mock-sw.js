@@ -54,10 +54,9 @@ export const handleFetch = async (event) => {
           } catch {}
         }
 
-        // Mark executed and notify page
-        self.clients.matchAll().then((clients) => {
-          notifyClients(clients, rule, body);
-        });
+        // Mark executed and notify page (await to prevent race condition)
+        const clients = await self.clients.matchAll();
+        notifyClients(clients, rule, body);
 
         return mockResponse(
           rule.response,

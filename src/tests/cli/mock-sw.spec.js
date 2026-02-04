@@ -276,5 +276,35 @@ describe('Service Worker', () => {
     const event = mockEvent();
     await handleFetch(event);
     expect(event.respondWith).not.toHaveBeenCalled();
-  })
+  });
+
+  it('should notify clients BEFORE returning response (no race condition)', async () => {
+    const rule = { alias: 'raceTest', method: 'POST', url: '/foo', response: { ok: true } };
+    rules.push(rule);
+
+    const event = mockEvent({
+      request: {
+        method: 'POST',
+        url: 'https://api.test/foo',
+        clone: vi.fn(() => ({
+          json: vi.fn(() => Promise.resolve({ test: 'data' })),
+        })),
+        headers: {
+          get: () => 'application/json',
+        },
+      }
+    });
+
+    await handleFetch(event);
+    const responsePromise = event.respondWith.mock.calls[0][0];
+    await responsePromise; // Wait for response to be generated
+
+    // notifyClients should have been called BEFORE response resolved
+    // (without needing an extra await Promise.resolve())
+    expect(notifyClients).toHaveBeenCalledWith(
+      expect.any(Array),
+      rule,
+      { test: 'data' }
+    );
+  });
 })
