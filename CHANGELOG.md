@@ -1,3 +1,8 @@
+## <small>1.4.3 (2026-02-04)</small>
+
+* Fix/service worker issues (#138) ([1ab3f95](https://github.com/BRIKEV/twd/commit/1ab3f95)), closes [#138](https://github.com/BRIKEV/twd/issues/138)
+
+
 ## <small>1.4.2 (2026-01-29)</small>
 
 * Fix/improve execution (#136) ([7503805](https://github.com/BRIKEV/twd/commit/7503805)), closes [#136](https://github.com/BRIKEV/twd/issues/136)

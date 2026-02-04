@@ -98,3 +98,15 @@ npm run dev
 ```
 
 Test files in that app import directly from source (`../../../../src/`), so changes are immediately reflected.
+
+## Release Process
+
+When releasing a new version, update the following files:
+
+1. **`package.json`** - Update the `"version"` field
+2. **`src/constants/version.ts`** - Update `TWD_VERSION` constant
+3. **`src/constants/version_cli.js`** - Update `TWD_VERSION` constant
+4. **Run `npm install`** - Updates `package-lock.json`
+5. **`CHANGELOG.md`** - Add new version entry at the top with changes since the previous version
+
+Use `git log v<previous-version>..HEAD --oneline` to see commits since the last release.
