@@ -329,7 +329,7 @@ describe("Service Worker Integration", () => {
       const rules = twd.getRequestMockRules();
       const sameAliasRules = rules.filter(r => r.alias === "sameAlias");
       expect(sameAliasRules.length).to.equal(1);
-      expect(sameAliasRules[0].response.version).to.equal(2);
+      expect((sameAliasRules[0].response as { version: number }).version).to.equal(2);
     });
   });
 });
