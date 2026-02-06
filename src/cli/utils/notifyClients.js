@@ -9,6 +9,7 @@
  * @property {number} [status] - HTTP status code for the response.
  * @property {Record<string, string>} [responseHeaders] - Headers to include in the response.
  * @property {boolean} [urlRegex] - Whether the URL is a regex pattern.
+ * @property {number} [delay] - Delay in ms before returning the response.
  */
 
 /**
@@ -20,13 +21,15 @@
  * @param {Array<{ postMessage: Function }>} clients - An array of client objects, each with a `postMessage` method.
  * @param {Rule} rule - The rule object that was executed, containing at least an `alias` property.
  * @param {unknown} body - The request body or payload to send to the clients.
+ * @param {number} [hitCount] - The number of times this rule has been matched.
  */
-export function notifyClients(clients, rule, body) {
+export function notifyClients(clients, rule, body, hitCount) {
   clients.forEach((client) =>
     client.postMessage({
       type: "EXECUTED",
       alias: rule.alias,
       request: body,
+      hitCount,
     })
   );
 }
