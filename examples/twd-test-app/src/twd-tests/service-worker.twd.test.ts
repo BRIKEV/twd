@@ -289,6 +289,157 @@ describe("Service Worker Integration", () => {
     });
   });
 
+  describe("Request Delay", () => {
+    it("delays the response by the specified amount", async () => {
+      await twd.mockRequest("delayedGet", {
+        method: "GET",
+        url: "/api/sw-test/delayed",
+        response: { delayed: true },
+        delay: 500,
+      });
+
+      const start = performance.now();
+      const response = await fetch("/api/sw-test/delayed");
+      const elapsed = performance.now() - start;
+      const data = await response.json();
+
+      expect(data.delayed).to.equal(true);
+      // Should take at least ~500ms (allow some tolerance)
+      expect(elapsed).to.be.greaterThanOrEqual(450);
+    });
+
+    it("returns response immediately when no delay is set", async () => {
+      await twd.mockRequest("noDelayGet", {
+        method: "GET",
+        url: "/api/sw-test/no-delay",
+        response: { fast: true },
+      });
+
+      const start = performance.now();
+      const response = await fetch("/api/sw-test/no-delay");
+      const elapsed = performance.now() - start;
+      const data = await response.json();
+
+      expect(data.fast).to.equal(true);
+      // Should be very fast (well under 200ms)
+      expect(elapsed).to.be.lessThan(200);
+    });
+
+    it("notifies EXECUTED before the delay completes", async () => {
+      await twd.mockRequest("delayedWithNotify", {
+        method: "GET",
+        url: "/api/sw-test/delayed-notify",
+        response: { ok: true },
+        delay: 1000,
+      });
+
+      // Start the fetch (don't await yet)
+      const fetchPromise = fetch("/api/sw-test/delayed-notify");
+
+      // waitForRequest should resolve quickly (EXECUTED fires before delay)
+      const rule = await twd.waitForRequest("delayedWithNotify");
+      expect(rule.executed).to.equal(true);
+
+      // Now wait for the actual response to come back
+      const response = await fetchPromise;
+      const data = await response.json();
+      expect(data.ok).to.equal(true);
+    });
+  });
+
+  describe("Request Counter", () => {
+    it("tracks hit count for a single rule", async () => {
+      await twd.mockRequest("countedGet", {
+        method: "GET",
+        url: "/api/sw-test/counted",
+        response: { counted: true },
+      });
+
+      expect(twd.getRequestCount("countedGet")).to.equal(0);
+
+      await fetch("/api/sw-test/counted");
+      await twd.waitForRequest("countedGet");
+      expect(twd.getRequestCount("countedGet")).to.equal(1);
+
+      // Re-register so executed resets for waitForRequest to work again
+      await twd.mockRequest("countedGet", {
+        method: "GET",
+        url: "/api/sw-test/counted",
+        response: { counted: true },
+      });
+
+      await fetch("/api/sw-test/counted");
+      await twd.waitForRequest("countedGet");
+      expect(twd.getRequestCount("countedGet")).to.equal(2);
+
+      // Third call
+      await twd.mockRequest("countedGet", {
+        method: "GET",
+        url: "/api/sw-test/counted",
+        response: { counted: true },
+      });
+
+      await fetch("/api/sw-test/counted");
+      await twd.waitForRequest("countedGet");
+      expect(twd.getRequestCount("countedGet")).to.equal(3);
+    });
+
+    it("tracks hit counts for multiple rules independently", async () => {
+      await twd.mockRequest("countA", {
+        method: "GET",
+        url: "/api/sw-test/count-a",
+        response: { a: true },
+      });
+
+      await twd.mockRequest("countB", {
+        method: "GET",
+        url: "/api/sw-test/count-b",
+        response: { b: true },
+      });
+
+      // Hit countA twice
+      await fetch("/api/sw-test/count-a");
+      await twd.waitForRequest("countA");
+
+      await twd.mockRequest("countA", {
+        method: "GET",
+        url: "/api/sw-test/count-a",
+        response: { a: true },
+      });
+      await fetch("/api/sw-test/count-a");
+      await twd.waitForRequest("countA");
+
+      // Hit countB once
+      await fetch("/api/sw-test/count-b");
+      await twd.waitForRequest("countB");
+
+      const counts = twd.getRequestCounts();
+      expect(counts["countA"]).to.equal(2);
+      expect(counts["countB"]).to.equal(1);
+    });
+
+    it("resets counts when rules are cleared", async () => {
+      await twd.mockRequest("resetCount", {
+        method: "GET",
+        url: "/api/sw-test/reset-count",
+        response: { ok: true },
+      });
+
+      await fetch("/api/sw-test/reset-count");
+      await twd.waitForRequest("resetCount");
+      expect(twd.getRequestCount("resetCount")).to.equal(1);
+
+      twd.clearRequestMockRules();
+
+      expect(twd.getRequestCount("resetCount")).to.equal(0);
+      expect(twd.getRequestCounts()).to.deep.equal({});
+    });
+
+    it("returns 0 for unknown alias", () => {
+      expect(twd.getRequestCount("nonExistent")).to.equal(0);
+    });
+  });
+
   describe("Mock Management", () => {
     it("clears all mocks correctly", async () => {
       await twd.mockRequest("tempMock1", {
