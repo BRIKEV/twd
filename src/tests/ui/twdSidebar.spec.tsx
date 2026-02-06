@@ -4,6 +4,8 @@ import userEvent from '@testing-library/user-event';
 import { render, screen, waitFor } from '@testing-library/react'
 import * as twd from '../../runner';
 import { TWDSidebar } from "../../ui/TWDSidebar";
+import * as mockBridge from '../../commands/mockBridge';
+import * as componentMocks from '../../ui/componentMocks';
 
 describe("TWDSidebar", () => {
   beforeEach(() => {
@@ -152,6 +154,24 @@ describe("TWDSidebar", () => {
       const runAllButton = screen.getByText("Run All");
       await user.click(runAllButton);
       expect(sessionStorage.getItem('twd-last-run-test-name')).toBeNull();
+    });
+
+    it('should render the Clear mocks button', () => {
+      render(<TWDSidebar open={true} />);
+      const clearMocksButton = screen.getByRole('button', { name: 'Clear all mocks' });
+      expect(clearMocksButton).toBeInTheDocument();
+      expect(clearMocksButton).toHaveTextContent('Clear mocks');
+    });
+
+    it('should call clearRequestMockRules and clearComponentMocks when clicking Clear mocks', async () => {
+      const user = userEvent.setup();
+      const clearRequestSpy = vi.spyOn(mockBridge, 'clearRequestMockRules').mockImplementation(() => {});
+      const clearComponentSpy = vi.spyOn(componentMocks, 'clearComponentMocks').mockImplementation(() => {});
+      render(<TWDSidebar open={true} />);
+      const clearMocksButton = screen.getByRole('button', { name: 'Clear all mocks' });
+      await user.click(clearMocksButton);
+      expect(clearRequestSpy).toHaveBeenCalled();
+      expect(clearComponentSpy).toHaveBeenCalled();
     });
   });
 

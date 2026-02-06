@@ -393,6 +393,10 @@ it("should include authentication headers", async () => {
 
 ### Clearing Mocks
 
+::: tip
+You can also clear all mocks (both API request mocks and component mocks) at any time by clicking the **Clear mocks** button in the TWD sidebar header, next to the "Run All" button. This is useful for quick manual resets during development without modifying test code.
+:::
+
 ```ts
 describe("User Management", () => {
   // Clear mocks before each test

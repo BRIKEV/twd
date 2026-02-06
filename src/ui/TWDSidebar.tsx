@@ -4,6 +4,8 @@ import { ClosedSidebar } from "./ClosedSidebar";
 import { useLayout } from "./hooks/useLayout";
 import { handlers, TestRunner, type Handler } from "../runner";
 import { MockRulesButton } from "./MockRulesButton";
+import { clearRequestMockRules } from "../commands/mockBridge";
+import { clearComponentMocks } from "./componentMocks";
 import { isChaiAssertionError, printChaiError, formatChaiError } from "./utils/chaiErrorFormat";
 import { LogType } from "./utils/formatLogs";
 import { displaySRMessageSpecificTest, displaySRMessageAllTests } from "./utils/screenReaderMessages";
@@ -157,19 +159,38 @@ export const TWDSidebar = ({ open, position = "left" }: TWDSidebarProps) => {
           alignItems: "center", 
           marginBottom: "var(--twd-spacing-xl)" 
         }}>
-          <button
-            onClick={runAll}
-            style={{
-              background: "var(--twd-button-primary)",
-              color: "var(--twd-button-primary-text)",
-              padding: "var(--twd-spacing-xs) var(--twd-spacing-md)",
-              borderRadius: "var(--twd-border-radius)",
-              border: "none",
-              cursor: "pointer",
-            }}
-          >
-            Run All
-          </button>
+          <div style={{ display: "flex", gap: "var(--twd-spacing-xs)" }}>
+            <button
+              onClick={runAll}
+              style={{
+                background: "var(--twd-button-primary)",
+                color: "var(--twd-button-primary-text)",
+                padding: "var(--twd-spacing-xs) var(--twd-spacing-md)",
+                borderRadius: "var(--twd-border-radius)",
+                border: "none",
+                cursor: "pointer",
+              }}
+            >
+              Run All
+            </button>
+            <button
+              onClick={() => {
+                clearRequestMockRules();
+                clearComponentMocks();
+              }}
+              aria-label="Clear all mocks"
+              style={{
+                background: "var(--twd-button-secondary)",
+                color: "var(--twd-button-secondary-text)",
+                padding: "var(--twd-spacing-xs) var(--twd-spacing-md)",
+                borderRadius: "var(--twd-border-radius)",
+                border: "1px solid var(--twd-button-border)",
+                cursor: "pointer",
+              }}
+            >
+              Clear mocks
+            </button>
+          </div>
           <button
             aria-label="Close sidebar"
             style={{
