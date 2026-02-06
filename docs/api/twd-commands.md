@@ -795,6 +795,10 @@ twd.initRequestMocking('/test-path/mock-sw.js')
 
 Clears all active mock rules.
 
+::: tip
+This can also be triggered from the sidebar via the **Clear mocks** button, which clears both request mock rules and component mocks.
+:::
+
 #### Syntax
 
 ```ts
@@ -957,6 +961,10 @@ twd.mockComponent("UserCard", ({ user }: UserCardProps) => {
 ### twd.clearComponentMocks()
 
 Clears all active component mocks.
+
+::: tip
+This can also be triggered from the sidebar via the **Clear mocks** button, which clears both component mocks and request mock rules.
+:::
 
 #### Syntax
 

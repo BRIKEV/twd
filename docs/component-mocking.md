@@ -245,6 +245,10 @@ it("should mock multiple components", async () => {
 
 ### Clearing Mocks
 
+::: tip
+You can also clear all component mocks (and API request mocks) at once by clicking the **Clear mocks** button in the TWD sidebar header, next to the "Run All" button.
+:::
+
 Always clear component mocks between tests to ensure isolation:
 
 ```ts
