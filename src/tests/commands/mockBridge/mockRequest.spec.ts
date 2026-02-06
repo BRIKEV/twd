@@ -79,11 +79,30 @@ describe('mockBridge mock request methods', () => {
     expect(getRequestMockRules().length).toBe(1);
     expect(getRequestMockRules()[0].alias).toBe(alias);
 
+    // Test that delay is passed through when provided
+    await mockRequest('delayedRequest', {
+      url: mockUrl,
+      status: 200,
+      method: 'GET',
+      response: mockResponse,
+      delay: 500,
+    });
+
+    expect(postMessageMock).toHaveBeenCalledWith({
+      type: 'ADD_RULE',
+      rule: expect.objectContaining({
+        alias: 'delayedRequest',
+        delay: 500,
+        executed: false,
+      }),
+      version: TWD_VERSION,
+    });
+
     // clear rules
     clearRequestMockRules();
     expect(getRequestMockRules().length).toBe(0);
-    expect(postMessageMock).toHaveBeenCalledTimes(3);
-    expect(postMessageMock).toHaveBeenNthCalledWith(3, { type: "CLEAR_RULES", version: TWD_VERSION });
+    expect(postMessageMock).toHaveBeenCalledTimes(4);
+    expect(postMessageMock).toHaveBeenNthCalledWith(4, { type: "CLEAR_RULES", version: TWD_VERSION });
 
     // Restore original controller
     Object.defineProperty(navigator.serviceWorker, 'controller', {

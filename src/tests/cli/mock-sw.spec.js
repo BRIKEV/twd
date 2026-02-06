@@ -5,7 +5,7 @@ vi.mock('../../cli/utils/notifyClients.js', () => ({
   notifyClients: vi.fn(),
 }));
 
-import { handleFetch, handleMessage, rules } from '../../cli/mock-sw.js';
+import { handleFetch, handleMessage, rules, ruleHitCount } from '../../cli/mock-sw.js';
 import { notifyClients } from '../../cli/utils/notifyClients.js';
 import { TWD_VERSION } from '../../constants/version_cli.js';
 
@@ -41,6 +41,10 @@ const mockEvent = (overrides = {}) => ({
 describe('Service Worker', () => {
   beforeEach(() => {
     rules.length = 0; // clear between tests
+    // Reset hit counters between tests
+    for (const key in ruleHitCount) {
+      delete ruleHitCount[key];
+    }
   });
 
   it('adds a rule via message', () => {
@@ -111,7 +115,8 @@ describe('Service Worker', () => {
     expect(notifyClients).toHaveBeenCalledWith(
       expect.any(Array),
       rule,
-      { foo: 'bar' }
+      { foo: 'bar' },
+      1,
     );
   });
 
@@ -147,6 +152,7 @@ describe('Service Worker', () => {
       expect.any(Array),
       rule,
       { key1: 'value1', key2: 'value2' },
+      1,
     );
   });
 
@@ -177,6 +183,7 @@ describe('Service Worker', () => {
       expect.any(Array),
       rule,
       'plain text',
+      1,
     );
   });
 
@@ -208,6 +215,7 @@ describe('Service Worker', () => {
       expect.any(Array),
       rule,
       arrayBuffer,
+      1,
     );
   });
 
@@ -239,6 +247,7 @@ describe('Service Worker', () => {
       expect.any(Array),
       rule,
       blob,
+      1,
     );
   });
 
@@ -269,6 +278,7 @@ describe('Service Worker', () => {
       expect.any(Array),
       rule,
       'some text',
+      1,
     );
   });
 
@@ -304,7 +314,8 @@ describe('Service Worker', () => {
     expect(notifyClients).toHaveBeenCalledWith(
       expect.any(Array),
       rule,
-      { test: 'data' }
+      { test: 'data' },
+      1,
     );
   });
 })

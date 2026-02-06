@@ -221,12 +221,73 @@ describe('initRequestMocking', () => {
         type: "EXECUTED",
         alias: "getUser",
         request: { headers: { foo: "bar" } },
+        hitCount: 1,
       }
     });
 
     rule = getRequestMockRules()[0];
     expect(rule.executed).toBe(true);
     expect(rule.request).toEqual({ headers: { foo: "bar" } });
+    expect(rule.hitCount).toBe(1);
+
+    // Restore
+    Object.defineProperty(navigator, 'serviceWorker', {
+      configurable: true,
+      value: originalSW,
+    });
+  });
+
+  it("should store hitCount from EXECUTED message on the rule", async () => {
+    // Set up proper service worker mock
+    localStorage.setItem('twd-sw-version', TWD_VERSION);
+    let messageHandler: Function;
+    const originalSW = navigator.serviceWorker;
+    Object.defineProperty(navigator, 'serviceWorker', {
+      configurable: true,
+      value: {
+        register: vi.fn().mockResolvedValue({}),
+        addEventListener: vi.fn((type: string, handler: Function) => {
+          if (type === 'message') {
+            messageHandler = handler;
+          }
+        }),
+        getRegistrations: vi.fn().mockResolvedValue([]),
+        controller: { postMessage: vi.fn() },
+      },
+    });
+
+    await initRequestMocking();
+
+    await mockRequest("getUser", {
+      method: "GET",
+      url: "/api/user/1",
+      response: { id: 1, name: "Kevin" },
+    });
+
+    // Simulate multiple EXECUTED messages with increasing hitCount
+    messageHandler!({
+      data: {
+        type: "EXECUTED",
+        alias: "getUser",
+        request: null,
+        hitCount: 1,
+      }
+    });
+
+    let rule = getRequestMockRules()[0];
+    expect(rule.hitCount).toBe(1);
+
+    messageHandler!({
+      data: {
+        type: "EXECUTED",
+        alias: "getUser",
+        request: null,
+        hitCount: 5,
+      }
+    });
+
+    rule = getRequestMockRules()[0];
+    expect(rule.hitCount).toBe(5);
 
     // Restore
     Object.defineProperty(navigator, 'serviceWorker', {
