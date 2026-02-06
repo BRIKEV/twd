@@ -1,7 +1,7 @@
 import { waitForElement, wait, waitForElements } from "./utils/wait";
 import { runAssertion } from "./asserts";
 import { log } from "./utils/log";
-import { mockRequest, Options, Rule, waitForRequest, initRequestMocking, clearRequestMockRules, getRequestMockRules, waitForRequests } from "./commands/mockBridge";
+import { mockRequest, Options, Rule, waitForRequest, initRequestMocking, clearRequestMockRules, getRequestMockRules, waitForRequests, getRequestCount, getRequestCounts } from "./commands/mockBridge";
 import type { AnyAssertion, ArgsFor, TWDElemAPI } from "./twd-types";
 import urlCommand, { type URLCommandAPI } from "./commands/url";
 import { visit } from "./commands/visit";
@@ -71,6 +71,7 @@ interface TWDAPI {
    *  - `response`: Body of the mocked response
    *  - `status`: (optional) HTTP status code (default: 200)
    *  - `responseHeaders`: (optional) Response headers
+   *  - `delay`: (optional) Delay in ms before returning the response
    *
    * @example
    * ```ts
@@ -154,6 +155,29 @@ interface TWDAPI {
    * ```
    */
   getRequestMockRules: () => Rule[];
+  /**
+   * Gets the number of times a specific mock rule was hit.
+   * @param alias The alias of the mock rule
+   * @returns The number of times the rule was matched
+   *
+   * @example
+   * ```ts
+   * const count = twd.getRequestCount("getUser");
+   * expect(count).to.equal(2);
+   * ```
+   */
+  getRequestCount: (alias: string) => number;
+  /**
+   * Gets a snapshot of all mock rule hit counts.
+   * @returns An object mapping rule aliases to their hit counts
+   *
+   * @example
+   * ```ts
+   * const counts = twd.getRequestCounts();
+   * expect(counts).to.deep.equal({ getUser: 2, listPosts: 1 });
+   * ```
+   */
+  getRequestCounts: () => Record<string, number>;
   /**
    * Waits for a specified time.
    * @param time Time in milliseconds to wait
@@ -270,6 +294,8 @@ export const twd: TWDAPI = {
   initRequestMocking,
   clearRequestMockRules,
   getRequestMockRules,
+  getRequestCount,
+  getRequestCounts,
   should: (el: Element, name: AnyAssertion, ...args: ArgsFor<AnyAssertion>) => {
     const message = runAssertion(el, name, ...args);
     log(message);

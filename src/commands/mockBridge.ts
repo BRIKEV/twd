@@ -12,6 +12,8 @@ export type Rule = {
   status?: number;
   responseHeaders?: Record<string, string>;
   urlRegex?: boolean;
+  delay?: number;
+  hitCount?: number;
 };
 
 export interface Options {
@@ -21,10 +23,12 @@ export interface Options {
   status?: number;
   responseHeaders?: Record<string, string>;
   urlRegex?: boolean;
+  delay?: number;
 }
 
 interface MockState {
   rules: Rule[];
+  counts: Record<string, number>;
 }
 
 const getMockState = (): MockState => {
@@ -32,6 +36,7 @@ const getMockState = (): MockState => {
     if (!window.__TWD_MOCK_STATE__) {
       window.__TWD_MOCK_STATE__ = {
         rules: [],
+        counts: {},
       };
     }
     return window.__TWD_MOCK_STATE__ as MockState;
@@ -39,6 +44,7 @@ const getMockState = (): MockState => {
   
   return {
     rules: [],
+    counts: {},
   };
 };
 
@@ -69,12 +75,14 @@ export const initRequestMocking = async (path?: string) => {
     }
     navigator.serviceWorker.addEventListener("message", (event) => {
       if (event.data?.type === "EXECUTED") {
-        const { alias, request } = event.data;
+        const { alias, request, hitCount } = event.data;
         const rule = rules.find((r) => r.alias === alias);
         if (rule) {
           rule.executed = true;
           rule.request = request;
+          rule.hitCount = hitCount;
         }
+        state.counts[alias] = hitCount ?? ((state.counts[alias] ?? 0) + 1);
       }
     });
   }
@@ -91,6 +99,7 @@ export const initRequestMocking = async (path?: string) => {
  *  - `status`: (optional) HTTP status code (default: 200)
  *  - `responseHeaders`: (optional) Response headers
  *  - `urlRegex`: (optional) Whether the URL is a regex (default: false)
+ *  - `delay`: (optional) Delay in ms before returning the response
  *
  * @example
  * ```ts
@@ -183,6 +192,27 @@ export const clearRequestMockRules = () => {
     version: TWD_VERSION,
   });
   rules.length = 0;
+  // Reset all hit counters
+  for (const key in state.counts) {
+    delete state.counts[key];
+  }
+};
+
+/**
+ * Get the number of times a specific mock rule was hit.
+ * @param alias The alias of the mock rule
+ * @returns The number of times the rule was matched
+ */
+export const getRequestCount = (alias: string): number => {
+  return state.counts[alias] ?? 0;
+};
+
+/**
+ * Get a snapshot of all mock rule hit counts.
+ * @returns An object mapping rule aliases to their hit counts
+ */
+export const getRequestCounts = (): Record<string, number> => {
+  return { ...state.counts };
 };
 
 /**
