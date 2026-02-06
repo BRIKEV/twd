@@ -107,12 +107,33 @@ TWD is an in-browser test runner. Tests run in the browser (not Node.js). Syntax
    // In test:
    twd.mockComponent("Chart", () => <div>Mocked</div>);
 
+### Module stubbing (Sinon)
+   Tests run in the browser, so use Sinon for stubs/spies.
+   ESM constraint: named exports (export const foo = ...) are IMMUTABLE and CANNOT be stubbed.
+   Solution: wrap in an object and export as default.
+
+   // hooks/useAuth.ts — CORRECT (stubbable)
+   import { useAuth0 } from "@auth0/auth0-react";
+   const useAuth = () => useAuth0();
+   export default { useAuth };
+
+   // hooks/useAuth.ts — WRONG (not stubbable)
+   export const useAuth = () => useAuth0();
+
+   // In test:
+   import authSession from '../hooks/useAuth';
+   import Sinon from 'sinon';
+   Sinon.stub(authSession, 'useAuth').returns({ isAuthenticated: true, ... });
+   // Clean up in beforeEach: Sinon.restore();
+
 ## Do's and Don'ts
    DO: await twd.get(); await userEvent actions; use .el when passing twd.get() result to userEvent.
    DO: Clear mocks in beforeEach: twd.clearRequestMockRules(); twd.clearComponentMocks();
    DO: Mock requests BEFORE twd.visit() or triggering the request.
    DON'T: use cy.get or cy.visit (not Cypress); use global describe/it — always import from "twd-js/runner".
    DON'T: assume Node.js (fs, path) is available — tests run in browser.
+   DON'T: try to stub named exports (export const fn = ...) — ESM makes them immutable. Wrap in an object and export default.
+   DO: use Sinon for module stubs/spies. Always call Sinon.restore() in beforeEach.
 ```
 
 ---
@@ -328,7 +349,88 @@ describe("Dashboard", () => {
 });
 ```
 
-#### 8. Waiting
+#### 8. Module Stubbing with Sinon
+
+TWD tests run in the browser, so use [Sinon](https://sinonjs.org/) for spies, stubs, and mocks.
+
+**Critical ESM constraint:** ES Module named exports (`export const foo = ...`) are **immutable at runtime** and **cannot be stubbed**. To make a module stubbable, wrap the function in an object and use a default export.
+
+**Step 1: Create a stubbable wrapper**
+
+```ts
+// hooks/useAuth.ts — CORRECT: default export as object
+import { useAuth0 } from "@auth0/auth0-react";
+
+const useAuth = () => useAuth0();
+
+export default { useAuth };
+```
+
+```ts
+// hooks/useAuth.ts — WRONG: named export cannot be stubbed
+export const useAuth = () => useAuth0();
+```
+
+**Step 2: Use the wrapper in your application code**
+
+```tsx
+// components/Profile.tsx
+import authSession from '../hooks/useAuth';
+
+function Profile() {
+  const { user, isAuthenticated } = authSession.useAuth();
+  if (!isAuthenticated) return <p>Please log in</p>;
+  return <h1>Welcome, {user.name}</h1>;
+}
+```
+
+**Step 3: Stub in your tests**
+
+```ts
+import { beforeEach, describe, it } from 'twd-js/runner';
+import { twd, screenDom } from 'twd-js';
+import authSession from '../hooks/useAuth';
+import Sinon from 'sinon';
+
+describe('Profile', () => {
+  beforeEach(() => {
+    Sinon.restore(); // Always restore stubs for test isolation
+    twd.clearRequestMockRules();
+  });
+
+  it('should show welcome for authenticated user', async () => {
+    Sinon.stub(authSession, 'useAuth').returns({
+      isAuthenticated: true,
+      isLoading: false,
+      user: { name: 'John Doe' },
+    });
+
+    await twd.visit('/profile');
+    const heading = await screenDom.findByRole('heading', { name: 'Welcome, John Doe' });
+    twd.should(heading, 'be.visible');
+  });
+
+  it('should show login prompt for unauthenticated user', async () => {
+    Sinon.stub(authSession, 'useAuth').returns({
+      isAuthenticated: false,
+      isLoading: false,
+      user: undefined,
+    });
+
+    await twd.visit('/profile');
+    const message = await screenDom.findByText('Please log in');
+    twd.should(message, 'be.visible');
+  });
+});
+```
+
+**Why this pattern works:** `Sinon.stub(object, 'property')` replaces a property on an object. Since ES modules freeze named exports, you need a mutable object (the default export) to swap out the function at runtime.
+
+This pattern applies to **any module** you need to control in tests — not just Auth0. Any hook, service, or utility can be wrapped the same way.
+
+For a complete authentication example, see the [Module Mocking guide](/module-mocking).
+
+#### 9. Waiting
 
 ```ts
 // Wait for time
@@ -347,6 +449,8 @@ await twd.notExists(".loading-spinner");
 *   **DO** use `.el` on the result of `twd.get()` when passing to `userEvent`.
 *   **DO** clear mocks in `beforeEach`: `twd.clearRequestMockRules()` and `twd.clearComponentMocks()`.
 *   **DO** mock requests/components **before** `twd.visit()` or triggering the request.
+*   **DO** use Sinon for module stubs/spies. Always call `Sinon.restore()` in `beforeEach` for test isolation.
+*   **DON'T** try to stub named exports (`export const fn = ...`). ESM makes them immutable at runtime. Wrap in an object and use `export default { fn }` instead.
 *   **DON'T** use `cy.get` or `cy.visit`. This is not Cypress.
 *   **DON'T** use global `describe`/`it`. Always import from `"twd-js/runner"`.
 *   **DON'T** assume Node.js modules (`fs`, `path`) are available.

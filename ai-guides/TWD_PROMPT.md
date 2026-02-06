@@ -300,6 +300,56 @@ describe("Component Mocking", () => {
 });
 ```
 
+## Module Stubbing with Sinon
+
+TWD tests run in the browser, so use [Sinon](https://sinonjs.org/) for spies, stubs, and mocks.
+
+### ESM Constraint
+
+ES Module named exports (`export const foo = ...`) are **immutable at runtime** and **cannot be stubbed**. To make a module stubbable, wrap the function in an object and use a default export.
+
+### Stubbable Module Pattern
+
+```typescript
+// hooks/useAuth.ts — CORRECT: stubbable
+import { useAuth0 } from "@auth0/auth0-react";
+const useAuth = () => useAuth0();
+export default { useAuth };
+
+// hooks/useAuth.ts — WRONG: named export, cannot be stubbed at runtime
+export const useAuth = () => useAuth0();
+```
+
+### Stubbing in Tests
+
+```typescript
+import { beforeEach, describe, it } from 'twd-js/runner';
+import { twd, screenDom } from 'twd-js';
+import authSession from '../hooks/useAuth';
+import Sinon from 'sinon';
+
+describe('Auth tests', () => {
+  beforeEach(() => {
+    Sinon.restore(); // Always restore for test isolation
+    twd.clearRequestMockRules();
+  });
+
+  it('should render for authenticated user', async () => {
+    Sinon.stub(authSession, 'useAuth').returns({
+      isAuthenticated: true,
+      isLoading: false,
+      user: { name: 'John Doe' },
+    });
+
+    await twd.visit('/profile');
+    const heading = await screenDom.findByRole('heading', { name: 'Welcome, John Doe' });
+    twd.should(heading, 'be.visible');
+  });
+});
+```
+
+**Why this works:** `Sinon.stub(object, 'property')` replaces a property on a mutable object. ES modules freeze named exports, so you need an object (the default export) to swap out the function. This pattern works for any hook, service, or utility — not just authentication.
+
 ## Test Structure Template
 
 ```typescript
@@ -425,6 +475,20 @@ import { describe, it } from "twd-js/runner";
 describe("Test", () => { ... });
 ```
 
+### DON'T: Try to stub named exports
+```typescript
+// BAD - Named exports are immutable in ESM, stub silently fails
+// utils.ts
+export const fetchData = () => fetch("/api/data");
+// test: Sinon.stub(utils, 'fetchData') — DOES NOT WORK
+
+// GOOD - Default export as object, property is mutable
+// utils.ts
+const fetchData = () => fetch("/api/data");
+export default { fetchData };
+// test: Sinon.stub(utils, 'fetchData') — WORKS
+```
+
 ## Quick Reference
 
 | Action | Code |
@@ -439,6 +503,8 @@ describe("Test", () => { ... });
 | Mock request | `await twd.mockRequest("alias", { method, url, response })` |
 | Wait for request | `await twd.waitForRequest("alias")` |
 | Clear mocks | `twd.clearRequestMockRules()` |
+| Stub module | `Sinon.stub(moduleDefault, 'method').returns(value)` |
+| Restore stubs | `Sinon.restore()` |
 
 ## Setup (for reference)
 
