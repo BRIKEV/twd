@@ -9,6 +9,7 @@
  * @property {number} [status] - HTTP status code for the response.
  * @property {Record<string, string>} [responseHeaders] - Headers to include in the response.
  * @property {boolean} [urlRegex] - Whether the URL is a regex pattern.
+ * @property {number} [delay] - Delay in ms before returning the response.
  */
 
 const validRegex = (pattern) => {

@@ -9,6 +9,12 @@ import { TWD_VERSION } from '../constants/version_cli.js';
  */
 export let rules = [];
 
+/**
+ * Per-rule hit counter keyed by rule alias.
+ * @type {Record<string, number>}
+ */
+export let ruleHitCount = {};
+
 export const handleFetch = async (event) => {
   const { method } = event.request;
   const url = event.request.url;
@@ -54,9 +60,18 @@ export const handleFetch = async (event) => {
           } catch {}
         }
 
+        // Increment hit counter for this rule
+        if (!ruleHitCount[rule.alias]) ruleHitCount[rule.alias] = 0;
+        ruleHitCount[rule.alias]++;
+
         // Mark executed and notify page (await to prevent race condition)
         const clients = await self.clients.matchAll();
-        notifyClients(clients, rule, body);
+        notifyClients(clients, rule, body, ruleHitCount[rule.alias]);
+
+        // Apply delay if configured (after notification, before response)
+        if (rule.delay && rule.delay > 0) {
+          await new Promise(resolve => setTimeout(resolve, rule.delay));
+        }
 
         return mockResponse(
           rule.response,
@@ -97,6 +112,7 @@ export const handleMessage = (event) => {
   }
   if (type === "CLEAR_RULES") {
     rules = [];
+    ruleHitCount = {};
     console.log("[TWD] All rules cleared");
   }
 };
