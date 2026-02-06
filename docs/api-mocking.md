@@ -233,6 +233,149 @@ it("should handle multiple API calls", async () => {
 });
 ```
 
+## Simulating Network Delay
+
+You can simulate network latency by adding a `delay` option (in milliseconds) to any mock rule. This is useful for testing loading states, spinners, timeouts, and other UX that depends on slow responses.
+
+### Basic Delay
+
+```ts
+it("should show loading state while waiting for API", async () => {
+  // Mock a slow API response (1 second delay)
+  await twd.mockRequest("getUser", {
+    method: "GET",
+    url: "/api/user/123",
+    response: { id: 123, name: "John Doe" },
+    delay: 1000, // 1 second delay
+  });
+
+  await twd.visit("/profile");
+
+  // Loading indicator should be visible while waiting
+  const spinner = await twd.get("[data-testid='loading-spinner']");
+  spinner.should("be.visible");
+
+  // Wait for the request to complete
+  await twd.waitForRequest("getUser");
+
+  // After the response arrives, loading should be gone
+  await twd.notExists("[data-testid='loading-spinner']");
+  const userName = await twd.get("[data-testid='user-name']");
+  userName.should("have.text", "John Doe");
+});
+```
+
+::: tip
+The `delay` only affects how long the browser waits for the HTTP response. The `EXECUTED` notification still fires immediately, so `twd.waitForRequest()` resolves right away -- it does not wait for the delay. This mirrors real network behavior: the server receives the request instantly, but the response takes time to arrive.
+:::
+
+### Delay with Error Responses
+
+```ts
+it("should handle timeout-like errors", async () => {
+  await twd.mockRequest("slowError", {
+    method: "GET",
+    url: "/api/data",
+    response: { error: "Gateway Timeout" },
+    status: 504,
+    delay: 3000, // Simulate a 3-second timeout
+  });
+
+  await twd.visit("/data-page");
+
+  // Verify the app shows appropriate timeout messaging
+  await twd.waitForRequest("slowError");
+  await twd.wait(3100); // Wait for the delayed response to arrive
+
+  const errorMessage = await twd.get(".error-message");
+  errorMessage.should("contain.text", "Gateway Timeout");
+});
+```
+
+## Asserting Request Count
+
+TWD tracks how many times each mock rule has been matched. This lets you assert that an API was called the expected number of times.
+
+### `getRequestCount(alias)`
+
+Returns the number of times a specific mock rule was hit.
+
+```ts
+it("should call the API exactly twice", async () => {
+  await twd.mockRequest("getUser", {
+    method: "GET",
+    url: "/api/user",
+    response: { id: 1, name: "John" },
+  });
+
+  await twd.visit("/profile");
+
+  // Trigger two requests
+  const refreshButton = await twd.get("button[data-testid='refresh']");
+  await userEvent.click(refreshButton.el);
+  await twd.waitForRequest("getUser");
+
+  // Re-register to reset executed flag for second wait
+  await twd.mockRequest("getUser", {
+    method: "GET",
+    url: "/api/user",
+    response: { id: 1, name: "John" },
+  });
+
+  await userEvent.click(refreshButton.el);
+  await twd.waitForRequest("getUser");
+
+  // Assert the count
+  expect(twd.getRequestCount("getUser")).to.equal(2);
+});
+```
+
+### `getRequestCounts()`
+
+Returns a snapshot of all mock rule hit counts as an object.
+
+```ts
+it("should track counts for multiple endpoints", async () => {
+  await twd.mockRequest("getUsers", {
+    method: "GET",
+    url: "/api/users",
+    response: [],
+  });
+
+  await twd.mockRequest("getSettings", {
+    method: "GET",
+    url: "/api/settings",
+    response: { theme: "dark" },
+  });
+
+  await twd.visit("/dashboard");
+  await twd.waitForRequests(["getUsers", "getSettings"]);
+
+  const counts = twd.getRequestCounts();
+  expect(counts).to.deep.equal({
+    getUsers: 1,
+    getSettings: 1,
+  });
+});
+```
+
+### Counter Reset
+
+Counters are automatically reset when you call `twd.clearRequestMockRules()`. This happens naturally in `beforeEach` cleanup:
+
+```ts
+describe("API Tests", () => {
+  beforeEach(() => {
+    twd.clearRequestMockRules(); // Also resets all counters
+  });
+
+  it("starts with zero counts", () => {
+    expect(twd.getRequestCount("anyAlias")).to.equal(0);
+    expect(twd.getRequestCounts()).to.deep.equal({});
+  });
+});
+```
+
 ## Dynamic Mocking
 
 ### Updating Mocks Mid-Test
