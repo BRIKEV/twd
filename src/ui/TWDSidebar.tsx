@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { TestList } from "./TestList";
 import { ClosedSidebar } from "./ClosedSidebar";
 import { useLayout } from "./hooks/useLayout";
@@ -44,6 +44,12 @@ export const TWDSidebar = ({ open, position = "left" }: TWDSidebarProps) => {
   const [isOpen, setIsOpen] = useState(getOpenState(open));
   useLayout({ isOpen, position });
   const [message, setMessage] = useState<string>('');
+
+  useEffect(() => {
+    const onStateChange = () => setRefresh((n) => n + 1);
+    window.addEventListener('twd:state-change', onStateChange);
+    return () => window.removeEventListener('twd:state-change', onStateChange);
+  }, []);
 
   const runner = new TestRunner({
     onStart: (test) => {
