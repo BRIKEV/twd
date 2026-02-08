@@ -49,7 +49,6 @@ function createLoggedProxy(obj: any, prefix = 'userEvent') {
       // Fallback for type() when tab is not in focus (e.g. AI relay workflow)
       if (prop === 'type') {
         return async (...args: any[]) => {
-          console.log('type', document.visibilityState, document.hasFocus());
           if (document.visibilityState === 'hidden' || !document.hasFocus()) {
             typingFallback(args[0], args[1]);
             log(eventsMessage(prefix, prop, args));

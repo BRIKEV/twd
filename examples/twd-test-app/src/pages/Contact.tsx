@@ -10,7 +10,11 @@ const Contact: React.FC = () => {
   const [range, setRange] = useState('50');
   const [hour, setHour] = useState('12:00');
   const [week, setWeek] = useState('');
+  const [subject, setSubject] = useState('');
+  const [newsletter, setNewsletter] = useState(false);
+  const [priority, setPriority] = useState('normal');
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+  const [submittedData, setSubmittedData] = useState<Record<string, string> | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -21,10 +25,11 @@ const Contact: React.FC = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ email, message, date, month, time, color, range, hour, week }),
+        body: JSON.stringify({ email, message, date, month, time, color, range, hour, week, subject, newsletter: String(newsletter), priority }),
       });
       if (response.ok) {
         setStatus('success');
+        setSubmittedData({ email, message, date, month, time, color, range, hour, week, subject, newsletter: String(newsletter), priority });
         setEmail('');
         setMessage('');
         setDate('');
@@ -34,6 +39,9 @@ const Contact: React.FC = () => {
         setRange('50');
         setHour('12:00');
         setWeek('');
+        setSubject('');
+        setNewsletter(false);
+        setPriority('normal');
       } else {
         setStatus('error');
       }
@@ -58,6 +66,22 @@ const Contact: React.FC = () => {
             onChange={e => setEmail(e.target.value)}
             style={{ width: '100%', padding: '0.5rem' }}
           />
+        </div>
+        <div style={{ marginBottom: '1rem' }}>
+          <label htmlFor="subject">Subject:</label><br />
+          <select
+            id="subject"
+            name="subject"
+            value={subject}
+            onChange={e => setSubject(e.target.value)}
+            style={{ width: '100%', padding: '0.5rem' }}
+          >
+            <option value="">-- Select a subject --</option>
+            <option value="general">General Inquiry</option>
+            <option value="support">Support</option>
+            <option value="feedback">Feedback</option>
+            <option value="bug">Bug Report</option>
+          </select>
         </div>
         <div style={{ marginBottom: '1rem' }}>
           <label htmlFor="message">Message:</label><br />
@@ -141,7 +165,6 @@ const Contact: React.FC = () => {
             style={{ width: '100%', padding: '0.5rem' }}
           />
         </div>
-        add week input
         <div style={{ marginBottom: '1rem' }}>
           <label htmlFor="week">Week:</label><br />
           <input
@@ -153,12 +176,69 @@ const Contact: React.FC = () => {
             style={{ width: '100%', padding: '0.5rem' }}
           />
         </div>
+        <div style={{ marginBottom: '1rem' }}>
+          <label>
+            <input
+              id="newsletter"
+              type="checkbox"
+              name="newsletter"
+              checked={newsletter}
+              onChange={e => setNewsletter(e.target.checked)}
+            />
+            {' '}Subscribe to newsletter
+          </label>
+        </div>
+        <fieldset style={{ marginBottom: '1rem', border: '1px solid #ccc', padding: '0.5rem', borderRadius: 4 }}>
+          <legend>Priority:</legend>
+          <label style={{ marginRight: '1rem' }}>
+            <input
+              type="radio"
+              name="priority"
+              value="low"
+              checked={priority === 'low'}
+              onChange={e => setPriority(e.target.value)}
+            />
+            {' '}Low
+          </label>
+          <label style={{ marginRight: '1rem' }}>
+            <input
+              type="radio"
+              name="priority"
+              value="normal"
+              checked={priority === 'normal'}
+              onChange={e => setPriority(e.target.value)}
+            />
+            {' '}Normal
+          </label>
+          <label>
+            <input
+              type="radio"
+              name="priority"
+              value="high"
+              checked={priority === 'high'}
+              onChange={e => setPriority(e.target.value)}
+            />
+            {' '}High
+          </label>
+        </fieldset>
         <button type="submit" disabled={status === 'loading'} style={{ padding: '0.5rem 1rem' }}>
           {status === 'loading' ? 'Sending...' : 'Send'}
         </button>
         {status === 'success' && <div style={{ color: 'green', marginTop: '1rem' }}>Message sent!</div>}
         {status === 'error' && <div style={{ color: 'red', marginTop: '1rem' }}>Error sending message.</div>}
       </form>
+      {submittedData && (
+        <div data-testid="submitted-data" style={{ marginTop: '1.5rem', padding: '1rem', background: '#1a1a2e', borderRadius: 8 }}>
+          <h3>Submitted Data</h3>
+          <ul style={{ listStyle: 'none', padding: 0 }}>
+            {Object.entries(submittedData).map(([key, value]) => (
+              <li key={key} data-testid={`submitted-${key}`} style={{ padding: '0.25rem 0' }}>
+                <strong>{key}:</strong> {value || '(empty)'}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
     </div>
   );
 };

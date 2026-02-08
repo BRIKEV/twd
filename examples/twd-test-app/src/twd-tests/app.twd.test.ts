@@ -1,4 +1,4 @@
-import { twd, expect, userEvent } from "../../../../src";
+import { twd, expect, userEvent, screenDom } from "../../../../src";
 import { describe, it, beforeEach } from "../../../../src/runner";
 
 
@@ -107,10 +107,14 @@ describe("App interactions", () => {
       url: 'http://localhost:3001/contact',
       response: { success: true },
     });
-    const emailInput = await twd.get("input#email");
-    await user.type(emailInput.el, "test@example.com");
-    const messageInput = await twd.get("textarea#message");
-    await user.type(messageInput.el, "Hello, this is a test message.");
+    // Use screenDom (testing-library) for label/role-based queries
+    const emailInput = screenDom.getByLabelText("Email:");
+    await user.type(emailInput, "test@example.com");
+    const subjectSelect = screenDom.getByLabelText("Subject:");
+    await user.selectOptions(subjectSelect, "support");
+    const messageInput = screenDom.getByLabelText("Message:");
+    await user.type(messageInput, "Hello, this is a test message.");
+    // twd.get for special inputs that need setInputValue
     const dateInput = await twd.get("input#date");
     await user.type(dateInput.el, "2023-01-01");
     const monthInput = await twd.get("input#month");
@@ -125,11 +129,38 @@ describe("App interactions", () => {
     twd.setInputValue(rangeInput.el, '75');
     const hourInput = await twd.get('input[name="hour"]');
     twd.setInputValue(hourInput.el, '14:30');
-    const submitBtn = await twd.get("button[type='submit']");
-    await user.click(submitBtn.el);
+    // screenDom for checkbox and radio
+    const newsletterCheckbox = screenDom.getByRole("checkbox", { name: /subscribe to newsletter/i });
+    await user.click(newsletterCheckbox);
+    const highPriority = screenDom.getByRole("radio", { name: /high/i });
+    await user.click(highPriority);
+    const submitBtn = screenDom.getByRole("button", { name: /send/i });
+    await user.click(submitBtn);
     const rules = await twd.waitForRequests(["contactSubmit"]);
     const request = rules[0].request;
-    expect(request).to.deep.equal({ email: "test@example.com", message: "Hello, this is a test message.", date: "2023-01-01", month: "2023-01", time: "12:00", color: "#ff0000", range: "75", hour: "14:30", week: "2023-W15" });
+    expect(request).to.deep.equal({
+      email: "test@example.com",
+      message: "Hello, this is a test message.",
+      date: "2023-01-01",
+      month: "2023-01",
+      time: "12:00",
+      color: "#ff0000",
+      range: "75",
+      hour: "14:30",
+      week: "2023-W15",
+      subject: "support",
+      newsletter: "true",
+      priority: "high",
+    });
     await twd.url().should("contain.url", "/contact");
+    // Verify submitted data is displayed using screenDom
+    const submittedEmail = screenDom.getByTestId("submitted-email");
+    twd.should(submittedEmail, "contain.text", "test@example.com");
+    const submittedSubject = screenDom.getByTestId("submitted-subject");
+    twd.should(submittedSubject, "contain.text", "support");
+    const submittedNewsletter = screenDom.getByTestId("submitted-newsletter");
+    twd.should(submittedNewsletter, "contain.text", "true");
+    const submittedPriority = screenDom.getByTestId("submitted-priority");
+    twd.should(submittedPriority, "contain.text", "high");
   });
 });
