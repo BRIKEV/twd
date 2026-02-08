@@ -1,3 +1,11 @@
+## 1.5.0 (2026-02-09)
+
+* Feat/add communication ai tools (#143) ([89e9363](https://github.com/BRIKEV/twd/commit/89e9363)), closes [#143](https://github.com/BRIKEV/twd/issues/143)
+* Feat/mock service worker delay count (#142) ([fd5db36](https://github.com/BRIKEV/twd/commit/fd5db36)), closes [#142](https://github.com/BRIKEV/twd/issues/142)
+* feat: add clear mocks button (#141) ([ec645c2](https://github.com/BRIKEV/twd/commit/ec645c2)), closes [#141](https://github.com/BRIKEV/twd/issues/141)
+* docs: improve agent and prompt guidelines ([182cea7](https://github.com/BRIKEV/twd/commit/182cea7))
+
+
 ## <small>1.4.3 (2026-02-04)</small>
 
 * Fix/service worker issues (#138) ([1ab3f95](https://github.com/BRIKEV/twd/commit/1ab3f95)), closes [#138](https://github.com/BRIKEV/twd/issues/138)
