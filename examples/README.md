@@ -57,23 +57,6 @@ npm install
 npm run dev
 ```
 
-### Astro Example
-
-#### [astro-example](./astro-example)
-Shows how to integrate TWD in an Astro project with React components.
-
-**Features:**
-- Astro + React integration
-- Custom Vite plugin for test hot reload
-- Client-side test initialization
-
-**How to run:**
-```bash
-cd examples/astro-example
-npm install
-npm run dev
-```
-
 ## External Example Repositories
 
 We maintain separate repositories for framework-specific examples that demonstrate TWD integration:
