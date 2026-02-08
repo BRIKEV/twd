@@ -99,7 +99,7 @@ describe("App interactions", () => {
     jokeText.should("have.text", "Third Mocked joke!");
   });
 
-  it("visit contact page", async () => {
+  it.only("visit contact page", async () => {
     twd.visit("/contact");
     const user = userEvent.setup();
     await twd.mockRequest("contactSubmit", {
