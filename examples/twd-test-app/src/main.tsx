@@ -25,6 +25,11 @@ if (import.meta.env.DEV) {
     .catch((err) => {
       console.error("Error initializing request mocking:", err);
     });
+
+  // Browser client: connects to the relay (same origin via Vite plugin) and runs tests when it receives a "run" command.
+  const { createBrowserClient } = await import('twd-relay/browser');
+  const client = createBrowserClient();
+  client.connect();
 }
 
 createRoot(document.getElementById('root')!).render(

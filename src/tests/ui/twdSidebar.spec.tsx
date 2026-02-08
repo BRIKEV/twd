@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { expect as chaiExpect } from 'chai';
 import userEvent from '@testing-library/user-event';
-import { render, screen, waitFor } from '@testing-library/react'
+import { render, screen, waitFor, act } from '@testing-library/react'
 import * as twd from '../../runner';
 import { TWDSidebar } from "../../ui/TWDSidebar";
 import * as mockBridge from '../../commands/mockBridge';
@@ -355,6 +355,32 @@ describe("TWDSidebar", () => {
       // The message should still appear (may be same text, but it should re-announce)
       await waitFor(() => {
         expect(screen.getByText(/Test "Test 1" passed/)).toBeInTheDocument();
+      });
+    });
+  });
+
+  describe("relay state-change event", () => {
+    it('should re-render sidebar when twd:state-change is dispatched', async () => {
+      twd.describe('Relay group', () => {
+        twd.it('Relay test', vi.fn());
+      });
+      render(<TWDSidebar open={true} />);
+
+      // Manually mark the test as passed (simulating what the relay does)
+      const tests = Array.from(twd.handlers.values());
+      const test = tests.find(t => t.type === 'test')!;
+      test.status = 'pass';
+
+      // Sidebar hasn't re-rendered yet
+      expect(screen.getByText((c) => c.replace(/\s/g, '') === '✓0')).toBeInTheDocument();
+
+      // Dispatch the event the relay fires
+      act(() => {
+        window.dispatchEvent(new CustomEvent('twd:state-change'));
+      });
+
+      await waitFor(() => {
+        expect(screen.getByText((c) => c.replace(/\s/g, '') === '✓1')).toBeInTheDocument();
       });
     });
   });

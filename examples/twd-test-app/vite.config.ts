@@ -1,6 +1,8 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import istanbul from 'vite-plugin-istanbul';
+import { twdRemote } from 'twd-relay/vite';
+import type { PluginOption } from 'vite';
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -13,5 +15,6 @@ export default defineConfig({
       extension: ['.ts', '.tsx'],
       requireEnv: process.env.CI ? true : false,
     }),
+    twdRemote() as PluginOption,
   ],
 })

@@ -64,6 +64,7 @@ export default defineConfig({
           { text: 'Testing Library', link: '/testing-library' },
           { text: 'AI Context', link: '/agents' },
           { text: 'MCP Integration', link: '/mcp-integration' },
+          { text: 'AI Remote Testing', link: '/ai-remote-testing' },
         ]
       },
       {
