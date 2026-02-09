@@ -19,11 +19,11 @@ The irony: the Vite dev server is already running, TWD is already loaded, and th
 The relay is a WebSocket server that routes messages between the **browser** (where TWD runs) and **external clients** (AI agents, scripts).
 
 ```
-┌──────────────┐     WebSocket      ┌──────────────────┐                    ┌──────────────────┐
-│  AI Agent     │◄──────────────────►│  Relay Server     │◄──────────────────►│  Browser (TWD)    │
-│  (Claude Code,│   /__twd/ws        │  (Vite plugin or  │                    │  Test runner +    │
-│   script)     │                    │   standalone)      │                    │  sidebar UI       │
-└──────────────┘                    └──────────────────┘                    └──────────────────┘
+┌───────────────┐     WebSocket      ┌──────────────────┐                ┌───────────────────┐
+│  AI Agent     │◄──────────────────►│  Relay Server    │◄──────────────►│  Browser (TWD)    │
+│  (Claude Code,│   /__twd/ws        │  (Vite plugin or │                │  Test runner +    │
+│   script)     │                    │   standalone)    │                │  sidebar UI       │
+└───────────────┘                    └──────────────────┘                └───────────────────┘
 ```
 
 1. Browser connects and identifies as `role: "browser"`
@@ -35,7 +35,7 @@ The relay is a WebSocket server that routes messages between the **browser** (wh
 ## Installation
 
 ```bash
-npm install twd-relay
+npm install --save-dev twd-relay
 ```
 
 Peer dependency: `twd-js` (>=1.4.0).
