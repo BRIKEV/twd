@@ -91,29 +91,37 @@ client.connect();
 
 ## Triggering a Test Run
 
-Once the relay is running and the browser is connected, any WebSocket client can trigger tests. Here are common approaches:
-
-### From a script
+Once the relay is running and the browser is connected, use the `twd-relay run` CLI to trigger tests:
 
 ```bash
-node -e '
-  const Ws = require("ws");
-  const w = new Ws("ws://localhost:9876/__twd/ws");
-  let sent = false;
-  w.on("open", () => w.send(JSON.stringify({ type: "hello", role: "client" })));
-  w.on("message", d => {
-    const m = JSON.parse(d);
-    if (m.type === "connected" && m.browser && !sent) {
-      sent = true;
-      w.send(JSON.stringify({ type: "run", scope: "all" }));
-    }
-    if (m.type === "run:complete") {
-      console.log(JSON.stringify(m.results, null, 2));
-      w.close();
-    }
-  });
-  w.on("close", () => process.exit(0));
-'
+# If using the Vite plugin (default port 5173)
+npx twd-relay run
+
+# If using the standalone relay on a custom port
+npx twd-relay run --port 9876
+
+# With a custom timeout (default: 180s)
+npx twd-relay run --timeout 30000
+```
+
+The command connects to the relay, sends a run command, streams test output to the terminal, and exits with code 0 (all passed) or 1 (failures or timeout). Example output:
+
+```
+Connecting to ws://localhost:5173/__twd/ws...
+Browser connected, triggering test run...
+
+Running 3 test(s)...
+
+  RUN:  Counter > increments when button is clicked
+  PASS: Counter > increments when button is clicked (42ms)
+  RUN:  Counter > resets to zero
+  PASS: Counter > resets to zero (18ms)
+  RUN:  Counter > displays initial value
+  PASS: Counter > displays initial value (5ms)
+
+--- Run complete ---
+Passed: 3 | Failed: 0 | Skipped: 0
+Duration: 0.1s
 ```
 
 ### From an AI agent
@@ -121,9 +129,8 @@ node -e '
 Add this to your agent's instructions (e.g. `CLAUDE.md`):
 
 ```text
-To run TWD tests, connect to ws://localhost:5173/__twd/ws (or port 9876 for standalone).
-Send { type: "hello", role: "client" } then { type: "run", scope: "all" }.
-Listen for "run:complete" to get results.
+To run TWD tests: npx twd-relay run
+Exit code 0 means all tests passed; 1 means failures or errors.
 ```
 
 The agent can then run tests, read failures, fix code, and re-run — all in a tight loop without needing Playwright or Puppeteer.
@@ -141,7 +148,7 @@ This happens transparently — your tests don't need to change. It currently app
 
 ## Protocol Reference
 
-All messages are JSON over WebSocket.
+All messages are JSON over WebSocket. The `twd-relay run` CLI handles this protocol for you, but if you want to build a custom client:
 
 ### Client → Relay
 
