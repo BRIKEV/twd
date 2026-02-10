@@ -68,7 +68,11 @@ try {
   // Exit with appropriate code
   const hasFailures = testStatus.some(test => test.status === 'fail');
   console.timeEnd('Total Test Time');
-  console.log('\x1b[32m%s\x1b[0m', 'Test passed!');
+  if (hasFailures) {
+    console.log('\x1b[31m%s\x1b[0m', 'Test failed!');
+  } else {
+    console.log('\x1b[32m%s\x1b[0m', 'Test passed!');
+  }
   process.exit(hasFailures ? 1 : 0);
   
 } catch (error) {

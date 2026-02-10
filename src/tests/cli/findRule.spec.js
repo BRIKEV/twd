@@ -216,5 +216,29 @@ describe('findRule', () => {
       expect(findRule('GET', 'http://localhost/user', rules)).toEqual(rules[0]);
       expect(findRule('GET', 'http://localhost/user?id=1', rules)).toEqual(rules[0]);
     });
+
+    it('allows substring matching within query strings', () => {
+      const rules = [
+        { method: 'GET', url: 'https://api.tvmaze.com/search/shows?q=', alias: 'shows' },
+      ];
+      expect(findRule('GET', 'https://api.tvmaze.com/search/shows?q=friends', rules)).toEqual(rules[0]);
+      expect(findRule('GET', 'https://api.tvmaze.com/search/shows?q=', rules)).toEqual(rules[0]);
+    });
+
+    it('allows substring matching for partial query param values', () => {
+      const rules = [
+        { method: 'GET', url: '/api/data?filter=active', alias: 'data' },
+      ];
+      expect(findRule('GET', 'http://localhost/api/data?filter=active&sort=name', rules)).toEqual(rules[0]);
+    });
+
+    it('still applies boundary check in path even when URL has query string', () => {
+      const rules = [
+        { method: 'GET', url: '/api/user', alias: 'user' },
+      ];
+      // Path boundary still enforced — /users is not /user
+      expect(findRule('GET', 'http://localhost/api/users?page=1', rules)).toBeUndefined();
+      expect(findRule('GET', 'http://localhost/api/user?page=1', rules)).toEqual(rules[0]);
+    });
   });
 });

@@ -201,6 +201,22 @@ await twd.mockRequest("getOrdersSummary", {
 // Each request matches only its intended mock
 ```
 
+::: tip Query String Matching
+Boundary checking only applies to the **path** portion of the URL. Once the match extends into the query string, substring matching is used. This lets you provide partial query strings to match any value:
+
+```ts
+// Matches any search query
+await twd.mockRequest("search", {
+  method: "GET",
+  url: "https://api.example.com/search?q=",
+  response: [{ id: 1, title: "Result" }],
+});
+
+// ✅ Matches: /search?q=laptops
+// ✅ Matches: /search?q=phones&category=electronics
+```
+:::
+
 If you need more flexible matching, use RegExp patterns instead.
 
 ### Custom Status Codes and Headers
