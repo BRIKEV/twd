@@ -1,3 +1,9 @@
+## <small>1.5.1 (2026-02-10)</small>
+
+* boundary-aware URL matching in mockRequest to prevent overlapping matches (#144) ([392a58a](https://github.com/BRIKEV/twd/commit/392a58a)), closes [#144](https://github.com/BRIKEV/twd/issues/144)
+* docs: update remote testing docs ([ee54a5e](https://github.com/BRIKEV/twd/commit/ee54a5e))
+
+
 ## 1.5.0 (2026-02-09)
 
 * Feat/add communication ai tools (#143) ([89e9363](https://github.com/BRIKEV/twd/commit/89e9363)), closes [#143](https://github.com/BRIKEV/twd/issues/143)
