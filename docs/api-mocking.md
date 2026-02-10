@@ -163,6 +163,46 @@ it("should handle dynamic user IDs", async () => {
 });
 ```
 
+### URL Matching with Strings
+
+When you provide a string URL (not a RegExp), TWD uses **boundary-aware matching**. The mock triggers when the request URL contains the mock URL followed by a valid boundary character: `/`, `?`, `#`, `&`, or end of string.
+
+This prevents similar URLs from accidentally matching each other:
+
+```ts
+await twd.mockRequest("getUsers", {
+  method: "GET",
+  url: "/api/users",
+  response: [{ id: 1, name: "John" }],
+});
+
+// ✅ Matches: /api/users
+// ✅ Matches: /api/users?page=1&limit=10
+// ✅ Matches: /api/users/123
+// ❌ Does NOT match: /api/users-settings
+// ❌ Does NOT match: /api/username
+```
+
+This means you can safely mock similar endpoints without conflicts:
+
+```ts
+await twd.mockRequest("getOrders", {
+  method: "GET",
+  url: "/api/orders",
+  response: [{ id: 1 }],
+});
+
+await twd.mockRequest("getOrdersSummary", {
+  method: "GET",
+  url: "/api/orders-summary",
+  response: { total: 100 },
+});
+
+// Each request matches only its intended mock
+```
+
+If you need more flexible matching, use RegExp patterns instead.
+
 ### Custom Status Codes and Headers
 
 ```ts
