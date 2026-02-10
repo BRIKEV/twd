@@ -63,6 +63,29 @@ const isFile = (url) => {
 };
 
 /**
+ * Check if the match ends at a URL boundary.
+ * Valid boundaries: end of string, '/', '?', '#', '&'
+ * This prevents '/users' from matching '/users-settings'.
+ * Boundary checking only applies to the path portion of the URL.
+ * If the match extends into the query string, it is always valid
+ * (e.g. rule "shows?q=" matches "shows?q=friends").
+ * @param {string} url
+ * @param {string} ruleUrl
+ * @returns {boolean}
+ */
+const isBoundaryMatch = (url, ruleUrl) => {
+  const matchIndex = url.indexOf(ruleUrl);
+  if (matchIndex === -1) return false;
+  const matchEnd = matchIndex + ruleUrl.length;
+  const charAfter = url[matchEnd];
+  if (charAfter === undefined) return true;
+  // If the match extends past the query string, it's valid
+  const queryStart = url.indexOf('?');
+  if (queryStart !== -1 && matchEnd > queryStart) return true;
+  return '/?#&'.includes(charAfter);
+};
+
+/**
  * Find a matching rule based on method and url
  * @param {string} method
  * @param {string} url
@@ -81,7 +104,7 @@ export function findRule(method, url, rules) {
       if (ruleIsFile) {
         return isMethodMatch && url.includes(r.url);
       }
-      const isUrlMatch = r.url === url || url.includes(r.url);
+      const isUrlMatch = r.url === url || isBoundaryMatch(url, r.url);
       return isMethodMatch && isUrlMatch && !isFile(url);
   });
 }

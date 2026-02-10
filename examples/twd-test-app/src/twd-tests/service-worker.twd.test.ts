@@ -440,6 +440,48 @@ describe("Service Worker Integration", () => {
     });
   });
 
+  describe("Boundary-Aware URL Matching", () => {
+    it("does not match overlapping URLs (wallet vs wallet-transactions)", async () => {
+      await twd.mockRequest("wallet", {
+        method: "GET",
+        url: "/api/sw-test/wallet",
+        response: { type: "wallet" },
+      });
+
+      await twd.mockRequest("walletTransactions", {
+        method: "GET",
+        url: "/api/sw-test/wallet-transactions",
+        response: { type: "wallet-transactions" },
+      });
+
+      const [walletRes, transactionsRes] = await Promise.all([
+        fetch("/api/sw-test/wallet"),
+        fetch("/api/sw-test/wallet-transactions?page=1&page_size=10"),
+      ]);
+
+      const walletData = await walletRes.json();
+      const transactionsData = await transactionsRes.json();
+
+      expect(walletData.type).to.equal("wallet");
+      expect(transactionsData.type).to.equal("wallet-transactions");
+
+      await twd.waitForRequests(["wallet", "walletTransactions"]);
+    });
+
+    it("matches URL with query params at boundary", async () => {
+      await twd.mockRequest("boundaryQuery", {
+        method: "GET",
+        url: "/api/sw-test/boundary-endpoint",
+        response: { matched: true },
+      });
+
+      const response = await fetch("/api/sw-test/boundary-endpoint?foo=bar&baz=1");
+      const data = await response.json();
+
+      expect(data.matched).to.equal(true);
+    });
+  });
+
   describe("Mock Management", () => {
     it("clears all mocks correctly", async () => {
       await twd.mockRequest("tempMock1", {
