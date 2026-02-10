@@ -141,14 +141,80 @@ describe('findRule', () => {
     expect(findRule('GET', 'http://localhost/api/data?query=1', rules)).toEqual(rules[0]);
   });
 
-  it('should match general rule when request URL has version suffix', () => {
-    // BUG: /api.v2 was incorrectly treated as a file, blocking the match
+  it('should not match general rule when request URL has version suffix', () => {
+    // /api and /api.v2 are different endpoints — mock for /api should not match /api.v2
     const rules = [
       { method: 'GET', url: '/api', alias: 'a' },
     ];
-    // /api.v2 is a versioned API, not a file - should match /api rule
-    expect(findRule('GET', 'http://localhost/api.v2', rules)).toEqual(rules[0]);
-    expect(findRule('GET', 'http://localhost/api.v1', rules)).toEqual(rules[0]);
-    expect(findRule('GET', 'http://localhost/api.2', rules)).toEqual(rules[0]);
+    expect(findRule('GET', 'http://localhost/api.v2', rules)).toBeUndefined();
+    expect(findRule('GET', 'http://localhost/api.v1', rules)).toBeUndefined();
+    expect(findRule('GET', 'http://localhost/api.2', rules)).toBeUndefined();
+    // But /api itself and /api with sub-paths should still match
+    expect(findRule('GET', 'http://localhost/api', rules)).toEqual(rules[0]);
+    expect(findRule('GET', 'http://localhost/api/v2', rules)).toEqual(rules[0]);
+  });
+
+  describe('boundary-aware matching', () => {
+    it('does not match overlapping path segments (wallet vs wallet-transactions)', () => {
+      const rules = [
+        { method: 'GET', url: 'v1/travelers/123/wallet', alias: 'wallet' },
+        { method: 'GET', url: 'v1/travelers/123/wallet-transactions', alias: 'walletTransactions' },
+      ];
+      expect(findRule('GET', 'http://localhost/v1/travelers/123/wallet-transactions?page=1&page_size=10', rules)).toEqual(rules[1]);
+      expect(findRule('GET', 'http://localhost/v1/travelers/123/wallet', rules)).toEqual(rules[0]);
+    });
+
+    it('matches when URL ends with rule URL (end of string boundary)', () => {
+      const rules = [
+        { method: 'GET', url: '/api/users', alias: 'users' },
+      ];
+      expect(findRule('GET', 'http://localhost/api/users', rules)).toEqual(rules[0]);
+    });
+
+    it('matches when followed by ? (query param boundary)', () => {
+      const rules = [
+        { method: 'GET', url: '/api/users', alias: 'users' },
+      ];
+      expect(findRule('GET', 'http://localhost/api/users?page=1&limit=10', rules)).toEqual(rules[0]);
+    });
+
+    it('matches when followed by / (path boundary)', () => {
+      const rules = [
+        { method: 'GET', url: '/api/users', alias: 'users' },
+      ];
+      expect(findRule('GET', 'http://localhost/api/users/123', rules)).toEqual(rules[0]);
+    });
+
+    it('matches when followed by # (hash boundary)', () => {
+      const rules = [
+        { method: 'GET', url: '/api/users', alias: 'users' },
+      ];
+      expect(findRule('GET', 'http://localhost/api/users#section', rules)).toEqual(rules[0]);
+    });
+
+    it('matches rule with query params followed by & (ampersand boundary)', () => {
+      const rules = [
+        { method: 'GET', url: '/api/users?page=1', alias: 'users' },
+      ];
+      expect(findRule('GET', 'http://localhost/api/users?page=1&limit=10', rules)).toEqual(rules[0]);
+    });
+
+    it('does not match partial path segments', () => {
+      const rules = [
+        { method: 'GET', url: '/api/item', alias: 'item' },
+      ];
+      expect(findRule('GET', 'http://localhost/api/items', rules)).toBeUndefined();
+      expect(findRule('GET', 'http://localhost/api/item-details', rules)).toBeUndefined();
+      expect(findRule('GET', 'http://localhost/api/item', rules)).toEqual(rules[0]);
+    });
+
+    it('does not match when rule URL is a substring mid-segment', () => {
+      const rules = [
+        { method: 'GET', url: '/user', alias: 'user' },
+      ];
+      expect(findRule('GET', 'http://localhost/username', rules)).toBeUndefined();
+      expect(findRule('GET', 'http://localhost/user', rules)).toEqual(rules[0]);
+      expect(findRule('GET', 'http://localhost/user?id=1', rules)).toEqual(rules[0]);
+    });
   });
 });

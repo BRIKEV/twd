@@ -63,6 +63,21 @@ const isFile = (url) => {
 };
 
 /**
+ * Check if the match ends at a URL boundary.
+ * Valid boundaries: end of string, '/', '?', '#', '&'
+ * This prevents '/wallet' from matching '/wallet-transactions'.
+ * @param {string} url
+ * @param {string} ruleUrl
+ * @returns {boolean}
+ */
+const isBoundaryMatch = (url, ruleUrl) => {
+  const matchIndex = url.indexOf(ruleUrl);
+  if (matchIndex === -1) return false;
+  const charAfter = url[matchIndex + ruleUrl.length];
+  return charAfter === undefined || '/?#&'.includes(charAfter);
+};
+
+/**
  * Find a matching rule based on method and url
  * @param {string} method
  * @param {string} url
@@ -81,7 +96,7 @@ export function findRule(method, url, rules) {
       if (ruleIsFile) {
         return isMethodMatch && url.includes(r.url);
       }
-      const isUrlMatch = r.url === url || url.includes(r.url);
+      const isUrlMatch = r.url === url || isBoundaryMatch(url, r.url);
       return isMethodMatch && isUrlMatch && !isFile(url);
   });
 }
