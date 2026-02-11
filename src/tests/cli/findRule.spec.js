@@ -149,9 +149,10 @@ describe('findRule', () => {
     expect(findRule('GET', 'http://localhost/api.v2', rules)).toBeUndefined();
     expect(findRule('GET', 'http://localhost/api.v1', rules)).toBeUndefined();
     expect(findRule('GET', 'http://localhost/api.2', rules)).toBeUndefined();
-    // But /api itself and /api with sub-paths should still match
+    // But /api itself should still match
     expect(findRule('GET', 'http://localhost/api', rules)).toEqual(rules[0]);
-    expect(findRule('GET', 'http://localhost/api/v2', rules)).toEqual(rules[0]);
+    // /api should NOT match /api/v2 — sub-paths are different resources
+    expect(findRule('GET', 'http://localhost/api/v2', rules)).toBeUndefined();
   });
 
   describe('boundary-aware matching', () => {
@@ -178,11 +179,11 @@ describe('findRule', () => {
       expect(findRule('GET', 'http://localhost/api/users?page=1&limit=10', rules)).toEqual(rules[0]);
     });
 
-    it('matches when followed by / (path boundary)', () => {
+    it('does not match when followed by / (sub-path is a different resource)', () => {
       const rules = [
         { method: 'GET', url: '/api/users', alias: 'users' },
       ];
-      expect(findRule('GET', 'http://localhost/api/users/123', rules)).toEqual(rules[0]);
+      expect(findRule('GET', 'http://localhost/api/users/123', rules)).toBeUndefined();
     });
 
     it('matches when followed by # (hash boundary)', () => {
@@ -197,6 +198,16 @@ describe('findRule', () => {
         { method: 'GET', url: '/api/users?page=1', alias: 'users' },
       ];
       expect(findRule('GET', 'http://localhost/api/users?page=1&limit=10', rules)).toEqual(rules[0]);
+    });
+
+    it('does not match sub-resource paths (travelers/123 vs travelers/123/billing-details)', () => {
+      const rules = [
+        { method: 'GET', url: 'v1/travelers/123', alias: 'travellerDetail' },
+        { method: 'GET', url: 'v1/travelers/123/billing-details', alias: 'billingDetails' },
+      ];
+      expect(findRule('GET', 'http://localhost/v1/travelers/123/billing-details', rules)).toEqual(rules[1]);
+      expect(findRule('GET', 'http://localhost/v1/travelers/123', rules)).toEqual(rules[0]);
+      expect(findRule('GET', 'http://localhost/v1/travelers/123?q=asd', rules)).toEqual(rules[0]);
     });
 
     it('does not match partial path segments', () => {

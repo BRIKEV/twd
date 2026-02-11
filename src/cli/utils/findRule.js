@@ -82,7 +82,7 @@ const isBoundaryMatch = (url, ruleUrl) => {
   // If the match extends past the query string, it's valid
   const queryStart = url.indexOf('?');
   if (queryStart !== -1 && matchEnd > queryStart) return true;
-  return '/?#&'.includes(charAfter);
+  return '?#&'.includes(charAfter);
 };
 
 /**

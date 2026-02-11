@@ -601,7 +601,7 @@ interface Options {
 
 #### URL Matching Behavior
 
-When `url` is a **string**, TWD uses boundary-aware matching: the mock triggers when the request URL contains the mock URL followed by `/`, `?`, `#`, `&`, or end of string. This prevents `/api/orders` from accidentally matching `/api/orders-summary`. Boundary checking only applies to the path portion — query string matching uses substring, so a rule like `/search?q=` will match `/search?q=anything`.
+When `url` is a **string**, TWD uses boundary-aware matching: the mock triggers when the request URL contains the mock URL followed by `?`, `#`, `&`, or end of string. This prevents `/api/orders` from accidentally matching `/api/orders-summary` and `/api/travelers/123` from matching `/api/travelers/123/billing-details`. Boundary checking only applies to the path portion — query string matching uses substring, so a rule like `/search?q=` will match `/search?q=anything`.
 
 When `url` is a **RegExp**, standard regex matching applies.
 
