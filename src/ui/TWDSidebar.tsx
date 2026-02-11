@@ -9,6 +9,7 @@ import { clearComponentMocks } from "./componentMocks";
 import { isChaiAssertionError, printChaiError, formatChaiError } from "./utils/chaiErrorFormat";
 import { LogType } from "./utils/formatLogs";
 import { displaySRMessageSpecificTest, displaySRMessageAllTests } from "./utils/screenReaderMessages";
+import { TWD_VERSION } from "../constants/version";
 
 interface TWDSidebarProps {
   /**
@@ -196,6 +197,11 @@ export const TWDSidebar = ({ open, position = "left" }: TWDSidebarProps) => {
             >
               Clear mocks
             </button>
+            <span style={{
+              color: "var(--twd-text-secondary)",
+              fontSize: "var(--twd-font-size-sm)",
+              alignSelf: "center",
+            }}>v{TWD_VERSION}</span>
           </div>
           <button
             aria-label="Close sidebar"

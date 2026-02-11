@@ -29,7 +29,7 @@ if (save) {
   console.log("💡 Remember to register it in your app:");
   console.log(`
 if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register("/mock-sw.js?v=1");
+  navigator.serviceWorker.register("/mock-sw.js");
 }
   `);
 }
