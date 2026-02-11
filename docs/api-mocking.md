@@ -165,7 +165,7 @@ it("should handle dynamic user IDs", async () => {
 
 ### URL Matching with Strings
 
-When you provide a string URL (not a RegExp), TWD uses **boundary-aware matching**. The mock triggers when the request URL contains the mock URL followed by a valid boundary character: `/`, `?`, `#`, `&`, or end of string.
+When you provide a string URL (not a RegExp), TWD uses **boundary-aware matching**. The mock triggers when the request URL contains the mock URL followed by a valid boundary character: `?`, `#`, `&`, or end of string.
 
 This prevents similar URLs from accidentally matching each other:
 
@@ -178,14 +178,15 @@ await twd.mockRequest("getUsers", {
 
 // ✅ Matches: /api/users
 // ✅ Matches: /api/users?page=1&limit=10
-// ✅ Matches: /api/users/123
+// ❌ Does NOT match: /api/users/123 (different resource)
 // ❌ Does NOT match: /api/users-settings
 // ❌ Does NOT match: /api/username
 ```
 
-This means you can safely mock similar endpoints without conflicts:
+This means you can safely mock similar endpoints and nested resources without conflicts:
 
 ```ts
+// Similar endpoint names
 await twd.mockRequest("getOrders", {
   method: "GET",
   url: "/api/orders",
@@ -196,6 +197,19 @@ await twd.mockRequest("getOrdersSummary", {
   method: "GET",
   url: "/api/orders-summary",
   response: { total: 100 },
+});
+
+// Nested resources
+await twd.mockRequest("travelerDetail", {
+  method: "GET",
+  url: `v1/travelers/${travelerId}`,
+  response: mockTravelerDetail,
+});
+
+await twd.mockRequest("billingDetails", {
+  method: "GET",
+  url: `v1/travelers/${travelerId}/billing-details`,
+  response: mockBillingDetails,
 });
 
 // Each request matches only its intended mock
