@@ -290,12 +290,10 @@ const isDev = import.meta.env.DEV
 
 ## React Router (Framework Mode)
 
-TWD works with React Router Framework mode applications. Note that TWD is designed for **frontend testing only** - React Router server-side features (loaders, actions, server components, etc.) are not supported.
+TWD works with React Router Framework mode applications, including SSR mode. Using `createRoutesStub`, you can mock loaders and actions to test your routes in isolation while running within your real application context.
 
-::: warning
-**Important Limitations:**
-- TWD tests **frontend components only** - React Router server-side features (loaders, actions, server components) cannot be tested with TWD
-- TWD is a frontend testing library and focuses on client-side behavior
+::: info
+TWD focuses on **client-side UI behavior**. Server-side loaders and actions can be mocked with `createRoutesStub` and tested as pure functions separately.
 :::
 
 ### Recommended: Testing Routes with createRoutesStub
@@ -434,17 +432,17 @@ This approach provides a powerful way to test React Router routes in isolation w
 
 ## Framework Support Philosophy
 
-TWD is designed for **deterministic, client-side UI testing** in Single Page Application (SPA) environments. It focuses on frameworks that provide:
+TWD is designed for **deterministic, client-side UI testing**. It focuses on frameworks that provide:
 
 - **Explicit execution** - Clear control over when and how components render
 - **Deterministic behavior** - Predictable rendering and state management
 - **Fast feedback loops** - Quick test execution and hot module replacement
 
-Frameworks that use Server-Side Rendering (SSR) with implicit execution patterns (like Next.js App Router) mix rendering, data loading, and infrastructure in ways that make behavior-level testing unreliable. For this reason, TWD does not provide official support for SSR-first architectures like Next.js.
+TWD works with SPAs and frameworks where the UI renders client-side. This includes SSR frameworks like **React Router** where loaders and actions are explicit and testable. Server-component-first architectures like **Next.js App Router**, where rendering, data loading, and infrastructure are implicitly mixed, are not compatible with TWD's testing model.
 
 TWD officially supports:
 - **React (SPA)** - Standard Vite-based React applications
-- **React Router (Framework Mode)** - Client-side routing with explicit loaders
+- **React Router (Framework Mode)** - Including SSR mode, with explicit loaders and `createRoutesStub`
 - **Vue, Angular, Solid.js** - Other SPA frameworks
 - **Astro** - When used with client-driven components
 

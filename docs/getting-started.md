@@ -1,6 +1,6 @@
 # Getting Started
 
-Welcome to TWD (Test While Developing)! This guide will help you set up TWD in your application and write your first test. TWD works with React, Vue, Angular, Solid.js, and other Vite-based frameworks.
+Welcome to TWD (Test While Developing)! This guide will help you set up TWD in your application and write your first test. TWD works with React, Vue, Angular, Solid.js, React Router (including SSR mode), and other Vite-based frameworks.
 
 ## Installation
 

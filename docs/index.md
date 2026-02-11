@@ -74,6 +74,10 @@ describe("Hello World Page", () => {
 });
 ```
 
+## See It in Action
+
+Try TWD yourself with the **[shadcn/ui live showcase](https://brikev.github.io/twd-shadcn/)** — real shadcn components with TWD tests running in the browser. Open the sidebar and click "Run All" to see instant test results.
+
 ## Why TWD?
 
 TWD bridges the gap between development and testing by bringing tests directly into your development environment. Instead of running tests in a separate terminal, you can see results instantly in your browser's sidebar while you code.
@@ -81,7 +85,7 @@ TWD bridges the gap between development and testing by bringing tests directly i
 Perfect for:
 - **Frontend developers** who want immediate test feedback
 - **Teams** practicing Testing while Developing (TWD)
-- **React, Vue, Angular, and Solid.js applications** that need comprehensive UI testing
+- **React, Vue, Angular, Solid.js, and React Router** applications (including SSR mode) that need comprehensive UI testing
 - **Projects** requiring API mocking and integration testing
 
 ## Community

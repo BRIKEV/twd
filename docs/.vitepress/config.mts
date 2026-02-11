@@ -3,7 +3,7 @@ import { defineConfig } from 'vitepress'
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
   title: "TWD",
-  description: "Test While Developing (TWD) - in-browser testing for React applications",
+  description: "Test While Developing (TWD) - in-browser testing for React, Vue, Angular, and Solid.js applications",
   base: '/',
   appearance: { initialValue: 'dark' },
   head: [
@@ -62,6 +62,7 @@ export default defineConfig({
           { text: 'Coverage', link: '/coverage' },
           { text: 'Framework Integration', link: '/frameworks' },
           { text: 'Testing Library', link: '/testing-library' },
+          { text: 'AI Integration', link: '/ai-overview' },
           { text: 'AI Context', link: '/agents' },
           { text: 'MCP Integration', link: '/mcp-integration' },
           { text: 'AI Remote Testing', link: '/ai-remote-testing' },
@@ -78,7 +79,7 @@ export default defineConfig({
       {
         text: 'Community',
         items: [
-          { text: 'Community', link: '/community' },
+          { text: 'Community & Examples', link: '/community' },
         ]
       },
       {
