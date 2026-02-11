@@ -1,1 +1,1 @@
-export const TWD_VERSION = "1.5.1";
+export const TWD_VERSION = "1.5.2";

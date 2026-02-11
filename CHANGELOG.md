@@ -1,3 +1,9 @@
+## <small>1.5.2 (2026-02-11)</small>
+
+* fix: remove hardcoded version from CLI service worker registration ([698923a](https://github.com/BRIKEV/twd/commit/698923a))
+* feat: display TWD version in sidebar UI
+
+
 ## <small>1.5.1 (2026-02-10)</small>
 
 * boundary-aware URL matching in mockRequest to prevent overlapping matches (#144) ([392a58a](https://github.com/BRIKEV/twd/commit/392a58a)), closes [#144](https://github.com/BRIKEV/twd/issues/144)
