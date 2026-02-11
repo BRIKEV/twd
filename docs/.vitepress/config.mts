@@ -75,6 +75,12 @@ export default defineConfig({
         ]
       },
       {
+        text: 'Community',
+        items: [
+          { text: 'Community', link: '/community' },
+        ]
+      },
+      {
         text: 'Tutorial',
         items: [
           { text: 'Overview', link: '/tutorial/' },
