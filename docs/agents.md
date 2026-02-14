@@ -10,9 +10,29 @@ TWD provides AI agent prompts to help coding assistants (Claude, Cursor, Copilot
 If you use Claude Code, check out the **[Claude Code Skill](/claude-code-skill)** guide — it creates an autonomous agent that writes tests, runs them via twd-relay, and iterates until they pass.
 :::
 
-## Quick Start
+## Quick Start: Agent Skills (Recommended)
 
-The easiest way to give your AI assistant TWD context is to copy the comprehensive prompt from:
+The easiest way to give your AI assistant TWD context — no copy-pasting needed:
+
+```bash
+npx skills add BRIKEV/twd
+```
+
+This installs TWD skills directly into your AI agent. Works with Claude Code, Cursor, Codex, and [35+ more agents](https://github.com/vercel-labs/skills#available-agents).
+
+```bash
+# Install just the test writing context
+npx skills add BRIKEV/twd --skill twd-test-writer
+
+# Install to specific agents
+npx skills add BRIKEV/twd -a claude-code -a cursor
+```
+
+See the [AI Integration overview](/ai-overview) for all available skills.
+
+## Alternative: Manual Setup
+
+If you prefer manual configuration, copy the comprehensive prompt from:
 
 **[`ai-guides/TWD_PROMPT.md`](https://github.com/brikev/twd/blob/main/ai-guides/TWD_PROMPT.md)**
 

@@ -58,13 +58,31 @@ Before setting up the skill, make sure you have:
 
 ## Setup
 
-### 1. Create the skill directory
+### Option A: Agent Skills CLI (Recommended)
+
+The fastest way to install the TWD tester skill:
+
+```bash
+npx skills add BRIKEV/twd --skill twd-tester -a claude-code
+```
+
+This installs the skill automatically. You can also install all TWD skills at once:
+
+```bash
+npx skills add BRIKEV/twd -a claude-code
+```
+
+After installing, customize the skill for your project by editing the installed `SKILL.md` file (see [Customize for your project](#_3-customize-for-your-project) below).
+
+### Option B: Manual Setup
+
+#### 1. Create the skill directory
 
 ```bash
 mkdir -p .claude/skills/twd-tester
 ```
 
-### 2. Create the SKILL.md file
+#### 2. Create the SKILL.md file
 
 Copy the template below into `.claude/skills/twd-tester/SKILL.md` and customize the **"Project-Specific Patterns"** section for your app.
 

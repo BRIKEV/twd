@@ -2,6 +2,37 @@
 
 TWD is built with AI agent support as a core feature. Whether you want your AI assistant to write better tests, generate tests from browser interactions, or run tests autonomously, TWD has you covered.
 
+## Quick Start: Agent Skills
+
+The fastest way to give your AI agent TWD context is with the [Agent Skills CLI](https://github.com/vercel-labs/skills):
+
+```bash
+npx skills add BRIKEV/twd
+```
+
+This installs TWD skills directly into your AI agent (Claude Code, Cursor, Codex, and [35+ more](https://github.com/vercel-labs/skills#available-agents)) — no copy-pasting prompts, no manual configuration.
+
+**Available skills:**
+
+| Skill | Description |
+|-------|-------------|
+| `twd-test-writer` | Teaches your AI how to write correct TWD tests |
+| `twd-setup` | Guides your AI through TWD project setup |
+| `twd-tester` | Autonomous test agent — writes, runs, and fixes tests (Claude Code) |
+
+```bash
+# Install a specific skill
+npx skills add BRIKEV/twd --skill twd-test-writer
+
+# Install to a specific agent
+npx skills add BRIKEV/twd -a claude-code -a cursor
+
+# List available skills
+npx skills add BRIKEV/twd --list
+```
+
+---
+
 ## Features at a Glance
 
 ### 1. AI Context
@@ -57,7 +88,7 @@ Claude Code Skill    →  AI writes, runs, and fixes tests autonomously
 
 A typical workflow with all features:
 
-1. **AI Context** ensures your AI knows TWD's API and patterns
+1. **Agent Skills** (`npx skills add BRIKEV/twd`) installs TWD context into your AI agent
 2. **MCP** generates an initial test from a user flow
 3. **twd-relay** runs the test in the browser
 4. **Claude Code Skill** iterates on failures until the test passes

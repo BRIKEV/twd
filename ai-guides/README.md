@@ -2,7 +2,17 @@
 
 This directory contains prompts and context files for AI coding assistants to help them understand and generate TWD test code.
 
-## Available Files
+## Recommended: Agent Skills CLI
+
+The easiest way to install TWD context into your AI agent — no copy-pasting needed:
+
+```bash
+npx skills add BRIKEV/twd
+```
+
+Works with Claude Code, Cursor, Codex, and [35+ more agents](https://github.com/vercel-labs/skills#available-agents). See the [`skills/`](../skills/) directory for the available skills.
+
+## Manual Setup
 
 ### `TWD_PROMPT.md`
 

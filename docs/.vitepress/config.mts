@@ -62,8 +62,13 @@ export default defineConfig({
           { text: 'Coverage', link: '/coverage' },
           { text: 'Framework Integration', link: '/frameworks' },
           { text: 'Testing Library', link: '/testing-library' },
-          { text: 'AI Integration', link: '/ai-overview' },
-          { text: 'AI Context', link: '/agents' },
+        ]
+      },
+      {
+        text: 'AI',
+        items: [
+          { text: 'Overview', link: '/ai-overview' },
+          { text: 'Agent Skills', link: '/agents' },
           { text: 'MCP Integration', link: '/mcp-integration' },
           { text: 'AI Remote Testing', link: '/ai-remote-testing' },
           { text: 'Claude Code Skill', link: '/claude-code-skill' },
