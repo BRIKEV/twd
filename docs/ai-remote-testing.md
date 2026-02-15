@@ -33,13 +33,18 @@ The relay is a WebSocket server that routes messages between the **browser** (wh
 4. Relay forwards to browser → tests execute → events stream back
 5. Client receives `run:complete` with all test results
 
+## Requirements
+
+::: warning Version requirements
+- **twd-js** `>=1.5.2` — earlier versions do not support the relay protocol
+- **twd-relay** `>=0.2.x` — previous versions are incompatible
+:::
+
 ## Installation
 
 ```bash
 npm install --save-dev twd-relay
 ```
-
-Peer dependency: `twd-js` (>=1.4.0).
 
 ## Setup
 
