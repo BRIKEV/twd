@@ -189,6 +189,57 @@ client.connect();
 npx twd-relay run
 ```
 
+## Step 7: Generate AI Coding Tool Configuration
+
+After setup, generate a project instructions file so AI tools automatically write TWD tests when implementing features. This is critical for long-term adoption — without it, each new conversation starts without TWD context.
+
+### Claude Code (`CLAUDE.md`)
+
+Create a `CLAUDE.md` in the project root with TWD workflow instructions. Adapt the content based on the project's framework, structure, and existing configuration.
+
+The file should include:
+
+1. **Project overview** — framework, key dependencies, project description
+2. **Commands** — how to run dev server, build, etc.
+3. **Architecture** — routing, API layer, styling, key directories
+4. **TWD testing section** covering:
+   - Test file location and naming convention (`src/twd-tests/*.twd.test.ts`)
+   - Key TWD imports:
+     ```typescript
+     import { twd, userEvent, screenDom, expect } from "twd-js";
+     import { describe, it, beforeEach } from "twd-js/runner";
+     ```
+   - Test patterns: `twd.visit()`, `twd.mockRequest()`, `screenDom.*`, `userEvent.*`
+   - Mock data location (`src/twd-tests/mocks/`)
+5. **Development workflow rule** — instruct the AI to always write TWD tests when implementing new features
+
+Example workflow section:
+```markdown
+## Development Workflow
+
+When implementing a new feature:
+1. Write the feature code (components, API layer, routes, navigation)
+2. Write TWD tests in `src/twd-tests/` following existing test patterns
+3. Add mock data in `src/twd-tests/mocks/` for API responses
+4. Run and validate TWD tests pass before considering the task complete
+
+TWD tests run in the browser during development — no separate test command needed.
+```
+
+### Other AI Coding Tools
+
+The same workflow instructions can be adapted for other tools. The content is nearly identical — only the filename changes:
+
+| Tool | File |
+|------|------|
+| Claude Code | `CLAUDE.md` |
+| Cursor | `.cursorrules` |
+| GitHub Copilot | `.github/copilot-instructions.md` |
+| Windsurf | `.windsurfrules` |
+| Cline | `.clinerules` |
+
+When the developer specifies which tool they use, generate the appropriate file. If not specified, default to `CLAUDE.md`.
+
 ## Troubleshooting
 
 ### Tests Not Loading
