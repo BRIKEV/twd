@@ -34,7 +34,11 @@ The main TWD repository also includes working examples:
 
 ## Podcasts
 
-*Coming soon*
+- **Una nueva forma de testear frontend con TWD | Kevin Martinez #83** (Spanish)
+  - [YouTube](https://www.youtube.com/watch?v=qkFe4kayGIw) | [Spotify](https://spotifycreators-web.app.link/e/a6xQdwYSF0b)
+
+- **How to Test This - Episode #14: How to Test with Testing While Developing (TWD) - Kevin Martínez**
+  - [YouTube](https://youtu.be/O4QahYTYQgE) | [Spotify](https://open.spotify.com/episode/6mQV2liEL68mM9JqRXpPVo)
 
 ## Blog Posts
 
