@@ -18,6 +18,27 @@ Key features:
 - **`allowed-tools`** — controls what the agent can do (read files, write tests, run commands)
 - **`$ARGUMENTS`** — receives input from you (e.g., `/twd-tester order detail page`)
 
+## Available TWD Skills
+
+TWD provides four skills you can install individually or all at once:
+
+| Skill | Description |
+|-------|-------------|
+| `twd` | End-to-end orchestrator — detects project state, sets up TWD, writes tests, runs them, and fixes failures |
+| `twd-test-writer` | Teaches your AI how to write correct TWD tests |
+| `twd-setup` | Guides your AI through TWD project setup |
+| `twd-tester` | Autonomous test runner — runs existing tests, reads failures, fixes, and re-runs |
+
+```bash
+# Install all skills
+npx skills add BRIKEV/twd -a claude-code
+
+# Install a specific skill
+npx skills add BRIKEV/twd --skill twd -a claude-code
+```
+
+The rest of this page walks through the `twd-tester` skill in detail as an example of how to set up and customize a skill manually.
+
 ## How It Works
 
 When you're developing a feature and need tests, the flow looks like this:

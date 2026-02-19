@@ -16,9 +16,10 @@ This installs TWD skills directly into your AI agent (Claude Code, Cursor, Codex
 
 | Skill | Description |
 |-------|-------------|
+| `twd` | End-to-end orchestrator — detects project state, sets up TWD, writes tests, runs them, and fixes failures |
 | `twd-test-writer` | Teaches your AI how to write correct TWD tests |
 | `twd-setup` | Guides your AI through TWD project setup |
-| `twd-tester` | Autonomous test agent — writes, runs, and fixes tests (Claude Code) |
+| `twd-tester` | Autonomous test runner — runs existing tests, reads failures, fixes, and re-runs (Claude Code) |
 
 ```bash
 # Install a specific skill
