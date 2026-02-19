@@ -165,11 +165,12 @@ npm install --save-dev twd-relay
 ```typescript
 // vite.config.ts
 import { twdRemote } from 'twd-relay/vite';
+import type { PluginOption } from 'vite';
 
 export default defineConfig({
   plugins: [
     // ... other plugins
-    twdRemote(),
+    twdRemote() as PluginOption,
   ],
 });
 ```
