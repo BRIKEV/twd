@@ -16,7 +16,7 @@ The bundled setup is the recommended approach for all frameworks, including Reac
 // src/main.tsx
 if (import.meta.env.DEV) {
   const { initTWD } = await import('twd-js/bundled');
-  const tests = import.meta.glob("./**/*.twd.test.ts")
+  const tests = import.meta.glob("./**/*.twd.test.{ts,tsx}")
   
   // Initialize TWD with tests and optional configuration
   // Request mocking is automatically initialized by default
@@ -75,7 +75,7 @@ The standard setup is available for React applications that need full control ov
 ```tsx
 // src/main.tsx
 if (import.meta.env.DEV) {
-  const testModules = import.meta.glob("./**/*.twd.test.ts");
+  const testModules = import.meta.glob("./**/*.twd.test.{ts,tsx}");
   const { initTests, twd, TWDSidebar } = await import('twd-js');
   
   // You need to pass the test modules, the sidebar component, and createRoot function
@@ -110,7 +110,7 @@ import App from './App.vue'
 if (import.meta.env.DEV) {
   // Use the bundled version
   const { initTWD } = await import('twd-js/bundled');
-  const tests = import.meta.glob("./**/*.twd.test.ts")
+  const tests = import.meta.glob("./**/*.twd.test.{ts,tsx}")
   
   // Initialize TWD - request mocking is automatically initialized by default
   initTWD(tests, { open: true, position: 'left' });
@@ -135,7 +135,7 @@ import App from './App';
 
 if (import.meta.env.DEV) {
   const { initTWD } = await import('twd-js/bundled');
-  const tests = import.meta.glob("./**/*.twd.test.ts");
+  const tests = import.meta.glob("./**/*.twd.test.{ts,tsx}");
   
   // Initialize TWD - request mocking is automatically initialized by default
   initTWD(tests, { open: true, position: 'left' });
@@ -242,7 +242,7 @@ export default function TestSidebar() {
   useEffect(() => {
     if (import.meta.env.DEV) {
       const initializeTests = async () => {
-        const testModules = import.meta.glob("../**/*.twd.test.ts");
+        const testModules = import.meta.glob("../**/*.twd.test.{ts,tsx}");
         const { initTests, twd, TWDSidebar } = await import('twd-js');
         initTests(testModules, <TWDSidebar open={true} position="left" />, createRoot);
         

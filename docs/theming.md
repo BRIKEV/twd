@@ -22,7 +22,7 @@ With the bundled setup, you can pass a `theme` option to `initTWD`:
 // src/main.tsx
 if (import.meta.env.DEV) {
   const { initTWD } = await import('twd-js/bundled');
-  const tests = import.meta.glob("./**/*.twd.test.ts");
+  const tests = import.meta.glob("./**/*.twd.test.{ts,tsx}");
   
   const customTheme = {
     primary: '#2563eb',
@@ -143,7 +143,7 @@ A complete dark theme for those who prefer dark mode:
 ```tsx
 if (import.meta.env.DEV) {
   const { initTWD } = await import('twd-js/bundled');
-  const tests = import.meta.glob("./**/*.twd.test.ts");
+  const tests = import.meta.glob("./**/*.twd.test.{ts,tsx}");
   
   const darkTheme = {
     primary: '#2dd4bf',
@@ -194,7 +194,7 @@ A clean, minimal theme with subtle colors and increased spacing:
 ```tsx
 if (import.meta.env.DEV) {
   const { initTWD } = await import('twd-js/bundled');
-  const tests = import.meta.glob("./**/*.twd.test.ts");
+  const tests = import.meta.glob("./**/*.twd.test.{ts,tsx}");
   
   const minimalTheme = {
     primary: '#6366f1',
@@ -295,7 +295,7 @@ Here's a complete example combining theme customization with other options:
 // src/main.tsx
 if (import.meta.env.DEV) {
   const { initTWD } = await import('twd-js/bundled');
-  const tests = import.meta.glob("./**/*.twd.test.ts");
+  const tests = import.meta.glob("./**/*.twd.test.{ts,tsx}");
   
   initTWD(tests, { 
     open: true,

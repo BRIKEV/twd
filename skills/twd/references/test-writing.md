@@ -27,7 +27,9 @@ NEVER import `describe`, `it`, `beforeEach`, `expect` from Jest, Mocha, or other
 
 Place all test files in `src/twd-tests/`. For larger projects, organize by domain (e.g., `src/twd-tests/auth/`, `src/twd-tests/dashboard/`). Shared mock data goes in `src/twd-tests/mocks/`.
 
-Files must follow: `*.twd.test.ts` or `*.twd.test.tsx`
+Files must follow: `*.twd.test.ts` or `*.twd.test.tsx`.
+
+**When to use `.tsx`:** If your test uses `twd.mockComponent()` with JSX in the mock implementation, the file **must** use the `.tsx` extension. Use `.ts` for tests that don't contain JSX.
 
 ## Async/Await (Required)
 

@@ -40,7 +40,7 @@ import App from './App';
 // Only load the test sidebar and tests in development mode
 if (import.meta.env.DEV) {
   const { initTWD } = await import('twd-js/bundled');
-  const tests = import.meta.glob("./**/*.twd.test.ts");
+  const tests = import.meta.glob("./**/*.twd.test.{ts,tsx}");
   
   // Initialize TWD with tests and optional configuration
   // Request mocking is automatically initialized by default
@@ -73,7 +73,7 @@ import App from './App';
 // Only load the test sidebar and tests in development mode
 if (import.meta.env.DEV) {
   // Use Vite's glob import to find all test files
-  const testModules = import.meta.glob("./**/*.twd.test.ts");
+  const testModules = import.meta.glob("./**/*.twd.test.{ts,tsx}");
   const { initTests, twd, TWDSidebar } = await import('twd-js');
   // You need to pass the test modules, the sidebar component, and createRoot function
   initTests(testModules, <TWDSidebar open={true} position="left" />, createRoot);

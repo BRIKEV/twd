@@ -25,7 +25,7 @@ TWD should only load in development mode.
 // src/main.ts (or main.tsx)
 if (import.meta.env.DEV) {
   const { initTWD } = await import('twd-js/bundled');
-  const tests = import.meta.glob("./**/*.twd.test.ts");
+  const tests = import.meta.glob("./**/*.twd.test.{ts,tsx}");
 
   initTWD(tests, {
     open: true,
@@ -52,7 +52,7 @@ import App from './App.vue';
 
 if (import.meta.env.DEV) {
   const { initTWD } = await import('twd-js/bundled');
-  const tests = import.meta.glob("./**/*.twd.test.ts");
+  const tests = import.meta.glob("./**/*.twd.test.{ts,tsx}");
   initTWD(tests, { open: true, position: 'left' });
 }
 

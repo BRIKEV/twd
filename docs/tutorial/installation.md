@@ -47,7 +47,7 @@ Once installed, open `src/main.tsx` and add this code snippet:
 ```ts
 if (import.meta.env.DEV) {
   // You choose how to load the tests; this example uses Vite's glob import
-  const testModules = import.meta.glob("./**/*.twd.test.ts");
+  const testModules = import.meta.glob("./**/*.twd.test.{ts,tsx}");
   const { initTests, TWDSidebar } = await import('twd-js');
   // You need to pass the test modules, the sidebar component, and createRoot function
   initTests(testModules, <TWDSidebar open={true} position="left" />, createRoot);
@@ -65,7 +65,7 @@ Once that's added, you'll see the TWD Sidebar, where all your tests will appear:
 In the snippet above, we're using this line: 
 
 ```ts
-const testModules = import.meta.glob("./**/*.twd.test.ts");
+const testModules = import.meta.glob("./**/*.twd.test.{ts,tsx}");
 ```
 
 This tells Vite to automatically load every file matching the pattern `./**/*.twd.test.ts`.

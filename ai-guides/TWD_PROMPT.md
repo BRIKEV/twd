@@ -514,7 +514,7 @@ export default { fetchData };
 // src/main.ts
 if (import.meta.env.DEV) {
   const { initTWD } = await import("twd-js/bundled");
-  const tests = import.meta.glob("./**/*.twd.test.ts");
+  const tests = import.meta.glob("./**/*.twd.test.{ts,tsx}");
   initTWD(tests, {
     open: true,
     position: "left",
