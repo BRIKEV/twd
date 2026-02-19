@@ -17,12 +17,12 @@ TWD is an **in-browser testing library** that runs tests directly in the browser
 Every TWD test file needs these imports:
 
 ```typescript
-import { twd, userEvent, screenDom } from "twd-js";
-import { describe, it, beforeEach, afterEach, expect } from "twd-js/runner";
+import { twd, userEvent, screenDom, expect } from "twd-js";
+import { describe, it, beforeEach, afterEach } from "twd-js/runner";
 ```
 
 **Package exports:**
-- `twd-js` - Main API (`twd`, `userEvent`, `screenDom`, `screenDomGlobal`)
+- `twd-js` - Main API (`twd`, `userEvent`, `screenDom`, `screenDomGlobal`, `expect`)
 - `twd-js/runner` - Test functions (`describe`, `it`, `beforeEach`, `afterEach`, `expect`)
 - `twd-js/bundled` - Framework-agnostic setup (`initTWD`)
 - `twd-js/ui` - UI components (`MockedComponent`)
@@ -353,8 +353,8 @@ describe('Auth tests', () => {
 ## Test Structure Template
 
 ```typescript
-import { twd, userEvent, screenDom } from "twd-js";
-import { describe, it, beforeEach, afterEach, expect } from "twd-js/runner";
+import { twd, userEvent, screenDom, expect } from "twd-js";
+import { describe, it, beforeEach, afterEach } from "twd-js/runner";
 
 describe("Feature Name", () => {
   beforeEach(() => {

@@ -101,8 +101,10 @@ client.connect();
 
 ## Step 6: Write a First Test
 
+Create a `src/twd-tests/` folder for all TWD tests. For larger projects, organize by domain (e.g., `src/twd-tests/auth/`, `src/twd-tests/dashboard/`).
+
 ```typescript
-// src/App.twd.test.ts
+// src/twd-tests/app.twd.test.ts
 import { twd, screenDom } from "twd-js";
 import { describe, it } from "twd-js/runner";
 
@@ -113,6 +115,18 @@ describe("App", () => {
     twd.should(heading, "be.visible");
   });
 });
+```
+
+**Folder structure example:**
+```
+src/twd-tests/
+  app.twd.test.ts          # General app tests
+  auth/
+    login.twd.test.ts      # Auth-related tests
+  dashboard/
+    overview.twd.test.ts   # Dashboard domain tests
+  mocks/
+    users.ts               # Shared mock data
 ```
 
 ## Verify Setup

@@ -62,10 +62,17 @@ When a test fails:
 
 For the full TWD API (imports, element selection, assertions, mocking), refer to the **twd-test-writer** skill. Key reminders:
 
-- **Imports**: `twd`, `userEvent`, `screenDom` from `twd-js`; `describe`, `it`, `beforeEach`, `expect` from `twd-js/runner`
+- **Imports**: `twd`, `userEvent`, `screenDom`, `expect` from `twd-js`; `describe`, `it`, `beforeEach` from `twd-js/runner`
 - **Always `await`**: `twd.visit()`, `twd.get()`, `userEvent.*`, `screenDom.findBy*`, `twd.waitForRequest()`
 - **Mock before visit**: Set up `twd.mockRequest()` before `twd.visit()`
 - **Clear mocks in `beforeEach`**: `twd.clearRequestMockRules()` and `twd.clearComponentMocks()`
+
+## Component and Module Mocking
+
+When tests use component or module mocking, watch for these patterns:
+
+- **Component mocking**: `twd.mockComponent("Name", ...)` replaces components wrapped with `MockedComponent` from `twd-js/ui`. Always `twd.clearComponentMocks()` in `beforeEach`.
+- **Module stubbing**: Uses Sinon to stub default-export objects. ESM named exports are immutable — hooks/services must be wrapped in objects with default export. Always `Sinon.restore()` in `beforeEach`.
 
 ## Completion
 

@@ -121,11 +121,11 @@ The user wants to: $ARGUMENTS
 ### Required Imports
 
 ```typescript
-import { twd, userEvent, screenDom } from "twd-js";
-import { describe, it, beforeEach, afterEach, expect } from "twd-js/runner";
+import { twd, userEvent, screenDom, expect } from "twd-js";
+import { describe, it, beforeEach, afterEach } from "twd-js/runner";
 ```
 
-NEVER import `describe`, `it`, `beforeEach`, `expect` from other libraries. They MUST come from `twd-js/runner`.
+NEVER import `describe`, `it`, `beforeEach` from other libraries. They MUST come from `twd-js/runner`. `expect` MUST come from `twd-js`.
 
 ### File Naming
 

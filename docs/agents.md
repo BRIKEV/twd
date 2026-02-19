@@ -62,8 +62,8 @@ TWD is an in-browser test runner. Tests run in the browser (not Node.js). Syntax
 ## Core Rules
 
 1. Imports — use in every TWD test file:
-   import { twd, userEvent, screenDom } from "twd-js";
-   import { describe, it, beforeEach, afterEach, expect } from "twd-js/runner";
+   import { twd, userEvent, screenDom, expect } from "twd-js";
+   import { describe, it, beforeEach, afterEach } from "twd-js/runner";
 
 2. File naming: *.twd.test.ts or *.twd.test.tsx
 
@@ -80,8 +80,8 @@ TWD is an in-browser test runner. Tests run in the browser (not Node.js). Syntax
 ## Common Patterns
 
 ### Basic test structure
-   import { twd, userEvent, screenDom } from "twd-js";
-   import { describe, it, beforeEach, expect } from "twd-js/runner";
+   import { twd, userEvent, screenDom, expect } from "twd-js";
+   import { describe, it, beforeEach } from "twd-js/runner";
 
    describe("Feature Name", () => {
      beforeEach(() => {
@@ -176,8 +176,8 @@ TWD is an in-browser test runner that allows developers to write and run tests a
 2.  **Imports**: Use these exact imports in every TWD test file:
 
 ```ts
-import { twd, userEvent, screenDom } from "twd-js";
-import { describe, it, beforeEach, afterEach, expect } from "twd-js/runner";
+import { twd, userEvent, screenDom, expect } from "twd-js";
+import { describe, it, beforeEach, afterEach } from "twd-js/runner";
 ```
 
 3.  **Async/Await**:
@@ -194,8 +194,8 @@ import { describe, it, beforeEach, afterEach, expect } from "twd-js/runner";
 #### 1. Basic Test Structure
 
 ```ts
-import { twd, userEvent, screenDom } from "twd-js";
-import { describe, it, beforeEach, expect } from "twd-js/runner";
+import { twd, userEvent, screenDom, expect } from "twd-js";
+import { describe, it, beforeEach } from "twd-js/runner";
 
 describe("Feature Name", () => {
   beforeEach(() => {

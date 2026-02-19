@@ -13,19 +13,21 @@ TWD tests should focus on **full user flows**, not granular unit-style assertion
 ## Required Imports
 
 ```typescript
-import { twd, userEvent, screenDom } from "twd-js";
-import { describe, it, beforeEach, afterEach, expect } from "twd-js/runner";
+import { twd, userEvent, screenDom, expect } from "twd-js";
+import { describe, it, beforeEach, afterEach } from "twd-js/runner";
 ```
 
-- `twd-js` — Main API (`twd`, `userEvent`, `screenDom`, `screenDomGlobal`)
-- `twd-js/runner` — Test functions (`describe`, `it`, `beforeEach`, `afterEach`, `expect`)
+- `twd-js` — Main API (`twd`, `userEvent`, `screenDom`, `screenDomGlobal`, `expect`)
+- `twd-js/runner` — Test functions (`describe`, `it`, `beforeEach`, `afterEach`)
 - `twd-js/ui` — UI components (`MockedComponent`)
 
 NEVER import `describe`, `it`, `beforeEach`, `expect` from Jest, Mocha, or other libraries.
 
-## File Naming
+## File Location and Naming
 
-`*.twd.test.ts` or `*.twd.test.tsx`
+Place all test files in `src/twd-tests/`. For larger projects, organize by domain (e.g., `src/twd-tests/auth/`, `src/twd-tests/dashboard/`). Shared mock data goes in `src/twd-tests/mocks/`.
+
+Files must follow: `*.twd.test.ts` or `*.twd.test.tsx`
 
 ## Async/Await (Required)
 
@@ -243,8 +245,8 @@ Sinon.stub(authModule, "useAuth").returns({
 ## Standard Test Template
 
 ```typescript
-import { twd, userEvent, screenDom } from "twd-js";
-import { describe, it, beforeEach, expect } from "twd-js/runner";
+import { twd, userEvent, screenDom, expect } from "twd-js";
+import { describe, it, beforeEach } from "twd-js/runner";
 
 const mockItems = [
   { id: 1, name: "Item One", status: "active" },
@@ -316,6 +318,6 @@ describe("Items Page", () => {
 2. **Mocking AFTER visit** — always mock before `twd.visit()`
 3. **Not clearing mocks** — always `twd.clearRequestMockRules()` and `twd.clearComponentMocks()` in `beforeEach`
 4. **Using Node.js APIs** — tests run in the browser, no `fs`, `path`, etc.
-5. **Importing from wrong package** — `describe`/`it`/`beforeEach` from `twd-js/runner`, NOT Jest/Mocha
+5. **Importing from wrong package** — `describe`/`it`/`beforeEach` from `twd-js/runner`, `expect` from `twd-js`, NOT Jest/Mocha
 6. **Stubbing named exports** — ESM makes them immutable. Use the default-export object pattern
 7. **Writing granular unit tests** — don't write one `it()` per element. Test full user flows

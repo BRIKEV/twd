@@ -66,18 +66,32 @@ it("should render first row", async () => { /* only checks one row */ });
 Every TWD test file needs these exact imports:
 
 ```typescript
-import { twd, userEvent, screenDom } from "twd-js";
-import { describe, it, beforeEach, afterEach, expect } from "twd-js/runner";
+import { twd, userEvent, screenDom, expect } from "twd-js";
+import { describe, it, beforeEach, afterEach } from "twd-js/runner";
 ```
 
 **Package exports:**
-- `twd-js` — Main API (`twd`, `userEvent`, `screenDom`, `screenDomGlobal`)
-- `twd-js/runner` — Test functions (`describe`, `it`, `beforeEach`, `afterEach`, `expect`)
+- `twd-js` — Main API (`twd`, `userEvent`, `screenDom`, `screenDomGlobal`, `expect`)
+- `twd-js/runner` — Test functions (`describe`, `it`, `beforeEach`, `afterEach`)
 - `twd-js/ui` — UI components (`MockedComponent`)
 
-NEVER import `describe`, `it`, `beforeEach`, `expect` from Jest, Mocha, or other libraries. They MUST come from `twd-js/runner`.
+NEVER import `describe`, `it`, `beforeEach` from Jest, Mocha, or other libraries. They MUST come from `twd-js/runner`. `expect` MUST come from `twd-js`.
 
-## File Naming
+## File Location and Naming
+
+Place all test files in `src/twd-tests/`. For larger projects, organize by domain:
+
+```
+src/twd-tests/
+  app.twd.test.ts
+  auth/
+    login.twd.test.ts
+    register.twd.test.ts
+  dashboard/
+    overview.twd.test.ts
+  mocks/
+    users.ts
+```
 
 Test files must follow: `*.twd.test.ts` or `*.twd.test.tsx`
 
@@ -309,8 +323,8 @@ Sinon.stub(authModule, "useAuth").returns({
 ## Standard Test Template
 
 ```typescript
-import { twd, userEvent, screenDom } from "twd-js";
-import { describe, it, beforeEach, expect } from "twd-js/runner";
+import { twd, userEvent, screenDom, expect } from "twd-js";
+import { describe, it, beforeEach } from "twd-js/runner";
 
 // Mock data — define at the top for reuse across tests
 const mockItems = [
@@ -419,7 +433,7 @@ describe("Items Page", () => {
 2. **Mocking AFTER visit** — always mock before `twd.visit()` or the action triggering the request
 3. **Not clearing mocks** — always `twd.clearRequestMockRules()` and `twd.clearComponentMocks()` in `beforeEach`
 4. **Using Node.js APIs** — tests run in the browser, no `fs`, `path`, etc.
-5. **Importing from wrong package** — `describe`/`it`/`beforeEach` from `twd-js/runner`, NOT Jest/Mocha
+5. **Importing from wrong package** — `describe`/`it`/`beforeEach` from `twd-js/runner`, `expect` from `twd-js`, NOT Jest/Mocha
 6. **Using Cypress syntax** — no `cy.get()`, `cy.visit()`. Use `twd.get()`, `twd.visit()`
 7. **Stubbing named exports** — ESM makes them immutable. Use the default-export object pattern
 8. **Using global describe/it** — always import from `twd-js/runner`

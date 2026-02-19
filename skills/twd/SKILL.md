@@ -57,6 +57,10 @@ Before writing tests:
 - Don't write one test per element — test the full journey through a page
 - Group flows by scenario: happy path, empty states, error handling, CRUD operations
 
+**Component mocking** — if a component is wrapped with `MockedComponent` from `twd-js/ui`, you can replace it in tests with `twd.mockComponent("Name", () => <div>Mock</div>)`. Always clear with `twd.clearComponentMocks()` in `beforeEach`.
+
+**Module stubbing** — for hooks like `useAuth0`, wrap them in a default-export object so Sinon can stub them. ESM named exports are immutable and cannot be stubbed at runtime. Always `Sinon.restore()` in `beforeEach`.
+
 ### Phase 4: Run and Fix
 
 Read the reference file `references/running-tests.md` for running and debugging tests.
@@ -76,4 +80,4 @@ When done, summarize:
 2. **Mock BEFORE visit** — set up `twd.mockRequest()` before `twd.visit()`
 3. **Clear mocks in `beforeEach`** — always call `twd.clearRequestMockRules()`
 4. **Tests run in the browser** — no Node.js APIs
-5. **Imports from `twd-js/runner`** — never from Jest, Mocha, or Vitest
+5. **Imports**: `describe`/`it`/`beforeEach` from `twd-js/runner`, `expect` from `twd-js` — never from Jest, Mocha, or Vitest
