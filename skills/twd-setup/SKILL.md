@@ -36,7 +36,7 @@ TWD should only load in development mode. Choose the setup based on the framewor
 // src/main.ts (or main.tsx)
 if (import.meta.env.DEV) {
   const { initTWD } = await import('twd-js/bundled');
-  const tests = import.meta.glob("./**/*.twd.test.{ts,tsx}");
+  const tests = import.meta.glob("./**/*.twd.test.ts");
 
   initTWD(tests, {
     open: true,
@@ -61,7 +61,7 @@ if (import.meta.env.DEV) {
 import { createRoot } from 'react-dom/client';
 
 if (import.meta.env.DEV) {
-  const testModules = import.meta.glob("./**/*.twd.test.{ts,tsx}");
+  const testModules = import.meta.glob("./**/*.twd.test.ts");
   const { initTests, twd, TWDSidebar } = await import('twd-js');
   initTests(testModules, <TWDSidebar open={true} position="left" />, createRoot);
   twd.initRequestMocking().catch(console.error);
@@ -78,7 +78,7 @@ import App from './App.vue';
 
 if (import.meta.env.DEV) {
   const { initTWD } = await import('twd-js/bundled');
-  const tests = import.meta.glob("./**/*.twd.test.{ts,tsx}");
+  const tests = import.meta.glob("./**/*.twd.test.ts");
   initTWD(tests, { open: true, position: 'left' });
 }
 
@@ -105,7 +105,7 @@ if (isDevMode()) {
 // src/main.tsx
 if (import.meta.env.DEV) {
   const { initTWD } = await import('twd-js/bundled');
-  const tests = import.meta.glob("./**/*.twd.test.{ts,tsx}");
+  const tests = import.meta.glob("./**/*.twd.test.ts");
   initTWD(tests, { open: true, position: 'left' });
 }
 ```

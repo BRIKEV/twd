@@ -95,7 +95,7 @@ src/twd-tests/
 
 Test files must follow: `*.twd.test.ts` or `*.twd.test.tsx`.
 
-**When to use `.tsx`:** If your test uses `twd.mockComponent()` with JSX in the mock implementation, the file **must** use the `.tsx` extension. Use `.ts` for tests that don't contain JSX.
+**When to use `.tsx`:** If your test uses `twd.mockComponent()` with JSX in the mock implementation, the file **must** use the `.tsx` extension. Use `.ts` for tests that don't contain JSX. When using `.tsx` test files, ensure the entry point glob pattern includes them: `import.meta.glob("./**/*.twd.test.{ts,tsx}")`.
 
 ## Core Rules
 

@@ -118,7 +118,7 @@ Use the standard setup with `initTests`:
 ```tsx
 // src/main.tsx
 if (import.meta.env.DEV) {
-  const testModules = import.meta.glob("./**/*.twd.test.{ts,tsx}");
+  const testModules = import.meta.glob("./**/*.twd.test.ts");
   const { initTests, twd, TWDSidebar } = await import('twd-js');
   initTests(testModules, <TWDSidebar open={true} position="left" />, createRoot);
   twd.initRequestMocking().catch(console.error);
@@ -133,7 +133,7 @@ Use the bundled setup with `initTWD`:
 // src/main.ts (Vue/Angular) or main.tsx (Solid)
 if (import.meta.env.DEV) {
   const { initTWD } = await import('twd-js/bundled');
-  const tests = import.meta.glob("./**/*.twd.test.{ts,tsx}");
+  const tests = import.meta.glob("./**/*.twd.test.ts");
   initTWD(tests, { open: true, position: 'left' });
 }
 ```

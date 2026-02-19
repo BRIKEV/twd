@@ -88,7 +88,7 @@ interface InitTWDOptions {
 
 ```ts
 // Minimal setup - uses all defaults
-const tests = import.meta.glob("./**/*.twd.test.{ts,tsx}");
+const tests = import.meta.glob("./**/*.twd.test.ts");
 initTWD(tests);
 
 // Custom sidebar configuration
@@ -115,7 +115,7 @@ initTWD(tests, {
 ```tsx
 if (import.meta.env.DEV) {
   const { initTWD } = await import('twd-js/bundled');
-  const tests = import.meta.glob("./**/*.twd.test.{ts,tsx}");
+  const tests = import.meta.glob("./**/*.twd.test.ts");
   initTWD(tests, { open: true, position: 'left' });
 }
 ```
@@ -124,7 +124,7 @@ if (import.meta.env.DEV) {
 ```ts
 if (import.meta.env.DEV) {
   const { initTWD } = await import('twd-js/bundled');
-  const tests = import.meta.glob("./**/*.twd.test.{ts,tsx}");
+  const tests = import.meta.glob("./**/*.twd.test.ts");
   initTWD(tests);
 }
 ```

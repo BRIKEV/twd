@@ -44,7 +44,7 @@ TWD now supports any framework via its bundled version.
 // Only load the test sidebar and tests in development mode
 if (import.meta.env.DEV) {
   const { initTWD } = await import('twd-js/bundled');
-  const tests = import.meta.glob("./**/*.twd.test.{ts,tsx}");
+  const tests = import.meta.glob("./**/*.twd.test.ts");
   
   // Initialize TWD with tests and optional configuration
   // Request mocking is automatically initialized by default
