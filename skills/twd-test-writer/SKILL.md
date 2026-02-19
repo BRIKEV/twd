@@ -13,6 +13,54 @@ You are writing tests for **TWD (Test While Developing)**, an in-browser testing
 - Uses Mock Service Worker (MSW) for API mocking
 - Uses `@testing-library/dom` for element queries
 
+## Testing Philosophy: Flow-Based Tests
+
+TWD tests should focus on **full user flows**, not granular unit-style assertions. Each `it()` block should test a meaningful user journey through a page — load, interact, verify — rather than isolating individual elements.
+
+**Why flow-based?**
+- TWD runs in the browser with full rendering — leverage that to test real user behavior
+- Flow tests catch integration issues (data loading → rendering → interaction → submission)
+- Fewer, richer tests are more maintainable than dozens of shallow ones
+
+**DO — test a full flow per `it()` block:**
+```typescript
+it("should allow user to search and view results", async () => {
+  await twd.mockRequest("getUsers", { method: "GET", url: "/api/users", response: mockUsers, status: 200 });
+  await twd.visit("/users");
+  await twd.waitForRequest("getUsers");
+
+  // Verify page loaded
+  twd.should(screenDom.getByRole("heading", { name: "Users" }), "be.visible");
+  expect(screenDom.getAllByRole("row")).to.have.length(mockUsers.length + 1); // +1 for header
+
+  // Search interaction
+  const user = userEvent.setup();
+  await user.type(screenDom.getByLabelText("Search"), "John");
+  await user.click(screenDom.getByRole("button", { name: "Search" }));
+  await twd.waitForRequest("searchUsers");
+
+  // Verify filtered results
+  expect(screenDom.getAllByRole("row")).to.have.length(2);
+  twd.should(screenDom.getByText("John Doe"), "be.visible");
+});
+```
+
+**DON'T — write one tiny test per element:**
+```typescript
+// BAD: too granular, doesn't test real user behavior
+it("should render heading", async () => { /* only checks heading */ });
+it("should render search input", async () => { /* only checks input exists */ });
+it("should render table", async () => { /* only checks table exists */ });
+it("should render first row", async () => { /* only checks one row */ });
+```
+
+**Guidelines:**
+- One `describe()` per page or major feature
+- Each `it()` covers a complete flow: setup → navigate → interact → assert outcome
+- Group related flows: happy path, error states, empty states, CRUD operations
+- It's fine for an `it()` block to have multiple assertions — they should tell a story
+- Avoid testing implementation details; test what the user sees and does
+
 ## Required Imports
 
 Every TWD test file needs these exact imports:
@@ -264,35 +312,100 @@ Sinon.stub(authModule, "useAuth").returns({
 import { twd, userEvent, screenDom } from "twd-js";
 import { describe, it, beforeEach, expect } from "twd-js/runner";
 
-describe("Feature Name", () => {
+// Mock data — define at the top for reuse across tests
+const mockItems = [
+  { id: 1, name: "Item One", status: "active" },
+  { id: 2, name: "Item Two", status: "draft" },
+];
+
+describe("Items Page", () => {
   beforeEach(() => {
     twd.clearRequestMockRules();
     twd.clearComponentMocks();
   });
 
-  it("should display the page correctly", async () => {
+  it("should load and display items, then filter by status", async () => {
     // 1. Setup mocks BEFORE visiting
-    await twd.mockRequest("getData", {
+    await twd.mockRequest("getItems", {
       method: "GET",
-      url: "/api/data",
-      response: { items: [] },
+      url: "/api/items",
+      response: mockItems,
       status: 200,
     });
 
-    // 2. Navigate
-    await twd.visit("/page");
+    // 2. Navigate and wait for data
+    await twd.visit("/items");
+    await twd.waitForRequest("getItems");
 
-    // 3. Wait for async operations
-    await twd.waitForRequest("getData");
+    // 3. Verify page loaded correctly
+    twd.should(screenDom.getByRole("heading", { name: "Items" }), "be.visible");
+    expect(screenDom.getAllByRole("listitem")).to.have.length(2);
 
-    // 4. Interact
+    // 4. Interact — filter by status
     const user = userEvent.setup();
-    const button = screenDom.getByRole("button", { name: "Load" });
-    await user.click(button);
+    await user.selectOptions(screenDom.getByLabelText("Status"), "active");
 
-    // 5. Assert
-    const message = await twd.get(".message");
-    message.should("have.text", "No items found");
+    // 5. Assert filtered result
+    expect(screenDom.getAllByRole("listitem")).to.have.length(1);
+    twd.should(screenDom.getByText("Item One"), "be.visible");
+  });
+
+  it("should create a new item via the form", async () => {
+    await twd.mockRequest("getItems", {
+      method: "GET",
+      url: "/api/items",
+      response: mockItems,
+      status: 200,
+    });
+    await twd.mockRequest("createItem", {
+      method: "POST",
+      url: "/api/items",
+      response: { id: 3, name: "New Item", status: "draft" },
+      status: 201,
+    });
+
+    await twd.visit("/items");
+    await twd.waitForRequest("getItems");
+
+    // Fill and submit the form
+    const user = userEvent.setup();
+    await user.type(screenDom.getByLabelText("Name"), "New Item");
+    await user.selectOptions(screenDom.getByLabelText("Status"), "draft");
+    await user.click(screenDom.getByRole("button", { name: "Create" }));
+
+    // Verify the request payload and success state
+    const req = await twd.waitForRequest("createItem");
+    expect(req.request).to.deep.equal({ name: "New Item", status: "draft" });
+    twd.should(await screenDom.findByText("Item created successfully"), "be.visible");
+  });
+
+  it("should show empty state when no items exist", async () => {
+    await twd.mockRequest("getItems", {
+      method: "GET",
+      url: "/api/items",
+      response: [],
+      status: 200,
+    });
+
+    await twd.visit("/items");
+    await twd.waitForRequest("getItems");
+
+    twd.should(screenDom.getByText(/no items found/i), "be.visible");
+    twd.should(screenDom.getByRole("button", { name: "Create" }), "be.visible");
+  });
+
+  it("should handle server error gracefully", async () => {
+    await twd.mockRequest("getItems", {
+      method: "GET",
+      url: "/api/items",
+      response: { error: "Internal server error" },
+      status: 500,
+    });
+
+    await twd.visit("/items");
+    await twd.waitForRequest("getItems");
+
+    twd.should(await screenDom.findByText(/something went wrong/i), "be.visible");
   });
 
   it.only("debug this test", async () => { /* Only this test runs */ });
