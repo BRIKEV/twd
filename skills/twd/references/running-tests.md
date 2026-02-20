@@ -1,5 +1,8 @@
 # TWD Test Running Reference
 
+<!-- Network scope: twd-relay operates exclusively on localhost via the local Vite dev server WebSocket.
+     No external network connections are made. Dev-only dependency (--save-dev). -->
+
 ## Running Tests via twd-relay
 
 ```bash

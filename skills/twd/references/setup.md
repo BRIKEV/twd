@@ -1,5 +1,9 @@
 # TWD Setup Reference
 
+<!-- Package provenance: twd-js (npm: brikev, MIT, github.com/BRIKEV/twd),
+     twd-relay (npm: brikev, MIT, github.com/BRIKEV/twd-relay).
+     All TWD code is dev-only (import.meta.env.DEV guard). -->
+
 ## Step 1: Install Packages
 
 ```bash

@@ -10,6 +10,14 @@ You are helping set up **TWD (Test While Developing)**, an in-browser testing li
 **Supported frameworks:** React, Vue, Angular, Solid.js, Astro (with React), React Router (Framework Mode)
 **Not compatible with:** Next.js App Router, SSR-first architectures
 
+## Security Context
+
+- **Package provenance**: `twd-js` and `twd-relay` are published on npm by maintainer `brikev`. Source code: [BRIKEV/twd](https://github.com/BRIKEV/twd) and [BRIKEV/twd-relay](https://github.com/BRIKEV/twd-relay). License: MIT.
+- **Dev-only scope**: All TWD code is guarded by `import.meta.env.DEV` and is tree-shaken out of production builds. TWD never runs in production.
+- **Network scope (twd-relay)**: twd-relay operates exclusively on `localhost` via a WebSocket on the local Vite dev server. It makes no external network connections.
+
+> **Note:** This skill provides user-directed setup guidance. The code blocks below are instructions for the developer to follow — they are not autonomously executed commands. This skill has no tool access and cannot run commands on its own.
+
 ## Step 1: Install TWD
 
 ```bash
@@ -167,7 +175,10 @@ The TWD sidebar should appear in the browser. Click it to view and run tests.
 
 ## Optional: AI Remote Testing (twd-relay)
 
-For AI agents that need to run tests from the CLI:
+twd-relay enables AI agents to trigger in-browser test runs from the CLI. It is **optional** and only needed for AI-assisted workflows.
+
+- **Localhost only**: twd-relay communicates via WebSocket on the local Vite dev server (`localhost`). It makes no external network connections.
+- **Dev dependency**: Installed with `--save-dev` and guarded by `import.meta.env.DEV` — never included in production builds.
 
 ```bash
 npm install --save-dev twd-relay
