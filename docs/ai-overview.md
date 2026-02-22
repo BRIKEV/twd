@@ -46,17 +46,7 @@ Teach your AI assistant (Claude, Cursor, Copilot, Windsurf) how to write correct
 
 ---
 
-### 2. MCP Integration
-
-Use the TWD MCP server with Playwright MCP to generate test code from browser automation data. Describe a user flow, and the AI captures DOM snapshots and network requests to produce a complete test file.
-
-**Best for:** Generating tests from user flows without writing them manually.
-
-[Read the MCP Integration guide](/mcp-integration)
-
----
-
-### 3. AI Remote Testing (twd-relay)
+### 2. AI Remote Testing (twd-relay)
 
 A WebSocket bridge that lets AI agents trigger test runs and stream results back, without launching a browser automation tool. Your Vite dev server is already running with TWD loaded -- the relay just connects to it.
 
@@ -66,13 +56,21 @@ A WebSocket bridge that lets AI agents trigger test runs and stream results back
 
 ---
 
-### 4. Claude Code Skill
+### 3. Auto-Invocation (Claude Code)
 
-A pre-built Claude Code skill that autonomously writes TWD tests, runs them via twd-relay, reads failures, fixes issues, and re-runs until they pass. Works as a slash command (`/twd-tester`) or auto-invokes when Claude detects testing is needed.
+When you install TWD skills via `npx skills add BRIKEV/twd -a claude-code`, Claude Code can automatically invoke the testing agent when it detects the task is relevant. For example:
 
-**Best for:** Fully autonomous test writing with Claude Code.
+- You ask: _"Add a search filter to the orders page"_
+- Claude implements the feature
+- Claude sees the `twd-tester` skill and spawns it as a sub-agent
+- The agent writes tests, runs them via `npx twd-relay run`, reads failures, fixes, and re-runs until green
+- Claude continues with your task
 
-[Read the Claude Code Skill guide](/claude-code-skill)
+The agent works autonomously in a forked context — your main conversation isn't cluttered with test-writing steps. You can also trigger it directly:
+
+```
+/twd-tester write tests for the login page
+```
 
 ---
 
@@ -82,14 +80,16 @@ You can use these features independently or combine them:
 
 ```
 AI Context           →  AI writes better tests
-MCP Integration      →  AI generates tests from browser flows
 AI Remote Testing    →  AI runs tests and reads results
-Claude Code Skill    →  AI writes, runs, and fixes tests autonomously
+Agent Skills         →  AI writes, runs, and fixes tests autonomously
 ```
 
-A typical workflow with all features:
+A typical workflow:
 
 1. **Agent Skills** (`npx skills add BRIKEV/twd`) installs TWD context into your AI agent
-2. **TWD skills** write tests, run them, and fix failures
-3. **twd-relay** runs the test in the browser
-4. **Claude Code Skill** iterates on failures until the test passes
+2. **TWD skills** write tests, run them via twd-relay, and fix failures
+3. The autonomous validation loop continues until all tests pass
+
+::: info MCP Integration
+TWD also provides an experimental MCP server that works with Playwright MCP to generate test code from browser automation data. This is an early feature — if you're interested, check the [TWD MCP package](https://github.com/BRIKEV/twd-mcp) for details.
+:::

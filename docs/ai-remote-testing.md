@@ -4,9 +4,8 @@ TWD Relay (`twd-relay`) enables AI coding agents (Claude Code, Cursor, Copilot) 
 
 ::: tip How this fits with other AI features
 - **[AI Context](/agents)** — Prompts so your AI writes correct TWD tests
-- **[MCP Integration](/mcp-integration)** — Generate test code from browser automation
 - **AI Remote Testing (this page)** — Run tests and get results via WebSocket
-- **[Claude Code Skill](/claude-code-skill)** — Autonomous test agent that writes, runs, and fixes tests
+- **[Auto-Invocation](/ai-overview#_3-auto-invocation-claude-code)** — Claude Code automatically writes, runs, and fixes tests
 :::
 
 ## The Problem

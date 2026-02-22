@@ -69,9 +69,7 @@ export default defineConfig({
         items: [
           { text: 'Overview', link: '/ai-overview' },
           { text: 'Agent Skills', link: '/agents' },
-          { text: 'MCP Integration', link: '/mcp-integration' },
           { text: 'AI Remote Testing', link: '/ai-remote-testing' },
-          { text: 'Claude Code Skill', link: '/claude-code-skill' },
         ]
       },
       {

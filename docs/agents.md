@@ -7,7 +7,7 @@ title: TWD Context for AI Agents
 TWD provides AI agent prompts to help coding assistants (Claude, Cursor, Copilot, Windsurf, etc.) generate correct TWD test code.
 
 ::: tip Claude Code users
-If you use Claude Code, check out the **[Claude Code Skill](/claude-code-skill)** guide — it creates an autonomous agent that writes tests, runs them via twd-relay, and iterates until they pass.
+If you use Claude Code, TWD skills can [auto-invoke](/ai-overview#_4-auto-invocation-claude-code) — Claude automatically writes tests, runs them via twd-relay, and iterates until they pass.
 :::
 
 ## Quick Start: Agent Skills (Recommended)
