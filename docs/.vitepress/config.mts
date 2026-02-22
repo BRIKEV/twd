@@ -14,13 +14,13 @@ export default defineConfig({
     ['link', { rel: 'manifest', href: '/site.webmanifest' }],
     
     // SEO Meta Tags
-    ['meta', { name: 'description', content: 'TWD (Test While Developing) - In-browser testing framework for React applications with instant feedback, Mock Service Worker integration, and beautiful UI.' }],
-    ['meta', { name: 'keywords', content: 'testing, react, javascript, typescript, twd, test-driven-development, browser-testing, mock-service-worker, vite' }],
+    ['meta', { name: 'description', content: 'TWD (Test While Developing) - In-browser testing for React, Vue, Angular, and Solid.js with instant feedback, Mock Service Worker integration, and beautiful UI.' }],
+    ['meta', { name: 'keywords', content: 'testing, deterministic, browser-validation, ai-testing, react, vue, angular, solidjs, javascript, typescript, twd, test-driven-development, browser-testing, mock-service-worker, vite' }],
     
     // Open Graph Tags
     ['meta', { property: 'og:type', content: 'website' }],
     ['meta', { property: 'og:title', content: 'TWD - Test While Developing' }],
-    ['meta', { property: 'og:description', content: 'In-browser testing framework for React applications with instant feedback, Mock Service Worker integration, and beautiful UI. Because testing isn\'t a phase, it\'s part of the flow.' }],
+    ['meta', { property: 'og:description', content: 'In-browser testing for React, Vue, Angular, and Solid.js with instant feedback, Mock Service Worker integration, and beautiful UI. Because testing isn\'t a phase, it\'s part of the flow.' }],
     ['meta', { property: 'og:url', content: 'https://twd.dev/' }],
     ['meta', { property: 'og:site_name', content: 'TWD Documentation' }],
     ['meta', { property: 'og:image', content: 'https://twd.dev/web-app-manifest-512x512.png' }],
@@ -31,7 +31,7 @@ export default defineConfig({
     // Twitter Card Tags
     ['meta', { name: 'twitter:card', content: 'summary_large_image' }],
     ['meta', { name: 'twitter:title', content: 'TWD - Test While Developing' }],
-    ['meta', { name: 'twitter:description', content: 'In-browser testing framework for React applications with instant feedback and beautiful UI.' }],
+    ['meta', { name: 'twitter:description', content: 'In-browser testing for React, Vue, Angular, and Solid.js with instant feedback and beautiful UI.' }],
     ['meta', { name: 'twitter:image', content: 'https://twd.dev/web-app-manifest-512x512.png' }],
     ['meta', { name: 'twitter:image:alt', content: 'TWD - Test While Developing Logo' }],
 

@@ -1,6 +1,6 @@
 ---
 name: twd
-description: TWD orchestrator agent — automatically sets up TWD, writes in-browser tests, runs them, and fixes failures in a single command. Use when you want end-to-end test coverage for your app or a specific feature.
+description: TWD orchestrator agent — automatically sets up TWD, writes in-browser tests, runs them, and fixes failures in a single command. Use when you want comprehensive in-browser validation for your app or a specific feature.
 argument-hint: [what-to-test or "set up and test everything"]
 allowed-tools: [Read, Write, Edit, Glob, Grep, Bash(npm install twd-js), Bash(npm install --save-dev twd-relay), Bash(npx twd-js init:*), Bash(npx twd-relay run), Bash(npx twd-relay run --file:*), Task]
 context: fork

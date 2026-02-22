@@ -26,7 +26,7 @@ features:
     details: See test results immediately as you write code. No need to switch between terminal and browser.
   - icon: 🔥
     title: Mock Service Worker Integration
-    details: Powerful API mocking with Mock Service Worker integration for realistic request/response testing.
+    details: Powerful API mocking with Mock Service Worker integration for API contract validation.
   - icon: 📝
     title: Simple, Readable Syntax
     details: Familiar testing syntax inspired by popular frameworks like Cypress and Jest with TypeScript support.
@@ -80,13 +80,13 @@ Try TWD yourself with the **[shadcn/ui live showcase](https://brikev.github.io/t
 
 ## Why TWD?
 
-TWD bridges the gap between development and testing by bringing tests directly into your development environment. Instead of running tests in a separate terminal, you can see results instantly in your browser's sidebar while you code.
+TWD makes browser-level validation a natural part of how you build. Instead of running tests in a separate terminal, you see results instantly in your browser's sidebar while you code — validate what you control, mock what you don't.
 
 Perfect for:
 - **Frontend developers** who want immediate test feedback
 - **Teams** practicing Testing while Developing (TWD)
-- **React, Vue, Angular, Solid.js, and React Router** applications (including SSR mode) that need comprehensive UI testing
-- **Projects** requiring API mocking and integration testing
+- **React, Vue, Angular, Solid.js, and React Router** applications (including SSR mode) that need comprehensive UI validation
+- **Projects** requiring API contract mocking and boundary validation
 
 ## Community
 

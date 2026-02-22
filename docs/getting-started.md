@@ -168,7 +168,7 @@ You can customize this pattern in your test loader using different glob patterns
 1. **Write tests** alongside your components
 2. **Run tests** using the browser sidebar
 3. **See instant feedback** as you develop
-4. **Mock APIs** for integration testing
+4. **Mock APIs** for boundary validation
 5. **Iterate quickly** with live reloading
 
 ## Next Steps

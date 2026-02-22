@@ -1,11 +1,11 @@
 ---
 name: twd-setup
-description: TWD project setup guide — helps AI agents install and configure TWD (Test While Developing) in a new or existing project. Use when setting up TWD, configuring Vite, or troubleshooting TWD initialization.
+description: TWD project setup guide — helps AI agents install and configure TWD (Test While Developing), an in-browser validation system, in a new or existing project. Use when setting up TWD, configuring Vite, or troubleshooting TWD initialization.
 ---
 
 # TWD Project Setup Guide
 
-You are helping set up **TWD (Test While Developing)**, an in-browser testing library for SPAs. Follow these steps carefully.
+You are helping set up **TWD (Test While Developing)**, an in-browser validation system for SPAs. Follow these steps carefully.
 
 **Supported frameworks:** React, Vue, Angular, Solid.js, Astro (with React), React Router (Framework Mode)
 **Not compatible with:** Next.js App Router, SSR-first architectures

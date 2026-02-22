@@ -1,6 +1,6 @@
 # Claude Code Skill
 
-Create a custom Claude Code **skill** (slash command) that writes TWD tests, runs them via `twd-relay`, and iterates until they pass — all while you develop.
+Create a custom Claude Code **skill** (slash command) that writes TWD tests, runs them via `twd-relay`, and iterates until they pass — all while you develop. This is an autonomous validation agent: it writes browser checks, runs them, reads structured results, and fixes failures without human intervention.
 
 ::: tip How this fits with other AI features
 - **[AI Context](/agents)** — Prompts so your AI writes correct TWD tests
@@ -24,7 +24,7 @@ TWD provides four skills you can install individually or all at once:
 
 | Skill | Description |
 |-------|-------------|
-| `twd` | End-to-end orchestrator — detects project state, sets up TWD, writes tests, runs them, and fixes failures |
+| `twd` | Full-lifecycle orchestrator — detects project state, sets up TWD, writes tests, runs them, and fixes failures |
 | `twd-test-writer` | Teaches your AI how to write correct TWD tests |
 | `twd-setup` | Guides your AI through TWD project setup |
 | `twd-tester` | Autonomous test runner — runs existing tests, reads failures, fixes, and re-runs |
@@ -112,7 +112,7 @@ Copy the template below into `.claude/skills/twd-tester/SKILL.md` and customize 
 ```yaml
 ---
 name: twd-tester
-description: TWD test agent — writes, runs, and validates E2E tests while you develop. Automatically invoked when writing or modifying tests, or when verifying features work correctly.
+description: TWD test agent — writes, runs, and validates in-browser tests while you develop. Automatically invoked when writing or modifying tests, or when verifying features work correctly.
 argument-hint: [what-to-test]
 allowed-tools: [Read, Write, Edit, Glob, Grep, Bash(npx twd-relay run:*), Bash(npx twd-relay run), Task]
 context: fork
@@ -123,7 +123,7 @@ agent: general-purpose
 ````markdown
 # TWD Test Agent
 
-You are a testing agent. Your job is to write TWD E2E tests, run them via twd-relay, read failures, fix issues, and re-run until they pass.
+You are a testing agent. Your job is to write TWD tests, run them via twd-relay, read failures, fix issues, and re-run until they pass.
 
 The user wants to: $ARGUMENTS
 

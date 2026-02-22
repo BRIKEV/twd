@@ -1,6 +1,6 @@
 # AI Remote Testing
 
-TWD Relay (`twd-relay`) enables AI coding agents (Claude Code, Cursor, Copilot) to **run your in-browser tests and read results** — without launching a browser automation tool. Your app is already running with TWD loaded; the relay just opens a WebSocket bridge so external tools can trigger test runs and stream results back.
+TWD Relay (`twd-relay`) enables AI coding agents (Claude Code, Cursor, Copilot) to **run in-browser validations and read structured results** — without launching a browser automation tool. Your app is already running with TWD loaded; the relay just opens a WebSocket bridge so external tools can trigger test runs and stream results back.
 
 ::: tip How this fits with other AI features
 - **[AI Context](/agents)** — Prompts so your AI writes correct TWD tests
@@ -14,6 +14,8 @@ TWD Relay (`twd-relay`) enables AI coding agents (Claude Code, Cursor, Copilot) 
 During development, TWD tests run in the browser and results appear in the sidebar UI. That's great when you're looking at it — but AI agents run as CLI processes. They can edit files and run shell commands, but they can't click "Run All" in your browser.
 
 The irony: the Vite dev server is already running, TWD is already loaded, and the test runner exists in memory. We just need a bridge.
+
+AI agents need structured, parseable pass/fail signals — not screenshots or DOM dumps. The relay provides exactly that: consistent results the agent can read and act on.
 
 ## How It Works
 
@@ -139,7 +141,7 @@ To run TWD tests: npx twd-relay run
 Exit code 0 means all tests passed; 1 means failures or errors.
 ```
 
-The agent can then run tests, read failures, fix code, and re-run — all in a tight loop without needing Playwright or Puppeteer.
+The agent can then run tests, read failures, fix code, and re-run — all in a tight loop without needing Playwright or Puppeteer. This is the core AI iteration loop: write, run, read, fix, repeat.
 
 ## Visibility Fallback
 

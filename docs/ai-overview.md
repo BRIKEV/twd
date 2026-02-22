@@ -1,6 +1,6 @@
 # AI Integration
 
-TWD is built with AI agent support as a core feature. Whether you want your AI assistant to write better tests, generate tests from browser interactions, or run tests autonomously, TWD has you covered.
+TWD produces structured, deterministic output that AI agents can parse and act on autonomously. Every test run returns the same pass/fail signals for the same inputs — no flakiness, no ambiguity. Whether you want your AI assistant to write better tests, generate tests from browser interactions, or run tests autonomously, TWD has you covered.
 
 ## Quick Start: Agent Skills
 
@@ -16,7 +16,7 @@ This installs TWD skills directly into your AI agent (Claude Code, Cursor, Codex
 
 | Skill | Description |
 |-------|-------------|
-| `twd` | End-to-end orchestrator — detects project state, sets up TWD, writes tests, runs them, and fixes failures |
+| `twd` | Full-lifecycle orchestrator — detects project state, sets up TWD, writes tests, runs them, and fixes failures |
 | `twd-test-writer` | Teaches your AI how to write correct TWD tests |
 | `twd-setup` | Guides your AI through TWD project setup |
 | `twd-tester` | Autonomous test runner — runs existing tests, reads failures, fixes, and re-runs (Claude Code) |
@@ -90,6 +90,6 @@ Claude Code Skill    →  AI writes, runs, and fixes tests autonomously
 A typical workflow with all features:
 
 1. **Agent Skills** (`npx skills add BRIKEV/twd`) installs TWD context into your AI agent
-2. **MCP** generates an initial test from a user flow
+2. **TWD skills** write tests, run them, and fix failures
 3. **twd-relay** runs the test in the browser
 4. **Claude Code Skill** iterates on failures until the test passes

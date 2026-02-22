@@ -4,7 +4,7 @@ Welcome to the TWD (Testing While Developing) tutorial! This comprehensive guide
 
 ## What is TWD?
 
-TWD is a testing library designed to seamlessly integrate testing into your web development workflow. Unlike traditional testing tools that run in separate environments, TWD runs directly in your browser, allowing you to test your application exactly as your users experience it.
+TWD is a browser validation system that makes testing a natural part of your development workflow. Unlike traditional testing tools that run in separate environments, TWD runs directly in your browser, allowing you to validate your application exactly as your users experience it.
 
 ## Why TWD?
 
@@ -22,6 +22,7 @@ TWD solves these problems by letting you:
 - Install and run tests effortlessly, without complex configuration.
 - Mock network requests with a simple, declarative API (similar to Cypress intercepts).
 - Run in CI mode and generate coverage reports automatically.
+- Produce structured, AI-readable output so agents can run tests, parse results, and iterate autonomously.
 
 ## What You'll Learn
 
