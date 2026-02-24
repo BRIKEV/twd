@@ -178,6 +178,9 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Install mock service worker
+        run: npx twd-js init public --save
+
       - name: Start Vite dev server
         run: |
           nohup npm run dev > vite.log 2>&1 &

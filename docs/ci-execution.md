@@ -48,6 +48,9 @@ Create `twd.config.json` in your repo to customize the runner:
 - name: Install dependencies
   run: npm ci
 
+- name: Install mock service worker
+  run: npx twd-js init public --save
+
 - name: Cache Puppeteer browsers
   uses: actions/cache@v4
   with:
