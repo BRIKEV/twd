@@ -1,6 +1,6 @@
 # API Mocking
 
-TWD provides powerful API mocking capabilities through our own mock service worker integration, allowing you to test your application with realistic network requests and responses.
+TWD provides API mocking through its own mock service worker integration, allowing you to isolate your frontend from external systems and validate UI behavior against deterministic network boundaries.
 
 ## Setup
 

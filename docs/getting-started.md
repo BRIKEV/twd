@@ -1,6 +1,6 @@
 # Getting Started
 
-Welcome to TWD (Test While Developing)! This guide will help you set up TWD in your application and write your first test. TWD works with React, Vue, Angular, Solid.js, React Router (including SSR mode), and other Vite-based frameworks.
+Welcome to TWD (Test While Developing)! This guide will help you set up TWD in your application and write your first test. TWD is a deterministic browser validation layer for your frontend boundaries. It works with React, Vue, Angular, Solid.js, React Router (client-side and SSR with explicit loaders/actions), and other Vite-based frameworks.
 
 ## Installation
 
@@ -168,7 +168,7 @@ You can customize this pattern in your test loader using different glob patterns
 1. **Write tests** alongside your components
 2. **Run tests** using the browser sidebar
 3. **See instant feedback** as you develop
-4. **Mock APIs** for boundary validation
+4. **Mock external systems** (APIs, auth, feature flags) for deterministic results
 5. **Iterate quickly** with live reloading
 
 ## Next Steps

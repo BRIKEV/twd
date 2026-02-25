@@ -19,14 +19,14 @@ hero:
 
 features:
   - icon: 🧪
-    title: In-Browser Test Runner
-    details: Beautiful sidebar UI that runs tests directly in your browser with instant feedback as you develop.
+    title: In-Browser Validation
+    details: Sidebar UI that validates your frontend directly in the browser with instant feedback as you develop.
   - icon: ⚡
-    title: Instant Feedback
-    details: See test results immediately as you write code. No need to switch between terminal and browser.
+    title: Deterministic Results
+    details: Every test runs in a real browser with mocked boundaries. No flaky network calls, no backend dependencies, no surprises in CI.
   - icon: 🔥
-    title: Mock Service Worker Integration
-    details: Powerful API mocking with Mock Service Worker integration for API contract validation.
+    title: API Boundary Mocking
+    details: Mock Service Worker integration to isolate your frontend from external systems. Validate what you own, mock what you don't.
   - icon: 📝
     title: Simple, Readable Syntax
     details: Familiar testing syntax inspired by popular frameworks like Cypress and Jest with TypeScript support.
@@ -80,13 +80,27 @@ Try TWD yourself with the **[shadcn/ui live showcase](https://brikev.github.io/t
 
 ## Why TWD?
 
-TWD makes browser-level validation a natural part of how you build. Instead of running tests in a separate terminal, you see results instantly in your browser's sidebar while you code — validate what you control, mock what you don't.
+TWD is a deterministic browser validation layer for frontend boundaries. Instead of running tests in a separate terminal, you see results instantly in your browser's sidebar while you code — validate what you own, mock what you don't.
 
 Perfect for:
-- **Frontend developers** who want immediate test feedback
-- **Teams** practicing Testing while Developing (TWD)
-- **React, Vue, Angular, Solid.js, and React Router** applications (including SSR mode) that need comprehensive UI validation
-- **Projects** requiring API contract mocking and boundary validation
+- **Frontend developers** who want immediate validation feedback during development
+- **Teams** that treat testing as part of the development flow, not an afterthought
+- **React, Vue, Angular, Solid.js, and React Router** applications that need frontend boundary validation
+- **Projects** that need to isolate external systems (APIs, auth, feature flags) and validate UI logic deterministically
+
+## TWD vs System E2E
+
+TWD is not a replacement for Playwright or system-level E2E testing. They serve different purposes at different boundaries:
+
+| | **TWD** | **System E2E (Playwright, Cypress)** |
+|---|---|---|
+| **Validates** | Frontend UI logic, state transitions, error states, conditional rendering | Cross-system flows, real APIs, auth, infrastructure |
+| **Boundaries** | Mocked — APIs, auth, third-party integrations | Real — backend, database, network |
+| **Environment** | Deterministic browser, no external dependencies | Full system, real services |
+| **Feedback** | Instant, during development | Slower, typically CI or QA stage |
+| **Owns** | What you built (UI) | How systems connect |
+
+Use TWD for fast, deterministic validation of your frontend. Use Playwright for verifying that your systems work together end-to-end. They complement each other.
 
 ## Community
 
