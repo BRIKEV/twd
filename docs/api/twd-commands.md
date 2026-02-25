@@ -570,6 +570,108 @@ All assertions can be negated with `"not."` prefix (e.g., `"not.be.visible"`).
 
 ---
 
+## Viewport Simulation
+
+### twd.viewport(width?, height?)
+
+Simulates a viewport size by constraining the body element dimensions. Call with no arguments to reset.
+
+**Important**: This simulates viewport dimensions visually by constraining the body element. CSS `@media` queries and `window.matchMedia` still respond to the real browser viewport, not the simulated one.
+
+#### Syntax
+
+```ts
+twd.viewport(width?: number, height?: number): void
+```
+
+#### Parameters
+
+- **width** (`number`, optional) - Viewport width in pixels. Omit to reset viewport.
+- **height** (`number`, optional) - Viewport height in pixels. Omit to leave height unconstrained.
+
+#### Returns
+
+`void`
+
+#### Visual Feedback
+
+When a viewport is set, TWD displays:
+- A blue badge at the bottom center showing dimensions (e.g., "375 × 667")
+- A subtle blue border around the constrained area
+
+#### Examples
+
+```ts
+// Mobile viewport (iPhone SE)
+twd.viewport(375, 667);
+
+// Tablet width, unconstrained height
+twd.viewport(768);
+
+// Reset to original viewport
+twd.viewport();
+```
+
+#### Use Cases
+
+```ts
+describe("Responsive Layout", () => {
+  beforeEach(() => {
+    twd.resetViewport();
+  });
+
+  it("should show mobile menu on small screens", async () => {
+    twd.viewport(375, 667);
+    await twd.visit("/");
+
+    const mobileMenu = await twd.get(".mobile-menu");
+    mobileMenu.should("be.visible");
+  });
+
+  it("should show desktop menu on large screens", async () => {
+    twd.viewport(1920, 1080);
+    await twd.visit("/");
+
+    const desktopMenu = await twd.get(".desktop-menu");
+    desktopMenu.should("be.visible");
+  });
+});
+```
+
+---
+
+### twd.resetViewport()
+
+Resets the viewport to its original size, removing the simulated dimensions.
+
+#### Syntax
+
+```ts
+twd.resetViewport(): void
+```
+
+#### Returns
+
+`void`
+
+#### Examples
+
+```ts
+// Reset in beforeEach for test isolation
+describe("Viewport Tests", () => {
+  beforeEach(() => {
+    twd.resetViewport();
+  });
+
+  it("should test at mobile size", async () => {
+    twd.viewport(375, 667);
+    // Test mobile layout
+  });
+});
+```
+
+---
+
 ## API Mocking
 
 ### twd.mockRequest(alias, options)
