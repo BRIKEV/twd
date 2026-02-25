@@ -237,11 +237,10 @@ interface TWDAPI {
    */
   notExists: (selector: string) => Promise<void>;
   /**
-   * Simulates a viewport size by constraining the body element dimensions.
+   * Simulates a viewport size by constraining body dimensions, overriding
+   * `window.innerWidth`/`window.innerHeight` and `window.matchMedia()`, and
+   * rewriting CSS `@media` rules to match the simulated dimensions.
    * Call with no arguments to reset to the original viewport.
-   *
-   * Note: CSS `@media` queries and `window.matchMedia` still respond to the
-   * real browser viewport, not the simulated one.
    *
    * @param width Viewport width in pixels
    * @param height Viewport height in pixels (optional — omit to leave height unconstrained)

@@ -574,9 +574,9 @@ All assertions can be negated with `"not."` prefix (e.g., `"not.be.visible"`).
 
 ### twd.viewport(width?, height?)
 
-Simulates a viewport size by constraining the body element dimensions. Call with no arguments to reset.
+Simulates a viewport size by constraining the body element, overriding `window.innerWidth`/`window.innerHeight`, `window.matchMedia()`, and rewriting CSS `@media` rules to match the simulated dimensions. Call with no arguments to reset.
 
-**Important**: This simulates viewport dimensions visually by constraining the body element. CSS `@media` queries and `window.matchMedia` still respond to the real browser viewport, not the simulated one.
+**Note**: Stylesheets added dynamically after `viewport()` is called won't have their `@media` rules rewritten. CSS viewport units (`vw`, `vh`) still reference the real browser viewport.
 
 #### Syntax
 

@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { twd } from '../../';
 
 describe('twd viewport command', () => {
@@ -102,5 +102,123 @@ describe('twd viewport command', () => {
     // should not throw
     twd.resetViewport();
     expect(document.body.style.maxWidth).toBe('');
+  });
+});
+
+describe('twd viewport media query support', () => {
+  let originalInnerWidth: number;
+  let originalInnerHeight: number;
+  let originalMatchMedia: typeof window.matchMedia;
+
+  beforeEach(() => {
+    document.body.innerHTML = '';
+    document.body.removeAttribute('style');
+    document.getElementById('twd-viewport-styles')?.remove();
+    document.getElementById('twd-viewport-badge')?.remove();
+    document.getElementById('twd-viewport-iframe')?.remove();
+    originalInnerWidth = window.innerWidth;
+    originalInnerHeight = window.innerHeight;
+    originalMatchMedia = window.matchMedia;
+    twd.resetViewport();
+  });
+
+  afterEach(() => {
+    twd.resetViewport();
+    // Ensure cleanup even if tests fail
+    document.getElementById('twd-viewport-iframe')?.remove();
+  });
+
+  it('should override window.innerWidth to the simulated value', () => {
+    twd.viewport(375, 667);
+    expect(window.innerWidth).toBe(375);
+  });
+
+  it('should override window.innerHeight when height is provided', () => {
+    twd.viewport(375, 667);
+    expect(window.innerHeight).toBe(667);
+  });
+
+  it('should not override window.innerHeight when height is omitted', () => {
+    twd.viewport(768);
+    expect(window.innerWidth).toBe(768);
+    // innerHeight should remain at original jsdom value
+    expect(window.innerHeight).toBe(originalInnerHeight);
+  });
+
+  it('should restore window.innerWidth and innerHeight on reset', () => {
+    twd.viewport(375, 667);
+    expect(window.innerWidth).toBe(375);
+    expect(window.innerHeight).toBe(667);
+
+    twd.resetViewport();
+    expect(window.innerWidth).toBe(originalInnerWidth);
+    expect(window.innerHeight).toBe(originalInnerHeight);
+  });
+
+  it('should preserve matchMedia state through viewport lifecycle', () => {
+    // In jsdom, matchMedia is undefined so it won't be replaced.
+    // In a real browser, it would be replaced with the iframe's matchMedia.
+    // Either way, after reset it should be back to the original.
+    twd.viewport(375, 667);
+    twd.resetViewport();
+    expect(window.matchMedia).toBe(originalMatchMedia);
+  });
+
+  it('should create a hidden iframe for media query evaluation', () => {
+    twd.viewport(375, 667);
+
+    const iframe = document.getElementById('twd-viewport-iframe');
+    expect(iframe).not.toBeNull();
+    expect(iframe?.tagName).toBe('IFRAME');
+    expect((iframe as HTMLIFrameElement).style.visibility).toBe('hidden');
+  });
+
+  it('should remove the iframe on reset', () => {
+    twd.viewport(375, 667);
+    expect(document.getElementById('twd-viewport-iframe')).not.toBeNull();
+
+    twd.resetViewport();
+    expect(document.getElementById('twd-viewport-iframe')).toBeNull();
+  });
+
+  it('should dispatch a resize event when viewport is set', () => {
+    const listener = vi.fn();
+    window.addEventListener('resize', listener);
+
+    twd.viewport(375, 667);
+    expect(listener).toHaveBeenCalledTimes(1);
+
+    window.removeEventListener('resize', listener);
+  });
+
+  it('should dispatch a resize event when viewport is reset', () => {
+    twd.viewport(375, 667);
+
+    const listener = vi.fn();
+    window.addEventListener('resize', listener);
+
+    twd.resetViewport();
+    expect(listener).toHaveBeenCalledTimes(1);
+
+    window.removeEventListener('resize', listener);
+  });
+
+  it('should only have one iframe when viewport is called multiple times', () => {
+    twd.viewport(375, 667);
+    twd.viewport(1024, 768);
+
+    const iframes = document.querySelectorAll('#twd-viewport-iframe');
+    expect(iframes.length).toBe(1);
+    expect(window.innerWidth).toBe(1024);
+    expect(window.innerHeight).toBe(768);
+  });
+
+  it('should update innerWidth/innerHeight on subsequent calls', () => {
+    twd.viewport(375, 667);
+    expect(window.innerWidth).toBe(375);
+
+    twd.viewport(1024, 768);
+    expect(window.innerWidth).toBe(1024);
+    expect(window.innerHeight).toBe(768);
   });
 });
