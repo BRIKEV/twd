@@ -1,8 +1,8 @@
 .tract-container {
   max-width: 800px;
   margin: 2rem auto;
-  padding: 1rem;
-  font-family: sans-serif;
+  padding: 2rem;
+  text-align: left;
 }
 
 .tract-list {

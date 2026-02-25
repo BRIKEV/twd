@@ -69,7 +69,7 @@ export const LoadShows = () => {
   }
 
   return (
-    <div style={{ padding: '20px' }}>
+    <div style={{ maxWidth: 1100, margin: '0 auto', padding: '2rem' }}>
       <h1>Marvel Shows</h1>
       <p>Found {shows.length} Marvel shows</p>
       
