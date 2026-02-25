@@ -6,6 +6,7 @@ import type { AnyAssertion, ArgsFor, TWDElemAPI } from "./twd-types";
 import urlCommand, { type URLCommandAPI } from "./commands/url";
 import { visit } from "./commands/visit";
 import { mockComponent, clearComponentMocks } from "./ui/componentMocks";
+import { viewport, resetViewport } from "./commands/viewport";
 
 interface TWDAPI {
   /**
@@ -228,13 +229,40 @@ interface TWDAPI {
    * Asserts that an element does not exist in the DOM.
    * @param selector CSS selector of the element to check
    * @returns A promise that resolves if the element does not exist, or rejects if it does
-   * 
+   *
    * @example
    * ```ts
    * await twd.notExists(".non-existent");
    * ```
    */
   notExists: (selector: string) => Promise<void>;
+  /**
+   * Simulates a viewport size by constraining the body element dimensions.
+   * Call with no arguments to reset to the original viewport.
+   *
+   * Note: CSS `@media` queries and `window.matchMedia` still respond to the
+   * real browser viewport, not the simulated one.
+   *
+   * @param width Viewport width in pixels
+   * @param height Viewport height in pixels (optional — omit to leave height unconstrained)
+   *
+   * @example
+   * ```ts
+   * twd.viewport(375, 667); // mobile
+   * twd.viewport(768);      // tablet width, height unconstrained
+   * twd.viewport();          // reset
+   * ```
+   */
+  viewport: (width?: number, height?: number) => void;
+  /**
+   * Resets the viewport to its original size (undoes a previous `twd.viewport()` call).
+   *
+   * @example
+   * ```ts
+   * twd.resetViewport();
+   * ```
+   */
+  resetViewport: () => void;
 }
 
 /**
@@ -303,6 +331,8 @@ export const twd: TWDAPI = {
   wait,
   mockComponent,
   clearComponentMocks,
+  viewport,
+  resetViewport,
   notExists: async (selector: string): Promise<void> => {
     // Prepend selector to exclude TWD sidebar elements
     const enhancedSelector = `body > div:not(#twd-sidebar-root) ${selector}`;
