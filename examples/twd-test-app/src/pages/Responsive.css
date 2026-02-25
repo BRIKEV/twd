@@ -1,0 +1,122 @@
+.responsive-wrapper {
+  container-type: inline-size;
+  width: 100%;
+}
+
+/* Desktop (default) */
+.responsive-nav {
+  display: flex;
+  flex-direction: row;
+  gap: 0.5rem;
+  padding: 1rem 1.5rem;
+  background: #1a1a2e;
+  align-items: center;
+}
+
+.responsive-nav a {
+  color: #e0e0e0;
+  text-decoration: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  font-weight: 500;
+}
+
+.responsive-nav a:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+
+.responsive-content {
+  display: flex;
+  gap: 1.5rem;
+  padding: 1.5rem;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.responsive-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.responsive-main h1 {
+  font-size: 1.8em;
+  margin: 0 0 0.5rem;
+}
+
+.responsive-main > p {
+  margin: 0 0 1.5rem;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.responsive-card-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+
+.responsive-card {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: 1.25rem;
+  text-align: left;
+}
+
+.responsive-card h3 {
+  margin: 0 0 0.5rem;
+}
+
+.responsive-card p {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.9rem;
+}
+
+.responsive-sidebar {
+  width: 220px;
+  flex-shrink: 0;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: 1.25rem;
+}
+
+.responsive-sidebar h3 {
+  margin: 0 0 0.75rem;
+}
+
+.responsive-sidebar ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.responsive-sidebar li {
+  padding: 0.4rem 0;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+/* Mobile: stacked nav, single column, no sidebar */
+@media (max-width: 600px) {
+  .responsive-nav {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .responsive-nav a {
+    text-align: center;
+  }
+
+  .responsive-card-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .responsive-content {
+    flex-direction: column;
+  }
+
+  .responsive-sidebar {
+    display: none;
+  }
+}

@@ -51,7 +51,7 @@ const Contact: React.FC = () => {
   };
 
   return (
-    <div style={{ maxWidth: 400, margin: '2rem auto', padding: '2rem', border: '1px solid #ccc', borderRadius: 8 }}>
+    <div style={{ maxWidth: 480, margin: '2rem auto', padding: '2rem' }}>
       <h2>Contact Us</h2>
       <form onSubmit={handleSubmit}>
         <div style={{ marginBottom: '1rem' }}>

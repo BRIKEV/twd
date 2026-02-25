@@ -5,6 +5,7 @@ import Assertions from "./pages/Assertions/Assertions";
 import { LoadShows } from "./pages/LoadShows";
 import ScreenQueries from "./pages/ScreenQueries";
 import MockComponent from "./pages/MockComponent";
+import Responsive from "./pages/Responsive";
 
 const router = createBrowserRouter([
   {
@@ -30,6 +31,10 @@ const router = createBrowserRouter([
   {
     path: '/mock-component',
     Component: MockComponent,
+  },
+  {
+    path: '/responsive',
+    Component: Responsive,
   },
   {
     path: "*",

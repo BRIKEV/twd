@@ -15,7 +15,7 @@ const Button = ({ onClick, count }: ButtonProps) => {
 export default function MockComponent() {
   const [count, setCount] = useState(0);
   return (
-    <div>
+    <div style={{ maxWidth: 600, margin: '2rem auto', padding: '2rem' }}>
       <h1>Component Mocking Example</h1>
       <p>Count: {count}</p>
       <MockedComponent name="Button">
