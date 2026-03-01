@@ -2,35 +2,30 @@
 
 TWD produces structured, deterministic output that AI agents can parse and act on autonomously. Every test run returns the same pass/fail signals for the same inputs — no flakiness, no ambiguity. Whether you want your AI assistant to write better tests, generate tests from browser interactions, or run tests autonomously, TWD has you covered.
 
-## Quick Start: Agent Skills
+## Quick Start: Claude Code Plugin
 
-The fastest way to give your AI agent TWD context is with the [Agent Skills CLI](https://github.com/vercel-labs/skills):
-
-```bash
-npx skills add BRIKEV/twd
-```
-
-This installs TWD skills directly into your AI agent (Claude Code, Cursor, Codex, and [35+ more](https://github.com/vercel-labs/skills#available-agents)) — no copy-pasting prompts, no manual configuration.
-
-**Available skills:**
-
-| Skill | Description |
-|-------|-------------|
-| `twd` | Full-lifecycle orchestrator — detects project state, sets up TWD, writes tests, runs them, and fixes failures |
-| `twd-test-writer` | Teaches your AI how to write correct TWD tests |
-| `twd-setup` | Guides your AI through TWD project setup |
-| `twd-tester` | Autonomous test runner — runs existing tests, reads failures, fixes, and re-runs (Claude Code) |
+The fastest way to get AI-powered TWD testing is with the [Claude Code plugin](https://github.com/BRIKEV/twd-ai):
 
 ```bash
-# Install a specific skill
-npx skills add BRIKEV/twd --skill twd-test-writer
-
-# Install to a specific agent
-npx skills add BRIKEV/twd -a claude-code -a cursor
-
-# List available skills
-npx skills add BRIKEV/twd --list
+claude plugin install BRIKEV/twd-ai
 ```
+
+This gives Claude Code two capabilities:
+
+| Command | Description |
+|---------|-------------|
+| `/twd:setup` | Interactive setup — detects your project config and generates `.claude/twd-patterns.md` |
+| `twd` skill | Autonomous agent — writes tests, runs them via twd-relay, fixes failures, and re-runs until green |
+
+### Other AI Tools
+
+For Cursor, Copilot, Windsurf, and other AI tools, use the [Agent Skills CLI](https://github.com/vercel-labs/skills):
+
+```bash
+npx skills add BRIKEV/twd-ai
+```
+
+This copies TWD context into your AI tool's configuration file (`.cursorrules`, `.github/copilot-instructions.md`, etc.).
 
 ---
 
@@ -58,18 +53,18 @@ A WebSocket bridge that lets AI agents trigger test runs and stream results back
 
 ### 3. Auto-Invocation (Claude Code)
 
-When you install TWD skills via `npx skills add BRIKEV/twd -a claude-code`, Claude Code can automatically invoke the testing agent when it detects the task is relevant. For example:
+When you install the TWD plugin (`claude plugin install BRIKEV/twd-ai`), Claude Code can automatically invoke the testing agent when it detects the task is relevant. For example:
 
 - You ask: _"Add a search filter to the orders page"_
 - Claude implements the feature
-- Claude sees the `twd-tester` skill and spawns it as a sub-agent
+- Claude sees the `twd` skill and spawns it as a sub-agent
 - The agent writes tests, runs them via `npx twd-relay run`, reads failures, fixes, and re-runs until green
 - Claude continues with your task
 
-The agent works autonomously in a forked context — your main conversation isn't cluttered with test-writing steps. You can also trigger it directly:
+The agent works autonomously in a forked context — your main conversation isn't cluttered with test-writing steps. You can also set up your project interactively:
 
 ```
-/twd-tester write tests for the login page
+/twd:setup
 ```
 
 ---
@@ -81,13 +76,13 @@ You can use these features independently or combine them:
 ```
 AI Context           →  AI writes better tests
 AI Remote Testing    →  AI runs tests and reads results
-Agent Skills         →  AI writes, runs, and fixes tests autonomously
+Claude Code Plugin   →  AI writes, runs, and fixes tests autonomously
 ```
 
 A typical workflow:
 
-1. **Agent Skills** (`npx skills add BRIKEV/twd`) installs TWD context into your AI agent
-2. **TWD skills** write tests, run them via twd-relay, and fix failures
+1. **Plugin / Skills** install TWD context into your AI agent
+2. The **TWD agent** writes tests, runs them via twd-relay, and fixes failures
 3. The autonomous validation loop continues until all tests pass
 
 ::: info MCP Integration

@@ -7,7 +7,7 @@ title: TWD Context for AI Agents
 TWD provides AI agent prompts to help coding assistants (Claude, Cursor, Copilot, Windsurf, etc.) generate correct TWD test code.
 
 ::: tip Claude Code users
-If you use Claude Code, TWD skills can [auto-invoke](/ai-overview#_4-auto-invocation-claude-code) — Claude automatically writes tests, runs them via twd-relay, and iterates until they pass.
+Install the [TWD plugin](https://github.com/BRIKEV/twd-ai) (`claude plugin install BRIKEV/twd-ai`) for full autonomous testing — Claude writes tests, runs them via twd-relay, and iterates until they pass. See the [AI Integration overview](/ai-overview).
 :::
 
 ## Quick Start: Agent Skills (Recommended)
@@ -15,20 +15,18 @@ If you use Claude Code, TWD skills can [auto-invoke](/ai-overview#_4-auto-invoca
 The easiest way to give your AI assistant TWD context — no copy-pasting needed:
 
 ```bash
-npx skills add BRIKEV/twd
+npx skills add BRIKEV/twd-ai
 ```
 
-This installs TWD skills directly into your AI agent. Works with Claude Code, Cursor, Codex, and [35+ more agents](https://github.com/vercel-labs/skills#available-agents).
+This installs TWD skills directly into your AI agent. Works with Cursor, Codex, and [35+ more agents](https://github.com/vercel-labs/skills#available-agents).
+
+For **Claude Code**, use the plugin instead for the full autonomous agent experience:
 
 ```bash
-# Install just the test writing context
-npx skills add BRIKEV/twd --skill twd-test-writer
-
-# Install to specific agents
-npx skills add BRIKEV/twd -a claude-code -a cursor
+claude plugin install BRIKEV/twd-ai
 ```
 
-See the [AI Integration overview](/ai-overview) for all available skills.
+See the [AI Integration overview](/ai-overview) for details.
 
 ## Alternative: Manual Setup
 
