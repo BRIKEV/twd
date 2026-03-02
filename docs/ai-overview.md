@@ -2,20 +2,23 @@
 
 TWD produces structured, deterministic output that AI agents can parse and act on autonomously. Every test run returns the same pass/fail signals for the same inputs — no flakiness, no ambiguity. Whether you want your AI assistant to write better tests, generate tests from browser interactions, or run tests autonomously, TWD has you covered.
 
-## Quick Start: Claude Code Plugin
+## Claude Code Plugin
 
-The fastest way to get AI-powered TWD testing is with the [Claude Code plugin](https://github.com/BRIKEV/twd-ai):
+The fastest way to get AI-powered TWD testing is with the [Claude Code plugin](https://github.com/BRIKEV/twd-ai). It gives Claude two capabilities: an interactive setup wizard and an autonomous testing agent.
 
 ```bash
+claude plugin marketplace add BRIKEV/twd-ai
 claude plugin install BRIKEV/twd-ai
 ```
 
-This gives Claude Code two capabilities:
-
-| Command | Description |
+| Command | What it does |
 |---------|-------------|
-| `/twd:setup` | Interactive setup — detects your project config and generates `.claude/twd-patterns.md` |
+| `/twd:setup` | Analyzes your project, asks configuration questions, and generates `.claude/twd-patterns.md` |
 | `twd` skill | Autonomous agent — writes tests, runs them via twd-relay, fixes failures, and re-runs until green |
+
+The agent works in a forked context — your main conversation stays clean while tests are written, run, and fixed. If a test still fails after 3 fix attempts, it's marked as `it.skip` so it doesn't block the rest.
+
+**[Read the full Claude Code Plugin guide](/claude-plugin)**
 
 ### Other AI Tools
 
@@ -37,7 +40,7 @@ Teach your AI assistant (Claude, Cursor, Copilot, Windsurf) how to write correct
 
 **Best for:** Getting AI to write correct TWD tests on the first try.
 
-[Read the AI Context guide](/agents)
+[Read the AI Context & Prompts guide](/agents)
 
 ---
 
@@ -51,9 +54,9 @@ A WebSocket bridge that lets AI agents trigger test runs and stream results back
 
 ---
 
-### 3. Auto-Invocation (Claude Code)
+### 3. Claude Code Plugin — Autonomous Testing
 
-When you install the TWD plugin (`claude plugin install BRIKEV/twd-ai`), Claude Code can automatically invoke the testing agent when it detects the task is relevant. For example:
+When you install the TWD plugin, Claude Code can automatically invoke the testing agent when it detects the task is relevant. For example:
 
 - You ask: _"Add a search filter to the orders page"_
 - Claude implements the feature
@@ -61,11 +64,9 @@ When you install the TWD plugin (`claude plugin install BRIKEV/twd-ai`), Claude 
 - The agent writes tests, runs them via `npx twd-relay run`, reads failures, fixes, and re-runs until green
 - Claude continues with your task
 
-The agent works autonomously in a forked context — your main conversation isn't cluttered with test-writing steps. You can also set up your project interactively:
+You can also set up your project interactively with `/twd:setup`.
 
-```
-/twd:setup
-```
+**[Read the full Claude Code Plugin guide](/claude-plugin)**
 
 ---
 
@@ -74,9 +75,9 @@ The agent works autonomously in a forked context — your main conversation isn'
 You can use these features independently or combine them:
 
 ```
-AI Context           →  AI writes better tests
-AI Remote Testing    →  AI runs tests and reads results
-Claude Code Plugin   →  AI writes, runs, and fixes tests autonomously
+AI Context & Prompts   →  AI writes better tests (any AI tool)
+AI Remote Testing      →  AI runs tests and reads results (any AI tool)
+Claude Code Plugin     →  AI writes, runs, and fixes tests autonomously
 ```
 
 A typical workflow:

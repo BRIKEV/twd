@@ -68,7 +68,8 @@ export default defineConfig({
         text: 'AI',
         items: [
           { text: 'Overview', link: '/ai-overview' },
-          { text: 'Agent Skills', link: '/agents' },
+          { text: 'Claude Code Plugin', link: '/claude-plugin' },
+          { text: 'AI Context & Prompts', link: '/agents' },
           { text: 'AI Remote Testing', link: '/ai-remote-testing' },
         ]
       },
