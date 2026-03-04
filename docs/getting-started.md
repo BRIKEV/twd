@@ -24,11 +24,9 @@ pnpm add twd-js
 
 ## Quick Setup
 
-TWD offers two setup options: the **Standard Setup** for full control, and the **Simplified Setup (Bundled)** for a cleaner, easier configuration.
+### 1. Bundled Setup
 
-### Option 1: Simplified Setup (Bundled) - Recommended
-
-The bundled setup is the easiest way to get started and works with all supported frameworks (React, Vue, Angular, Solid.js). It handles React dependencies internally and automatically initializes request mocking, keeping your main entry file clean and simple.
+The bundled setup works with all supported frameworks (React, Vue, Angular, Solid.js). It handles React dependencies internally and automatically initializes request mocking, keeping your main entry file clean and simple.
 
 ```tsx{7-20}
 // src/main.tsx
@@ -59,42 +57,7 @@ createRoot(document.getElementById('root')!).render(
 );
 ```
 
-### Option 2: Standard Setup (React Only)
-
-The standard setup gives you full control over the initialization and allows you to customize the sidebar component directly. This setup is **only available for React applications**. For Vue, Angular, Solid.js, and other frameworks, use the bundled setup above. You'll need to manually initialize request mocking if you plan to use API mocking.
-
-```tsx{7-23}
-// src/main.tsx
-import { StrictMode } from 'react';
-import { createRoot } from 'react-dom/client';
-import './index.css';
-import App from './App';
-
-// Only load the test sidebar and tests in development mode
-if (import.meta.env.DEV) {
-  // Use Vite's glob import to find all test files
-  const testModules = import.meta.glob("./**/*.twd.test.ts");
-  const { initTests, twd, TWDSidebar } = await import('twd-js');
-  // You need to pass the test modules, the sidebar component, and createRoot function
-  initTests(testModules, <TWDSidebar open={true} position="left" />, createRoot);
-  // Initialize request mocking (optional)
-  twd.initRequestMocking()
-    .then(() => {
-      console.log("Request mocking initialized");
-    })
-    .catch((err) => {
-      console.error("Error initializing request mocking:", err);
-    });
-}
-
-createRoot(document.getElementById('root')!).render(
-  <StrictMode>
-    <App />
-  </StrictMode>,
-);
-```
-
-### 2. Set Up Mock Service Worker (Optional / recommended)
+### 2. Set Up Mock Service Worker (Optional but recommended)
 
 If you plan to use API mocking, set up the mock service worker:
 
@@ -186,13 +149,13 @@ You can customize this pattern in your test loader using different glob patterns
 Make sure you:
 1. Are running in development mode (`import.meta.env.DEV` is true)
 2. Used the correct file naming pattern (`.twd.test.ts`)
-3. Have the `initTests` logic in your main entry file
+3. Have the `initTWD` logic in your main entry file
 
 ### Mock Service Worker Issues
 
 If API mocking isn't working:
 1. Run `npx twd-js init public` to install the service worker
-2. If using the standard setup, make sure you called `twd.initRequestMocking()` in your main entry file (inside the `import.meta.env.DEV` block). Note: The bundled setup automatically initializes request mocking.
+2. Make sure request mocking is enabled in your `initTWD` options (`serviceWorker: true` is the default)
 3. Check the browser console for service worker registration errors
 
 ### Test Duplication on HMR
