@@ -13,7 +13,9 @@ claude plugin marketplace add BRIKEV/twd-ai
 Then install the plugin skills:
 
 ```bash
-claude plugin install BRIKEV/twd-ai
+claude plugin install twd@twd-ai
+# or update
+claude plugin update twd@twd-ai
 ```
 
 That's it. You now have access to `/twd:setup` and the `twd` skill.
@@ -153,10 +155,12 @@ The `twd` skill reads this file before writing any test. If your project changes
 To update to the latest version, remove and reinstall:
 
 ```bash
-claude plugin update BRIKEV/twd-ai
+# Remove and reinstall (the marketplace stays, only the plugin needs reinstalling)
+claude plugin remove twd@twd-ai
+claude plugin install twd@twd-ai
 # or remove and reinstall
-claude plugin remove BRIKEV/twd-ai
-claude plugin install BRIKEV/twd-ai
+claude plugin remove twd@twd-ai
+claude plugin add /path/to/twd-ai
 ```
 
 ---
