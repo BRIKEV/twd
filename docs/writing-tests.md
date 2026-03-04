@@ -481,6 +481,60 @@ const spinner = await twd.get(".loading-spinner");
 spinner.should("not.be.visible");
 ```
 
+## State Management & Test Isolation
+
+TWD runs tests directly in the browser **without page reloads**. The `twd.visit()` command simulates SPA navigation using the History API, which means your SPA router re-renders but **in-memory application state is preserved** between tests.
+
+This is a deliberate trade-off: it keeps tests fast and deterministic, but it means state from tools like Zustand, Redux, Jotai, or plain module-level variables will **leak between tests** unless you explicitly reset it.
+
+### What TWD resets for you
+
+TWD provides built-in reset methods for its own managed state:
+
+```ts
+beforeEach(() => {
+  twd.clearRequestMockRules();  // Clears API mock rules
+  twd.clearComponentMocks();    // Clears component mocks
+  twd.resetViewport();          // Resets simulated viewport
+});
+```
+
+### What you need to reset manually
+
+Any state that lives in your application's JavaScript memory persists across tests:
+
+| State type | Example | How to reset |
+|---|---|---|
+| State managers | Zustand, Redux, Jotai, Pinia | Call your store's reset method |
+| Browser storage | localStorage, sessionStorage | `localStorage.clear()` |
+| Module singletons | Caches, counters, flags | Re-assign to initial value |
+| Global event listeners | `window.addEventListener(...)` | Remove in `afterEach` |
+| Timers | `setInterval`, `setTimeout` | Clear in `afterEach` |
+
+Most state management libraries provide a way to reset stores to their initial state. Expose a reset method on your stores and call it in `beforeEach`:
+
+```ts
+import { resetMyStore } from "../../store";
+
+describe("My feature", () => {
+  beforeEach(() => {
+    twd.clearRequestMockRules();
+    twd.clearComponentMocks();
+    resetMyStore();
+    localStorage.clear();
+  });
+
+  it("should start with clean state", async () => {
+    await twd.visit("/my-page");
+    // State is fresh for every test
+  });
+});
+```
+
+### Why not just reload the page?
+
+TWD's test runner, sidebar UI, mock service worker, and all test definitions live in the same browser page as your app. A full page reload (`window.location.reload()`) would destroy the test runner itself, losing all test results and state. This is the fundamental constraint of in-browser testing — and the same trade-off other in-browser tools face.
+
 ## Best Practices
 
 ### 1. Group Related Tests
@@ -505,16 +559,14 @@ describe("Shopping Cart", () => {
 
 ### 2. Clean Up After Tests
 
-Use `beforeEach` to ensure clean state:
+Use `beforeEach` to ensure clean state. See [State Management & Test Isolation](#state-management-test-isolation) above for full details.
 
 ```ts
 beforeEach(() => {
-  // Clear local storage
-  localStorage.clear();
-  
-  // Reset any global state
-  // Clear any mocks from previous tests
   twd.clearRequestMockRules();
+  twd.clearComponentMocks();
+  localStorage.clear();
+  // Reset your app's state managers too (Zustand, Redux, etc.)
 });
 ```
 

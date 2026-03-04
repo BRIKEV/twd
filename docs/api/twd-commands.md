@@ -122,18 +122,22 @@ await twd.visit("/docs#getting-started");
 await twd.visit("/dashboard", true);
 ```
 
+::: warning Application state persists between visits
+`twd.visit()` uses the History API to simulate SPA navigation **without a page reload**. This means in-memory application state (Zustand, Redux, Jotai, module-level variables, localStorage) is **not reset** between calls. You must manually reset application state in `beforeEach` to ensure test isolation. See [State Management & Test Isolation](/writing-tests#state-management-test-isolation) for patterns and examples.
+:::
+
 #### Use Cases
 
 ```ts
 describe("Navigation Tests", () => {
   it("should navigate between pages", async () => {
     await twd.visit("/");
-    
+
     const homeHeading = await twd.get("h1");
     homeHeading.should("contain.text", "Home");
-    
+
     await twd.visit("/about");
-    
+
     const aboutHeading = await twd.get("h1");
     aboutHeading.should("contain.text", "About");
   });
