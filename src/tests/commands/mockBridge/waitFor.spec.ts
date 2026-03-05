@@ -82,6 +82,29 @@ describe('waitForRequest', () => {
   it('throws if the rule is not executed within the given time', async () => {
     const alias = 'notExecutedAlias';
     await mockRequest(alias, { method: 'GET', url: '/not-executed', response: {} });
-    await expect(waitForRequest(alias, 1, 10)).rejects.toThrow(`Rule ${alias} was not executed within 10ms`);
+    await expect(waitForRequest(alias, 1, 10)).rejects.toThrow(`Rule "${alias}" was not executed within 10ms.`);
+  });
+
+  it('includes executed and not-executed rules in the timeout error', async () => {
+    await mockRequest('getUser', { method: 'GET', url: '/api/user', response: {} });
+    await mockRequest('postUser', { method: 'POST', url: '/api/user', response: {} });
+    await mockRequest('getItems', { method: 'GET', url: '/api/items', response: {} });
+
+    // Mark postUser as executed
+    const rules = getRequestMockRules();
+    const postRule = rules.find((r) => r.alias === 'postUser');
+    if (postRule) {
+      postRule.executed = true;
+    }
+
+    try {
+      await waitForRequest('getUser', 1, 10);
+      expect.unreachable('should have thrown');
+    } catch (err: any) {
+      expect(err.message).toContain('Rule "getUser" was not executed within 10ms.');
+      expect(err.message).toContain('Expected: GET /api/user');
+      expect(err.message).toContain('Executed rules: postUser (POST /api/user)');
+      expect(err.message).toContain('Not executed rules: getUser (GET /api/user), getItems (GET /api/items)');
+    }
   });
 });
