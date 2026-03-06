@@ -1,3 +1,14 @@
+## 1.6.0 (2026-03-06)
+
+* feat: improve waitForRequest timeout error with detailed rule info (#159) ([5a2db79](https://github.com/BRIKEV/twd/commit/5a2db79))
+* feat: add viewport command with CSS @media query support (#150) ([285a404](https://github.com/BRIKEV/twd/commit/285a404))
+* feat: add agent skills for AI adoption and separate AI docs section ([4f8a44f](https://github.com/BRIKEV/twd/commit/4f8a44f))
+* fix: vulnerabilities ([02fbea1](https://github.com/BRIKEV/twd/commit/02fbea1))
+* docs: remove standard setup option, keep bundled as the only approach ([af8fd55](https://github.com/BRIKEV/twd/commit/af8fd55))
+* docs: add state management & test isolation guidance for visit command ([762062d](https://github.com/BRIKEV/twd/commit/762062d))
+* docs: add dedicated Claude Code Plugin page and restructure AI sidebar ([a283923](https://github.com/BRIKEV/twd/commit/a283923))
+
+
 ## <small>1.5.2 (2026-02-11)</small>
 
 * fix: remove hardcoded version from CLI service worker registration ([698923a](https://github.com/BRIKEV/twd/commit/698923a))
