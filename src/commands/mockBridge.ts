@@ -171,9 +171,24 @@ export const waitForRequest = async (
       await new Promise(resolve => setTimeout(resolve, retryDelay));
     }
   }
-  console.log(`Rule ${alias} was not executed within ${retries * retryDelay}ms`);
+  const timeout = retries * retryDelay;
+  const executedRules = rules
+    .filter((r) => r.executed)
+    .map((r) => `${r.alias} (${r.method} ${r.url})`)
+    .join(', ');
+  const notExecutedRules = rules
+    .filter((r) => !r.executed)
+    .map((r) => `${r.alias} (${r.method} ${r.url})`)
+    .join(', ');
+  const message = [
+    `Rule "${alias}" was not executed within ${timeout}ms.`,
+    `  Expected: ${ruleExists.method} ${ruleExists.url}`,
+    `  Executed rules: ${executedRules || 'none'}`,
+    `  Not executed rules: ${notExecutedRules || 'none'}`,
+  ].join('\n');
+  console.log(message);
   // If we get here, the rule was never executed
-  throw new Error(`Rule ${alias} was not executed within ${retries * retryDelay}ms`);
+  throw new Error(message);
 };
 
 /**
