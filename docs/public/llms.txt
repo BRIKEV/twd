@@ -1,0 +1,54 @@
+# TWD (Test While Developing)
+
+> TWD is an in-browser testing library for SPAs that runs tests directly in the browser with a sidebar UI for instant visual feedback. It supports React, Vue, Angular, and Solid.js with deterministic, client-side UI testing.
+
+Key features:
+- In-browser test execution with visual sidebar UI
+- API mocking via Mock Service Worker
+- Component and module mocking
+- Testing Library integration
+- CI/CD execution with twd-cli
+- Multi-framework support (React, Vue, Angular, Solid.js)
+- AI-assisted testing with Claude Code plugin
+
+## Guide
+
+- [Getting Started](https://twd.dev/getting-started.html): Installation, setup (bundled vs standard), first test, troubleshooting
+- [Writing Tests](https://twd.dev/writing-tests.html): Test structure, element selection (TWD native + Testing Library), assertions, user interactions, navigation
+- [API Mocking](https://twd.dev/api-mocking.html): Mock Service Worker setup, request mocking patterns, dynamic responses, error handling
+- [Component Mocking](https://twd.dev/component-mocking.html): MockedComponent wrapper, conditional mocking, error states
+- [Module Mocking](https://twd.dev/module-mocking.html): Sinon-based module mocking for ESM
+- [Framework Integration](https://twd.dev/frameworks.html): React, Vue, Angular, Solid.js, CRA, Astro, React Router setup
+- [Testing Library](https://twd.dev/testing-library.html): Testing Library integration and selectors
+- [CI Execution](https://twd.dev/ci-execution.html): twd-cli setup, Puppeteer, GitHub Actions
+- [Coverage](https://twd.dev/coverage.html): Code coverage reporting
+
+## API Reference
+
+- [API Overview](https://twd.dev/api/): Imports, initialization, type definitions, core concepts
+- [Test Functions](https://twd.dev/api/test-functions.html): describe, it, beforeEach, afterEach, only, skip
+- [TWD Commands](https://twd.dev/api/twd-commands.html): Element selection, navigation, mocking commands
+- [Assertions](https://twd.dev/api/assertions.html): Text, attribute, state, and URL assertions
+
+## Tutorial
+
+- [Tutorial Overview](https://twd.dev/tutorial/): Step-by-step learning path
+- [Installation](https://twd.dev/tutorial/installation.html): Project setup
+- [First Test](https://twd.dev/tutorial/first-test.html): Writing your first test
+- [API Mocking Tutorial](https://twd.dev/tutorial/api-mocking.html): Learning to mock HTTP requests
+- [CI Integration](https://twd.dev/tutorial/ci-integration.html): Setting up CI/CD
+- [Production Builds](https://twd.dev/tutorial/production-builds.html): Removing test code from production
+
+## AI Integration
+
+- [AI Overview](https://twd.dev/ai-overview.html): Using TWD with AI tools
+- [Claude Plugin](https://twd.dev/claude-plugin.html): Claude Code plugin for TWD
+- [AI Agents & Context](https://twd.dev/agents.html): Context and prompts for AI agents
+- [AI Remote Testing](https://twd.dev/ai-remote-testing.html): Remote testing patterns
+
+## Optional
+
+- [Theming](https://twd.dev/theming.html): Customizing TWD sidebar appearance
+- [Motivation](https://twd.dev/motivation.html): Why Test While Developing
+- [TWD Manifesto](https://twd.dev/twd-manifesto.html): Project philosophy
+- [Community](https://twd.dev/community.html): Examples and community links
