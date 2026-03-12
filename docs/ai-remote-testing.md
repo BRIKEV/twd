@@ -1,3 +1,8 @@
+---
+title: AI Remote Testing
+description: Connect AI coding agents to your running app via TWD Relay WebSocket bridge
+---
+
 # AI Remote Testing
 
 TWD Relay (`twd-relay`) enables AI coding agents (Claude Code, Cursor, Copilot) to **run in-browser validations and read structured results** — without launching a browser automation tool. Your app is already running with TWD loaded; the relay just opens a WebSocket bridge so external tools can trigger test runs and stream results back.

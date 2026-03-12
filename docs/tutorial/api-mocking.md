@@ -1,3 +1,8 @@
+---
+title: API Mocking Tutorial
+description: Learn to mock HTTP requests and test components that depend on network data
+---
+
 # API Mocking - Testing with Network Requests
 
 In the [previous tutorial](./first-test), we explored assertions, selectors, and user interactions in TWD.

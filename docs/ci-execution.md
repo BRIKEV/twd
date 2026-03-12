@@ -1,3 +1,8 @@
+---
+title: CI Execution
+description: Run TWD tests in headless CI environments with twd-cli, Puppeteer, and GitHub Actions
+---
+
 # CI Execution
 
 Use the `twd-cli` package to run TWD tests in headless CI environments. It wraps Puppeteer, waits for your app, executes all tests, and reports coverage. It exits with a non-zero status code when a test fails, so it integrates directly into any CI/CD pipeline.

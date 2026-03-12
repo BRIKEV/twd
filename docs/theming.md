@@ -1,3 +1,8 @@
+---
+title: Theming
+description: Customize the TWD sidebar appearance with colors, spacing, and typography
+---
+
 # Theming
 
 TWD allows you to customize the appearance of the test sidebar to match your preferences or your application's design system. You can personalize colors, spacing, typography, and more through a simple theme configuration.

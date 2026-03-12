@@ -1,3 +1,8 @@
+---
+title: Component Mocking
+description: Replace React components with mock implementations for isolated testing and edge cases
+---
+
 # Component Mocking
 
 TWD provides powerful component mocking capabilities, allowing you to replace React components with mock implementations during testing. This is especially useful for isolating components, testing edge cases, or replacing complex dependencies with simpler test doubles.

@@ -1,3 +1,8 @@
+---
+title: API Reference
+description: Complete reference for all TWD functions, methods, types, and imports
+---
+
 # API Reference
 
 Complete reference documentation for all TWD functions, methods, and types.

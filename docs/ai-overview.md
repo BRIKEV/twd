@@ -1,3 +1,8 @@
+---
+title: AI Integration
+description: Use TWD with AI agents for autonomous test writing, generation, and execution
+---
+
 # AI Integration
 
 TWD produces structured, deterministic output that AI agents can parse and act on autonomously. Every test run returns the same pass/fail signals for the same inputs — no flakiness, no ambiguity. Whether you want your AI assistant to write better tests, generate tests from browser interactions, or run tests autonomously, TWD has you covered.

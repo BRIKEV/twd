@@ -1,3 +1,8 @@
+---
+title: Testing Library Selectors
+description: Use Testing Library-style selectors with TWD sidebar visual selection support
+---
+
 # Using Testing Library Selectors
 
 In this part, we’ll look at a new feature in TWD: support for Testing Library–style selectors.

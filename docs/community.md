@@ -1,3 +1,8 @@
+---
+title: Community & Examples
+description: Real-world examples, tutorials, and community content for TWD
+---
+
 # Community & Examples
 
 Real-world examples, tutorials, and community content for TWD.

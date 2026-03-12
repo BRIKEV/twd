@@ -1,3 +1,8 @@
+---
+title: Claude Code Plugin
+description: Install and use the TWD plugin for Claude Code to write and run tests automatically
+---
+
 # Claude Code Plugin
 
 The [TWD plugin for Claude Code](https://github.com/BRIKEV/twd-ai) gives Claude two skills: an interactive project setup wizard and an autonomous testing agent that writes, runs, and fixes TWD tests for you.

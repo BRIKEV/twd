@@ -5,6 +5,9 @@ export default defineConfig({
   title: "TWD",
   description: "Test While Developing (TWD) - in-browser testing for React, Vue, Angular, and Solid.js applications",
   base: '/',
+  sitemap: {
+    hostname: 'https://twd.dev'
+  },
   appearance: { initialValue: 'dark' },
   head: [
     // Favicon and app icons
@@ -14,7 +17,6 @@ export default defineConfig({
     ['link', { rel: 'manifest', href: '/site.webmanifest' }],
     
     // SEO Meta Tags
-    ['meta', { name: 'description', content: 'TWD (Test While Developing) - In-browser testing for React, Vue, Angular, and Solid.js with instant feedback, Mock Service Worker integration, and beautiful UI.' }],
     ['meta', { name: 'keywords', content: 'testing, deterministic, browser-validation, ai-testing, react, vue, angular, solidjs, javascript, typescript, twd, test-driven-development, browser-testing, mock-service-worker, vite' }],
     
     // Open Graph Tags

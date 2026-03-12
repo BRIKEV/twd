@@ -1,7 +1,7 @@
 {
   "name": "TWD - Test While Developing",
   "short_name": "TWD",
-  "description": "In-browser testing framework for React applications",
+  "description": "In-browser testing framework for React, Vue, Angular, and Solid.js applications",
   "icons": [
     {
       "src": "/twd/web-app-manifest-192x192.png",
@@ -21,7 +21,7 @@
       "type": "image/png"
     }
   ],
-  "start_url": "/twd/",
+  "start_url": "/",
   "theme_color": "#ffffff",
   "background_color": "#ffffff",
   "display": "standalone",

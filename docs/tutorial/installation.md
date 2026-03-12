@@ -1,3 +1,8 @@
+---
+title: Installation and First Test
+description: Set up TWD in a sample project, configure Vite, and run your first test
+---
+
 # Installation and First Test
 
 Let's start our journey learning how to use TWD (Test While Developing)!

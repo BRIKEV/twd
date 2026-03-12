@@ -1,3 +1,8 @@
+---
+title: Writing Tests
+description: Learn TWD test structure, element selection, assertions, user interactions, and navigation
+---
+
 # Writing Tests
 
 Learn how to write effective tests with TWD's intuitive API and powerful features.

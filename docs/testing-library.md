@@ -1,3 +1,8 @@
+---
+title: Testing Library
+description: Use Testing Library query methods and user event utilities inside TWD tests
+---
+
 # Testing Library Support
 
 TWD fully supports Testing Library's query methods and user event utilities, giving you access to the same powerful APIs used in traditional testing frameworks.

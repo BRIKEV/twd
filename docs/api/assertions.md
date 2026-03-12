@@ -1,3 +1,8 @@
+---
+title: Assertions
+description: Reference for all TWD assertion methods — text, attribute, state, and URL checks
+---
+
 # Assertions
 
 Complete reference for all TWD assertion methods to verify element states, content, and behavior.

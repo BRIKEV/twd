@@ -1,3 +1,8 @@
+---
+title: CI Integration Tutorial
+description: Run TWD tests in the terminal and integrate them into a CI/CD pipeline
+---
+
 # CI Integration - Running Tests in Continuous Integration
 
 In the [previous tutorial](./api-mocking), we explored one of TWD's core features — **network mocking** — and completed our first full set of tests.

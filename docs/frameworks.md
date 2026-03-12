@@ -1,3 +1,8 @@
+---
+title: Framework Integration
+description: Set up TWD with React, Vue, Angular, Solid.js, CRA, Astro, and React Router
+---
+
 # Framework Integration
 
 TWD is designed to work with any Vite-based application. Currently, **react, vue, angular and solid.js are supported**, and the library can be adapted to work with other build tools and frameworks.

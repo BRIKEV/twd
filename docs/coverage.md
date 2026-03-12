@@ -1,3 +1,8 @@
+---
+title: Code Coverage
+description: Instrument your Vite app and collect code coverage reports from TWD tests
+---
+
 # Collecting Code Coverage
 
 Coverage in TWD is a feedback tool, not a vanity metric. It helps you discover untested paths and missing assertions so you can strengthen your tests where it matters. The goal isn’t “100%”, it’s to reveal gaps while you develop.

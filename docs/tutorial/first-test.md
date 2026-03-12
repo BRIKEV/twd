@@ -1,3 +1,8 @@
+---
+title: Selectors, Assertions, and User Events
+description: Write meaningful tests using TWD selectors, assertions, and user interactions
+---
+
 # Selectors, Assertions, and User Events
 
 In the [previous tutorial](./installation), we set up our basic testing configuration and used the `visit` command to load our app.

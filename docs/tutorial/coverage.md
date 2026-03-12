@@ -1,3 +1,8 @@
+---
+title: Code Coverage Tutorial
+description: Collect and visualize code coverage from your TWD tests locally and in CI
+---
+
 # Collecting Code Coverage
 
 TWD still has many more advanced features — such as function mocking — but with what we've covered so far, you already have everything a solid testing tool needs.
