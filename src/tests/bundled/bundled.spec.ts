@@ -81,17 +81,26 @@ describe('initTWD', () => {
 
   it('should handle all options together', () => {
     const files = {};
-    initTWD(files, { 
-      open: false, 
-      position: 'right', 
-      serviceWorker: true, 
-      serviceWorkerUrl: '/custom-sw.js' 
+    initTWD(files, {
+      open: false,
+      position: 'right',
+      serviceWorker: true,
+      serviceWorkerUrl: '/custom-sw.js'
     });
-    
+
     expect(initTests).toHaveBeenCalled();
     const callArgs = (initTests as any).mock.calls[0];
     expect(callArgs[1].props).toEqual({ open: false, position: 'right' });
     expect(mockInitRequestMocking).toHaveBeenCalledWith('/custom-sw.js');
+  });
+
+  it('should forward search option to TWDSidebar', () => {
+    const files = {};
+    initTWD(files, { search: true });
+
+    expect(initTests).toHaveBeenCalled();
+    const callArgs = (initTests as any).mock.calls[0];
+    expect(callArgs[1].props).toEqual({ open: true, position: 'left', search: true });
   });
 });
 
