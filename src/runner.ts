@@ -275,6 +275,52 @@ export class TestRunner {
     await this.runTest(handler, hasOnly);
   }
 
+  async runByIds(ids: string[]) {
+    const idSet = new Set(ids);
+    const rootSuites = Array.from(handlers.values()).filter(
+      (h) => !h.parent && h.type === "suite"
+    );
+    const hasOnly = Array.from(handlers.values()).some((h) => h.only);
+    for (const suite of rootSuites) {
+      await this.runSuiteByIds(suite, idSet, hasOnly);
+    }
+    return handlers;
+  }
+
+  private async runSuiteByIds(suite: Handler, idSet: Set<string>, hasOnly: boolean) {
+    const hasMatchingDescendant = this.hasDescendantInSet(suite, idSet);
+    if (!hasMatchingDescendant) return;
+
+    const suiteIsSkipped = isSuiteSkipped(suite.id);
+    if (suiteIsSkipped && !hasOnlyInTree(suite.id)) {
+      this.events.onSkip?.(suite);
+      return;
+    }
+
+    if (hasOnly && !hasOnlyInTree(suite.id)) return;
+
+    this.events.onSuiteStart?.(suite);
+    const children = (suite.children || []).map((id) => handlers.get(id)!);
+
+    for (const child of children) {
+      if (child.type === "suite") {
+        await this.runSuiteByIds(child, idSet, hasOnly);
+      } else if (child.type === "test" && idSet.has(child.id)) {
+        await this.runTest(child, hasOnly);
+      }
+    }
+    this.events.onSuiteEnd?.(suite);
+  }
+
+  private hasDescendantInSet(handler: Handler, idSet: Set<string>): boolean {
+    if (idSet.has(handler.id)) return true;
+    if (!handler.children) return false;
+    return handler.children.some((childId) => {
+      const child = handlers.get(childId);
+      return child ? this.hasDescendantInSet(child, idSet) : false;
+    });
+  }
+
   private async runSuite(suite: Handler, hasOnly: boolean) {
     const suiteIsSkipped = isSuiteSkipped(suite.id);
     // If suite is skipped AND no .only inside → skip whole subtree
