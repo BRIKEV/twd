@@ -57,4 +57,52 @@ describe("TestList", () => {
     expect(testItem).toBeInTheDocument();
     expect(testItem).toHaveAttribute('data-test-name', 'Test 1.1');
   });
+
+  it("should filter tests by search query preserving hierarchy", () => {
+    twd.describe("Auth", () => {
+      twd.describe("Login", () => {
+        twd.it("shows error on invalid password", () => {});
+        twd.it("redirects on success", () => {});
+      });
+      twd.describe("Signup", () => {
+        twd.it("validates email format", () => {});
+      });
+    });
+    const mockRunTest = vi.fn();
+    const tests = Array.from(twd.handlers.values());
+
+    render(<TestList tests={tests} runTest={mockRunTest} searchQuery="error" />);
+
+    expect(screen.getByTestId("test-group-Auth")).toBeInTheDocument();
+    expect(screen.getByTestId("test-group-Login")).toBeInTheDocument();
+    expect(screen.getByText("shows error on invalid password")).toBeInTheDocument();
+    expect(screen.queryByText("redirects on success")).not.toBeInTheDocument();
+    expect(screen.queryByTestId("test-group-Signup")).not.toBeInTheDocument();
+  });
+
+  it("should show empty state when no tests match search query", () => {
+    twd.describe("Auth", () => {
+      twd.it("login test", () => {});
+    });
+    const mockRunTest = vi.fn();
+    const tests = Array.from(twd.handlers.values());
+
+    render(<TestList tests={tests} runTest={mockRunTest} searchQuery="zzzzz" />);
+
+    expect(screen.getByText(/No tests match "zzzzz"/)).toBeInTheDocument();
+  });
+
+  it("should show all tests when searchQuery is empty", () => {
+    twd.describe("Auth", () => {
+      twd.it("test 1", () => {});
+      twd.it("test 2", () => {});
+    });
+    const mockRunTest = vi.fn();
+    const tests = Array.from(twd.handlers.values());
+
+    render(<TestList tests={tests} runTest={mockRunTest} searchQuery="" />);
+
+    expect(screen.getByText("test 1")).toBeInTheDocument();
+    expect(screen.getByText("test 2")).toBeInTheDocument();
+  });
 });

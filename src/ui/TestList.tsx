@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { buildTreeFromHandlers, Node } from "./utils/buildTreeFromHandlers";
+import { filterTree } from "./utils/filterTree";
 import { TestListItem } from "./TestListItem";
 import ChevronDown from "./Icons/ChevronDown";
 import ChevronRight from "./Icons/ChevronRight";
@@ -20,9 +21,10 @@ interface Test {
 interface TestListProps {
   runTest: (id: string) => Promise<void>;
   tests: Test[];
+  searchQuery?: string;
 }
 
-export const TestList = ({ tests, runTest }: TestListProps) => {
+export const TestList = ({ tests, runTest, searchQuery = "" }: TestListProps) => {
   const [collapsed, setCollapsed] = useState<Record<string, boolean>>({});
   const listContainerRef = useRef<HTMLUListElement>(null);
   const hasScrolledRef = useRef(false);
@@ -124,15 +126,27 @@ export const TestList = ({ tests, runTest }: TestListProps) => {
   };
 
   const roots = buildTreeFromHandlers(tests);
+  const filteredRoots = filterTree(roots, searchQuery);
 
   return (
-    <ul 
-      ref={listContainerRef} 
+    <ul
+      ref={listContainerRef}
       style={{ listStyle: "none", padding: 0, margin: 0 }}
       role="list"
       aria-label="Test list"
     >
-      {roots.map((n) => renderNode(n))}
+      {filteredRoots.length === 0 && searchQuery ? (
+        <li style={{
+          padding: "var(--twd-spacing-md)",
+          color: "var(--twd-text-secondary)",
+          fontSize: "var(--twd-font-size-sm)",
+          textAlign: "center",
+        }}>
+          No tests match "{searchQuery}"
+        </li>
+      ) : (
+        filteredRoots.map((n) => renderNode(n))
+      )}
     </ul>
   );
 };
