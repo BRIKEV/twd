@@ -43,6 +43,7 @@ The `initTWD` function accepts the following options:
 - **`serviceWorker`** (`boolean`, optional) - Whether to initialize request mocking. Default: `true`
 - **`serviceWorkerUrl`** (`string`, optional) - Custom path to the service worker file. Default: `'/mock-sw.js'`
 - **`theme`** (`Partial<TWDTheme>`, optional) - Custom theme configuration. See [Theming](/theming) for details.
+- **`search`** (`boolean`, optional) - Whether to show the search/filter input in the sidebar. Default: `false`
 
 **Examples:**
 
@@ -59,9 +60,12 @@ initTWD(tests, { serviceWorker: false });
 // Custom service worker path
 initTWD(tests, { serviceWorkerUrl: '/custom-path/mock-sw.js' });
 
+// Enable test filtering in the sidebar
+initTWD(tests, { search: true });
+
 // All options together
-initTWD(tests, { 
-  open: true, 
+initTWD(tests, {
+  open: true,
   position: 'right',
   serviceWorker: true,
   serviceWorkerUrl: '/my-mock-sw.js',
