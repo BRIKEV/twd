@@ -234,4 +234,100 @@ describe('twd runner', () => {
     expect(testFn2).not.toHaveBeenCalled();
     expect(mockEvents.onSkip).toHaveBeenCalledWith(expect.objectContaining({ name: 'test 2' }));
   });
+
+  it('should run only tests matching provided IDs with runByIds', async () => {
+    const testFn1 = vi.fn();
+    const testFn2 = vi.fn();
+    const testFn3 = vi.fn();
+    twd.describe('Suite A', () => {
+      twd.it('test 1', testFn1);
+      twd.it('test 2', testFn2);
+    });
+    twd.describe('Suite B', () => {
+      twd.it('test 3', testFn3);
+    });
+
+    const tests = Array.from(twd.handlers.values());
+    const test1 = tests.find(t => t.name === 'test 1')!;
+    const test3 = tests.find(t => t.name === 'test 3')!;
+
+    const mockEvents = {
+      onStart: vi.fn(),
+      onPass: vi.fn(),
+      onFail: vi.fn(),
+      onSkip: vi.fn(),
+      onSuiteStart: vi.fn(),
+      onSuiteEnd: vi.fn(),
+    };
+
+    const runner = new twd.TestRunner(mockEvents);
+    await runner.runByIds([test1.id, test3.id]);
+
+    expect(testFn1).toHaveBeenCalledTimes(1);
+    expect(testFn2).not.toHaveBeenCalled();
+    expect(testFn3).toHaveBeenCalledTimes(1);
+  });
+
+  it('should respect beforeEach/afterEach hooks in runByIds', async () => {
+    const beforeFn = vi.fn();
+    const afterFn = vi.fn();
+    const testFn1 = vi.fn();
+    const testFn2 = vi.fn();
+    twd.describe('Suite with hooks', () => {
+      twd.beforeEach(beforeFn);
+      twd.afterEach(afterFn);
+      twd.it('included test', testFn1);
+      twd.it('excluded test', testFn2);
+    });
+
+    const tests = Array.from(twd.handlers.values());
+    const test1 = tests.find(t => t.name === 'included test')!;
+
+    const mockEvents = {
+      onStart: vi.fn(),
+      onPass: vi.fn(),
+      onFail: vi.fn(),
+      onSkip: vi.fn(),
+      onSuiteStart: vi.fn(),
+      onSuiteEnd: vi.fn(),
+    };
+
+    const runner = new twd.TestRunner(mockEvents);
+    await runner.runByIds([test1.id]);
+
+    expect(beforeFn).toHaveBeenCalledTimes(1);
+    expect(afterFn).toHaveBeenCalledTimes(1);
+    expect(testFn1).toHaveBeenCalledTimes(1);
+    expect(testFn2).not.toHaveBeenCalled();
+  });
+
+  it('should respect .only and .skip within runByIds', async () => {
+    const testFn1 = vi.fn();
+    const testFn2 = vi.fn();
+    const testFn3 = vi.fn();
+    twd.describe('Suite', () => {
+      twd.it('normal test', testFn1);
+      twd.it.only('only test', testFn2);
+      twd.it.skip('skip test', testFn3);
+    });
+
+    const tests = Array.from(twd.handlers.values());
+    const allTestIds = tests.filter(t => t.type === 'test').map(t => t.id);
+
+    const mockEvents = {
+      onStart: vi.fn(),
+      onPass: vi.fn(),
+      onFail: vi.fn(),
+      onSkip: vi.fn(),
+      onSuiteStart: vi.fn(),
+      onSuiteEnd: vi.fn(),
+    };
+
+    const runner = new twd.TestRunner(mockEvents);
+    await runner.runByIds(allTestIds);
+
+    expect(testFn1).not.toHaveBeenCalled();
+    expect(testFn2).toHaveBeenCalledTimes(1);
+    expect(testFn3).not.toHaveBeenCalled();
+  });
 });

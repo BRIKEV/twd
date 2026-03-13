@@ -14,6 +14,7 @@ interface InitTWDOptions {
   serviceWorker?: boolean;
   serviceWorkerUrl?: string;
   theme?: Partial<TWDTheme>;
+  search?: boolean;
 }
 
 // Create a compatibility wrapper for Preact's render to match React's createRoot API
@@ -43,8 +44,8 @@ const createRoot = (el: HTMLElement) => ({
  * initTWD(testModules, { open: true, position: 'left', theme: { primary: '#ff0000', background: '#ffffff' } });
  */
 export const initTWD = (files: TestModule, options?: InitTWDOptions) => {
-  const { open = true, position = "left", serviceWorker = true, serviceWorkerUrl = '/mock-sw.js', theme } = options || {};
-  initTests(files, <TWDSidebar open={open} position={position} />, createRoot, theme);
+  const { open = true, position = "left", serviceWorker = true, serviceWorkerUrl = '/mock-sw.js', theme, search } = options || {};
+  initTests(files, <TWDSidebar open={open} position={position} {...(search !== undefined && { search })} />, createRoot, theme);
   if (serviceWorker) {
   initRequestMocking(serviceWorkerUrl)
     .then(() => {

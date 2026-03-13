@@ -47,10 +47,11 @@ if (import.meta.env.DEV) {
   
   // Initialize TWD with tests and optional configuration
   // Request mocking is automatically initialized by default
-  initTWD(tests, { 
-    open: true, 
+  initTWD(tests, {
+    open: true,
     position: 'left',
-    serviceWorker: true,           // Enable request mocking (default: true)
+    search: true,                   // Enable search/filter in the sidebar (default: false)
+    serviceWorker: true,            // Enable request mocking (default: true)
     serviceWorkerUrl: '/mock-sw.js' // Custom service worker path (default: '/mock-sw.js')
   });
 }
