@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { TestList } from "./TestList";
 import { ClosedSidebar } from "./ClosedSidebar";
 import { useLayout } from "./hooks/useLayout";
@@ -12,7 +12,7 @@ import { displaySRMessageSpecificTest, displaySRMessageAllTests } from "./utils/
 import { TWD_VERSION } from "../constants/version";
 import { SearchInput } from "./SearchInput";
 import { filterTree } from "./utils/filterTree";
-import { buildTreeFromHandlers } from "./utils/buildTreeFromHandlers";
+import { buildTreeFromHandlers, type Node } from "./utils/buildTreeFromHandlers";
 
 interface TWDSidebarProps {
   /**
@@ -55,8 +55,17 @@ const getOpenState = (open: boolean) => {
   return sessionStorage.getItem('twd-sidebar-open') === 'true';
 };
 
+const collectTestIds = (nodes: Node[]): string[] => {
+  const ids: string[] = [];
+  for (const node of nodes) {
+    if (node.type === 'test') ids.push(node.id);
+    if (node.childrenNodes) ids.push(...collectTestIds(node.childrenNodes));
+  }
+  return ids;
+};
+
 export const TWDSidebar = ({ open, position = "left", search }: TWDSidebarProps) => {
-  const [_, setRefresh] = useState(0);
+  const [refreshKey, setRefresh] = useState(0);
   const [isOpen, setIsOpen] = useState(getOpenState(open));
   useLayout({ isOpen, position });
   const [message, setMessage] = useState<string>('');
@@ -128,27 +137,32 @@ export const TWDSidebar = ({ open, position = "left", search }: TWDSidebarProps)
 
   const tests = Array.from(handlers.values());
 
-  const roots = buildTreeFromHandlers(tests.map(test => ({
-    name: test.name, depth: test.depth, status: test.status,
-    logs: test.logs, id: test.id, parent: test.parent,
-    type: test.type, only: test.only, skip: test.skip,
-  })));
-  const filteredRoots = filterTree(roots, searchQuery);
+  const roots = useMemo(
+    () => buildTreeFromHandlers(tests),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [refreshKey]
+  );
 
-  const collectTestIds = (nodes: typeof filteredRoots): string[] => {
-    const ids: string[] = [];
-    for (const node of nodes) {
-      if (node.type === 'test') ids.push(node.id);
-      if (node.childrenNodes) ids.push(...collectTestIds(node.childrenNodes));
+  const filteredRoots = useMemo(
+    () => filterTree(roots, searchQuery),
+    [roots, searchQuery]
+  );
+
+  const { filteredTestIds, displayTests } = useMemo(() => {
+    if (searchQuery) {
+      const ids = collectTestIds(filteredRoots);
+      const idSet = new Set(ids);
+      return {
+        filteredTestIds: ids,
+        displayTests: tests.filter(t => t.type === 'test' && idSet.has(t.id)),
+      };
     }
-    return ids;
-  };
-  const filteredTestIds = searchQuery ? collectTestIds(filteredRoots) : null;
-  const filteredTestSet = filteredTestIds ? new Set(filteredTestIds) : null;
-
-  const displayTests = filteredTestSet
-    ? tests.filter(t => t.type === 'test' && filteredTestSet.has(t.id))
-    : tests.filter(t => t.type === 'test');
+    return {
+      filteredTestIds: null as string[] | null,
+      displayTests: tests.filter(t => t.type === 'test'),
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filteredRoots, searchQuery, refreshKey]);
 
   const runAll = async () => {
     // Clear the last run test name when running all tests
@@ -290,17 +304,7 @@ export const TWDSidebar = ({ open, position = "left", search }: TWDSidebarProps)
       </div>
       <div style={{ padding: "var(--twd-spacing-md)" }}>
         <TestList
-          tests={tests.map(test => ({
-            name: test.name,
-            depth: test.depth,
-            status: test.status,
-            logs: test.logs,
-            id: test.id,
-            parent: test.parent,
-            type: test.type,
-            only: test.only,
-            skip: test.skip,
-          }))}
+          roots={filteredRoots}
           runTest={runTest}
           searchQuery={searchQuery}
         />
