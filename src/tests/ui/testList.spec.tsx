@@ -3,6 +3,8 @@ import userEvent from '@testing-library/user-event';
 import { render, screen } from '@testing-library/react'
 import * as twd from '../../runner';
 import { TestList } from "../../ui/TestList";
+import { buildTreeFromHandlers } from "../../ui/utils/buildTreeFromHandlers";
+import { filterTree } from "../../ui/utils/filterTree";
 
 describe("TestList", () => {
   beforeEach(() => {
@@ -23,10 +25,10 @@ describe("TestList", () => {
     });
     const mockRunTest = vi.fn();
     const user = userEvent.setup();
-    const tests = twd.handlers;
-    const testArray = Array.from(tests.values());
+    const testArray = Array.from(twd.handlers.values());
+    const roots = buildTreeFromHandlers(testArray);
 
-    render(<TestList tests={testArray} runTest={mockRunTest} />);
+    render(<TestList roots={roots} runTest={mockRunTest} />);
     // aria-expanded is false when collapsed
     const testGroupA = screen.getByTestId('test-group-Group 1');
     expect(testGroupA).toBeInTheDocument();
@@ -48,10 +50,10 @@ describe("TestList", () => {
       twd.it('Test 1.1', () => {});
     });
     const mockRunTest = vi.fn();
-    const tests = twd.handlers;
-    const testArray = Array.from(tests.values());
+    const testArray = Array.from(twd.handlers.values());
+    const roots = buildTreeFromHandlers(testArray);
 
-    render(<TestList tests={testArray} runTest={mockRunTest} />);
+    render(<TestList roots={roots} runTest={mockRunTest} />);
     
     const testItem = screen.getByText('Test 1.1').closest('[data-test-name]');
     expect(testItem).toBeInTheDocument();
@@ -71,7 +73,9 @@ describe("TestList", () => {
     const mockRunTest = vi.fn();
     const tests = Array.from(twd.handlers.values());
 
-    render(<TestList tests={tests} runTest={mockRunTest} searchQuery="error" />);
+    const roots = filterTree(buildTreeFromHandlers(tests), "error");
+
+    render(<TestList roots={roots} runTest={mockRunTest} searchQuery="error" />);
 
     expect(screen.getByTestId("test-group-Auth")).toBeInTheDocument();
     expect(screen.getByTestId("test-group-Login")).toBeInTheDocument();
@@ -87,7 +91,9 @@ describe("TestList", () => {
     const mockRunTest = vi.fn();
     const tests = Array.from(twd.handlers.values());
 
-    render(<TestList tests={tests} runTest={mockRunTest} searchQuery="zzzzz" />);
+    const roots = filterTree(buildTreeFromHandlers(tests), "zzzzz");
+
+    render(<TestList roots={roots} runTest={mockRunTest} searchQuery="zzzzz" />);
 
     expect(screen.getByText(/No tests match "zzzzz"/)).toBeInTheDocument();
   });
@@ -100,7 +106,9 @@ describe("TestList", () => {
     const mockRunTest = vi.fn();
     const tests = Array.from(twd.handlers.values());
 
-    render(<TestList tests={tests} runTest={mockRunTest} searchQuery="" />);
+    const roots = buildTreeFromHandlers(tests);
+
+    render(<TestList roots={roots} runTest={mockRunTest} searchQuery="" />);
 
     expect(screen.getByText("test 1")).toBeInTheDocument();
     expect(screen.getByText("test 2")).toBeInTheDocument();

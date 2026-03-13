@@ -1,30 +1,17 @@
 import { useState, useEffect, useRef } from "react";
-import { buildTreeFromHandlers, Node } from "./utils/buildTreeFromHandlers";
-import { filterTree } from "./utils/filterTree";
+import { Node } from "./utils/buildTreeFromHandlers";
 import { TestListItem } from "./TestListItem";
 import ChevronDown from "./Icons/ChevronDown";
 import ChevronRight from "./Icons/ChevronRight";
 import SkipOnlyName from "./SkipOnlyName";
 
-interface Test {
-  name: string;
-  depth: number;
-  status?: "idle" | "pass" | "fail" | "skip" | "running";
-  logs?: string[];
-  parent?: string;
-  id: string;
-  type: "test" | "suite";
-  only?: boolean;
-  skip?: boolean;
-}
-
 interface TestListProps {
+  roots: Node[];
   runTest: (id: string) => Promise<void>;
-  tests: Test[];
   searchQuery?: string;
 }
 
-export const TestList = ({ tests, runTest, searchQuery = "" }: TestListProps) => {
+export const TestList = ({ roots, runTest, searchQuery = "" }: TestListProps) => {
   const [collapsed, setCollapsed] = useState<Record<string, boolean>>({});
   const listContainerRef = useRef<HTMLUListElement>(null);
   const hasScrolledRef = useRef(false);
@@ -125,9 +112,6 @@ export const TestList = ({ tests, runTest, searchQuery = "" }: TestListProps) =>
     );
   };
 
-  const roots = buildTreeFromHandlers(tests);
-  const filteredRoots = filterTree(roots, searchQuery);
-
   return (
     <ul
       ref={listContainerRef}
@@ -135,7 +119,7 @@ export const TestList = ({ tests, runTest, searchQuery = "" }: TestListProps) =>
       role="list"
       aria-label="Test list"
     >
-      {filteredRoots.length === 0 && searchQuery ? (
+      {roots.length === 0 && searchQuery ? (
         <li style={{
           padding: "var(--twd-spacing-md)",
           color: "var(--twd-text-secondary)",
@@ -145,7 +129,7 @@ export const TestList = ({ tests, runTest, searchQuery = "" }: TestListProps) =>
           No tests match "{searchQuery}"
         </li>
       ) : (
-        filteredRoots.map((n) => renderNode(n))
+        roots.map((n) => renderNode(n))
       )}
     </ul>
   );
