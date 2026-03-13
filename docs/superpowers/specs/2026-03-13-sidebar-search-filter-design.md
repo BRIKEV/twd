@@ -25,11 +25,12 @@ When `search` is `true`, a search input appears below the sticky header, above t
 
 - Text input placed below the sticky header in a non-scrolling area
 - Placeholder text: `"Filter tests..."`
-- The input has `aria-label="Filter tests"` and `role="searchbox"`
+- The input uses `<input type="search">` for native searchbox semantics and `aria-label="Filter tests"`
 - A clear button (x) appears when there's text, with `aria-label="Clear search filter"` and proper focus management (focus returns to the search input after clearing)
 - Instant filtering on every keystroke, case-insensitive
 - Search value persisted to `sessionStorage` (key: `twd-search-filter`) so it survives HMR and page reloads
 - On mount, the input restores the persisted value and applies the filter immediately
+- When `search` prop is `false` or removed, the sessionStorage key is cleared to avoid stale filter state
 
 ## Filtering Logic
 
@@ -40,6 +41,7 @@ When the search input has a value:
    - It matches the search string directly, OR
    - Any of its descendants match (so ancestor describe blocks are preserved)
 3. **Result**: The tree retains full hierarchy for matching paths. Entire branches with no matches are hidden.
+4. **Empty state**: When no tests match the query, show a "No tests match \"{query}\"" message in the test list area.
 
 ### Example
 
@@ -54,6 +56,15 @@ describe('Auth')              <- visible (has matching descendant)
     it('validates email')     <- hidden
 ```
 
+## Interaction with `.only` and `.skip`
+
+The search filter operates as a visual/execution filter **on top of** existing `.only`/`.skip` semantics:
+
+- The search filter determines which nodes are **visible** in the tree
+- Within the visible set, `.only` and `.skip` still apply as normal
+- A `.skip` test that matches the search appears in the filtered list but remains skipped when run
+- If `.only` tests exist, the filter narrows further within the `.only` set (both conditions must be satisfied)
+
 ## "Run All" with Active Filter
 
 When a search filter is active:
@@ -62,6 +73,10 @@ When a search filter is active:
 - The button label changes to `"Run Filtered"` to make the scoped behavior clear
 - The label has `aria-live="polite"` so screen readers announce the change
 - When the search is cleared, the button reverts to `"Run All"`
+
+## Header Counters
+
+When a search filter is active, the header counters (Total, Passed, Failed) reflect only the **visible/filtered tests**, consistent with the "Run Filtered" behavior. When the search is cleared, counters revert to showing all tests.
 
 ## Impact on Existing Components
 
@@ -84,9 +99,16 @@ When a search filter is active:
 - Does not mutate the original tree
 - Logic: recursively mark nodes as visible if they match or have matching descendants, then prune invisible branches
 
+### `bundled.tsx`
+
+- Add `search?: boolean` to `InitTWDOptions` interface
+- Forward the `search` prop to `TWDSidebar` in the `initTWD` function
+
 ### `runner.ts`
 
-- Add a `runByIds(ids: string[])` method that accepts a list of test IDs to run, or the sidebar calls `runSingle()` on each matching test
+- Add a `runByIds(ids: string[])` method that accepts a set of test IDs to run
+- Implementation: perform a filtered tree walk (same as `runAll`), but skip tests whose IDs are not in the provided set
+- This preserves the existing suite-level hook execution semantics (`beforeEach`/`afterEach` run per suite scope, not per individual test)
 
 ### `buildTreeFromHandlers.ts`
 
@@ -94,7 +116,7 @@ When a search filter is active:
 
 ## Accessibility
 
-- Search input: `role="searchbox"`, `aria-label="Filter tests"`
+- Search input: `<input type="search">` with `aria-label="Filter tests"`
 - Clear button: `aria-label="Clear search filter"`, returns focus to search input on click
 - "Run Filtered" label change announced via `aria-live="polite"`
 - All interactive elements keyboard-accessible
@@ -109,7 +131,8 @@ When a search filter is active:
 | Case sensitivity | Case-insensitive always | Simpler, test filtering rarely needs case-sensitivity |
 | "Run All" behavior | Runs only filtered tests, label changes to "Run Filtered" | Most intuitive — run what you see |
 | Config option | `search: boolean` prop (default `false`) | Simple; expandable to object later if needed |
-| Debounce | None — instant filtering | In-memory string match is fast enough for typical test counts |
+| Debounce | None — instant filtering | In-memory string match is fast enough for typical test counts. Revisit if performance issues are reported with very large suites (500+) |
+| Match scope | Node name only, not full ancestor path | Simpler; full-path matching (e.g., "auth error" matching Auth > Login > shows error) could be added later as an enhancement |
 | Persistence | sessionStorage (`twd-search-filter`) | Survives HMR and page reloads during development |
 
 ## Testing & Documentation
