@@ -10,6 +10,9 @@ import { isChaiAssertionError, printChaiError, formatChaiError } from "./utils/c
 import { LogType } from "./utils/formatLogs";
 import { displaySRMessageSpecificTest, displaySRMessageAllTests } from "./utils/screenReaderMessages";
 import { TWD_VERSION } from "../constants/version";
+import { SearchInput } from "./SearchInput";
+import { filterTree } from "./utils/filterTree";
+import { buildTreeFromHandlers } from "./utils/buildTreeFromHandlers";
 
 interface TWDSidebarProps {
   /**
@@ -20,10 +23,14 @@ interface TWDSidebarProps {
    * Sidebar position
    * - left: Sidebar on the left side (default)
    * - right: Sidebar on the right side
-   * 
+   *
    * @default "left"
    */
   position?: "left" | "right";
+  /**
+   * Whether to show the search/filter input
+   */
+  search?: boolean;
 }
 
 const positionStyles = {
@@ -33,6 +40,14 @@ const positionStyles = {
 
 const fontFamily = `-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"`;
 
+const getSearchQuery = (search?: boolean) => {
+  if (!search) {
+    sessionStorage.removeItem('twd-search-filter');
+    return '';
+  }
+  return sessionStorage.getItem('twd-search-filter') || '';
+};
+
 const getOpenState = (open: boolean) => {
   if (!sessionStorage.getItem('twd-sidebar-open')) {
     return open;
@@ -40,11 +55,12 @@ const getOpenState = (open: boolean) => {
   return sessionStorage.getItem('twd-sidebar-open') === 'true';
 };
 
-export const TWDSidebar = ({ open, position = "left" }: TWDSidebarProps) => {
+export const TWDSidebar = ({ open, position = "left", search }: TWDSidebarProps) => {
   const [_, setRefresh] = useState(0);
   const [isOpen, setIsOpen] = useState(getOpenState(open));
   useLayout({ isOpen, position });
   const [message, setMessage] = useState<string>('');
+  const [searchQuery, setSearchQuery] = useState(getSearchQuery(search));
 
   useEffect(() => {
     const onStateChange = () => setRefresh((n) => n + 1);
@@ -96,16 +112,53 @@ export const TWDSidebar = ({ open, position = "left" }: TWDSidebarProps) => {
     },
   });
 
+  const handleSearchChange = (value: string) => {
+    setSearchQuery(value);
+    if (value) {
+      sessionStorage.setItem('twd-search-filter', value);
+    } else {
+      sessionStorage.removeItem('twd-search-filter');
+    }
+  };
+
   const handleSetIsOpen = (open: boolean) => {
     setIsOpen(open);
     sessionStorage.setItem('twd-sidebar-open', open.toString());
   };
 
+  const tests = Array.from(handlers.values());
+
+  const roots = buildTreeFromHandlers(tests.map(test => ({
+    name: test.name, depth: test.depth, status: test.status,
+    logs: test.logs, id: test.id, parent: test.parent,
+    type: test.type, only: test.only, skip: test.skip,
+  })));
+  const filteredRoots = filterTree(roots, searchQuery);
+
+  const collectTestIds = (nodes: typeof filteredRoots): string[] => {
+    const ids: string[] = [];
+    for (const node of nodes) {
+      if (node.type === 'test') ids.push(node.id);
+      if (node.childrenNodes) ids.push(...collectTestIds(node.childrenNodes));
+    }
+    return ids;
+  };
+  const filteredTestIds = searchQuery ? collectTestIds(filteredRoots) : null;
+  const filteredTestSet = filteredTestIds ? new Set(filteredTestIds) : null;
+
+  const displayTests = filteredTestSet
+    ? tests.filter(t => t.type === 'test' && filteredTestSet.has(t.id))
+    : tests.filter(t => t.type === 'test');
+
   const runAll = async () => {
     // Clear the last run test name when running all tests
     setMessage('');
     sessionStorage.removeItem('twd-last-run-test-name');
-    await runner.runAll();
+    if (filteredTestIds) {
+      await runner.runByIds(filteredTestIds);
+    } else {
+      await runner.runAll();
+    }
     const srMessage = displaySRMessageAllTests(tests);
     setMessage(srMessage);
   };
@@ -120,14 +173,12 @@ export const TWDSidebar = ({ open, position = "left" }: TWDSidebarProps) => {
     const srMessage = displaySRMessageSpecificTest(test);
     setMessage(srMessage);
   };
-  
-  const tests = Array.from(handlers.values());
 
-    if (!isOpen) {
+  if (!isOpen) {
     return <ClosedSidebar position={position} setOpen={handleSetIsOpen} />;
   }
 
-  const totalTests = tests.filter(test => test.type === "test").length;
+  const totalTests = displayTests.length;
 
   return (
     <div
@@ -178,7 +229,7 @@ export const TWDSidebar = ({ open, position = "left" }: TWDSidebarProps) => {
                 cursor: "pointer",
               }}
             >
-              Run All
+              <span aria-live="polite">{searchQuery ? "Run Filtered" : "Run All"}</span>
             </button>
             <button
               onClick={() => {
@@ -228,11 +279,14 @@ export const TWDSidebar = ({ open, position = "left" }: TWDSidebarProps) => {
         }}>
           <span style={{ color: "var(--twd-text)" }}>Total: {totalTests}</span>
           <div style={{ display: "flex", gap: "var(--twd-spacing-xs)" }}>
-            <span style={{ color: "var(--twd-success)" }}>&#10003; {tests.filter(test => test.status === "pass").length}</span>
-            <span style={{ color: "var(--twd-error)" }}>&#10007; {tests.filter(test => test.status === "fail").length}</span>
+            <span style={{ color: "var(--twd-success)" }}>&#10003; {displayTests.filter(test => test.status === "pass").length}</span>
+            <span style={{ color: "var(--twd-error)" }}>&#10007; {displayTests.filter(test => test.status === "fail").length}</span>
           </div>
         </div>
         <MockRulesButton />
+        {search && (
+          <SearchInput value={searchQuery} onChange={handleSearchChange} />
+        )}
       </div>
       <div style={{ padding: "var(--twd-spacing-md)" }}>
         <TestList
@@ -248,6 +302,7 @@ export const TWDSidebar = ({ open, position = "left" }: TWDSidebarProps) => {
             skip: test.skip,
           }))}
           runTest={runTest}
+          searchQuery={searchQuery}
         />
       </div>
     </div>

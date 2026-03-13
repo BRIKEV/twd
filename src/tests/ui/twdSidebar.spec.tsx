@@ -359,6 +359,116 @@ describe("TWDSidebar", () => {
     });
   });
 
+  describe("search feature", () => {
+    it("should not render search input when search prop is false", () => {
+      render(<TWDSidebar open={true} />);
+      expect(screen.queryByLabelText("Filter tests")).not.toBeInTheDocument();
+    });
+
+    it("should render search input when search prop is true", () => {
+      render(<TWDSidebar open={true} search={true} />);
+      expect(screen.getByLabelText("Filter tests")).toBeInTheDocument();
+    });
+
+    it("should filter tests when typing in search input", async () => {
+      const user = userEvent.setup();
+      twd.describe("Auth", () => {
+        twd.it("login test", () => {});
+        twd.it("error test", () => {});
+      });
+      render(<TWDSidebar open={true} search={true} />);
+      const input = screen.getByLabelText("Filter tests");
+      await user.type(input, "error");
+      expect(screen.getByText("error test")).toBeInTheDocument();
+      expect(screen.queryByText("login test")).not.toBeInTheDocument();
+    });
+
+    it("should persist search query to sessionStorage", async () => {
+      const user = userEvent.setup();
+      twd.describe("Group", () => {
+        twd.it("test 1", () => {});
+      });
+      render(<TWDSidebar open={true} search={true} />);
+      const input = screen.getByLabelText("Filter tests");
+      await user.type(input, "test");
+      expect(sessionStorage.getItem("twd-search-filter")).toBe("test");
+    });
+
+    it("should restore search query from sessionStorage on mount", () => {
+      sessionStorage.setItem("twd-search-filter", "error");
+      twd.describe("Auth", () => {
+        twd.it("error test", () => {});
+        twd.it("login test", () => {});
+      });
+      render(<TWDSidebar open={true} search={true} />);
+      expect(screen.getByLabelText("Filter tests")).toHaveValue("error");
+      expect(screen.getByText("error test")).toBeInTheDocument();
+      expect(screen.queryByText("login test")).not.toBeInTheDocument();
+    });
+
+    it("should clear sessionStorage when search prop is false", () => {
+      sessionStorage.setItem("twd-search-filter", "old-query");
+      render(<TWDSidebar open={true} search={false} />);
+      expect(sessionStorage.getItem("twd-search-filter")).toBeNull();
+    });
+
+    it("should show 'Run Filtered' button when search is active", async () => {
+      const user = userEvent.setup();
+      twd.describe("Group", () => {
+        twd.it("test 1", () => {});
+      });
+      render(<TWDSidebar open={true} search={true} />);
+      const input = screen.getByLabelText("Filter tests");
+      await user.type(input, "test");
+      expect(screen.getByText("Run Filtered")).toBeInTheDocument();
+      expect(screen.queryByText("Run All")).not.toBeInTheDocument();
+    });
+
+    it("should show 'Run All' when search is cleared", async () => {
+      const user = userEvent.setup();
+      twd.describe("Group", () => {
+        twd.it("test 1", () => {});
+      });
+      render(<TWDSidebar open={true} search={true} />);
+      const input = screen.getByLabelText("Filter tests");
+      await user.type(input, "test");
+      expect(screen.getByText("Run Filtered")).toBeInTheDocument();
+      const clearButton = screen.getByLabelText("Clear search filter");
+      await user.click(clearButton);
+      expect(screen.getByText("Run All")).toBeInTheDocument();
+    });
+
+    it("should show filtered counters when search is active", async () => {
+      const user = userEvent.setup();
+      twd.describe("Auth", () => {
+        twd.it("error test", () => {});
+        twd.it("login test", () => {});
+        twd.it("another error", () => {});
+      });
+      render(<TWDSidebar open={true} search={true} />);
+      const input = screen.getByLabelText("Filter tests");
+      await user.type(input, "error");
+      expect(screen.getByText(/Total:\s*2/)).toBeInTheDocument();
+    });
+
+    it("should run only filtered tests when clicking Run Filtered", async () => {
+      const user = userEvent.setup();
+      const errorFn = vi.fn();
+      const loginFn = vi.fn();
+      twd.describe("Auth", () => {
+        twd.it("error test", errorFn);
+        twd.it("login test", loginFn);
+      });
+      render(<TWDSidebar open={true} search={true} />);
+      const input = screen.getByLabelText("Filter tests");
+      await user.type(input, "error");
+      const runButton = screen.getByText("Run Filtered");
+      await user.click(runButton);
+      expect(errorFn).toHaveBeenCalled();
+      expect(loginFn).not.toHaveBeenCalled();
+    });
+  });
+
   describe("relay state-change event", () => {
     it('should re-render sidebar when twd:state-change is dispatched', async () => {
       twd.describe('Relay group', () => {
