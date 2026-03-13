@@ -302,9 +302,10 @@ if (import.meta.env.DEV) {
   const { initTWD } = await import('twd-js/bundled');
   const tests = import.meta.glob("./**/*.twd.test.ts");
   
-  initTWD(tests, { 
+  initTWD(tests, {
     open: true,
     position: 'right',
+    search: true,
     serviceWorker: true,
     serviceWorkerUrl: '/mock-sw.js',
     theme: {

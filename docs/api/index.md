@@ -47,12 +47,14 @@ import { reportResults } from "twd-js";
 // initTWD options:
 //   open?: boolean                    // Whether the sidebar is open by default (default: true)
 //   position?: "left" | "right"       // Sidebar position (default: "left")
+//   search?: boolean                  // Show search input to filter tests (default: false)
 //   serviceWorker?: boolean           // Enable request mocking (default: true)
 //   serviceWorkerUrl?: string         // Custom service worker path (default: '/mock-sw.js')
 
 // TWDSidebar props (for standard setup):
 //   open?: boolean        // Whether the sidebar is open by default (default: true)
 //   position?: "left" | "right" // Sidebar position (default: "left")
+//   search?: boolean      // Show search input to filter tests (default: false)
 ```
 
 ## Initialization
@@ -80,6 +82,7 @@ initTWD(files: TestModule, options?: InitTWDOptions): void
 interface InitTWDOptions {
   open?: boolean;              // Whether the sidebar is open by default (default: true)
   position?: "left" | "right";  // Sidebar position (default: "left")
+  search?: boolean;             // Show search input to filter tests (default: false)
   serviceWorker?: boolean;      // Enable request mocking (default: true)
   serviceWorkerUrl?: string;    // Custom service worker path (default: '/mock-sw.js')
 }
@@ -98,6 +101,9 @@ initTWD(tests);
 
 // Custom sidebar configuration
 initTWD(tests, { open: false, position: 'right' });
+
+// Enable search filter for tests
+initTWD(tests, { search: true });
 
 // Disable request mocking
 initTWD(tests, { serviceWorker: false });
