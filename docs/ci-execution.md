@@ -33,7 +33,8 @@ Create `twd.config.json` in your repo to customize the runner:
   "coverageDir": "./coverage",
   "nycOutputDir": "./.nyc_output",
   "headless": true,
-  "puppeteerArgs": ["--no-sandbox", "--disable-setuid-sandbox"]
+  "puppeteerArgs": ["--no-sandbox", "--disable-setuid-sandbox"],
+  "retryCount": 2
 }
 ```
 
@@ -46,6 +47,7 @@ Create `twd.config.json` in your repo to customize the runner:
 | `nycOutputDir` | string | `"./.nyc_output"` | NYC temp folder |
 | `headless` | boolean | `true` | Run Chrome in headless mode |
 | `puppeteerArgs` | string[] | `["--no-sandbox", "--disable-setuid-sandbox"]` | Extra arguments for Puppeteer |
+| `retryCount` | number | `2` | Number of times to attempt each test before reporting failure. Default is 2 (one normal attempt + one retry). Set to 1 to disable retries. |
 
 ### Example GitHub Actions job
 
