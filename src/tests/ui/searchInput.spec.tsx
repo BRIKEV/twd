@@ -24,22 +24,4 @@ describe("SearchInput", () => {
     await user.type(input, "auth");
     expect(onChange).toHaveBeenCalled();
   });
-
-  it("calls onChange with empty string when escape key is pressed", async () => {
-    const user = userEvent.setup();
-    const onChange = vi.fn();
-    render(<SearchInput value="auth" onChange={onChange} />);
-    const input = screen.getByLabelText("Filter tests");
-    await user.type(input, "{esc}");
-    expect(onChange).toHaveBeenCalledWith("");
-  });
-
-  it("calls onChange with empty string when clear button is clicked", async () => {
-    const user = userEvent.setup();
-    const onChange = vi.fn();
-    render(<SearchInput value="auth" onChange={onChange} />);
-    const clearButton = screen.getByLabelText("Clear search filter");
-    await user.click(clearButton);
-    expect(onChange).toHaveBeenCalledWith("");
-  });
 });

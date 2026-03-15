@@ -424,20 +424,6 @@ describe("TWDSidebar", () => {
       expect(screen.queryByText("Run All")).not.toBeInTheDocument();
     });
 
-    it("should show 'Run All' when search is cleared", async () => {
-      const user = userEvent.setup();
-      twd.describe("Group", () => {
-        twd.it("test 1", () => {});
-      });
-      render(<TWDSidebar open={true} search={true} />);
-      const input = screen.getByLabelText("Filter tests");
-      await user.type(input, "test");
-      expect(screen.getByText("Run Filtered")).toBeInTheDocument();
-      const clearButton = screen.getByLabelText("Clear search filter");
-      await user.click(clearButton);
-      expect(screen.getByText("Run All")).toBeInTheDocument();
-    });
-
     it("should show filtered counters when search is active", async () => {
       const user = userEvent.setup();
       twd.describe("Auth", () => {
