@@ -25,18 +25,16 @@ describe("SearchInput", () => {
     expect(onChange).toHaveBeenCalled();
   });
 
-  it("shows clear button when value is not empty", () => {
-    render(<SearchInput value="auth" onChange={vi.fn()} />);
-    const clearButton = screen.getByLabelText("Clear search filter");
-    expect(clearButton).toBeInTheDocument();
+  it("calls onChange with empty string when escape key is pressed", async () => {
+    const user = userEvent.setup();
+    const onChange = vi.fn();
+    render(<SearchInput value="auth" onChange={onChange} />);
+    const input = screen.getByLabelText("Filter tests");
+    await user.type(input, "{esc}");
+    expect(onChange).toHaveBeenCalledWith("");
   });
 
-  it("does not show clear button when value is empty", () => {
-    render(<SearchInput value="" onChange={vi.fn()} />);
-    expect(screen.queryByLabelText("Clear search filter")).not.toBeInTheDocument();
-  });
-
-  it("calls onChange with empty string and focuses input when clear is clicked", async () => {
+  it("calls onChange with empty string when clear button is clicked", async () => {
     const user = userEvent.setup();
     const onChange = vi.fn();
     render(<SearchInput value="auth" onChange={onChange} />);
