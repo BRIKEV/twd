@@ -96,6 +96,7 @@ export const screenDom: ScreenDom = createLoggedProxy(screen, 'screen', true);
 export const screenDomGlobal: ScreenDom = createLoggedProxy(screen, 'screen', false);
 
 configure({
+  asyncUtilTimeout: 3000,
   getElementError(message) {
     return new Error(`${message}`);
   },
