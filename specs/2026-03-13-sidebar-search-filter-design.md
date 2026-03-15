@@ -26,7 +26,7 @@ When `search` is `true`, a search input appears below the sticky header, above t
 - Text input placed below the sticky header in a non-scrolling area
 - Placeholder text: `"Filter tests..."`
 - The input uses `<input type="search">` for native searchbox semantics and `aria-label="Filter tests"`
-- A clear button (x) appears when there's text, with `aria-label="Clear search filter"` and proper focus management (focus returns to the search input after clearing)
+- **Revised**: No custom clear button. `<input type="search">` provides native clear semantics; adding a custom button creates duplicate a11y affordances. Escape key clears the input as a keyboard alternative. Native clear button appearance varies by browser (Firefox has none) — accepted tradeoff for a dev-tool context.
 - Instant filtering on every keystroke, case-insensitive
 - Search value persisted to `sessionStorage` (key: `twd-search-filter`) so it survives HMR and page reloads
 - On mount, the input restores the persisted value and applies the filter immediately
@@ -117,7 +117,7 @@ When a search filter is active, the header counters (Total, Passed, Failed) refl
 ## Accessibility
 
 - Search input: `<input type="search">` with `aria-label="Filter tests"`
-- Clear button: `aria-label="Clear search filter"`, returns focus to search input on click
+- Clear: handled natively by `<input type="search">` (browser-dependent) and Escape key — no custom button needed
 - "Run Filtered" label change announced via `aria-live="polite"`
 - All interactive elements keyboard-accessible
 

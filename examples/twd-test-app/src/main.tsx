@@ -13,7 +13,7 @@ if (import.meta.env.DEV) {
   // You need to pass the test modules, the sidebar component, createRoot function, and optional theme
   initTests(
     testModules, 
-    <TWDSidebar open={false} position="left" />, 
+    <TWDSidebar open={false} position="left" search />, 
     createRoot,
   );
   
