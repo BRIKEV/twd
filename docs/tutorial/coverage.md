@@ -100,9 +100,10 @@ try {
   const { handlers, testStatus } = await page.evaluate(async () => {
     const TestRunner = window.__testRunner;
     const testStatus = [];
+    // Pass { retryCount: 2 } as second arg to retry flaky tests in CI
     const runner = new TestRunner({
       onStart: () => {},
-      onPass: (test) => {
+      onPass: (test, retryAttempt) => {
         testStatus.push({ id: test.id, status: "pass" });
       },
       onFail: (test, err) => {

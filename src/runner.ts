@@ -243,18 +243,24 @@ export const clearTests = () => {
 
 export interface RunnerEvents {
   onStart: (test: Handler) => void;
-  onPass: (test: Handler) => void;
+  onPass: (test: Handler, retryAttempt?: number) => void;
   onFail: (test: Handler, error: Error) => void;
   onSkip: (test: Handler) => void;
   onSuiteStart?: (suite: Handler) => void;
   onSuiteEnd?: (suite: Handler) => void;
 }
 
+export interface TestRunnerOptions {
+  retryCount?: number;
+}
+
 export class TestRunner {
   private events: RunnerEvents;
+  private retryCount: number;
 
-  constructor(events: RunnerEvents) {
+  constructor(events: RunnerEvents, options?: TestRunnerOptions) {
     this.events = events;
+    this.retryCount = options?.retryCount ?? 1;
   }
 
   async runAll() {
@@ -361,17 +367,23 @@ export class TestRunner {
 
     this.events.onStart?.(test);
     const hooks = collectHooks(test.parent!);
+    let lastError: Error | null = null;
 
-    try {
-      for (const hook of hooks.before) await hook();
-      test.logs = [];
-      await test.handler();
-      this.events.onPass(test);
-    } catch (err) {
-      this.events.onFail(test, err as Error);
-    } finally {
-      for (const hook of hooks.after) await hook();
+    for (let attempt = 1; attempt <= this.retryCount; attempt++) {
+      try {
+        for (const hook of hooks.before) await hook();
+        test.logs = [];
+        await test.handler();
+        this.events.onPass(test, attempt > 1 ? attempt : undefined);
+        return;
+      } catch (err) {
+        lastError = err as Error;
+      } finally {
+        for (const hook of hooks.after) await hook();
+      }
     }
+
+    this.events.onFail(test, lastError!);
   }
 }
 

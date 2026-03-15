@@ -173,8 +173,10 @@ expect(modal).toBeNull(); // Modal should not be present
 
 #### findBy* Methods (Async, waits for element)
 
+TWD configures the async utility timeout at **3000ms** (instead of RTL's default 1000ms) to accommodate CI rendering delays after network requests.
+
 ```ts
-// Wait for element to appear
+// Wait for element to appear (waits up to 3s)
 const successMessage = await screenDom.findByText("Success!");
 const loadingSpinner = await screenDom.findByRole("status");
 ```

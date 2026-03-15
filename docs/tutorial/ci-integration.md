@@ -39,7 +39,8 @@ const TestRunner = window.__testRunner;
 const testStatus = [];
 const runner = new TestRunner({
   onStart: () => {},
-  onPass: (test) => {
+  onPass: (test, retryAttempt) => {
+    // retryAttempt is undefined on first-attempt success, or the attempt number (2+) on retry
     testStatus.push({ id: test.id, status: "pass" });
   },
   onFail: (test, err) => {
@@ -53,6 +54,8 @@ const handlers = await runner.runAll();
 // report results
 reportResults(handlers, testStatus);
 ```
+
+> **Tip:** You can pass a second argument to the `TestRunner` constructor with `{ retryCount: 2 }` to automatically retry failing tests in CI. See the [CI Execution docs](/ci-execution#custom-runner-options) for details.
 
 That's the core logic we need to run TWD tests headlessly — but we still need a way to access the `window` context.
 Let's do that by using Puppeteer.

@@ -330,4 +330,149 @@ describe('twd runner', () => {
     expect(testFn2).toHaveBeenCalledTimes(1);
     expect(testFn3).not.toHaveBeenCalled();
   });
+
+  describe('retry mechanism', () => {
+    it('should not retry when retryCount defaults to 1', async () => {
+      const testFn = vi.fn(() => { throw new Error('always fails'); });
+      twd.describe('No retry suite', () => {
+        twd.it('failing test', testFn);
+      });
+
+      const mockEvents = {
+        onStart: vi.fn(),
+        onPass: vi.fn(),
+        onFail: vi.fn(),
+        onSkip: vi.fn(),
+      };
+
+      const runner = new twd.TestRunner(mockEvents);
+      await runner.runAll();
+
+      expect(testFn).toHaveBeenCalledTimes(1);
+      expect(mockEvents.onFail).toHaveBeenCalledTimes(1);
+      expect(mockEvents.onPass).not.toHaveBeenCalled();
+    });
+
+    it('should retry and pass if second attempt succeeds', async () => {
+      let callCount = 0;
+      const testFn = vi.fn(() => {
+        callCount++;
+        if (callCount === 1) throw new Error('flaky fail');
+      });
+      twd.describe('Retry suite', () => {
+        twd.it('flaky test', testFn);
+      });
+
+      const mockEvents = {
+        onStart: vi.fn(),
+        onPass: vi.fn(),
+        onFail: vi.fn(),
+        onSkip: vi.fn(),
+      };
+
+      const runner = new twd.TestRunner(mockEvents, { retryCount: 2 });
+      await runner.runAll();
+
+      expect(testFn).toHaveBeenCalledTimes(2);
+      expect(mockEvents.onPass).toHaveBeenCalledTimes(1);
+      expect(mockEvents.onPass).toHaveBeenCalledWith(
+        expect.objectContaining({ name: 'flaky test' }),
+        2
+      );
+      expect(mockEvents.onFail).not.toHaveBeenCalled();
+    });
+
+    it('should fail after all retry attempts are exhausted', async () => {
+      const testFn = vi.fn(() => { throw new Error('persistent fail'); });
+      twd.describe('All retries fail suite', () => {
+        twd.it('always failing test', testFn);
+      });
+
+      const mockEvents = {
+        onStart: vi.fn(),
+        onPass: vi.fn(),
+        onFail: vi.fn(),
+        onSkip: vi.fn(),
+      };
+
+      const runner = new twd.TestRunner(mockEvents, { retryCount: 2 });
+      await runner.runAll();
+
+      expect(testFn).toHaveBeenCalledTimes(2);
+      expect(mockEvents.onFail).toHaveBeenCalledTimes(1);
+      expect(mockEvents.onFail).toHaveBeenCalledWith(
+        expect.objectContaining({ name: 'always failing test' }),
+        expect.objectContaining({ message: 'persistent fail' })
+      );
+      expect(mockEvents.onPass).not.toHaveBeenCalled();
+    });
+
+    it('should run afterEach hooks on every attempt', async () => {
+      let callCount = 0;
+      const afterEachFn = vi.fn();
+      const testFn = vi.fn(() => {
+        callCount++;
+        if (callCount === 1) throw new Error('flaky');
+      });
+      twd.describe('Hooks retry suite', () => {
+        twd.afterEach(afterEachFn);
+        twd.it('flaky with hooks', testFn);
+      });
+
+      const mockEvents = {
+        onStart: vi.fn(),
+        onPass: vi.fn(),
+        onFail: vi.fn(),
+        onSkip: vi.fn(),
+      };
+
+      const runner = new twd.TestRunner(mockEvents, { retryCount: 2 });
+      await runner.runAll();
+
+      expect(afterEachFn).toHaveBeenCalledTimes(2);
+      expect(mockEvents.onPass).toHaveBeenCalledTimes(1);
+    });
+
+    it('should call onStart only once before all attempts', async () => {
+      const testFn = vi.fn(() => { throw new Error('fail'); });
+      twd.describe('onStart suite', () => {
+        twd.it('failing test', testFn);
+      });
+
+      const mockEvents = {
+        onStart: vi.fn(),
+        onPass: vi.fn(),
+        onFail: vi.fn(),
+        onSkip: vi.fn(),
+      };
+
+      const runner = new twd.TestRunner(mockEvents, { retryCount: 2 });
+      await runner.runAll();
+
+      expect(mockEvents.onStart).toHaveBeenCalledTimes(1);
+    });
+
+    it('should pass undefined retryAttempt on first-attempt success', async () => {
+      const testFn = vi.fn();
+      twd.describe('First attempt pass suite', () => {
+        twd.it('passing test', testFn);
+      });
+
+      const mockEvents = {
+        onStart: vi.fn(),
+        onPass: vi.fn(),
+        onFail: vi.fn(),
+        onSkip: vi.fn(),
+      };
+
+      const runner = new twd.TestRunner(mockEvents, { retryCount: 2 });
+      await runner.runAll();
+
+      expect(testFn).toHaveBeenCalledTimes(1);
+      expect(mockEvents.onPass).toHaveBeenCalledWith(
+        expect.objectContaining({ name: 'passing test' }),
+        undefined
+      );
+    });
+  });
 });
