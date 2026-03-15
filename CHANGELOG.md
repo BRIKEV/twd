@@ -1,3 +1,14 @@
+## <small>1.6.1 (2026-03-15)</small>
+
+* feat: improve CI test stability with retries and timeout (#164) ([03aa5ee](https://github.com/BRIKEV/twd/commit/03aa5ee)), closes [#164](https://github.com/BRIKEV/twd/issues/164)
+* fix: improve theme search (#163) ([3e9b420](https://github.com/BRIKEV/twd/commit/3e9b420)), closes [#163](https://github.com/BRIKEV/twd/issues/163)
+* perf: memoize sidebar tree building and deduplicate from TestList (#161) ([b79c375](https://github.com/BRIKEV/twd/commit/b79c375)), closes [#161](https://github.com/BRIKEV/twd/issues/161)
+* feat: add optional search/filter to sidebar (#160) ([b4a78c7](https://github.com/BRIKEV/twd/commit/b4a78c7)), closes [#160](https://github.com/BRIKEV/twd/issues/160)
+* chore(deps): bump undici from 7.22.0 to 7.24.1 (#162) ([41279f0](https://github.com/BRIKEV/twd/commit/41279f0)), closes [#162](https://github.com/BRIKEV/twd/issues/162)
+* docs: add sitemap, robots.txt, and per-page SEO meta descriptions ([0c8e7eb](https://github.com/BRIKEV/twd/commit/0c8e7eb))
+* docs: add llms.txt for LLM-friendly project documentation ([1f2e053](https://github.com/BRIKEV/twd/commit/1f2e053))
+
+
 ## 1.6.0 (2026-03-06)
 
 * feat: improve waitForRequest timeout error with detailed rule info (#159) ([5a2db79](https://github.com/BRIKEV/twd/commit/5a2db79))
