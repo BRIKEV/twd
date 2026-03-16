@@ -1,3 +1,14 @@
+## <small>1.6.2 (2026-03-16)</small>
+
+* fix: update dependencies and errors (#171) ([b98f0ac](https://github.com/BRIKEV/twd/commit/b98f0ac)), closes [#171](https://github.com/BRIKEV/twd/issues/171)
+* fix: search input Preact compat + improve CONTRIBUTING.md (#170) ([3fad4d4](https://github.com/BRIKEV/twd/commit/3fad4d4)), closes [#170](https://github.com/BRIKEV/twd/issues/170)
+* chore: update dependencies ([95e0198](https://github.com/BRIKEV/twd/commit/95e0198))
+* chore(deps): bump preact from 10.28.4 to 10.29.0 (#168) ([33c347b](https://github.com/BRIKEV/twd/commit/33c347b)), closes [#168](https://github.com/BRIKEV/twd/issues/168)
+* chore(deps-dev): bump @vitest/coverage-v8 from 4.0.18 to 4.1.0 (#169) ([ae73933](https://github.com/BRIKEV/twd/commit/ae73933)), closes [#169](https://github.com/BRIKEV/twd/issues/169)
+* chore(deps-dev): bump jsdom from 28.1.0 to 29.0.0 (#167) ([14112f3](https://github.com/BRIKEV/twd/commit/14112f3)), closes [#167](https://github.com/BRIKEV/twd/issues/167)
+* docs: add retryCount option to twd.config.json documentation ([84573f1](https://github.com/BRIKEV/twd/commit/84573f1))
+
+
 ## <small>1.6.1 (2026-03-15)</small>
 
 * feat: improve CI test stability with retries and timeout (#164) ([03aa5ee](https://github.com/BRIKEV/twd/commit/03aa5ee)), closes [#164](https://github.com/BRIKEV/twd/issues/164)
