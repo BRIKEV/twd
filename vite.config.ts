@@ -23,18 +23,31 @@ export default defineConfig({
         ui: 'src/ui/index.ts',
       },
       name: 'TWD',
-      fileName: (format, entryName) => `${entryName}.${format}.js`,
     },
     rollupOptions: {
-      external: ['react', 'react-dom', 'fs', 'path', 'vite'],
-      output: {
-        globals: {
-          react: 'React',
-          'react-dom': 'ReactDOM',
+      external: ['react', 'react/jsx-runtime', 'react/jsx-dev-runtime', 'react-dom', 'react-dom/client', 'fs', 'path', 'vite'],
+      output: [
+        {
+          format: 'es',
+          entryFileNames: '[name].es.js',
+          chunkFileNames: '[name]-[hash].js',
+          globals: {
+            react: 'React',
+            'react-dom': 'ReactDOM',
+          },
+          exports: 'named',
         },
-        exports: 'named',
-        compact: true,
-      },
+        {
+          format: 'cjs',
+          entryFileNames: '[name].cjs.js',
+          chunkFileNames: '[name]-[hash].cjs',
+          globals: {
+            react: 'React',
+            'react-dom': 'ReactDOM',
+          },
+          exports: 'named',
+        },
+      ],
       // Do NOT use aggressive treeshake here: it can remove code @testing-library/user-event
       // relies on (e.g. side-effectful init), which breaks userEvent.type() in the bundled app.
     },

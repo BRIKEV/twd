@@ -2,6 +2,7 @@
   "name": "twd-js",
   "version": "1.6.1",
   "description": "Test While Developing (TWD) - in-browser testing",
+  "type": "module",
   "license": "MIT",
   "author": "BRIKEV",
   "homepage": "https://github.com/BRIKEV/twd#readme",
