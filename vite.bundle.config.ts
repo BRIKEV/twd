@@ -35,8 +35,6 @@ export default defineConfig({
         },
         // Remove source maps in production bundle
         sourcemap: false,
-        // Better tree shaking
-        compact: true,
         // Optimize exports
         exports: 'named',
       },
@@ -44,7 +42,6 @@ export default defineConfig({
       treeshake: {
         moduleSideEffects: false,
         propertyReadSideEffects: false,
-        tryCatchDeoptimization: false,
       },
     },
     // Target modern browsers for smaller output

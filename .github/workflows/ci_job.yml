@@ -1,6 +1,8 @@
 name: CI - TWD Test App CI tests
 
 on:
+  push:
+    branches: [ main ]
   pull_request:
     branches: [ main ]
 

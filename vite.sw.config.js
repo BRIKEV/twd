@@ -11,7 +11,6 @@ export default defineConfig({
       output: {
         entryFileNames: "mock-sw.js",
         format: "iife",
-        compact: true,
       },
       treeshake: {
         moduleSideEffects: false,
