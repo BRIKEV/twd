@@ -62,3 +62,8 @@ Expected: ALL PASS — no regressions in TWDSidebar or other UI tests.
 git add src/ui/SearchInput.tsx src/tests/ui/searchInput.spec.tsx
 git commit -m "fix: use onInput instead of onChange for Preact compat in SearchInput"
 ```
+
+- [ ] **Step 6: Build and copy dist to examples**
+
+Run: `npm run build && npm run copy:dist:examples`
+Expected: Build succeeds, dist files copied to example apps for manual testing.
