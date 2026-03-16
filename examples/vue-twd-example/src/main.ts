@@ -56,7 +56,7 @@ if (import.meta.env.DEV) {
   
   
   const tests = import.meta.glob("./**/*.twd.test.ts")
-  initTWD(tests, { theme: darkTheme });
+  initTWD(tests, { theme: darkTheme, search: true });
 }
 
 createApp(App).mount('#app')
