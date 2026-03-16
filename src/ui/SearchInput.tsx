@@ -12,7 +12,7 @@ export const SearchInput = ({ value, onChange }: SearchInputProps) => {
         aria-label="Filter tests"
         placeholder="Filter tests..."
         value={value}
-        onChange={(e) => onChange(e.target.value)}
+        onInput={(e) => onChange((e.target as HTMLInputElement).value)}
         style={{
           width: "100%",
           padding: "var(--twd-spacing-md)",

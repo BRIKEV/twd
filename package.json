@@ -70,7 +70,8 @@
     "docs:preview": "vitepress preview docs",
     "copy:mock-sw": "cp dist/mock-sw.js examples/twd-test-app/public/mock-sw.js && cp dist/mock-sw.js examples/tutorial-example/public/mock-sw.js && cp dist/mock-sw.js examples/vue-twd-example/public/mock-sw.js",
     "copy:dist:vue-twd-example": "cp -r dist examples/vue-twd-example/src",
-    "copy:dist:tutorial-example": "cp -r dist examples/tutorial-example/src"
+    "copy:dist:tutorial-example": "cp -r dist examples/tutorial-example/src",
+    "copy:dist:examples": "npm run copy:dist:vue-twd-example && npm run copy:dist:tutorial-example"
   },
   "peerDependencies": {
     "react": ">=17.0.0",
