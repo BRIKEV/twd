@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import userEvent from "@testing-library/user-event";
-import { render, screen } from "@testing-library/react";
+import { render, screen, fireEvent } from "@testing-library/react";
 import { SearchInput } from "../../ui/SearchInput";
 
 describe("SearchInput", () => {
@@ -23,5 +23,13 @@ describe("SearchInput", () => {
     const input = screen.getByLabelText("Filter tests");
     await user.type(input, "auth");
     expect(onChange).toHaveBeenCalled();
+  });
+
+  it("responds to native input event (Preact compat regression)", () => {
+    const onChange = vi.fn();
+    render(<SearchInput value="" onChange={onChange} />);
+    const input = screen.getByLabelText("Filter tests");
+    fireEvent.input(input, { target: { value: "auth" } });
+    expect(onChange).toHaveBeenCalledWith("auth");
   });
 });
