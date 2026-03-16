@@ -78,20 +78,20 @@
     "react-dom": ">=17.0.0"
   },
   "devDependencies": {
-    "@preact/preset-vite": "^2.10.3",
+    "@preact/preset-vite": "^2.10.4",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
-    "@vitejs/plugin-react": "^5.1.4",
-    "@vitest/coverage-v8": "^4.0.18",
+    "@vitejs/plugin-react": "^6.0.1",
+    "@vitest/coverage-v8": "^4.1.0",
     "conventional-changelog": "^7.2.0",
     "jsdom": "^29.0.0",
     "typescript": "^5.9.3",
-    "vite": "^7.3.1",
+    "vite": "^8.0.0",
     "vite-plugin-dts": "^4.5.4",
     "vitepress": "^2.0.0-alpha.12",
-    "vitest": "^4.0.18"
+    "vitest": "^4.1.0"
   },
   "keywords": [
     "testing",
@@ -108,6 +108,6 @@
     "@testing-library/user-event": "^14.6.1",
     "@types/chai": "^5.2.3",
     "chai": "^6.2.2",
-    "preact": "^10.28.4"
+    "preact": "^10.29.0"
   }
 }
