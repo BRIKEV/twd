@@ -5,7 +5,7 @@ description: Install and use the TWD plugin for Claude Code to write and run tes
 
 # Claude Code Plugin
 
-The [TWD plugin for Claude Code](https://github.com/BRIKEV/twd-ai) gives Claude two skills: an interactive project setup wizard and an autonomous testing agent that writes, runs, and fixes TWD tests for you.
+The [TWD plugin for Claude Code](https://github.com/BRIKEV/twd-ai) gives Claude a set of skills: project setup, autonomous test writing, CI configuration, test quality analysis, gap detection, and visual test documentation.
 
 ## Installation
 
@@ -23,7 +23,7 @@ claude plugin install twd@twd-ai
 claude plugin update twd@twd-ai
 ```
 
-That's it. You now have access to `/twd:setup` and the `twd` skill.
+That's it. You now have access to all TWD skills and commands.
 
 ## `/twd:setup` — Interactive Project Setup
 
@@ -136,6 +136,134 @@ When the plugin is installed, Claude Code can automatically invoke the `twd` ski
 5. Claude continues with your original task
 
 Your main conversation stays clean — the testing work happens in a forked context.
+
+---
+
+## `/twd:ci-setup` — CI/CD Configuration
+
+Sets up CI/CD for TWD tests — installs `twd-cli`, optionally configures code coverage, and generates a GitHub Actions workflow.
+
+```
+/twd:ci-setup
+```
+
+### What It Does
+
+- Detects your project setup (framework, Vite config, existing workflows)
+- Installs `twd-cli` for headless test running
+- Optionally sets up code coverage with `vite-plugin-istanbul` + `nyc` (requires Vite)
+- Generates `.github/workflows/twd-tests.yml`
+
+---
+
+## `/twd:test-flow-gallery` — Visual Test Documentation
+
+Reads TWD test files and generates visual Mermaid flowcharts with plain-language summaries — living documentation auto-generated from real tests.
+
+```
+/twd:test-flow-gallery
+```
+
+### What It Does
+
+- Reads all `*.twd.test.{ts,js}` files in the project
+- Generates a `.flows.md` file next to each test file with Mermaid diagrams
+- Creates a `test-flow-gallery.md` index at the project root
+- Each `it()` block gets a plain-language summary and color-coded flowchart (purple visit nodes, blue actions, green assertions, orange API subgraphs)
+
+### Example Output
+
+```
+## Items Page
+
+**What this tests:** A user navigates to the items page and sees a list of
+all available items. The page loads data from the API and displays each item
+as a list entry.
+```
+
+---
+
+## `/twd:test-gaps` — Untested Pages Report
+
+Scans project routes and cross-references against TWD test files to find untested pages, classify risk, and generate a prioritized gap report.
+
+```
+/twd:test-gaps
+```
+
+### What It Does
+
+- Detects your framework and reads the route config (React Router, Vue Router, Angular, Next.js, Nuxt, SolidJS)
+- Discovers all TWD test files and extracts tested routes
+- Identifies untested and partially tested pages
+- Classifies risk: **HIGH** (mutations, payments), **MEDIUM** (auth, complex loading), **LOW** (static, read-only)
+- Outputs a prioritized "Start Here" top-5 list
+
+### Example Output
+
+```
+## Summary
+- Pages/routes discovered: 22
+- Pages with tests: 15
+- Pages partially tested: 2
+- Pages untested: 5
+
+## UNTESTED Pages — HIGH Risk
+| Page          | Path              | Why High Risk                    |
+|---------------|-------------------|----------------------------------|
+| Checkout      | /checkout         | Handles payments — direct impact |
+| User Settings | /settings/account | Has delete account flow          |
+```
+
+If no TWD tests are found, the skill detects other test frameworks (Playwright, Jest, etc.) and explains how TWD complements them.
+
+---
+
+## `/twd:test-quality` — Test Quality Grading
+
+Reads TWD test files, evaluates quality across four dimensions, assigns letter grades (A/B/C/D), and generates an improvement report.
+
+```
+/twd:test-quality
+```
+
+### What It Does
+
+- Grades each test file across 4 dimensions:
+  - **Journey Coverage** (35%) — complete user flows vs visibility-only checks
+  - **Interaction Depth** (20%) — variety of `userEvent` types (click, type, keyboard, etc.)
+  - **Assertion Quality** (25%) — `be.visible` (weak) to `deep.equal` on API payloads (strong)
+  - **Error & Edge Cases** (20%) — error states, empty states, cancel flows
+- Assigns a final letter grade per file and an overall project grade
+- Generates specific grade-up suggestions per file
+- Ranks improvements by impact
+
+### Example Output
+
+```
+# TWD Test Quality Report
+Files analyzed: 8
+Overall grade: C
+
+## Grade Distribution
+| Grade | Count | Files                                              |
+|-------|-------|----------------------------------------------------|
+| A     | 2     | user-list.twd.test.ts, order-list.twd.test.ts     |
+| D     | 2     | payment-list.twd.test.ts, item-create.twd.test.ts |
+
+### payment-list.twd.test.ts — Grade D
+| Dimension          | Grade | Notes                              |
+|--------------------|-------|------------------------------------|
+| Journey Coverage   | D     | 1 test, visibility check only      |
+| Interaction Depth  | D     | No userEvent calls                 |
+| Assertion Quality  | D     | Only be.visible and greaterThan(1) |
+| Error & Edge Cases | D     | Only happy path                    |
+
+**To reach grade C:** Add a search test with userEvent.type + URL assertion.
+Add column header assertions with have.text.
+```
+
+Works best alongside `/twd:test-gaps` — gaps tells you **what's untested**, quality tells you **if existing tests are any good**.
 
 ---
 

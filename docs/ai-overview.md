@@ -9,17 +9,21 @@ TWD produces structured, deterministic output that AI agents can parse and act o
 
 ## Claude Code Plugin
 
-The fastest way to get AI-powered TWD testing is with the [Claude Code plugin](https://github.com/BRIKEV/twd-ai). It gives Claude two capabilities: an interactive setup wizard and an autonomous testing agent.
+The fastest way to get AI-powered TWD testing is with the [Claude Code plugin](https://github.com/BRIKEV/twd-ai). It gives Claude a full set of testing skills.
 
 ```bash
 claude plugin marketplace add BRIKEV/twd-ai
-claude plugin install BRIKEV/twd-ai
+claude plugin install twd@twd-ai
 ```
 
-| Command | What it does |
+| Command / Skill | What it does |
 |---------|-------------|
 | `/twd:setup` | Analyzes your project, asks configuration questions, and generates `.claude/twd-patterns.md` |
 | `twd` skill | Autonomous agent — writes tests, runs them via twd-relay, fixes failures, and re-runs until green |
+| `/twd:ci-setup` | Installs `twd-cli`, configures coverage, and generates a GitHub Actions workflow |
+| `/twd:test-gaps` | Scans routes, finds untested pages, and classifies risk (HIGH/MEDIUM/LOW) |
+| `/twd:test-quality` | Grades test files on journey coverage, interaction depth, assertion quality, and edge cases |
+| `/twd:test-flow-gallery` | Generates Mermaid flowcharts and plain-language summaries from test files |
 
 The agent works in a forked context — your main conversation stays clean while tests are written, run, and fixed. If a test still fails after 3 fix attempts, it's marked as `it.skip` so it doesn't block the rest.
 
