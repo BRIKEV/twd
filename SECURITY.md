@@ -35,6 +35,6 @@ TWD is a development-only testing library. It is not designed to run in producti
 
 - The mock service worker (`mock-sw.js`) intercepts network requests during development
 - Test files may contain sensitive mock data or API patterns
-- The library is installed as a dependency in production app repositories
+- TWD should be installed as a **devDependency** and only loaded in development mode — this is the recommended setup in our docs. If TWD code or `mock-sw.js` reaches production, that is a misconfiguration on the user's side
 
 We encourage responsible disclosure for any issue that could affect developers using TWD in their workflow.
