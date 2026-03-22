@@ -43,7 +43,7 @@ The relay is a WebSocket server that routes messages between the **browser** (wh
 
 ::: warning Version requirements
 - **twd-js** `>=1.5.2` — earlier versions do not support the relay protocol
-- **twd-relay** `>=0.2.x` — previous versions are incompatible
+- **twd-relay** `>=1.0.0` — previous versions do not support `--test` filtering
 :::
 
 ## Installation
@@ -114,7 +114,15 @@ npx twd-relay run --port 9876
 
 # With a custom timeout (default: 180s)
 npx twd-relay run --timeout 30000
+
+# Run specific tests by name (substring match, case-insensitive)
+npx twd-relay run --test "should show error"
+
+# Run multiple specific tests
+npx twd-relay run --test "login" --test "signup"
 ```
+
+The `--test` flag filters tests by name using substring matching. When used and no tests match, the CLI prints the available test names so you can correct the filter. This is especially useful for AI agents to run only the tests they're working on without modifying the test file.
 
 The command connects to the relay, sends a run command, streams test output to the terminal, and exits with code 0 (all passed) or 1 (failures or timeout). Example output:
 
@@ -142,6 +150,7 @@ Add this to your agent's instructions (e.g. `CLAUDE.md`):
 
 ```text
 To run TWD tests: npx twd-relay run
+To run specific tests: npx twd-relay run --test "test name"
 Exit code 0 means all tests passed; 1 means failures or errors.
 ```
 
@@ -168,7 +177,7 @@ All messages are JSON over WebSocket. The `twd-relay run` CLI handles this proto
 |---------|-------------|
 | `{ type: "hello", role: "client" }` | Identify as an external client |
 | `{ type: "run", scope: "all" }` | Run all tests |
-| `{ type: "run", scope: "single", testId: "..." }` | Run a specific test |
+| `{ type: "run", scope: "all", testNames: ["..."] }` | Run tests matching names (substring, case-insensitive) |
 
 ### Browser → Relay → Client
 

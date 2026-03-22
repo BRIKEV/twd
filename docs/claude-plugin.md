@@ -115,7 +115,7 @@ Writes test files following your project's patterns — correct imports, selecto
 
 Runs tests via `npx twd-relay run` and reads the structured output. If tests fail:
 
-- **Isolates** the failing test with `it.only` to reduce noise
+- **Isolates** the failing test with `--test "name"` to reduce noise (e.g. `npx twd-relay run --test "should show error"`)
 - **Reads the error** and fixes the test code
 - **Re-runs** the isolated test
 - **Repeats** up to 3 attempts per failing test
