@@ -250,11 +250,21 @@ await twd.mockRequest("withHeaders", {
 ```typescript
 const rule = await twd.waitForRequest("submitForm");
 
-// Check request body
+// rule.request IS the parsed body directly — NOT rule.request.body
 expect(rule.request).to.deep.equal({
   email: "test@example.com",
   message: "Hello"
 });
+```
+
+### Debugging Mock Hits
+
+```typescript
+// Check if a specific mock was hit and how many times
+const count = twd.getRequestCount("submitForm"); // returns number
+
+// Get all mock hit counts at once — useful for debugging when a mock isn't being matched
+const counts = twd.getRequestCounts(); // returns { alias1: 1, alias2: 0, ... }
 ```
 
 ## Component Mocking
@@ -502,6 +512,8 @@ export default { fetchData };
 | Assert visible | `element.should("be.visible")` |
 | Mock request | `await twd.mockRequest("alias", { method, url, response })` |
 | Wait for request | `await twd.waitForRequest("alias")` |
+| Check mock hit count | `twd.getRequestCount("alias")` |
+| All mock hit counts | `twd.getRequestCounts()` |
 | Clear mocks | `twd.clearRequestMockRules()` |
 | Stub module | `Sinon.stub(moduleDefault, 'method').returns(value)` |
 | Restore stubs | `Sinon.restore()` |

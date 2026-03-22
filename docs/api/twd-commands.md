@@ -778,7 +778,7 @@ twd.waitForRequest(alias: string, retries?: number, retryDelay?: number): Promis
 
 #### Returns
 
-`Promise<Rule>` - The matched rule with request data
+`Promise<Rule>` - The matched rule. Note: `rule.request` contains the **parsed request body directly** (e.g., `rule.request.email`), not a request object with a `.body` property.
 
 #### Examples
 
@@ -807,8 +807,8 @@ const submitButton = await twd.get("button[type='submit']");
 await userEvent.click(submitButton.el);
 
 const submitRule = await twd.waitForRequest("submitForm");
-const requestBody = JSON.parse(submitRule.request as string);
-expect(requestBody).to.deep.equal({
+// rule.request IS the parsed body directly (not rule.request.body)
+expect(submitRule.request).to.deep.equal({
   name: "John Doe",
   email: "john@example.com"
 });

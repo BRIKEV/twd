@@ -1,28 +1,49 @@
 import { wait } from "../utils/wait";
 import { TWD_VERSION } from "../constants/version";
 
-// mockBridge.ts
 export type Rule = {
+  /** HTTP method to match (e.g. `"GET"`, `"POST"`). */
   method: string;
+  /** URL string or RegExp to match against the request URL. */
   url: string | RegExp;
+  /** The mocked response body returned to the client. */
   response: unknown;
+  /** Unique identifier for this mock rule, used with `waitForRequest`. */
   alias: string;
+  /** Whether this rule has been matched by an actual request. Set automatically by the service worker. */
   executed?: boolean;
+  /**
+   * The parsed request body sent by the client.
+   * For JSON requests this is the parsed object, for form data an object of key/value pairs, for text a string.
+   * Access fields directly: `rule.request.email`, **not** `rule.request.body.email`.
+   */
   request?: any;
+  /** HTTP status code for the mocked response (default: `200`). */
   status?: number;
+  /** Headers to include in the mocked response. */
   responseHeaders?: Record<string, string>;
+  /** Whether the `url` field should be treated as a regex pattern. */
   urlRegex?: boolean;
+  /** Delay in milliseconds before returning the mocked response. */
   delay?: number;
+  /** Number of times this rule has been matched. Updated automatically by the service worker. */
   hitCount?: number;
 };
 
 export interface Options {
+  /** HTTP method to match (e.g. `"GET"`, `"POST"`). */
   method: string;
+  /** URL string or RegExp to match against the request URL. */
   url: string | RegExp;
+  /** The mocked response body returned to the client. */
   response: unknown;
+  /** HTTP status code for the mocked response (default: `200`). */
   status?: number;
+  /** Headers to include in the mocked response. */
   responseHeaders?: Record<string, string>;
+  /** Whether the `url` field should be treated as a regex pattern. */
   urlRegex?: boolean;
+  /** Delay in milliseconds before returning the mocked response. */
   delay?: number;
 }
 
