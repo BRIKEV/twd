@@ -581,15 +581,12 @@ it("should send correct form data", async () => {
 });
 ```
 
-### Headers and Metadata
+### Verifying Request Body
 
 ```ts
-it("should include authentication headers", async () => {
-  // Set up authentication token
-  localStorage.setItem("authToken", "bearer-token-123");
-
+it("should send the correct request body", async () => {
   await twd.mockRequest("authenticatedRequest", {
-    method: "GET",
+    method: "POST",
     url: "/api/protected",
     response: { data: "secret data" }
   });
@@ -600,12 +597,17 @@ it("should include authentication headers", async () => {
   await userEvent.click(loadButton.el);
 
   const rule = await twd.waitForRequest("authenticatedRequest");
-  
-  // Check that the request included auth headers
-  // (This depends on your app's implementation)
-  console.log("Request headers:", rule.headers);
+
+  // rule.request IS the parsed body directly (not rule.request.body)
+  expect(rule.request).to.deep.equal({
+    token: "bearer-token-123"
+  });
 });
 ```
+
+::: warning
+`rule.request` contains the parsed request body directly — **not** a request object with a `.body` property. Use `rule.request.fieldName`, not `rule.request.body.fieldName`.
+:::
 
 ## Mock Management
 
