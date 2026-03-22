@@ -7,6 +7,10 @@ description: Mock HTTP requests with Mock Service Worker — setup, dynamic resp
 
 TWD provides API mocking through its own mock service worker integration, allowing you to isolate your frontend from external systems and validate UI behavior against deterministic network boundaries.
 
+::: tip Cross-origin requests
+The mock service worker intercepts **all** requests made from the page, including cross-origin URLs (e.g., third-party APIs like payment providers or analytics services). You can mock any URL your frontend calls, regardless of domain.
+:::
+
 ## Setup
 
 ### 1. Install Mock Service Worker
