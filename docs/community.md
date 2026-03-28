@@ -47,4 +47,6 @@ The main TWD repository also includes working examples:
 
 ## Blog Posts
 
+Written by [Kevin Martinez](https://www.linkedin.com/in/kevinjmartinez/), TWD maintainer. More posts on [DEV.to](https://dev.to/kevinccbsg).
+
 *Coming soon*
