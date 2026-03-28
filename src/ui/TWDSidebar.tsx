@@ -217,14 +217,17 @@ export const TWDSidebar = ({ open, position = "left", search }: TWDSidebarProps)
       aria-label="Test While Developing sidebar"
     >
       <div aria-live="polite" aria-atomic="true" style={{ position: "absolute", width: "1px", height: "1px", margin: "-1px", border: "0", padding: "0", overflow: "hidden", clip: "rect(0 0 0 0)" }}>{message}</div>
-      <div style={{ 
-        padding: "var(--twd-spacing-md)", 
-        background: "var(--twd-background)", 
-        position: "sticky", 
-        top: 0, 
-        zIndex: "var(--twd-z-index-sticky)", 
-        borderBottom: "1px solid var(--twd-border)" 
-      }}>
+      <div
+        data-testid="twd-sidebar-header"
+        style={{
+          padding: "var(--twd-spacing-md)",
+          background: "var(--twd-background)",
+          position: "sticky",
+          top: 0,
+          zIndex: "var(--twd-z-index-sticky)",
+          borderBottom: "1px solid var(--twd-border)"
+        }}
+      >
         <div style={{ 
           display: "flex", 
           justifyContent: "space-between", 

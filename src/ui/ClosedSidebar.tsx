@@ -28,6 +28,7 @@ export const ClosedSidebar = ({ setOpen, position }: ClosedSidebarProps) => {
         position: "fixed",
         top: "50%",
         transform: "translateY(-50%)",
+        zIndex: "var(--twd-z-index-sidebar)",
         background: "var(--twd-button-primary)",
         color: "var(--twd-button-primary-text)",
         padding: "var(--twd-spacing-sm) 10px",

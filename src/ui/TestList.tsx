@@ -39,9 +39,12 @@ export const TestList = ({ roots, runTest, searchQuery = "" }: TestListProps) =>
           const scrollTop = sidebar.scrollTop;
           const elementTop = elementRect.top - sidebarRect.top + scrollTop;
 
-          // Scroll with some offset to account for sticky header
+          // Measure the sticky header to account for its actual height (varies with search input)
+          const stickyHeader = sidebar.querySelector<HTMLElement>('[data-testid="twd-sidebar-header"]');
+          const headerOffset = stickyHeader ? stickyHeader.getBoundingClientRect().height + 16 : 150;
+
           sidebar.scrollTo({
-            top: elementTop - 150, // 150px offset from top
+            top: elementTop - headerOffset,
             behavior: 'smooth'
           });
         }
