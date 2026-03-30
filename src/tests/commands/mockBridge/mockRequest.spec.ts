@@ -110,4 +110,63 @@ describe('mockBridge mock request methods', () => {
       get: () => originalController,
     });
   });
+
+  it('should call __twdCollectMock when defined', async () => {
+    const collectMock = vi.fn();
+    window.__twdCollectMock = collectMock;
+
+    const postMessageMock = vi.fn();
+    Object.defineProperty(navigator.serviceWorker, 'controller', {
+      configurable: true,
+      get: () => ({ postMessage: postMessageMock }),
+    });
+
+    await mockRequest('testAlias', {
+      url: 'https://api.example.com/test',
+      method: 'POST',
+      status: 201,
+      response: { id: 1 },
+    });
+
+    expect(collectMock).toHaveBeenCalledWith({
+      alias: 'testAlias',
+      url: 'https://api.example.com/test',
+      method: 'POST',
+      status: 201,
+      response: { id: 1 },
+      urlRegex: false,
+    });
+
+    delete window.__twdCollectMock;
+  });
+
+  it('should call __twdCollectMock with urlRegex when provided', async () => {
+    const collectMock = vi.fn();
+    window.__twdCollectMock = collectMock;
+
+    const postMessageMock = vi.fn();
+    Object.defineProperty(navigator.serviceWorker, 'controller', {
+      configurable: true,
+      get: () => ({ postMessage: postMessageMock }),
+    });
+
+    await mockRequest('regexAlias', {
+      url: 'https://api.example.com/.*',
+      method: 'GET',
+      status: 200,
+      response: [],
+      urlRegex: true,
+    });
+
+    expect(collectMock).toHaveBeenCalledWith({
+      alias: 'regexAlias',
+      url: 'https://api.example.com/.*',
+      method: 'GET',
+      status: 200,
+      response: [],
+      urlRegex: true,
+    });
+
+    delete window.__twdCollectMock;
+  });
 });
