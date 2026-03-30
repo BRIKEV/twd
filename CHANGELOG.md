@@ -1,3 +1,15 @@
+## <small>1.6.3 (2026-03-30)</small>
+
+* feat: add contract validation hook to mockRequest (#186) ([87752b1](https://github.com/BRIKEV/twd/commit/87752b1)), closes [#186](https://github.com/BRIKEV/twd/issues/186)
+* fix: CSS issues and patch dependency updates (#184) ([45ad966](https://github.com/BRIKEV/twd/commit/45ad966)), closes [#184](https://github.com/BRIKEV/twd/issues/184)
+* chore(deps-dev): bump typescript from 5.9.3 to 6.0.2 (#185) ([c04aade](https://github.com/BRIKEV/twd/commit/c04aade)), closes [#185](https://github.com/BRIKEV/twd/issues/185)
+* chore(deps-dev): bump flatted in /examples/tutorial-example (#173) ([461375c](https://github.com/BRIKEV/twd/commit/461375c)), closes [#173](https://github.com/BRIKEV/twd/issues/173)
+* chore(deps-dev): bump flatted in /examples/twd-test-app (#172) ([dc1f1af](https://github.com/BRIKEV/twd/commit/dc1f1af)), closes [#172](https://github.com/BRIKEV/twd/issues/172)
+* docs: improvements from AI feedback session (#174) ([d8c22b1](https://github.com/BRIKEV/twd/commit/d8c22b1)), closes [#174](https://github.com/BRIKEV/twd/issues/174)
+* docs: add --test flag documentation for twd-relay run ([45c5384](https://github.com/BRIKEV/twd/commit/45c5384))
+* docs: add missing plugin skills (ci-setup, test-gaps, test-quality, test-flow-gallery) ([ce678e8](https://github.com/BRIKEV/twd/commit/ce678e8))
+
+
 ## <small>1.6.2 (2026-03-16)</small>
 
 * fix: update dependencies and errors (#171) ([b98f0ac](https://github.com/BRIKEV/twd/commit/b98f0ac)), closes [#171](https://github.com/BRIKEV/twd/issues/171)
