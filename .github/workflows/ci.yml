@@ -35,6 +35,38 @@ jobs:
       - name: Run Vitest
         run: npm run test:ci
 
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v5
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: 24.x
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build package
+        run: npm run build
+
+      - name: Verify type declarations are not empty
+        run: |
+          for f in dist/index.d.ts dist/runner.d.ts dist/bundled.d.ts dist/vite-plugin.d.ts dist/runner-ci.d.ts dist/ui.d.ts; do
+            if [ ! -f "$f" ]; then
+              echo "FAIL: $f does not exist"
+              exit 1
+            fi
+            if [ "$(cat "$f" | grep -cv '^export {}')" -eq 0 ]; then
+              echo "FAIL: $f has no real exports (empty type declarations)"
+              exit 1
+            fi
+            echo "OK: $f"
+          done
+
   coverage:
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
