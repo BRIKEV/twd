@@ -25,6 +25,20 @@ jobs:
       - name: Build package
         run: npm run build
 
+      - name: Verify type declarations are not empty
+        run: |
+          for f in dist/index.d.ts dist/runner.d.ts dist/bundled.d.ts dist/vite-plugin.d.ts dist/runner-ci.d.ts dist/ui.d.ts; do
+            if [ ! -f "$f" ]; then
+              echo "FAIL: $f does not exist"
+              exit 1
+            fi
+            if [ "$(cat "$f" | grep -cv '^export {}')" -eq 0 ]; then
+              echo "FAIL: $f has no real exports (empty type declarations)"
+              exit 1
+            fi
+            echo "OK: $f"
+          done
+
       - name: Publish to npm
         run: |
           if [ "${{ github.event.release.prerelease }}" = "true" ]; then
