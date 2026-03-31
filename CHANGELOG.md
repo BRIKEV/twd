@@ -1,3 +1,9 @@
+## <small>1.6.4 (2026-03-31)</small>
+
+* fix: revert TS 6 upgrade that broke type declarations, add CI build checks (#187) ([82f5d20](https://github.com/BRIKEV/twd/commit/82f5d20)), closes [#187](https://github.com/BRIKEV/twd/issues/187)
+* fix: regenerate package-lock.json for CI compatibility ([96e4705](https://github.com/BRIKEV/twd/commit/96e4705))
+
+
 ## <small>1.6.3 (2026-03-30)</small>
 
 * feat: add contract validation hook to mockRequest (#186) ([87752b1](https://github.com/BRIKEV/twd/commit/87752b1)), closes [#186](https://github.com/BRIKEV/twd/issues/186)
