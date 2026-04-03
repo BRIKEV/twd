@@ -195,19 +195,50 @@ const faqs = [
       </div>
     </section>
 
-    <!-- Section 4: How It Works -->
+    <!-- Section 4: Quick Start -->
     <section class="how-it-works">
-      <h2 class="section-title">How It Works</h2>
+      <h2 class="section-title">Quick Start</h2>
 
       <div class="steps">
         <div class="step">
-          <span class="step-number">1</span>
+          <span class="step-number" aria-hidden="true">1</span>
           <div class="step-content">
-            <h3 class="step-title">Run tests in your own browser</h3>
+            <h3 class="step-title">Install and add to your entry point</h3>
+            <pre class="step-code"><code>npm install twd-js</code></pre>
+            <pre class="step-code"><code>// src/main.tsx
+if (import.meta.env.DEV) {
+  const { initTWD } = await import('twd-js/bundled');
+  const tests = import.meta.glob("./**/*.twd.test.ts");
+  initTWD(tests, { open: true });
+}</code></pre>
+          </div>
+        </div>
+
+        <div class="step">
+          <span class="step-number" aria-hidden="true">2</span>
+          <div class="step-content">
+            <h3 class="step-title">Write a test</h3>
+            <pre class="step-code"><code>// src/App.twd.test.ts
+import { twd, userEvent, screenDom } from "twd-js";
+import { describe, it } from "twd-js/runner";
+
+describe("App", () => {
+  it("should render the heading", async () => {
+    await twd.visit("/");
+    const heading = screenDom.getByRole("heading", { level: 1 });
+    twd.should(heading, "be.visible");
+  });
+});</code></pre>
+          </div>
+        </div>
+
+        <div class="step">
+          <span class="step-number" aria-hidden="true">3</span>
+          <div class="step-content">
+            <h3 class="step-title">Run your dev server and see results</h3>
+            <pre class="step-code"><code>npm run dev</code></pre>
             <p class="step-desc">
-              Your tests execute in your real browser, with your real devtools.
-              No terminal, no jsdom, no headless runner. Results show in a sidebar
-              — click play to run any scenario.
+              The sidebar appears in your browser. Click play to run any test.
             </p>
             <img
               src="/images/twd_side_bar_success.png"
@@ -215,30 +246,6 @@ const faqs = [
               class="step-img"
               loading="lazy"
             />
-          </div>
-        </div>
-
-        <div class="step">
-          <span class="step-number">2</span>
-          <div class="step-content">
-            <h3 class="step-title">The agent writes, runs, and improves</h3>
-            <p class="step-desc">
-              The AI agent writes tests, runs them via WebSocket, fixes failures,
-              and repeats autonomously. It also finds untested pages, grades test
-              quality, and closes gaps — not just green tests, but good tests.
-            </p>
-          </div>
-        </div>
-
-        <div class="step">
-          <span class="step-number">3</span>
-          <div class="step-content">
-            <h3 class="step-title">Validate and ship</h3>
-            <p class="step-desc">
-              In CI, twd-cli runs your tests headlessly and collects coverage
-              automatically. If you add contract testing, every mock is validated
-              against the real OpenAPI spec before the PR merges.
-            </p>
           </div>
         </div>
       </div>
@@ -672,6 +679,24 @@ const faqs = [
   font-size: 0.9375rem;
   line-height: 1.6;
   color: var(--vp-c-text-2);
+}
+
+.step-code {
+  margin-top: 12px;
+  padding: 16px;
+  border-radius: 8px;
+  background: var(--vp-c-bg-soft);
+  border: 1px solid var(--vp-c-border);
+  overflow-x: auto;
+  font-size: 0.8125rem;
+  line-height: 1.6;
+  font-family: var(--vp-font-family-mono);
+  color: var(--vp-c-text-1);
+}
+
+.step-code code {
+  font-family: inherit;
+  white-space: pre;
 }
 
 .step-img {
