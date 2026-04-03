@@ -167,6 +167,55 @@ const { isDark } = useData()
         </div>
       </div>
     </section>
+
+    <!-- Section 4: How It Works -->
+    <section class="how-it-works">
+      <h2 class="section-title">How It Works</h2>
+
+      <div class="steps">
+        <div class="step">
+          <span class="step-number">1</span>
+          <div class="step-content">
+            <h3 class="step-title">Run tests in your own browser</h3>
+            <p class="step-desc">
+              Your tests execute in your real browser, with your real devtools.
+              No terminal, no jsdom, no headless runner. Results show in a sidebar
+              — click play to run any scenario.
+            </p>
+            <img
+              src="/images/twd_side_bar_success.png"
+              alt="TWD sidebar showing passing tests in the browser"
+              class="step-img"
+              loading="lazy"
+            />
+          </div>
+        </div>
+
+        <div class="step">
+          <span class="step-number">2</span>
+          <div class="step-content">
+            <h3 class="step-title">The agent writes, runs, and improves</h3>
+            <p class="step-desc">
+              The AI agent writes tests, runs them via WebSocket, fixes failures,
+              and repeats autonomously. It also finds untested pages, grades test
+              quality, and closes gaps — not just green tests, but good tests.
+            </p>
+          </div>
+        </div>
+
+        <div class="step">
+          <span class="step-number">3</span>
+          <div class="step-content">
+            <h3 class="step-title">Validate and ship</h3>
+            <p class="step-desc">
+              In CI, twd-cli runs your tests headlessly and collects coverage
+              automatically. If you add contract testing, every mock is validated
+              against the real OpenAPI spec before the PR merges.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
     </main>
   </div>
 </template>
@@ -515,6 +564,75 @@ const { isDark } = useData()
   }
   .section-title {
     font-size: 1.5rem;
+  }
+}
+
+/* How It Works */
+.how-it-works {
+  padding: 60px 0;
+}
+
+.steps {
+  margin-top: 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+.step {
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+}
+
+.step-number {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--vp-c-brand-1);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.125rem;
+  font-weight: 700;
+}
+
+.step-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.step-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--vp-c-text-1);
+  margin-bottom: 8px;
+}
+
+.step-desc {
+  font-size: 0.9375rem;
+  line-height: 1.6;
+  color: var(--vp-c-text-2);
+}
+
+.step-img {
+  margin-top: 20px;
+  width: 100%;
+  max-width: 700px;
+  border-radius: 12px;
+  border: 1px solid var(--vp-c-border);
+}
+
+@media (max-width: 640px) {
+  .step-number {
+    width: 32px;
+    height: 32px;
+    font-size: 0.875rem;
+  }
+  .step-title {
+    font-size: 1.0625rem;
   }
 }
 </style>
