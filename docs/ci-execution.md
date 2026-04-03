@@ -21,6 +21,19 @@ or run it directly:
 npx twd-cli run
 ```
 
+### How It Works
+
+Puppeteer is **not** used as a testing framework — it simply provides a headless browser to load your application. Once the page loads, all test execution happens inside the real browser context through the TWD runner.
+
+1. Launches a headless browser via Puppeteer
+2. Navigates to your dev server URL
+3. Waits for the app and TWD sidebar to be ready
+4. TWD's in-browser test runner executes all tests against the real DOM
+5. Collects and reports test results
+6. Validates collected mocks against OpenAPI contracts (if [configured](/contract-testing))
+7. Optionally collects code coverage data
+8. Exits with appropriate code (0 for success, 1 for failures)
+
 ### Configure (optional)
 
 Create `twd.config.json` in your repo to customize the runner:
@@ -34,7 +47,9 @@ Create `twd.config.json` in your repo to customize the runner:
   "nycOutputDir": "./.nyc_output",
   "headless": true,
   "puppeteerArgs": ["--no-sandbox", "--disable-setuid-sandbox"],
-  "retryCount": 2
+  "retryCount": 2,
+  "contracts": [],
+  "contractReportPath": ".twd/contract-report.md"
 }
 ```
 
@@ -48,8 +63,76 @@ Create `twd.config.json` in your repo to customize the runner:
 | `headless` | boolean | `true` | Run Chrome in headless mode |
 | `puppeteerArgs` | string[] | `["--no-sandbox", "--disable-setuid-sandbox"]` | Extra arguments for Puppeteer |
 | `retryCount` | number | `2` | Number of times to attempt each test before reporting failure. Default is 2 (one normal attempt + one retry). Set to 1 to disable retries. |
+| `contracts` | object[] | `[]` | OpenAPI contract validation specs. See [Contract Testing](/contract-testing) |
+| `contractReportPath` | string | — | Path to write a markdown report for CI/PR integration |
 
-### Example GitHub Actions job
+## GitHub Action (Recommended)
+
+The easiest way to run TWD tests in CI. The composite action handles Puppeteer caching, Chrome installation, and optional contract report posting in a single step:
+
+```yaml
+name: TWD Tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  pull-requests: write  # only needed if using contract-report
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install mock service worker
+        run: npx twd-js init public --save
+
+      - name: Start dev server
+        run: |
+          nohup npm run dev > /dev/null 2>&1 &
+          npx wait-on http://localhost:5173
+
+      - name: Run TWD tests
+        uses: BRIKEV/twd-cli/.github/actions/run@main
+        with:
+          contract-report: 'true'
+```
+
+### Action Inputs
+
+| Input | Default | Description |
+|-------|---------|-------------|
+| `working-directory` | `.` | Directory where `twd.config.json` lives |
+| `contract-report` | `false` | Post contract validation summary as a PR comment |
+
+### With code coverage
+
+The action runs in the same job, so coverage data is available for subsequent steps:
+
+```yaml
+      - name: Run TWD tests
+        uses: BRIKEV/twd-cli/.github/actions/run@main
+
+      - name: Display coverage
+        run: npm run collect:coverage:text
+```
+
+## Custom Setup (Without the Action)
+
+If you prefer full control over each CI step, or your CI isn't GitHub Actions, set up each step manually. Puppeteer 24+ no longer auto-downloads Chrome, so you need to install it explicitly:
 
 ```yaml
 - name: Install dependencies
@@ -106,7 +189,8 @@ The `onPass` callback receives an optional second parameter `retryAttempt` — i
 
 ## Next Steps
 
-- Coverage Reporting: Learn how to collect and report code coverage with TWD in [Code Coverage](/coverage)
-- Learn about [Writing Tests](/writing-tests) for creating testable components
-- Explore [API Mocking](/api-mocking) for testing with network requests
-- Check the [API Reference](/api/) for complete function documentation
+- [Contract Testing](/contract-testing): Validate your API mocks against OpenAPI specs
+- [Code Coverage](/coverage): Learn how to collect and report code coverage with TWD
+- [Writing Tests](/writing-tests): Create testable components
+- [API Mocking](/api-mocking): Test with network requests
+- [API Reference](/api/): Complete function documentation

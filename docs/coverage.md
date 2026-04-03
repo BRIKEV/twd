@@ -69,7 +69,9 @@ You can configure the output folders used by the CLI in a `twd.config.json` file
   "nycOutputDir": "./.nyc_output",
   "headless": true,
   "puppeteerArgs": ["--no-sandbox", "--disable-setuid-sandbox"],
-  "retryCount": 2
+  "retryCount": 2,
+  "contracts": [],
+  "contractReportPath": ".twd/contract-report.md"
 }
 ```
 
@@ -83,6 +85,8 @@ You can configure the output folders used by the CLI in a `twd.config.json` file
 | `headless` | boolean | `true` | Run Chrome in headless mode |
 | `puppeteerArgs` | string[] | `["--no-sandbox", "--disable-setuid-sandbox"]` | Extra arguments for Puppeteer |
 | `retryCount` | number | `2` | Number of times to attempt each test before reporting failure. Default is 2 (one normal attempt + one retry). Set to 1 to disable retries. |
+| `contracts` | object[] | `[]` | OpenAPI contract validation specs. See [Contract Testing](/contract-testing) |
+| `contractReportPath` | string | — | Path to write a markdown report for CI/PR integration |
 
 ## Updating package.json Scripts
 
@@ -136,7 +140,30 @@ You’ll see outputs like:
 
 ## Adding Coverage to GitHub Actions
 
-To include the coverage output in your GitHub Action, update your existing CI workflow:
+### Using the GitHub Action (recommended)
+
+The [composite GitHub Action](/ci-execution#github-action-recommended) handles Puppeteer setup, test execution, and optional contract reporting — so you only need to add the coverage step after it:
+
+```yaml
+      - name: Start Vite dev server
+        run: |
+          nohup npm run dev > /dev/null 2>&1 &
+          npx wait-on http://localhost:5173
+        env:
+          CI: true
+
+      - name: Run TWD tests
+        uses: BRIKEV/twd-cli/.github/actions/run@main
+
+      - name: Display coverage
+        run: npm run collect:coverage:text
+```
+
+See the [CI Execution](/ci-execution#github-action-recommended) page for the full workflow.
+
+### Custom setup
+
+If you prefer full control over each CI step, set up the workflow manually:
 
 ```yml
 name: CI - twd tests
@@ -159,7 +186,7 @@ jobs:
         uses: actions/setup-node@v5
         with:
           node-version: 24
-          cache: 'npm'
+          cache: ‘npm’
 
       - name: Install dependencies
         run: npm ci
@@ -178,7 +205,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/.cache/puppeteer
-          key: ${{ runner.os }}-puppeteer-${{ hashFiles('package-lock.json') }}
+          key: ${{ runner.os }}-puppeteer-${{ hashFiles(‘package-lock.json’) }}
           restore-keys: |
             ${{ runner.os }}-puppeteer-
 
