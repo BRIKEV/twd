@@ -46,8 +46,8 @@ const faqs = [
           <span class="nav-brand-mark">TWD</span>
         </a>
         <div class="nav-links">
-          <a href="/getting-started">Guide</a>
-          <a href="/tutorial/">Tutorial</a>
+          <a href="/getting-started">Docs</a>
+          <a href="/community#example-repositories">Examples</a>
           <a href="/api/">API Reference</a>
         </div>
       </nav>
