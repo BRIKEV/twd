@@ -33,6 +33,34 @@ const { isDark } = useData()
           </div>
         </div>
       </section>
+
+      <!-- Section 2: Pain Points -->
+      <section class="pain-points" aria-labelledby="pain-heading">
+        <h2 id="pain-heading" class="visually-hidden">Problems TWD solves</h2>
+        <div class="pain-cards">
+          <div class="pain-card">
+            <h3 class="pain-title">Testing is always last</h3>
+            <p class="pain-desc">
+              Every sprint, testing gets pushed to "next week." Next week never comes.
+              The codebase grows. The debt compounds.
+            </p>
+          </div>
+          <div class="pain-card">
+            <h3 class="pain-title">AI writes tests that don't run</h3>
+            <p class="pain-desc">
+              Your agent generates test files. They look correct. They never execute
+              in a real browser. No one notices until someone does.
+            </p>
+          </div>
+          <div class="pain-card">
+            <h3 class="pain-title">Your mocks lie</h3>
+            <p class="pain-desc">
+              The backend renames a field. Your mock doesn't know. Tests pass.
+              Production breaks. You find out from a user.
+            </p>
+          </div>
+        </div>
+      </section>
     </main>
   </div>
 </template>
@@ -162,6 +190,43 @@ const { isDark } = useData()
   }
   .nav-links a {
     font-size: 0.8125rem;
+  }
+}
+
+/* Pain Points */
+.pain-points {
+  padding: 60px 0;
+}
+
+.pain-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+.pain-card {
+  padding: 28px 24px;
+  border-radius: 12px;
+  border: 1px solid var(--vp-c-border);
+  background: var(--vp-c-bg-soft);
+}
+
+.pain-title {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--vp-c-text-1);
+  margin-bottom: 12px;
+}
+
+.pain-desc {
+  font-size: 0.9375rem;
+  line-height: 1.6;
+  color: var(--vp-c-text-2);
+}
+
+@media (max-width: 768px) {
+  .pain-cards {
+    grid-template-columns: 1fr;
   }
 }
 </style>
