@@ -29,3 +29,18 @@
 .dark {
   --vp-home-hero-name-color: var(--vp-c-brand-1);
 }
+
+/* Pipeline diagram colors */
+:root {
+  --pipeline-card-bg: rgba(18, 57, 86, 0.08);
+  --pipeline-badge-text: #fff;
+  --pipeline-green: #1a7f37;
+  --pipeline-gold: #9a6700;
+}
+
+.dark {
+  --pipeline-card-bg: #1a2a3a;
+  --pipeline-badge-text: #0d1117;
+  --pipeline-green: #3fb950;
+  --pipeline-gold: #d29922;
+}
