@@ -1,4 +1,10 @@
 import DefaultTheme from 'vitepress/theme'
+import HomePage from './components/HomePage.vue'
 import './style.css'
 
-export default DefaultTheme
+export default {
+  extends: DefaultTheme,
+  enhanceApp({ app }) {
+    app.component('HomePage', HomePage)
+  }
+}
