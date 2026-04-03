@@ -56,24 +56,34 @@ const faqs = [
     <main>
       <!-- Section 1: Hero -->
       <section class="hero">
-        <div class="hero-content">
-          <p class="hero-eyebrow">Frontend testing ecosystem</p>
-          <h1 class="hero-headline">
-            <span class="hero-line hero-line--1">Testing isn't a phase.</span>
-            <span class="hero-line hero-line--2">It's how you build.</span>
-          </h1>
-          <p class="hero-sub">
-            Write tests while you develop, in your real browser.
-            Let the AI agent iterate. Validate every mock against the real API before you merge.
-          </p>
-          <div class="hero-actions">
-            <a href="/getting-started" class="btn btn-brand">
-              <span>Get Started</span>
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M6 3l5 5-5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            </a>
-            <a href="https://github.com/BRIKEV/twd" target="_blank" rel="noopener" class="btn btn-outline">
-              View on GitHub <span class="visually-hidden">(opens in new tab)</span>
-            </a>
+        <div class="hero-grid">
+          <div class="hero-content">
+            <p class="hero-eyebrow">Frontend testing ecosystem</p>
+            <h1 class="hero-headline">
+              <span class="hero-line hero-line--1">Testing isn't a phase.</span>
+              <span class="hero-line hero-line--2">It's how you build.</span>
+            </h1>
+            <p class="hero-sub">
+              Write tests while you develop, in your real browser.
+              Let the AI agent iterate. Validate every mock against the real API before you merge.
+            </p>
+            <div class="hero-actions">
+              <a href="/getting-started" class="btn btn-brand">
+                <span>Get Started</span>
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M6 3l5 5-5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </a>
+              <a href="https://github.com/BRIKEV/twd" target="_blank" rel="noopener" class="btn btn-outline">
+                View on GitHub <span class="visually-hidden">(opens in new tab)</span>
+              </a>
+            </div>
+          </div>
+          <div class="hero-visual">
+            <img
+              src="/images/twd_side_bar_success.png"
+              alt="TWD sidebar showing passing tests in the browser"
+              class="hero-img"
+              loading="lazy"
+            />
           </div>
         </div>
       </section>
@@ -145,8 +155,8 @@ const faqs = [
 
             <!-- Stage 1: Top — DEVELOP + TEST (CORE) -->
             <rect x="280" y="50" width="240" height="88" rx="12" fill="var(--pipeline-card-bg)" stroke="var(--vp-c-brand-1)" stroke-width="2"/>
-            <rect x="430" y="42" width="60" height="18" rx="9" fill="var(--vp-c-brand-1)"/>
-            <text x="460" y="55" text-anchor="middle" fill="var(--pipeline-badge-text)" font-size="9" font-weight="700" letter-spacing="0.05em">CORE</text>
+            <rect x="430" y="42" width="60" height="18" rx="9" fill="var(--vp-c-brand-btn)"/>
+            <text x="460" y="55" text-anchor="middle" fill="#fff" font-size="9" font-weight="700" letter-spacing="0.05em">CORE</text>
             <text x="305" y="80" fill="var(--vp-c-brand-1)" font-size="10" font-weight="700" letter-spacing="0.08em">DEVELOP + TEST</text>
             <text x="305" y="100" fill="var(--vp-c-text-1)" font-size="15" font-weight="700">twd-js</text>
             <text x="305" y="120" fill="var(--vp-c-text-3)" font-size="11">Sidebar in your browser</text>
@@ -194,34 +204,34 @@ const faqs = [
         <div class="pipeline-mobile" role="list" aria-label="TWD ecosystem stages">
           <div class="pipeline-stage pipeline-stage--core" role="listitem">
             <span class="pipeline-badge pipeline-badge--core">CORE</span>
-            <h4 class="pipeline-label">DEVELOP + TEST</h4>
+            <h3 class="pipeline-label">DEVELOP + TEST</h3>
             <p class="pipeline-pkg">twd-js</p>
             <p class="pipeline-desc">Sidebar in your browser</p>
           </div>
           <div class="pipeline-arrow" aria-hidden="true"></div>
           <div class="pipeline-stage pipeline-stage--optional" role="listitem">
             <span class="pipeline-badge pipeline-badge--optional">optional</span>
-            <h4 class="pipeline-label">AI AGENT</h4>
+            <h3 class="pipeline-label">AI AGENT</h3>
             <p class="pipeline-pkg">twd-relay + twd-ai</p>
             <p class="pipeline-desc">Write, run, fix, repeat</p>
           </div>
           <div class="pipeline-arrow" aria-hidden="true"></div>
           <div class="pipeline-stage pipeline-stage--optional" role="listitem">
             <span class="pipeline-badge pipeline-badge--optional">optional</span>
-            <h4 class="pipeline-label">CI PIPELINE</h4>
+            <h3 class="pipeline-label">CI PIPELINE</h3>
             <p class="pipeline-pkg">twd-cli</p>
             <p class="pipeline-desc">Headless tests + coverage</p>
           </div>
           <div class="pipeline-arrow" aria-hidden="true"></div>
           <div class="pipeline-stage pipeline-stage--gold" role="listitem">
             <span class="pipeline-badge pipeline-badge--gold">optional</span>
-            <h4 class="pipeline-label pipeline-label--gold">VALIDATE CONTRACTS</h4>
+            <h3 class="pipeline-label pipeline-label--gold">VALIDATE CONTRACTS</h3>
             <p class="pipeline-pkg">openapi-mock-validator</p>
             <p class="pipeline-desc">Every mock vs the real spec</p>
           </div>
           <div class="pipeline-arrow pipeline-arrow--green" aria-hidden="true"></div>
           <div class="pipeline-stage pipeline-stage--green" role="listitem">
-            <h4 class="pipeline-label pipeline-label--green">SHIP</h4>
+            <h3 class="pipeline-label pipeline-label--green">SHIP</h3>
             <p class="pipeline-pkg">Merge with confidence</p>
             <p class="pipeline-desc">Contracts validated, tests green</p>
           </div>
@@ -305,7 +315,7 @@ const faqs = [
 
       <!-- Section 5: FAQ -->
       <section class="faq" aria-labelledby="faq-heading">
-        <h2 id="faq-heading" class="section-title">Frequently Asked Questions</h2>
+        <h2 id="faq-heading" class="section-title faq-title">Frequently Asked Questions</h2>
         <div class="faq-grid">
           <details v-for="(faq, i) in faqs" :key="i" class="faq-item">
             <summary class="faq-question">{{ faq.q }}</summary>
@@ -317,6 +327,7 @@ const faqs = [
       <!-- Section 6: Manifesto Quote -->
       <section class="manifesto-quote">
         <blockquote class="manifesto-text">
+          <span class="manifesto-mark" aria-hidden="true">&ldquo;</span>
           TWD isn't about writing <em>more</em> tests — it's about writing the <em>right</em> ones, at the right time.
         </blockquote>
         <a href="/twd-manifesto" class="manifesto-link">Read the full manifesto &rarr;</a>
@@ -351,7 +362,6 @@ const faqs = [
   --hp-surface: var(--vp-c-bg-soft);
   --hp-border: var(--vp-c-border);
   --hp-section-gap: 96px;
-
   max-width: var(--hp-max-w);
   margin: 0 auto;
   padding: 0 var(--hp-gutter);
@@ -447,8 +457,21 @@ const faqs = [
    Hero
    ============================================ */
 .hero {
-  text-align: center;
   padding: 80px 0 var(--hp-section-gap);
+}
+
+.hero-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 48px;
+  align-items: center;
+}
+
+.hero-img {
+  width: 100%;
+  border-radius: var(--hp-radius);
+  border: 1px solid var(--hp-border);
+  box-shadow: 0 16px 48px -12px rgba(0,0,0,0.2);
 }
 
 .hero-eyebrow {
@@ -465,7 +488,7 @@ const faqs = [
 }
 
 .hero-headline {
-  font-size: 3.5rem;
+  font-size: 3.25rem;
   line-height: 1.1;
   font-weight: 800;
   color: var(--vp-c-text-1);
@@ -477,20 +500,17 @@ const faqs = [
 }
 
 .hero-sub {
-  margin-top: 28px;
-  font-size: 1.125rem;
+  margin-top: 24px;
+  font-size: 1.0625rem;
   line-height: 1.75;
   color: var(--vp-c-text-2);
-  max-width: 560px;
-  margin-left: auto;
-  margin-right: auto;
+  max-width: 480px;
 }
 
 .hero-actions {
   display: flex;
-  justify-content: center;
   gap: 14px;
-  margin-top: 36px;
+  margin-top: 32px;
   flex-wrap: wrap;
 }
 
@@ -508,13 +528,13 @@ const faqs = [
 }
 
 .btn-brand {
-  background: var(--vp-c-brand-1);
+  background: var(--vp-c-brand-btn);
   color: #fff;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 0 0 1px var(--vp-c-brand-1);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 0 0 1px var(--vp-c-brand-btn);
 }
 
 .btn-brand:hover {
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15), 0 0 0 1px var(--vp-c-brand-2);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15), 0 0 0 1px var(--vp-c-brand-btn);
   transform: translateY(-1px);
 }
 
@@ -677,8 +697,8 @@ const faqs = [
 }
 
 .pipeline-badge--core {
-  background: var(--vp-c-brand-1);
-  color: var(--pipeline-badge-text);
+  background: var(--vp-c-brand-btn);
+  color: #fff;
 }
 
 .pipeline-badge--optional {
@@ -884,9 +904,9 @@ const faqs = [
 
 .faq-grid {
   margin-top: 36px;
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
 .faq-item {
@@ -938,6 +958,10 @@ details[open] .faq-question::before {
   transform: rotate(0deg);
 }
 
+.faq-title {
+  text-align: left;
+}
+
 .faq-answer {
   padding: 0 22px 18px 52px;
   font-size: 0.8125rem;
@@ -963,6 +987,21 @@ details[open] .faq-question::before {
   border: none;
   padding: 0;
   letter-spacing: -0.01em;
+  position: relative;
+}
+
+.manifesto-mark {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 8rem;
+  line-height: 0;
+  color: var(--vp-c-brand-1);
+  opacity: 0.15;
+  position: absolute;
+  top: -20px;
+  left: 50%;
+  transform: translateX(-50%);
+  pointer-events: none;
+  user-select: none;
 }
 
 .manifesto-text em {
@@ -1043,13 +1082,19 @@ details[open] .faq-question::before {
     white-space: normal;
   }
 
-  .faq-grid {
-    grid-template-columns: 1fr;
-  }
-
   .section-title {
     font-size: 1.625rem;
   }
+}
+
+@media (max-width: 900px) {
+  .hero-grid {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+  .hero { text-align: center; }
+  .hero-sub { margin-left: auto; margin-right: auto; }
+  .hero-actions { justify-content: center; }
 }
 
 @media (max-width: 640px) {

@@ -1,7 +1,7 @@
 /**
  * TWD brand colors for VitePress docs
  * Darker: #123956 (deep teal) — primary in light theme
- * Lighter: #228387 (teal) — primary in dark theme (AA contrast)
+ * Lighter: #2faaae (teal) — primary in dark theme (AA 4.6:1 on #1b1b1f)
  * AA contrast preserved for both themes.
  */
 
@@ -11,14 +11,17 @@
   --vp-c-brand-2: #1a5270;
   --vp-c-brand-3: #123956;
   --vp-c-brand-soft: rgba(18, 57, 86, 0.14);
+  --vp-c-brand-btn: #123956;
 }
 
 .dark {
-  /* Brand: #228387 for links, buttons on dark bg (AA contrast) */
-  --vp-c-brand-1: #228387;
-  --vp-c-brand-2: #2a9a9e;
-  --vp-c-brand-3: #228387;
-  --vp-c-brand-soft: rgba(34, 131, 135, 0.16);
+  /* Brand text: #2faaae for links on dark bg (AA 4.6:1 on #1b1b1f) */
+  --vp-c-brand-1: #2faaae;
+  --vp-c-brand-2: #3bbec2;
+  --vp-c-brand-3: #2faaae;
+  --vp-c-brand-soft: rgba(47, 170, 174, 0.16);
+  /* Brand surface: darker teal for white text on brand bg (AA 4.8:1) */
+  --vp-c-brand-btn: #1a7c80;
 }
 
 /* Optional: home hero name uses brand so it matches */
