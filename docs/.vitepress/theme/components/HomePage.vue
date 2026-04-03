@@ -2,6 +2,33 @@
 import { useData } from 'vitepress'
 
 const { isDark } = useData()
+
+const faqs = [
+  {
+    q: 'How is this different from Playwright/Cypress?',
+    a: 'TWD validates your frontend UI logic with mocked boundaries. Playwright/Cypress validate that your systems work together end-to-end. They complement each other — TWD for fast deterministic feedback during dev, E2E for full integration in CI.'
+  },
+  {
+    q: 'How is this different from Vitest Browser Mode?',
+    a: 'Vitest Browser runs unit/component tests in a browser but in isolation from your app. TWD runs inside your actual dev server — same page, same routes, same state. You test what the user sees, not a mounted component in a vacuum.'
+  },
+  {
+    q: 'Does this replace Testing Library?',
+    a: 'No. TWD uses Testing Library under the hood. screenDom is a scoped wrapper around Testing Library queries. You get the same semantic selectors — TWD just adds the runner, sidebar, and mocking layer on top.'
+  },
+  {
+    q: 'What frameworks are supported?',
+    a: 'React, Vue, Angular, and Solid.js. Anything Vite-based. Not compatible with SSR-first architectures like Next.js App Router (the testing boundary becomes unclear when the server owns rendering).'
+  },
+  {
+    q: 'Can AI actually write good tests?',
+    a: "The twd-ai plugin doesn't just generate test files. It runs them, reads real failures, fixes them, checks quality, and finds gaps. The tests execute in a real browser — if they pass, they mean something. And because results come back as structured text over WebSocket (not screenshots or DOM snapshots), token usage is significantly lower than tools like Playwright MCP."
+  },
+  {
+    q: 'Does TWD code ship to production?',
+    a: 'No. All TWD imports are guarded by import.meta.env.DEV. Nothing reaches your production bundle.'
+  }
+]
 </script>
 
 <template>
@@ -214,6 +241,17 @@ const { isDark } = useData()
             </p>
           </div>
         </div>
+      </div>
+    </section>
+
+    <!-- Section 5: FAQ -->
+    <section class="faq" aria-labelledby="faq-heading">
+      <h2 id="faq-heading" class="section-title">Frequently Asked Questions</h2>
+      <div class="faq-grid">
+        <details v-for="(faq, i) in faqs" :key="i" class="faq-item">
+          <summary class="faq-question">{{ faq.q }}</summary>
+          <p class="faq-answer">{{ faq.a }}</p>
+        </details>
       </div>
     </section>
     </main>
@@ -633,6 +671,62 @@ const { isDark } = useData()
   }
   .step-title {
     font-size: 1.0625rem;
+  }
+}
+
+/* FAQ */
+.faq {
+  padding: 60px 0;
+}
+
+.faq-grid {
+  margin-top: 32px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+.faq-item {
+  border: 1px solid var(--vp-c-border);
+  border-radius: 12px;
+  padding: 0;
+  background: var(--vp-c-bg-soft);
+  overflow: hidden;
+}
+
+.faq-question {
+  padding: 16px 20px;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--vp-c-text-1);
+  cursor: pointer;
+  list-style: none;
+}
+
+.faq-question::-webkit-details-marker {
+  display: none;
+}
+
+.faq-question::before {
+  content: '+ ';
+  color: var(--vp-c-brand-1);
+  font-weight: 700;
+}
+
+details[open] .faq-question::before {
+  content: '− ';
+}
+
+.faq-answer {
+  padding: 0 20px 16px;
+  font-size: 0.875rem;
+  line-height: 1.6;
+  color: var(--vp-c-text-2);
+}
+
+@media (max-width: 768px) {
+  .faq-grid {
+    grid-template-columns: 1fr;
   }
 }
 </style>
