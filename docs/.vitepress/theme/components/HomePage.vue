@@ -19,7 +19,19 @@ const { isDark } = useData()
 
     <main>
       <section class="hero">
-        <h1>Testing isn't a phase. It's how you build.</h1>
+        <div class="hero-content">
+          <h1 class="hero-headline">Testing isn't a phase.<br>It's how you build.</h1>
+          <p class="hero-sub">
+            TWD is a frontend testing ecosystem. Write tests while you develop, in your real browser.
+            Let the AI agent iterate. Validate every mock against the real API before you merge.
+          </p>
+          <div class="hero-actions">
+            <a href="/getting-started" class="btn btn-brand">Get Started</a>
+            <a href="https://github.com/BRIKEV/twd" target="_blank" rel="noopener" class="btn btn-outline">
+              View on GitHub <span class="visually-hidden">(opens in new tab)</span>
+            </a>
+          </div>
+        </div>
       </section>
     </main>
   </div>
@@ -30,8 +42,10 @@ const { isDark } = useData()
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 24px;
+  font-family: var(--vp-font-family-base);
 }
 
+/* Navigation */
 .home-nav nav {
   display: flex;
   align-items: center;
@@ -63,17 +77,7 @@ const { isDark } = useData()
   color: var(--vp-c-brand-1);
 }
 
-.hero {
-  text-align: center;
-  padding: 80px 0 60px;
-}
-
-.hero h1 {
-  font-size: 2.5rem;
-  line-height: 1.2;
-  color: var(--vp-c-text-1);
-}
-
+/* Utility: visually hidden for screen readers */
 .visually-hidden {
   position: absolute;
   width: 1px;
@@ -86,12 +90,72 @@ const { isDark } = useData()
   border: 0;
 }
 
+/* Hero */
+.hero {
+  text-align: center;
+  padding: 100px 0 80px;
+}
+
+.hero-headline {
+  font-size: 3rem;
+  line-height: 1.15;
+  font-weight: 800;
+  color: var(--vp-c-text-1);
+  letter-spacing: -0.02em;
+}
+
+.hero-sub {
+  margin-top: 24px;
+  font-size: 1.125rem;
+  line-height: 1.7;
+  color: var(--vp-c-text-2);
+  max-width: 640px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.hero-actions {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 32px;
+  flex-wrap: wrap;
+}
+
+.btn {
+  display: inline-block;
+  padding: 12px 28px;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: opacity 0.2s;
+}
+
+.btn:hover {
+  opacity: 0.85;
+}
+
+.btn-brand {
+  background: var(--vp-c-brand-1);
+  color: #fff;
+}
+
+.btn-outline {
+  border: 1px solid var(--vp-c-border);
+  color: var(--vp-c-text-1);
+  background: transparent;
+}
+
 @media (max-width: 640px) {
   .hero {
-    padding: 48px 0 40px;
+    padding: 60px 0 48px;
   }
-  .hero h1 {
-    font-size: 1.75rem;
+  .hero-headline {
+    font-size: 2rem;
+  }
+  .hero-sub {
+    font-size: 1rem;
   }
   .nav-links {
     gap: 16px;
