@@ -139,9 +139,9 @@ const faqs = [
             <circle cx="400" cy="220" r="140" fill="url(#center-glow)"/>
 
             <!-- Center text -->
-            <text x="400" y="214" text-anchor="middle" fill="var(--vp-c-brand-1)" font-size="18" font-weight="700" opacity="0.25" letter-spacing="0.15em">TWD</text>
-            <text x="400" y="232" text-anchor="middle" fill="var(--vp-c-text-3)" font-size="9" opacity="0.4" letter-spacing="0.04em">test what you own</text>
-            <text x="400" y="244" text-anchor="middle" fill="var(--vp-c-text-3)" font-size="9" opacity="0.4" letter-spacing="0.04em">mock what you don't</text>
+            <text x="400" y="214" text-anchor="middle" fill="var(--vp-c-brand-1)" font-size="18" font-weight="700" opacity="0.55" letter-spacing="0.15em">TWD</text>
+            <text x="400" y="232" text-anchor="middle" fill="var(--vp-c-text-2)" font-size="10" opacity="0.7" letter-spacing="0.04em">test what you own</text>
+            <text x="400" y="246" text-anchor="middle" fill="var(--vp-c-text-2)" font-size="10" opacity="0.7" letter-spacing="0.04em">mock what you don't</text>
 
             <!-- Stage 1: Top — DEVELOP + TEST (CORE) -->
             <rect x="280" y="50" width="240" height="88" rx="12" fill="var(--pipeline-card-bg)" stroke="var(--vp-c-brand-1)" stroke-width="2"/>
@@ -153,24 +153,24 @@ const faqs = [
 
             <!-- Stage 2: Right — AI AGENT (optional) -->
             <rect x="560" y="155" width="220" height="88" rx="12" fill="var(--pipeline-card-bg)" stroke="var(--vp-c-brand-1)" stroke-width="1.5" stroke-dasharray="6,4"/>
-            <rect x="696" y="147" width="60" height="18" rx="9" fill="none" stroke="var(--vp-c-brand-1)" stroke-width="1" opacity="0.5"/>
-            <text x="726" y="160" text-anchor="middle" fill="var(--vp-c-brand-1)" font-size="9" font-weight="600" opacity="0.6">optional</text>
+            <rect x="690" y="147" width="72" height="20" rx="10" fill="var(--vp-c-bg)" stroke="var(--vp-c-brand-1)" stroke-width="1.2"/>
+            <text x="726" y="161" text-anchor="middle" fill="var(--vp-c-brand-1)" font-size="10" font-weight="700" letter-spacing="0.03em">optional</text>
             <text x="585" y="185" fill="var(--vp-c-brand-1)" font-size="10" font-weight="700" letter-spacing="0.08em">AI AGENT</text>
             <text x="585" y="207" fill="var(--vp-c-text-1)" font-size="13" font-weight="600">twd-relay + twd-ai</text>
             <text x="585" y="227" fill="var(--vp-c-text-3)" font-size="11">Write, run, fix, repeat</text>
 
             <!-- Stage 3: Bottom-right — CI PIPELINE (optional) -->
             <rect x="490" y="290" width="220" height="88" rx="12" fill="var(--pipeline-card-bg)" stroke="var(--vp-c-brand-1)" stroke-width="1.5" stroke-dasharray="6,4"/>
-            <rect x="626" y="282" width="60" height="18" rx="9" fill="none" stroke="var(--vp-c-brand-1)" stroke-width="1" opacity="0.5"/>
-            <text x="656" y="295" text-anchor="middle" fill="var(--vp-c-brand-1)" font-size="9" font-weight="600" opacity="0.6">optional</text>
+            <rect x="620" y="282" width="72" height="20" rx="10" fill="var(--vp-c-bg)" stroke="var(--vp-c-brand-1)" stroke-width="1.2"/>
+            <text x="656" y="296" text-anchor="middle" fill="var(--vp-c-brand-1)" font-size="10" font-weight="700" letter-spacing="0.03em">optional</text>
             <text x="515" y="320" fill="var(--vp-c-brand-1)" font-size="10" font-weight="700" letter-spacing="0.08em">CI PIPELINE</text>
             <text x="515" y="342" fill="var(--vp-c-text-1)" font-size="13" font-weight="600">twd-cli</text>
             <text x="515" y="362" fill="var(--vp-c-text-3)" font-size="11">Headless tests + coverage</text>
 
             <!-- Stage 4: Bottom-left — VALIDATE CONTRACTS (optional, gold) -->
             <rect x="90" y="290" width="240" height="88" rx="12" fill="var(--pipeline-card-bg)" stroke="var(--pipeline-gold)" stroke-width="1.5" stroke-dasharray="6,4"/>
-            <rect x="246" y="282" width="60" height="18" rx="9" fill="none" stroke="var(--pipeline-gold)" stroke-width="1" opacity="0.5"/>
-            <text x="276" y="295" text-anchor="middle" fill="var(--pipeline-gold)" font-size="9" font-weight="600" opacity="0.6">optional</text>
+            <rect x="240" y="282" width="72" height="20" rx="10" fill="var(--vp-c-bg)" stroke="var(--pipeline-gold)" stroke-width="1.2"/>
+            <text x="276" y="296" text-anchor="middle" fill="var(--pipeline-gold)" font-size="10" font-weight="700" letter-spacing="0.03em">optional</text>
             <text x="115" y="320" fill="var(--pipeline-gold)" font-size="10" font-weight="700" letter-spacing="0.08em">VALIDATE CONTRACTS</text>
             <text x="115" y="342" fill="var(--vp-c-text-1)" font-size="13" font-weight="600">openapi-mock-validator</text>
             <text x="115" y="362" fill="var(--vp-c-text-3)" font-size="11">Every mock vs the real spec</text>
