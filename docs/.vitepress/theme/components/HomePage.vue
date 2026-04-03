@@ -254,6 +254,25 @@ const faqs = [
         </details>
       </div>
     </section>
+
+    <!-- Section 6: Manifesto Quote -->
+    <section class="manifesto-quote">
+      <blockquote class="manifesto-text">
+        TWD isn't about writing <em>more</em> tests — it's about writing the <em>right</em> ones, at the right time.
+      </blockquote>
+      <a href="/twd-manifesto" class="manifesto-link">Read the full manifesto &rarr;</a>
+    </section>
+
+    <!-- Section 7: Final CTA -->
+    <section class="final-cta">
+      <div class="cta-install">
+        <code class="cta-code">npm install twd-js</code>
+      </div>
+      <a href="/getting-started" class="btn btn-brand">Get started &rarr;</a>
+    </section>
+
+    <!-- Footer spacing -->
+    <div style="height: 60px;"></div>
     </main>
   </div>
 </template>
@@ -727,6 +746,68 @@ details[open] .faq-question::before {
 @media (max-width: 768px) {
   .faq-grid {
     grid-template-columns: 1fr;
+  }
+}
+
+/* Manifesto Quote */
+.manifesto-quote {
+  padding: 60px 0;
+  text-align: center;
+}
+
+.manifesto-text {
+  font-size: 1.5rem;
+  line-height: 1.5;
+  color: var(--vp-c-text-1);
+  font-style: italic;
+  max-width: 640px;
+  margin: 0 auto;
+  border: none;
+  padding: 0;
+}
+
+.manifesto-text em {
+  color: var(--vp-c-brand-1);
+  font-style: italic;
+}
+
+.manifesto-link {
+  display: inline-block;
+  margin-top: 20px;
+  font-size: 1rem;
+  color: var(--vp-c-brand-1);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.manifesto-link:hover {
+  text-decoration: underline;
+}
+
+/* Final CTA */
+.final-cta {
+  text-align: center;
+  padding: 40px 0;
+}
+
+.cta-install {
+  margin-bottom: 20px;
+}
+
+.cta-code {
+  display: inline-block;
+  padding: 12px 24px;
+  border-radius: 8px;
+  background: var(--vp-c-bg-soft);
+  border: 1px solid var(--vp-c-border);
+  font-size: 1.0625rem;
+  font-family: var(--vp-font-family-mono);
+  color: var(--vp-c-text-1);
+}
+
+@media (max-width: 640px) {
+  .manifesto-text {
+    font-size: 1.25rem;
   }
 }
 </style>
