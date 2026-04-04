@@ -17,25 +17,25 @@ export default defineConfig({
     ['link', { rel: 'manifest', href: '/site.webmanifest' }],
     
     // SEO Meta Tags
-    ['meta', { name: 'keywords', content: 'testing, deterministic, browser-validation, ai-testing, react, vue, angular, solidjs, javascript, typescript, twd, test-driven-development, browser-testing, mock-service-worker, vite' }],
-    
+    ['meta', { name: 'keywords', content: 'testing, deterministic, browser-validation, ai-testing, ai-agent, react, vue, angular, solidjs, javascript, typescript, twd, test-while-developing, browser-testing, mock-service-worker, vite, contract-testing, openapi, code-coverage' }],
+
     // Open Graph Tags
     ['meta', { property: 'og:type', content: 'website' }],
     ['meta', { property: 'og:title', content: 'TWD - Test While Developing' }],
-    ['meta', { property: 'og:description', content: 'In-browser testing for React, Vue, Angular, and Solid.js with instant feedback, Mock Service Worker integration, and beautiful UI. Because testing isn\'t a phase, it\'s part of the flow.' }],
+    ['meta', { property: 'og:description', content: 'Frontend testing ecosystem. Write tests in your real browser, let the AI agent iterate, validate every mock against the real API. Testing isn\'t a phase — it\'s how you build.' }],
     ['meta', { property: 'og:url', content: 'https://twd.dev/' }],
-    ['meta', { property: 'og:site_name', content: 'TWD Documentation' }],
-    ['meta', { property: 'og:image', content: 'https://twd.dev/web-app-manifest-512x512.png' }],
-    ['meta', { property: 'og:image:width', content: '512' }],
-    ['meta', { property: 'og:image:height', content: '512' }],
-    ['meta', { property: 'og:image:alt', content: 'TWD - Test While Developing Logo' }],
+    ['meta', { property: 'og:site_name', content: 'TWD' }],
+    ['meta', { property: 'og:image', content: 'https://twd.dev/twd_ecosystem.png' }],
+    ['meta', { property: 'og:image:width', content: '2104' }],
+    ['meta', { property: 'og:image:height', content: '1436' }],
+    ['meta', { property: 'og:image:alt', content: 'TWD Ecosystem — develop, test, validate, ship' }],
 
     // Twitter Card Tags
     ['meta', { name: 'twitter:card', content: 'summary_large_image' }],
     ['meta', { name: 'twitter:title', content: 'TWD - Test While Developing' }],
-    ['meta', { name: 'twitter:description', content: 'In-browser testing for React, Vue, Angular, and Solid.js with instant feedback and beautiful UI.' }],
-    ['meta', { name: 'twitter:image', content: 'https://twd.dev/web-app-manifest-512x512.png' }],
-    ['meta', { name: 'twitter:image:alt', content: 'TWD - Test While Developing Logo' }],
+    ['meta', { name: 'twitter:description', content: 'Frontend testing ecosystem. Write tests in your real browser, let the AI agent iterate, validate every mock against the real API.' }],
+    ['meta', { name: 'twitter:image', content: 'https://twd.dev/twd_ecosystem.png' }],
+    ['meta', { name: 'twitter:image:alt', content: 'TWD Ecosystem — develop, test, validate, ship' }],
 
     // Additional Meta Tags (TWD brand: darker teal for light theme)
     ['meta', { name: 'theme-color', content: '#123956' }],
