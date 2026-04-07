@@ -52,6 +52,13 @@ export default defineConfig({
 
     sidebar: [
       {
+        text: 'Philosophy',
+        items: [
+          { text: 'TWD Manifesto', link: '/twd-manifesto' },
+          { text: 'Why Test While Developing', link: '/motivation' },
+        ]
+      },
+      {
         text: 'Core Concepts',
         items: [
           { text: 'Getting Started', link: '/getting-started' },
@@ -85,13 +92,6 @@ export default defineConfig({
           { text: 'Claude Code Plugin', link: '/claude-plugin' },
           { text: 'AI Context & Prompts', link: '/agents' },
           { text: 'AI Remote Testing', link: '/ai-remote-testing' },
-        ]
-      },
-      {
-        text: 'Philosophy',
-        items: [
-          { text: 'TWD Manifesto', link: '/twd-manifesto' },
-          { text: 'Why Test While Developing', link: '/motivation' },
         ]
       },
       {
