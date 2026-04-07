@@ -45,14 +45,30 @@ export default defineConfig({
     // https://vitepress.dev/reference/default-theme-config
     nav: [
       { text: 'Home', link: '/' },
-      { text: 'TWD + AI', link: '/twd-ai/setup' },
       { text: 'Core Concepts', link: '/getting-started' },
+      { text: 'AI Workflow', link: '/twd-ai/setup' },
       { text: 'API Reference', link: '/api/' }
     ],
 
     sidebar: [
       {
-        text: 'TWD + AI',
+        text: 'Core Concepts',
+        items: [
+          { text: 'Getting Started', link: '/getting-started' },
+          { text: 'Writing Tests', link: '/writing-tests' },
+          { text: 'API Mocking', link: '/api-mocking' },
+          { text: 'Component Mocking', link: '/component-mocking' },
+          { text: 'Module Mocking', link: '/module-mocking' },
+          { text: 'Theming', link: '/theming' },
+          { text: 'CI Execution', link: '/ci-execution' },
+          { text: 'Coverage', link: '/coverage' },
+          { text: 'Contract Testing', link: '/contract-testing' },
+          { text: 'Framework Integration', link: '/frameworks' },
+          { text: 'Testing Library', link: '/testing-library' },
+        ]
+      },
+      {
+        text: 'AI Workflow',
         items: [
           { text: 'Project Setup', link: '/twd-ai/setup' },
           { text: 'Writing Tests', link: '/twd-ai/writing-tests' },
@@ -82,22 +98,6 @@ export default defineConfig({
         text: 'Community',
         items: [
           { text: 'Community & Examples', link: '/community' },
-        ]
-      },
-      {
-        text: 'Core Concepts',
-        items: [
-          { text: 'Getting Started', link: '/getting-started' },
-          { text: 'Writing Tests', link: '/writing-tests' },
-          { text: 'API Mocking', link: '/api-mocking' },
-          { text: 'Component Mocking', link: '/component-mocking' },
-          { text: 'Module Mocking', link: '/module-mocking' },
-          { text: 'Theming', link: '/theming' },
-          { text: 'CI Execution', link: '/ci-execution' },
-          { text: 'Coverage', link: '/coverage' },
-          { text: 'Contract Testing', link: '/contract-testing' },
-          { text: 'Framework Integration', link: '/frameworks' },
-          { text: 'Testing Library', link: '/testing-library' },
         ]
       },
       {
