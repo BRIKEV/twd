@@ -31,16 +31,11 @@ TWD is for developers who want faster feedback, deeper confidence, and fewer reg
 6. **Prefer fast feedback over strict structure**  
    Don't get stuck on test types or formats — prioritize feedback that helps you move forward.
 
-7. **Design features to be easy to validate**  
+7. **Test what you own, mock what you don't**  
+   Focus on testing your own code and logic. External services, third-party APIs, and dependencies you don't control should be mocked — not tested.
+
+8. **Design features to be easy to validate**  
    Write code that's naturally testable and easy to observe as you develop.
-
----
-
-## Examples
-
-See TWD in action:
-
-- [NestJS Service Tests](https://github.com/BRIKEV/twd/blob/main/nestjs-testing.md) (external)
 
 ---
 

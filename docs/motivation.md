@@ -113,6 +113,18 @@ Yes, you should still do those too — once the main work is done.
 
 Here's where **coverage tools** come in. Not as a vanity metric, but as a checklist. Once your "test while developing" tests are done, run coverage to see what's missing. Then fill in the gaps with more traditional unit, integration, or even property-based tests.
 
+## What Changes in the AI Era
+
+Now that AI is generating a big portion of our frontend code, everything we've talked about matters even more.
+
+Speed is no longer the bottleneck — **confidence is**.
+
+AI can produce features fast, but it doesn't know your project the way you do. It doesn't know what should be mocked, how your auth works, or what "good tests" look like in your codebase. Without that context, AI-generated tests are generic, inconsistent, and sometimes useless.
+
+That's why TWD now includes an [AI Workflow](/twd-ai/setup) — a set of skills that give the AI agent your project context, your testing patterns, and your rules. The AI writes tests that actually fit your architecture, executes them in your real browser, and iterates until they pass.
+
+The philosophy hasn't changed. The principles still apply. But now, instead of just *you* testing while developing, **your AI agent tests while developing too** — with the same mindset, the same patterns, and the same confidence.
+
 ## Final Thoughts
 
 Testing isn't a separate phase of development. It's not an extra burden. It's a **different way of thinking** about the same job.

@@ -45,14 +45,21 @@ export default defineConfig({
     // https://vitepress.dev/reference/default-theme-config
     nav: [
       { text: 'Home', link: '/' },
-      { text: 'Guide', link: '/getting-started' },
-      { text: 'Tutorial', link: '/tutorial/' },
+      { text: 'Core Concepts', link: '/getting-started' },
+      { text: 'AI Workflow', link: '/twd-ai/setup' },
       { text: 'API Reference', link: '/api/' }
     ],
 
     sidebar: [
       {
-        text: 'Guide',
+        text: 'Philosophy',
+        items: [
+          { text: 'TWD Manifesto', link: '/twd-manifesto' },
+          { text: 'Why Test While Developing', link: '/motivation' },
+        ]
+      },
+      {
+        text: 'Core Concepts',
         items: [
           { text: 'Getting Started', link: '/getting-started' },
           { text: 'Writing Tests', link: '/writing-tests' },
@@ -68,19 +75,23 @@ export default defineConfig({
         ]
       },
       {
-        text: 'AI',
+        text: 'AI Workflow',
+        items: [
+          { text: 'Project Setup', link: '/twd-ai/setup' },
+          { text: 'Writing Tests', link: '/twd-ai/writing-tests' },
+          { text: 'CI Setup', link: '/twd-ai/ci-setup' },
+          { text: 'Test Gap Analysis', link: '/twd-ai/test-gaps' },
+          { text: 'Test Quality', link: '/twd-ai/test-quality' },
+          { text: 'Test Flow Gallery', link: '/twd-ai/flow-gallery' },
+        ]
+      },
+      {
+        text: 'AI Reference',
         items: [
           { text: 'Overview', link: '/ai-overview' },
           { text: 'Claude Code Plugin', link: '/claude-plugin' },
           { text: 'AI Context & Prompts', link: '/agents' },
           { text: 'AI Remote Testing', link: '/ai-remote-testing' },
-        ]
-      },
-      {
-        text: 'Philosophy',
-        items: [
-          { text: 'TWD Manifesto', link: '/twd-manifesto' },
-          { text: 'Why Test While Developing', link: '/motivation' },
         ]
       },
       {
