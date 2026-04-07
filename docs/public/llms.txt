@@ -1,6 +1,6 @@
 # TWD (Test While Developing)
 
-> TWD is an in-browser testing library for SPAs that runs tests directly in the browser with a sidebar UI for instant visual feedback. It supports React, Vue, Angular, and Solid.js with deterministic, client-side UI testing.
+> TWD is an in-browser testing ecosystem for SPAs that runs tests directly in the browser with a sidebar UI for instant visual feedback. It supports React, Vue, Angular, and Solid.js with deterministic, client-side UI testing — and includes an AI workflow that lets agents write, run, and iterate on tests autonomously.
 
 Key features:
 - In-browser test execution with visual sidebar UI
@@ -9,9 +9,14 @@ Key features:
 - Testing Library integration
 - CI/CD execution with twd-cli
 - Multi-framework support (React, Vue, Angular, Solid.js)
-- AI-assisted testing with Claude Code plugin
+- AI-assisted testing with Claude Code plugin and skills
 
-## Guide
+## Philosophy
+
+- [TWD Manifesto](https://twd.dev/twd-manifesto.html): Core principles — test while building, test what you own mock what you don't
+- [Why Test While Developing](https://twd.dev/motivation.html): Motivation, philosophy, and what changes in the AI era
+
+## Core Concepts
 
 - [Getting Started](https://twd.dev/getting-started.html): Installation, setup (bundled vs standard), first test, troubleshooting
 - [Writing Tests](https://twd.dev/writing-tests.html): Test structure, element selection (TWD native + Testing Library), assertions, user interactions, navigation
@@ -22,6 +27,24 @@ Key features:
 - [Testing Library](https://twd.dev/testing-library.html): Testing Library integration and selectors
 - [CI Execution](https://twd.dev/ci-execution.html): twd-cli setup, Puppeteer, GitHub Actions
 - [Coverage](https://twd.dev/coverage.html): Code coverage reporting
+- [Contract Testing](https://twd.dev/contract-testing.html): Validate mocks against OpenAPI specs
+- [Theming](https://twd.dev/theming.html): Customizing TWD sidebar appearance
+
+## AI Workflow
+
+- [Project Setup](https://twd.dev/twd-ai/setup.html): Configure your project for AI-driven testing with /twd:setup
+- [Writing Tests](https://twd.dev/twd-ai/writing-tests.html): Write and execute tests with the /twd skill via twd-relay
+- [CI Setup](https://twd.dev/twd-ai/ci-setup.html): Generate GitHub Actions workflows with /twd:ci-setup
+- [Test Gap Analysis](https://twd.dev/twd-ai/test-gaps.html): Find untested routes and classify risk with /twd:test-gaps
+- [Test Quality](https://twd.dev/twd-ai/test-quality.html): Grade test quality across four dimensions with /twd:test-quality
+- [Test Flow Gallery](https://twd.dev/twd-ai/flow-gallery.html): Generate visual flowcharts of test coverage with /twd:test-flow-gallery
+
+## AI Reference
+
+- [AI Overview](https://twd.dev/ai-overview.html): Using TWD with AI tools
+- [Claude Plugin](https://twd.dev/claude-plugin.html): Claude Code plugin for TWD
+- [AI Agents & Context](https://twd.dev/agents.html): Context and prompts for AI agents
+- [AI Remote Testing](https://twd.dev/ai-remote-testing.html): Remote testing patterns
 
 ## API Reference
 
@@ -39,16 +62,6 @@ Key features:
 - [CI Integration](https://twd.dev/tutorial/ci-integration.html): Setting up CI/CD
 - [Production Builds](https://twd.dev/tutorial/production-builds.html): Removing test code from production
 
-## AI Integration
+## Community
 
-- [AI Overview](https://twd.dev/ai-overview.html): Using TWD with AI tools
-- [Claude Plugin](https://twd.dev/claude-plugin.html): Claude Code plugin for TWD
-- [AI Agents & Context](https://twd.dev/agents.html): Context and prompts for AI agents
-- [AI Remote Testing](https://twd.dev/ai-remote-testing.html): Remote testing patterns
-
-## Optional
-
-- [Theming](https://twd.dev/theming.html): Customizing TWD sidebar appearance
-- [Motivation](https://twd.dev/motivation.html): Why Test While Developing
-- [TWD Manifesto](https://twd.dev/twd-manifesto.html): Project philosophy
-- [Community](https://twd.dev/community.html): Examples and community links
+- [Community & Examples](https://twd.dev/community.html): Example apps and community links
