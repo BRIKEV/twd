@@ -45,30 +45,25 @@ export default defineConfig({
     // https://vitepress.dev/reference/default-theme-config
     nav: [
       { text: 'Home', link: '/' },
-      { text: 'Guide', link: '/getting-started' },
-      { text: 'Tutorial', link: '/tutorial/' },
+      { text: 'TWD + AI', link: '/twd-ai/setup' },
+      { text: 'Core Concepts', link: '/getting-started' },
       { text: 'API Reference', link: '/api/' }
     ],
 
     sidebar: [
       {
-        text: 'Guide',
+        text: 'TWD + AI',
         items: [
-          { text: 'Getting Started', link: '/getting-started' },
-          { text: 'Writing Tests', link: '/writing-tests' },
-          { text: 'API Mocking', link: '/api-mocking' },
-          { text: 'Component Mocking', link: '/component-mocking' },
-          { text: 'Module Mocking', link: '/module-mocking' },
-          { text: 'Theming', link: '/theming' },
-          { text: 'CI Execution', link: '/ci-execution' },
-          { text: 'Coverage', link: '/coverage' },
-          { text: 'Contract Testing', link: '/contract-testing' },
-          { text: 'Framework Integration', link: '/frameworks' },
-          { text: 'Testing Library', link: '/testing-library' },
+          { text: 'Project Setup', link: '/twd-ai/setup' },
+          { text: 'Writing Tests', link: '/twd-ai/writing-tests' },
+          { text: 'CI Setup', link: '/twd-ai/ci-setup' },
+          { text: 'Test Gap Analysis', link: '/twd-ai/test-gaps' },
+          { text: 'Test Quality', link: '/twd-ai/test-quality' },
+          { text: 'Test Flow Gallery', link: '/twd-ai/flow-gallery' },
         ]
       },
       {
-        text: 'AI',
+        text: 'AI Reference',
         items: [
           { text: 'Overview', link: '/ai-overview' },
           { text: 'Claude Code Plugin', link: '/claude-plugin' },
@@ -87,6 +82,22 @@ export default defineConfig({
         text: 'Community',
         items: [
           { text: 'Community & Examples', link: '/community' },
+        ]
+      },
+      {
+        text: 'Core Concepts',
+        items: [
+          { text: 'Getting Started', link: '/getting-started' },
+          { text: 'Writing Tests', link: '/writing-tests' },
+          { text: 'API Mocking', link: '/api-mocking' },
+          { text: 'Component Mocking', link: '/component-mocking' },
+          { text: 'Module Mocking', link: '/module-mocking' },
+          { text: 'Theming', link: '/theming' },
+          { text: 'CI Execution', link: '/ci-execution' },
+          { text: 'Coverage', link: '/coverage' },
+          { text: 'Contract Testing', link: '/contract-testing' },
+          { text: 'Framework Integration', link: '/frameworks' },
+          { text: 'Testing Library', link: '/testing-library' },
         ]
       },
       {
