@@ -1,3 +1,26 @@
+## <small>1.6.5 (2026-04-12)</small>
+
+* feat: add unfocused tab fallbacks for clear() and keyboard() in userEvent proxy (#205) ([af6eea2](https://github.com/BRIKEV/twd/commit/af6eea2)), closes [#205](https://github.com/BRIKEV/twd/issues/205)
+* feat: send testId with __twdCollectMock for contract validation (#203) ([fc0958c](https://github.com/BRIKEV/twd/commit/fc0958c)), closes [#203](https://github.com/BRIKEV/twd/issues/203)
+* feat: redesign homepage with custom Vue component (#188) ([d0f45eb](https://github.com/BRIKEV/twd/commit/d0f45eb)), closes [#188](https://github.com/BRIKEV/twd/issues/188)
+* feat(docs): update OG/Twitter meta — ecosystem diagram as social image, refresh descriptions and keywords ([5d44af9](https://github.com/BRIKEV/twd/commit/5d44af9))
+* docs: add AI Workflow tutorial and restructure docs (#195) ([643d6a0](https://github.com/BRIKEV/twd/commit/643d6a0)), closes [#195](https://github.com/BRIKEV/twd/issues/195)
+* docs: add contract testing page, update CI execution and coverage docs ([98dec30](https://github.com/BRIKEV/twd/commit/98dec30))
+* chore(deps): bump preact from 10.29.0 to 10.29.1 (#189) ([4178609](https://github.com/BRIKEV/twd/commit/4178609)), closes [#189](https://github.com/BRIKEV/twd/issues/189)
+* chore(deps): bump vite (#191) ([bbb54f0](https://github.com/BRIKEV/twd/commit/bbb54f0)), closes [#191](https://github.com/BRIKEV/twd/issues/191)
+* chore(deps): bump lodash and @microsoft/api-extractor (#197) ([46071af](https://github.com/BRIKEV/twd/commit/46071af)), closes [#197](https://github.com/BRIKEV/twd/issues/197)
+* chore(deps): bump axios from 1.13.5 to 1.15.0 in /examples/twd-test-app (#204) ([fc6a5cb](https://github.com/BRIKEV/twd/commit/fc6a5cb)), closes [#204](https://github.com/BRIKEV/twd/issues/204)
+* chore(deps): bump axios in /examples/tutorial-example (#202) ([51689f0](https://github.com/BRIKEV/twd/commit/51689f0)), closes [#202](https://github.com/BRIKEV/twd/issues/202)
+* chore(deps-dev): bump basic-ftp in /examples/tutorial-example (#200) ([bf9a42d](https://github.com/BRIKEV/twd/commit/bf9a42d)), closes [#200](https://github.com/BRIKEV/twd/issues/200)
+* chore(deps-dev): bump basic-ftp in /examples/twd-test-app (#201) ([2c319bc](https://github.com/BRIKEV/twd/commit/2c319bc)), closes [#201](https://github.com/BRIKEV/twd/issues/201)
+* chore(deps-dev): bump basic-ftp in /examples/twd-test-app (#199) ([fe50d29](https://github.com/BRIKEV/twd/commit/fe50d29)), closes [#199](https://github.com/BRIKEV/twd/issues/199)
+* chore(deps-dev): bump basic-ftp in /examples/tutorial-example (#198) ([32e6458](https://github.com/BRIKEV/twd/commit/32e6458)), closes [#198](https://github.com/BRIKEV/twd/issues/198)
+* chore(deps): bump lodash in /examples/tutorial-example (#196) ([21c7dbe](https://github.com/BRIKEV/twd/commit/21c7dbe)), closes [#196](https://github.com/BRIKEV/twd/issues/196)
+* chore(deps-dev): bump vite in /examples/tutorial-example (#194) ([8e36efe](https://github.com/BRIKEV/twd/commit/8e36efe)), closes [#194](https://github.com/BRIKEV/twd/issues/194)
+* chore(deps-dev): bump vite from 7.2.2 to 7.3.2 in /examples/twd-test-app (#193) ([445fd07](https://github.com/BRIKEV/twd/commit/445fd07)), closes [#193](https://github.com/BRIKEV/twd/issues/193)
+* chore(deps-dev): bump vite in /examples/vue-twd-example (#192) ([49a2b0c](https://github.com/BRIKEV/twd/commit/49a2b0c)), closes [#192](https://github.com/BRIKEV/twd/issues/192)
+
+
 ## <small>1.6.4 (2026-03-31)</small>
 
 * fix: revert TS 6 upgrade that broke type declarations, add CI build checks (#187) ([82f5d20](https://github.com/BRIKEV/twd/commit/82f5d20)), closes [#187](https://github.com/BRIKEV/twd/issues/187)
