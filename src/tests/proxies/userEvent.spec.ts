@@ -113,3 +113,178 @@ describe('userEvent typing fallback', () => {
     document.body.removeChild(input);
   });
 });
+
+describe('userEvent clear fallback', () => {
+  let originalVisibilityState: PropertyDescriptor | undefined;
+  let hasFocusSpy: ReturnType<typeof vi.spyOn>;
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    twd.handlers.clear();
+    originalVisibilityState = Object.getOwnPropertyDescriptor(document, 'visibilityState');
+    hasFocusSpy = vi.spyOn(document, 'hasFocus');
+  });
+
+  afterEach(() => {
+    if (originalVisibilityState) {
+      Object.defineProperty(document, 'visibilityState', originalVisibilityState);
+    } else {
+      Object.defineProperty(document, 'visibilityState', {
+        configurable: true,
+        get: () => 'visible',
+      });
+    }
+    hasFocusSpy.mockRestore();
+  });
+
+  it('should clear input value and dispatch events when document is hidden', async () => {
+    Object.defineProperty(document, 'visibilityState', {
+      configurable: true,
+      get: () => 'hidden',
+    });
+    hasFocusSpy.mockReturnValue(false);
+
+    const input = document.createElement('input');
+    input.value = 'existing text';
+    document.body.appendChild(input);
+
+    const inputHandler = vi.fn();
+    const changeHandler = vi.fn();
+    input.addEventListener('input', inputHandler);
+    input.addEventListener('change', changeHandler);
+
+    twd.describe('Clear fallback hidden', () => {
+      twd.it('clears via fallback', async () => {
+        await userEvent.clear(input);
+      });
+    });
+
+    const testArray = Array.from(twd.handlers.values());
+    const test = testArray[testArray.length - 1];
+    test.status = 'running';
+    await test.handler();
+
+    expect(input.value).toBe('');
+    expect(inputHandler).toHaveBeenCalled();
+    expect(changeHandler).toHaveBeenCalled();
+
+    document.body.removeChild(input);
+  });
+
+  it('should clear input value when document has no focus but is visible', async () => {
+    Object.defineProperty(document, 'visibilityState', {
+      configurable: true,
+      get: () => 'visible',
+    });
+    hasFocusSpy.mockReturnValue(false);
+
+    const input = document.createElement('input');
+    input.value = 'some text';
+    document.body.appendChild(input);
+
+    twd.describe('Clear fallback unfocused', () => {
+      twd.it('clears via fallback', async () => {
+        await userEvent.clear(input);
+      });
+    });
+
+    const testArray = Array.from(twd.handlers.values());
+    const test = testArray[testArray.length - 1];
+    test.status = 'running';
+    await test.handler();
+
+    expect(input.value).toBe('');
+
+    document.body.removeChild(input);
+  });
+});
+
+describe('userEvent keyboard fallback', () => {
+  let originalVisibilityState: PropertyDescriptor | undefined;
+  let hasFocusSpy: ReturnType<typeof vi.spyOn>;
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    twd.handlers.clear();
+    originalVisibilityState = Object.getOwnPropertyDescriptor(document, 'visibilityState');
+    hasFocusSpy = vi.spyOn(document, 'hasFocus');
+  });
+
+  afterEach(() => {
+    if (originalVisibilityState) {
+      Object.defineProperty(document, 'visibilityState', originalVisibilityState);
+    } else {
+      Object.defineProperty(document, 'visibilityState', {
+        configurable: true,
+        get: () => 'visible',
+      });
+    }
+    hasFocusSpy.mockRestore();
+  });
+
+  it('should dispatch blur and focusout when pressing Tab and document is hidden', async () => {
+    Object.defineProperty(document, 'visibilityState', {
+      configurable: true,
+      get: () => 'hidden',
+    });
+    hasFocusSpy.mockReturnValue(false);
+
+    const input = document.createElement('input');
+    document.body.appendChild(input);
+    input.focus();
+
+    const blurHandler = vi.fn();
+    const focusoutHandler = vi.fn();
+    input.addEventListener('blur', blurHandler);
+    input.addEventListener('focusout', focusoutHandler);
+
+    twd.describe('Keyboard Tab fallback hidden', () => {
+      twd.it('dispatches blur via fallback', async () => {
+        await userEvent.keyboard('{Tab}');
+      });
+    });
+
+    const testArray = Array.from(twd.handlers.values());
+    const test = testArray[testArray.length - 1];
+    test.status = 'running';
+    await test.handler();
+
+    expect(blurHandler).toHaveBeenCalled();
+    expect(focusoutHandler).toHaveBeenCalled();
+
+    document.body.removeChild(input);
+  });
+
+  it('should dispatch blur and focusout when pressing Tab and document has no focus', async () => {
+    Object.defineProperty(document, 'visibilityState', {
+      configurable: true,
+      get: () => 'visible',
+    });
+    hasFocusSpy.mockReturnValue(false);
+
+    const input = document.createElement('input');
+    document.body.appendChild(input);
+    input.focus();
+
+    const blurHandler = vi.fn();
+    const focusoutHandler = vi.fn();
+    input.addEventListener('blur', blurHandler);
+    input.addEventListener('focusout', focusoutHandler);
+
+    twd.describe('Keyboard Tab fallback unfocused', () => {
+      twd.it('dispatches blur via fallback', async () => {
+        await userEvent.keyboard('{Tab}');
+      });
+    });
+
+    const testArray = Array.from(twd.handlers.values());
+    const test = testArray[testArray.length - 1];
+    test.status = 'running';
+    await test.handler();
+
+    expect(blurHandler).toHaveBeenCalled();
+    expect(focusoutHandler).toHaveBeenCalled();
+
+    document.body.removeChild(input);
+  });
+});

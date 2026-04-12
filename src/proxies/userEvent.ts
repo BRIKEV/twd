@@ -31,6 +31,14 @@ function typingFallback(element: HTMLElement, text: string) {
   element.dispatchEvent(new Event('change', { bubbles: true }));
 }
 
+/**
+ * Fallback for userEvent.clear() when the browser tab is not in focus.
+ * Reuses the native value setter pattern from typingFallback with an empty string.
+ */
+function clearFallback(element: HTMLElement) {
+  typingFallback(element, '');
+}
+
 function createLoggedProxy(obj: any, prefix = 'userEvent') {
   return new Proxy(obj, {
     get(target, prop, receiver) {
@@ -51,6 +59,41 @@ function createLoggedProxy(obj: any, prefix = 'userEvent') {
         return async (...args: any[]) => {
           if (document.visibilityState === 'hidden' || !document.hasFocus()) {
             typingFallback(args[0], args[1]);
+            log(eventsMessage(prefix, prop, args));
+            return;
+          }
+          const result = await orig(...args);
+          log(eventsMessage(prefix, prop, args));
+          return result;
+        };
+      }
+
+      // Fallback for clear() when tab is not in focus
+      if (prop === 'clear') {
+        return async (...args: any[]) => {
+          if (document.visibilityState === 'hidden' || !document.hasFocus()) {
+            clearFallback(args[0]);
+            log(eventsMessage(prefix, prop, args));
+            return;
+          }
+          const result = await orig(...args);
+          log(eventsMessage(prefix, prop, args));
+          return result;
+        };
+      }
+
+      // Fallback for keyboard() when tab is not in focus
+      if (prop === 'keyboard') {
+        return async (...args: any[]) => {
+          if (document.visibilityState === 'hidden' || !document.hasFocus()) {
+            const keys = args[0] as string;
+            if (keys === '{Tab}') {
+              const active = document.activeElement as HTMLElement;
+              if (active) {
+                active.dispatchEvent(new FocusEvent('blur', { bubbles: true }));
+                active.dispatchEvent(new FocusEvent('focusout', { bubbles: true }));
+              }
+            }
             log(eventsMessage(prefix, prop, args));
             return;
           }
