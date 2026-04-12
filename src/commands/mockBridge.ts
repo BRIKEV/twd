@@ -140,14 +140,19 @@ export const mockRequest = async (alias: string, options: Options) => {
   else rules.push(rule);
   // Collect mock for contract validation (twd-cli)
   if (typeof window.__twdCollectMock === 'function') {
-    window.__twdCollectMock({
-      alias,
-      url: String(options.url),
-      method: options.method,
-      status: options.status || 200,
-      response: options.response,
-      urlRegex: options.urlRegex || false,
-    });
+    const handlers = window.__TWD_STATE__?.handlers;
+    const running = handlers && [...handlers.values()].find((h: any) => h.status === 'running');
+    if (running) {
+      window.__twdCollectMock({
+        alias,
+        url: String(options.url),
+        method: options.method,
+        status: options.status || 200,
+        response: options.response,
+        urlRegex: options.urlRegex || false,
+        testId: running.id,
+      });
+    }
   }
   // Push to SW
   navigator.serviceWorker.controller?.postMessage({
