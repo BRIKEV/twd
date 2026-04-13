@@ -6,6 +6,8 @@ import { LoadShows } from "./pages/LoadShows";
 import ScreenQueries from "./pages/ScreenQueries";
 import MockComponent from "./pages/MockComponent";
 import Responsive from "./pages/Responsive";
+import BlurValidation from "./pages/BlurValidation";
+import ComboboxSelect from "./pages/ComboboxSelect";
 
 const router = createBrowserRouter([
   {
@@ -35,6 +37,14 @@ const router = createBrowserRouter([
   {
     path: '/responsive',
     Component: Responsive,
+  },
+  {
+    path: '/blur-validation',
+    Component: BlurValidation,
+  },
+  {
+    path: '/combobox-select',
+    Component: ComboboxSelect,
   },
   {
     path: "*",
