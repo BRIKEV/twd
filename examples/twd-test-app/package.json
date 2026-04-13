@@ -15,7 +15,7 @@
     "collect:coverage:text": "npx nyc report --reporter=text --report-dir=coverage"
   },
   "dependencies": {
-    "axios": "^1.12.2",
+    "axios": "^1.15.0",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
     "react-router": "^7.12.0"

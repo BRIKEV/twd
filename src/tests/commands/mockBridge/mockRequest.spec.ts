@@ -115,6 +115,17 @@ describe('mockBridge mock request methods', () => {
     const collectMock = vi.fn();
     window.__twdCollectMock = collectMock;
 
+    // Set up a running test in TWD state
+    const testId = 'test-abc123';
+    window.__TWD_STATE__ = {
+      handlers: new Map([
+        [testId, { id: testId, name: 'my test', type: 'test', status: 'running', logs: [], depth: 1 }],
+      ]),
+      beforeEachHooks: new Map(),
+      afterEachHooks: new Map(),
+      stack: [],
+    };
+
     const postMessageMock = vi.fn();
     Object.defineProperty(navigator.serviceWorker, 'controller', {
       configurable: true,
@@ -135,14 +146,26 @@ describe('mockBridge mock request methods', () => {
       status: 201,
       response: { id: 1 },
       urlRegex: false,
+      testId: testId,
     });
 
     delete window.__twdCollectMock;
+    delete window.__TWD_STATE__;
   });
 
   it('should call __twdCollectMock with urlRegex when provided', async () => {
     const collectMock = vi.fn();
     window.__twdCollectMock = collectMock;
+
+    const testId = 'test-regex456';
+    window.__TWD_STATE__ = {
+      handlers: new Map([
+        [testId, { id: testId, name: 'regex test', type: 'test', status: 'running', logs: [], depth: 1 }],
+      ]),
+      beforeEachHooks: new Map(),
+      afterEachHooks: new Map(),
+      stack: [],
+    };
 
     const postMessageMock = vi.fn();
     Object.defineProperty(navigator.serviceWorker, 'controller', {
@@ -165,8 +188,73 @@ describe('mockBridge mock request methods', () => {
       status: 200,
       response: [],
       urlRegex: true,
+      testId: testId,
     });
 
     delete window.__twdCollectMock;
+    delete window.__TWD_STATE__;
+  });
+
+  it('should not call __twdCollectMock when no test is running', async () => {
+    const collectMock = vi.fn();
+    window.__twdCollectMock = collectMock;
+
+    // Set up TWD state with no running test
+    window.__TWD_STATE__ = {
+      handlers: new Map([
+        ['idle-test', { id: 'idle-test', name: 'idle test', type: 'test', status: 'idle', logs: [], depth: 1 }],
+      ]),
+      beforeEachHooks: new Map(),
+      afterEachHooks: new Map(),
+      stack: [],
+    };
+
+    const postMessageMock = vi.fn();
+    Object.defineProperty(navigator.serviceWorker, 'controller', {
+      configurable: true,
+      get: () => ({ postMessage: postMessageMock }),
+    });
+
+    await mockRequest('orphanAlias', {
+      url: 'https://api.example.com/orphan',
+      method: 'GET',
+      status: 200,
+      response: {},
+    });
+
+    expect(collectMock).not.toHaveBeenCalled();
+
+    // Service worker messaging still works
+    expect(postMessageMock).toHaveBeenCalled();
+
+    delete window.__twdCollectMock;
+    delete window.__TWD_STATE__;
+  });
+
+  it('should not call __twdCollectMock when __TWD_STATE__ is not available', async () => {
+    const collectMock = vi.fn();
+    window.__twdCollectMock = collectMock;
+
+    const originalState = window.__TWD_STATE__;
+    delete window.__TWD_STATE__;
+
+    const postMessageMock = vi.fn();
+    Object.defineProperty(navigator.serviceWorker, 'controller', {
+      configurable: true,
+      get: () => ({ postMessage: postMessageMock }),
+    });
+
+    await mockRequest('noStateAlias', {
+      url: 'https://api.example.com/nostate',
+      method: 'GET',
+      status: 200,
+      response: {},
+    });
+
+    expect(collectMock).not.toHaveBeenCalled();
+    expect(postMessageMock).toHaveBeenCalled();
+
+    delete window.__twdCollectMock;
+    if (originalState) window.__TWD_STATE__ = originalState;
   });
 });
