@@ -1,3 +1,13 @@
+## <small>1.6.6 (2026-04-13)</small>
+
+* feat: migrate sidebar inline styles to CSS classes (#211) ([180eab7](https://github.com/BRIKEV/twd/commit/180eab7)), closes [#211](https://github.com/BRIKEV/twd/issues/211)
+* fix(userEvent): add unfocused tab fallbacks for keyboard(), clear() and blur (#210) ([6260196](https://github.com/BRIKEV/twd/commit/6260196)), closes [#210](https://github.com/BRIKEV/twd/issues/210)
+* chore: add release automation agent ([f1091c2](https://github.com/BRIKEV/twd/commit/f1091c2))
+* chore(deps-dev): bump @vitest/coverage-v8 from 4.1.2 to 4.1.4 (#207) ([a96f5c1](https://github.com/BRIKEV/twd/commit/a96f5c1)), closes [#207](https://github.com/BRIKEV/twd/issues/207)
+* chore(deps-dev): bump jsdom from 29.0.1 to 29.0.2 (#208) ([1766069](https://github.com/BRIKEV/twd/commit/1766069)), closes [#208](https://github.com/BRIKEV/twd/issues/208)
+* chore(deps-dev): bump vite from 8.0.7 to 8.0.8 (#206) ([b968da2](https://github.com/BRIKEV/twd/commit/b968da2)), closes [#206](https://github.com/BRIKEV/twd/issues/206)
+
+
 ## <small>1.6.5 (2026-04-12)</small>
 
 * feat: add unfocused tab fallbacks for clear() and keyboard() in userEvent proxy (#205) ([af6eea2](https://github.com/BRIKEV/twd/commit/af6eea2)), closes [#205](https://github.com/BRIKEV/twd/issues/205)
