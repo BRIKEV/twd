@@ -1,4 +1,5 @@
 import { injectTheme, TWDTheme } from "../ui/utils/theme";
+import { injectStyles } from "../ui/utils/styles";
 
 interface Options {
   Component: React.ReactNode;
@@ -27,10 +28,13 @@ interface Options {
  */
 export const initSidebar = (options: Options) => {
   const { Component, createRoot, theme } = options;
-  
+
   // Inject theme CSS variables
   injectTheme(theme);
-  
+
+  // Inject sidebar class rules
+  injectStyles();
+
   const el = document.createElement('div');
   el.setAttribute('id', 'twd-sidebar-root');
   document.body.appendChild(el);

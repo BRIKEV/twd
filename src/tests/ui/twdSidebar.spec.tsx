@@ -19,9 +19,10 @@ describe("TWDSidebar", () => {
     it("should render TWDSidebar right position", async () => {
       render(<TWDSidebar open position="right" />);
       const sidebarElement = screen.getByTestId("twd-sidebar");
-      // position fixed but right not left
-      expect(sidebarElement).toHaveStyle({ position: 'fixed', right: '0' });
-      expect(sidebarElement).not.toHaveStyle({ position: 'fixed', left: '0' });
+      // position is now handled by .twd-sidebar CSS class; inline style carries only the positional offset
+      expect(sidebarElement).toHaveClass('twd-sidebar');
+      expect(sidebarElement).toHaveStyle({ right: '0' });
+      expect(sidebarElement).not.toHaveStyle({ left: '0' });
       // html margin right 280px
       expect(document.documentElement).toHaveStyle({ marginRight: '280px' });
       expect(document.documentElement).not.toHaveStyle({ marginLeft: '280px' });

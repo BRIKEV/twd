@@ -38,8 +38,6 @@ const positionStyles = {
   right: { right: 0, borderLeft: "1px solid var(--twd-border)" },
 };
 
-const fontFamily = `-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"`;
-
 const getSearchQuery = (search?: boolean) => {
   if (!search) {
     sessionStorage.removeItem('twd-search-filter');
@@ -196,22 +194,8 @@ export const TWDSidebar = ({ open, position = "left", search }: TWDSidebarProps)
 
   return (
     <div
-      style={{
-        fontFamily,
-        position: "fixed",
-        top: 0,
-        bottom: 0,
-        width: "var(--twd-sidebar-width)",
-        background: "var(--twd-background)",
-        fontSize: "var(--twd-font-size-md)",
-        overflowY: "auto",
-        boxShadow: "var(--twd-shadow)",
-        textAlign: "left",
-        zIndex: "var(--twd-z-index-sidebar)",
-        pointerEvents: "all",
-        isolation: "isolate",
-        ...positionStyles[position]
-      }}
+      className="twd-sidebar"
+      style={positionStyles[position]}
       data-testid="twd-sidebar"
       role="complementary"
       aria-label="Test While Developing sidebar"
@@ -219,32 +203,13 @@ export const TWDSidebar = ({ open, position = "left", search }: TWDSidebarProps)
       <div aria-live="polite" aria-atomic="true" style={{ position: "absolute", width: "1px", height: "1px", margin: "-1px", border: "0", padding: "0", overflow: "hidden", clip: "rect(0 0 0 0)" }}>{message}</div>
       <div
         data-testid="twd-sidebar-header"
-        style={{
-          padding: "var(--twd-spacing-md)",
-          background: "var(--twd-background)",
-          position: "sticky",
-          top: 0,
-          zIndex: "var(--twd-z-index-sticky)",
-          borderBottom: "1px solid var(--twd-border)"
-        }}
+        className="twd-sidebar-header"
       >
-        <div style={{ 
-          display: "flex", 
-          justifyContent: "space-between", 
-          alignItems: "center", 
-          marginBottom: "var(--twd-spacing-xl)" 
-        }}>
-          <div style={{ display: "flex", gap: "var(--twd-spacing-xs)" }}>
+        <div className="twd-sidebar-header-row">
+          <div className="twd-sidebar-header-buttons">
             <button
               onClick={runAll}
-              style={{
-                background: "var(--twd-button-primary)",
-                color: "var(--twd-button-primary-text)",
-                padding: "var(--twd-spacing-xs) var(--twd-spacing-md)",
-                borderRadius: "var(--twd-border-radius)",
-                border: "none",
-                cursor: "pointer",
-              }}
+              className="twd-btn twd-btn-primary"
             >
               <span aria-live="polite">{searchQuery ? "Run Filtered" : "Run All"}</span>
             </button>
@@ -254,48 +219,23 @@ export const TWDSidebar = ({ open, position = "left", search }: TWDSidebarProps)
                 clearComponentMocks();
               }}
               aria-label="Clear all mocks"
-              style={{
-                background: "var(--twd-button-secondary)",
-                color: "var(--twd-button-secondary-text)",
-                padding: "var(--twd-spacing-xs) var(--twd-spacing-md)",
-                borderRadius: "var(--twd-border-radius)",
-                border: "1px solid var(--twd-button-border)",
-                cursor: "pointer",
-              }}
+              className="twd-btn twd-btn-secondary"
             >
               Clear mocks
             </button>
-            <span style={{
-              color: "var(--twd-text-secondary)",
-              fontSize: "var(--twd-font-size-sm)",
-              alignSelf: "center",
-            }}>v{TWD_VERSION}</span>
+            <span className="twd-sidebar-version">v{TWD_VERSION}</span>
           </div>
           <button
             aria-label="Close sidebar"
-            style={{
-              background: "transparent",
-              border: "none",
-              cursor: "pointer",
-              fontSize: "var(--twd-font-size-md)",
-              paddingRight: "0",
-              paddingLeft: "0",
-            }}
+            className="twd-btn twd-btn-icon"
             onClick={() => handleSetIsOpen(false)}
           >
             ✖
           </button>
         </div>
-        <div style={{ 
-          display: "flex", 
-          justifyContent: "space-between", 
-          alignItems: "center", 
-          fontSize: "var(--twd-font-size-md)", 
-          color: "var(--twd-text-secondary)", 
-          marginBottom: "10px" 
-        }}>
+        <div className="twd-sidebar-stats">
           <span style={{ color: "var(--twd-text)" }}>Total: {totalTests}</span>
-          <div style={{ display: "flex", gap: "var(--twd-spacing-xs)" }}>
+          <div className="twd-sidebar-stats-counts">
             <span style={{ color: "var(--twd-success)" }}>&#10003; {displayTests.filter(test => test.status === "pass").length}</span>
             <span style={{ color: "var(--twd-error)" }}>&#10007; {displayTests.filter(test => test.status === "fail").length}</span>
           </div>
@@ -305,7 +245,7 @@ export const TWDSidebar = ({ open, position = "left", search }: TWDSidebarProps)
           <SearchInput value={searchQuery} onChange={handleSearchChange} />
         )}
       </div>
-      <div style={{ padding: "var(--twd-spacing-md)" }}>
+      <div className="twd-sidebar-content">
         <TestList
           roots={filteredRoots}
           runTest={runTest}

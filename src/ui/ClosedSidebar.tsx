@@ -24,16 +24,8 @@ export const ClosedSidebar = ({ setOpen, position }: ClosedSidebarProps) => {
   return (
     <button
       aria-label="Open TWD sidebar"
+      className="twd-btn twd-sidebar-closed"
       style={{
-        position: "fixed",
-        top: "50%",
-        transform: "translateY(-50%)",
-        zIndex: "var(--twd-z-index-sidebar)",
-        background: "var(--twd-button-primary)",
-        color: "var(--twd-button-primary-text)",
-        padding: "var(--twd-spacing-sm) 10px",
-        cursor: "pointer",
-        fontSize: "var(--twd-font-size-sm)",
         ...positionStyles[position]
       }}
       onClick={() => setOpen(true)}

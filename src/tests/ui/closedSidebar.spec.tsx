@@ -14,7 +14,9 @@ describe("ClosedSidebar", () => {
     // Simulate a click event
     await user.click(sidebarElement);
     expect(mockSetOpen).toHaveBeenCalledWith(true);
-    expect(sidebarElement).toHaveStyle({ position: 'fixed', left: '0', zIndex: 'var(--twd-z-index-sidebar)' });
+    expect(sidebarElement).toHaveClass('twd-btn');
+    expect(sidebarElement).toHaveClass('twd-sidebar-closed');
+    expect(sidebarElement).toHaveStyle({ left: '0' });
   });
 
   it("should render ClosedSidebar component right position", async () => {
@@ -27,7 +29,9 @@ describe("ClosedSidebar", () => {
     // Simulate a click event
     await user.click(sidebarElement);
     expect(mockSetOpen).toHaveBeenCalledWith(true);
-    expect(sidebarElement).toHaveStyle({ position: 'fixed', right: '0', zIndex: 'var(--twd-z-index-sidebar)' });
+    expect(sidebarElement).toHaveClass('twd-btn');
+    expect(sidebarElement).toHaveClass('twd-sidebar-closed');
+    expect(sidebarElement).toHaveStyle({ right: '0' });
   });
 });
 
