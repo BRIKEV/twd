@@ -13,6 +13,7 @@ declare global {
       status: number;
       response: unknown;
       urlRegex: boolean;
+      testId: string;
     }) => void;
   }
 }

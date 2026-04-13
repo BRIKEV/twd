@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import userEvent from '@testing-library/user-event';
 import { render, screen } from '@testing-library/react'
-import { TestListItem, statusStyles } from "../../ui/TestListItem";
+import { TestListItem } from "../../ui/TestListItem";
 import { assertStyles } from "../../ui/utils/formatLogs";
 
 
@@ -207,72 +207,48 @@ describe("TestListItem", () => {
     });
   });
 
-  describe('statusStyles method', () => {
-    const test = {
+  describe('status CSS classes', () => {
+    const baseTest = {
       name: 'Test name',
       only: false,
       skip: false,
-      status: 'pass',
       logs: [],
       id: 'test-1',
-      type: 'test',
+      type: 'test' as const,
       depth: 1,
     };
-    it("should return correct styles for 'pass' status", () => {
-      const styles = statusStyles({
-        ...test,
-        status: 'pass',
-        type: 'test',
-      });
-      expect(styles).toEqual({
-        item: { background: "var(--twd-success-bg)" },
-        container: { borderLeft: "3px solid var(--twd-success)" },
-      });
+    const mockRunTest = vi.fn();
+
+    it("should apply 'twd-status-pass' class for 'pass' status", () => {
+      render(<TestListItem node={{ ...baseTest, status: 'pass' }} depth={1} id="test-1" runTest={mockRunTest} />);
+      const item = document.querySelector('.twd-status-pass');
+      expect(item).toBeInTheDocument();
     });
 
-    it("should return correct styles for 'fail' status", () => {
-      const styles = statusStyles({
-        ...test,
-        status: 'fail',
-        type: 'test',
-      });
-      expect(styles).toEqual({
-        item: { background: "var(--twd-error-bg)" },
-        container: { borderLeft: "3px solid var(--twd-error)" },
-      });
+    it("should apply 'twd-status-fail' class for 'fail' status", () => {
+      render(<TestListItem node={{ ...baseTest, status: 'fail' }} depth={1} id="test-1" runTest={mockRunTest} />);
+      const item = document.querySelector('.twd-status-fail');
+      expect(item).toBeInTheDocument();
     });
 
-    it("should return correct styles for 'skip' status", () => {
-      const styles = statusStyles({
-        ...test,
-        status: 'skip',
-        type: 'test',
-      });
-      expect(styles).toEqual({
-        item: { background: "var(--twd-skip-bg)" },
-      });
+    it("should apply 'twd-status-skip' class for 'skip' status", () => {
+      render(<TestListItem node={{ ...baseTest, status: 'skip' }} depth={1} id="test-1" runTest={mockRunTest} />);
+      const item = document.querySelector('.twd-status-skip');
+      expect(item).toBeInTheDocument();
     });
 
-    it("should return correct styles for 'running' status", () => {
-      const styles = statusStyles({
-        ...test,
-        status: 'running',
-        type: 'test',
-      });
-      expect(styles).toEqual({
-        item: { background: "var(--twd-warning-bg)" },
-      });
+    it("should apply 'twd-status-running' class for 'running' status", () => {
+      render(<TestListItem node={{ ...baseTest, status: 'running' }} depth={1} id="test-1" runTest={mockRunTest} />);
+      const item = document.querySelector('.twd-status-running');
+      expect(item).toBeInTheDocument();
     });
 
-    it("should return correct styles for unknown status", () => {
-      const styles = statusStyles({
-        ...test,
-        status: 'idle',
-        type: 'test',
-      });
-      expect(styles).toEqual({
-        item: { background: "transparent" },
-      });
+    it("should not apply any status class for 'idle' status", () => {
+      render(<TestListItem node={{ ...baseTest, status: 'idle' }} depth={1} id="test-1" runTest={mockRunTest} />);
+      expect(document.querySelector('.twd-status-pass')).toBeNull();
+      expect(document.querySelector('.twd-status-fail')).toBeNull();
+      expect(document.querySelector('.twd-status-skip')).toBeNull();
+      expect(document.querySelector('.twd-status-running')).toBeNull();
     });
   });
 });
