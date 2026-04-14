@@ -1,4 +1,5 @@
 import { waitForElement, wait, waitForElements } from "./utils/wait";
+import { waitFor } from "./utils/waitFor";
 import { runAssertion } from "./asserts";
 import { log } from "./utils/log";
 import { mockRequest, Options, Rule, waitForRequest, initRequestMocking, clearRequestMockRules, getRequestMockRules, waitForRequests, getRequestCount, getRequestCounts } from "./commands/mockBridge";
@@ -352,6 +353,7 @@ export const twd: TWDAPI = {
     log(message);
   },
   wait,
+  waitFor,
   mockComponent,
   clearComponentMocks,
   viewport,
