@@ -90,9 +90,15 @@ describe('waitFor', () => {
     const callback = vi.fn(() => { throw new Error('fail'); });
 
     const promise = waitFor(callback);
+    // Attach catch immediately so the rejection is never "unhandled"
+    const caught = promise.catch(() => {});
     await vi.advanceTimersByTimeAsync(2100);
+    await caught;
 
-    await expect(promise).rejects.toThrow('waitFor timed out after 2000ms.');
-    vi.useRealTimers();
+    try {
+      await expect(promise).rejects.toThrow('waitFor timed out after 2000ms.');
+    } finally {
+      vi.useRealTimers();
+    }
   });
 });

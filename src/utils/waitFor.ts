@@ -11,23 +11,27 @@ export const waitFor = (
 
   return new Promise<void>((resolve, reject) => {
     const start = Date.now();
-    let lastError: Error | null = null;
+    let settled = false;
 
     const attempt = async () => {
       try {
         await callback();
+        if (settled) return;
+        settled = true;
         const logMsg = message
           ? `waitFor: resolved (${message})`
           : 'waitFor: resolved';
         log(logMsg);
         resolve();
       } catch (err) {
-        lastError = err instanceof Error ? err : new Error(String(err));
+        if (settled) return;
+        const lastError = err instanceof Error ? err : new Error(String(err));
 
         if (Date.now() - start >= timeout) {
+          settled = true;
           const base = `waitFor timed out after ${timeout}ms`;
           const context = message ? ` waiting for: ${message}` : '';
-          const detail = lastError ? `\nLast error: ${lastError.message}` : '';
+          const detail = `\nLast error: ${lastError.message}`;
           reject(new Error(`${base}${context}.${detail}`));
           return;
         }
