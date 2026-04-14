@@ -63,13 +63,11 @@ describe('waitFor', () => {
     const callback = () => {
       throw new Error('fail');
     };
-    try {
-      await waitFor(callback, { timeout: 200, interval: 50 });
-    } catch {
-      // expected
-    }
+    await expect(
+      waitFor(callback, { timeout: 200, interval: 50 })
+    ).rejects.toThrow('waitFor timed out after 200ms.');
     const elapsed = Date.now() - start;
-    expect(elapsed).toBeGreaterThanOrEqual(180); // allow some leeway
+    expect(elapsed).toBeGreaterThanOrEqual(180);
     expect(elapsed).toBeLessThan(400);
   });
 
@@ -87,18 +85,14 @@ describe('waitFor', () => {
     expect(timestamps[0]).toBeLessThan(20);
   });
 
-  it('uses default timeout of 2000ms and interval of 50ms', async () => {
-    const start = Date.now();
-    const callback = () => {
-      throw new Error('fail');
-    };
-    try {
-      await waitFor(callback);
-    } catch {
-      // expected
-    }
-    const elapsed = Date.now() - start;
-    expect(elapsed).toBeGreaterThanOrEqual(1800);
-    expect(elapsed).toBeLessThan(3000);
+  it('uses default timeout of 2000ms', async () => {
+    vi.useFakeTimers();
+    const callback = vi.fn(() => { throw new Error('fail'); });
+
+    const promise = waitFor(callback);
+    await vi.advanceTimersByTimeAsync(2100);
+
+    await expect(promise).rejects.toThrow('waitFor timed out after 2000ms.');
+    vi.useRealTimers();
   });
 });
