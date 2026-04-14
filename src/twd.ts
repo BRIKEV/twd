@@ -92,14 +92,14 @@ interface TWDAPI {
    * @param retries The number of retries to make
    * @param retryDelay The delay between retries
    * @return The matched rule (with body if applicable)
-   * 
+   *
    * @example
    * ```ts
-   * const rule = await twd.waitFor("aliasId");
+   * const rule = await twd.waitForRequest("aliasId");
    * console.log(rule.body);
-   * const rule = await twd.waitFor("aliasId", 5, 100);
+   * const rule = await twd.waitForRequest("aliasId", 5, 100);
    * console.log(rule.body);
-   * 
+   *
    * ```
    */
   waitForRequest: (alias: string, retries?: number, retryDelay?: number) => Promise<Rule>;
