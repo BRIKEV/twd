@@ -444,15 +444,16 @@ modal.should("be.visible");
 #### Best Practices
 
 ```ts
-// ✅ Good - Wait for specific conditions
-const spinner = await twd.get(".loading-spinner");
-spinner.should("be.visible");
-await twd.wait(1000);
-spinner.should("not.be.visible");
+// ✅ Use twd.wait for intentional fixed delays
+await twd.wait(300); // Wait for CSS exit animation to finish
 
-// ❌ Avoid - Arbitrary waits without context
-await twd.wait(5000); // Why 5 seconds?
+// ❌ Avoid - Use twd.waitFor() instead for condition-based waiting
+await twd.wait(1000); // Hoping the spinner is gone by now
 ```
+
+::: tip
+For condition-based waiting (waiting for an element to change, an event to fire, etc.), use [`twd.waitFor()`](#twd-waitfor-callback-options) instead.
+:::
 
 ---
 
@@ -508,7 +509,7 @@ await twd.waitFor(() => {
 
 // Analytics event - wait for dataLayer event to fire
 await twd.waitFor(() => {
-  const event = findEvent("purchase");
+  const event = findEvent("purchase"); // your analytics helper
   expect(event).to.exist;
 }, { message: "purchase event to fire" });
 
@@ -519,6 +520,7 @@ await twd.waitFor(() => {
 }, { timeout: 5000 });
 
 // UI state change after action
+const submitButton = screenDom.getByRole("button", { name: /submit/i });
 await userEvent.click(submitButton);
 await twd.waitFor(() => {
   expect(submitButton.disabled).to.be.false;
@@ -1262,7 +1264,7 @@ describe("Component Tests", () => {
 await userEvent.click(loadButton.el);
 await twd.waitFor(() => {
   const spinner = screenDom.queryByRole("progressbar");
-  expect(spinner).to.be.null;
+  expect(spinner).not.to.exist;
 }, { message: "loading to complete" });
 
 // ✅ OK - Use twd.wait only for intentional fixed delays
