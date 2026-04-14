@@ -2,7 +2,7 @@ import { waitForElement, wait, waitForElements } from "./utils/wait";
 import { runAssertion } from "./asserts";
 import { log } from "./utils/log";
 import { mockRequest, Options, Rule, waitForRequest, initRequestMocking, clearRequestMockRules, getRequestMockRules, waitForRequests, getRequestCount, getRequestCounts } from "./commands/mockBridge";
-import type { AnyAssertion, ArgsFor, TWDElemAPI } from "./twd-types";
+import type { AnyAssertion, ArgsFor, TWDElemAPI, WaitForOptions } from "./twd-types";
 import urlCommand, { type URLCommandAPI } from "./commands/url";
 import { visit } from "./commands/visit";
 import { mockComponent, clearComponentMocks } from "./ui/componentMocks";
@@ -189,6 +189,30 @@ interface TWDAPI {
    * ```
    */
   wait: (time: number) => Promise<void>;
+  /**
+   * Retries a callback until it stops throwing or the timeout expires.
+   * Use this instead of `twd.wait(ms)` to wait for conditions rather than fixed delays.
+   *
+   * @param callback Function to retry — can be sync or async. Should throw if the condition is not yet met.
+   * @param options Optional timeout, interval, and message settings
+   * @returns A promise that resolves when the callback succeeds
+   *
+   * @example
+   * ```ts
+   * // Wait for an analytics event
+   * await twd.waitFor(() => {
+   *   const event = findEvent("purchase");
+   *   expect(event).to.exist;
+   * }, { message: "purchase event to fire" });
+   *
+   * // Wait with custom timeout
+   * await twd.waitFor(() => {
+   *   const el = document.querySelector(".loaded");
+   *   if (!el) throw new Error("not loaded");
+   * }, { timeout: 5000 });
+   * ```
+   */
+  waitFor: (callback: () => void | Promise<void>, options?: WaitForOptions) => Promise<void>;
   /**
    * Asserts something about the element.
    * @param el The element to assert on
