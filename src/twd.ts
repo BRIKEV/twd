@@ -66,7 +66,7 @@ interface TWDAPI {
   /**
    * Mock a network request.
    *
-   * @param alias Identifier for the mock rule. Useful for `waitFor()`.
+   * @param alias Identifier for the mock rule. Useful for `waitForRequest()`.
    * @param options Options to configure the mock:
    *  - `method`: HTTP method ("GET", "POST", …)
    *  - `url`: URL string or RegExp to match
