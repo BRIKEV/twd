@@ -1,3 +1,8 @@
+## <small>1.7.1 (2026-04-15)</small>
+
+* feat(waitFor): make generic to return callback value (#214) ([836695c](https://github.com/BRIKEV/twd/commit/836695c14b7563a1e0c83b61f6ccec13145bf69f)), closes [#214](https://github.com/BRIKEV/twd/issues/214)
+
+
 ## <small>1.7.0 (2026-04-15)</small>
 
 * feat: add twd.waitFor() polling utility (#212) ([f596e4d](https://github.com/BRIKEV/twd/commit/f596e4d)), closes [#212](https://github.com/BRIKEV/twd/issues/212)
