@@ -461,22 +461,24 @@ For condition-based waiting (waiting for an element to change, an event to fire,
 
 Retries a callback until it stops throwing or the timeout expires. Use this instead of `twd.wait(ms)` to avoid blind delays — `waitFor` resolves as soon as your condition is met, making tests faster and more reliable.
 
+If the callback returns a value, `waitFor` resolves with that value — useful for extracting elements or data without nesting all assertions inside the callback.
+
 #### Syntax
 
 ```ts
-twd.waitFor(
-  callback: () => void | Promise<void>,
+twd.waitFor<T>(
+  callback: () => T | Promise<T>,
   options?: {
     timeout?: number;   // Default: 2000
     interval?: number;  // Default: 50
     message?: string;
   }
-): Promise<void>
+): Promise<T>
 ```
 
 #### Parameters
 
-- **callback** (`() => void | Promise<void>`) - Function to retry. Should throw if the condition is not yet met. Can be sync or async.
+- **callback** (`() => T | Promise<T>`) - Function to retry. Should throw if the condition is not yet met. Can be sync or async. If it returns a value, `waitFor` resolves with that value.
 - **options** (`object`, optional):
   - **timeout** (`number`) - Max time to wait in milliseconds. Default: `2000`
   - **interval** (`number`) - Poll interval in milliseconds. Default: `50`
@@ -484,7 +486,7 @@ twd.waitFor(
 
 #### Returns
 
-`Promise<void>` - Resolves when the callback succeeds. Rejects with a timeout error if the callback keeps throwing past the timeout.
+`Promise<T>` - Resolves with the callback's return value when it succeeds. If the callback returns `void`, resolves as `Promise<void>`. Rejects with a timeout error if the callback keeps throwing past the timeout.
 
 #### Error Format
 
@@ -501,17 +503,22 @@ Last error: expected undefined to exist
 #### Examples
 
 ```ts
-// DOM assertion - wait for attribute to update
-const heading = await screenDom.findByText("Checkout");
+// Return an element — single expression
+const heading = await twd.waitFor(() => screenDom.getByRole("heading", { name: /checkout/i }));
+twd.should(heading, "be.visible");
+
+// Return a value with assertions inside
+const event = await twd.waitFor(() => {
+  const ev = findEvent("purchase");
+  expect(ev).to.exist;
+  return ev;
+}, { message: "purchase event to fire" });
+expect(event.customer_type).to.equal("b2c");
+
+// Fire-and-forget (void) — works exactly as before
 await twd.waitFor(() => {
   expect(heading).to.have.attribute("data-loaded", "true");
 });
-
-// Analytics event - wait for dataLayer event to fire
-await twd.waitFor(() => {
-  const event = findEvent("purchase"); // your analytics helper
-  expect(event).to.exist;
-}, { message: "purchase event to fire" });
 
 // Custom timeout for slow operations
 await twd.waitFor(() => {
@@ -534,7 +541,22 @@ await twd.waitFor(() => {
 | **Resolves when** | Callback stops throwing | Fixed time elapses |
 | **Speed** | As fast as the condition is met | Always waits the full duration |
 | **Reliability** | Adapts to timing variations | Fails if operation is slower than the wait |
+| **Returns** | The callback's return value | `void` |
 | **Use for** | Any async condition (DOM, events, state) | Intentional delays (animations, debounce testing) |
+
+::: warning Only use waitFor when retry logic is necessary
+`waitFor` is a polling utility — it retries the callback repeatedly until it passes. Don't use it as a general-purpose wrapper. If you already have the element or value and just need to assert on it, assert directly.
+
+```ts
+// DON'T — no retry needed, getByRole throws synchronously if not found
+const heading = await twd.waitFor(() => screenDom.getByRole("heading"));
+
+// DO — use waitFor when the element might not exist yet (async rendering, delayed state)
+const heading = await twd.waitFor(() => screenDom.getByRole("heading", { name: /loaded/i }));
+```
+
+Use `waitFor` for: analytics events that fire asynchronously, DOM attributes that update after an async operation, elements that appear after a delay.
+:::
 
 ::: tip Prefer waitFor over twd.wait
 Most uses of `twd.wait(ms)` can be replaced with `twd.waitFor()`. The callback should be a **pure check** — don't perform actions inside it, only assertions or reads.
