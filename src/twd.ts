@@ -196,24 +196,27 @@ interface TWDAPI {
    *
    * @param callback Function to retry — can be sync or async. Should throw if the condition is not yet met.
    * @param options Optional timeout, interval, and message settings
-   * @returns A promise that resolves when the callback succeeds
+   * @returns A promise that resolves with the callback's return value when it succeeds
    *
    * @example
    * ```ts
-   * // Wait for an analytics event
-   * await twd.waitFor(() => {
-   *   const event = findEvent("purchase");
-   *   expect(event).to.exist;
+   * // Wait for an analytics event and return it
+   * const event = await twd.waitFor(() => {
+   *   const ev = findEvent("purchase");
+   *   expect(ev).to.exist;
+   *   return ev;
    * }, { message: "purchase event to fire" });
    *
-   * // Wait with custom timeout
+   * // Wait for an element (single expression)
+   * const heading = await twd.waitFor(() => screenDom.getByRole("heading", { name: /checkout/i }));
+   *
+   * // Fire-and-forget (void) — still works as before
    * await twd.waitFor(() => {
-   *   const el = document.querySelector(".loaded");
-   *   if (!el) throw new Error("not loaded");
-   * }, { timeout: 5000 });
+   *   expect(submitButton.disabled).to.be.false;
+   * });
    * ```
    */
-  waitFor: (callback: () => void | Promise<void>, options?: WaitForOptions) => Promise<void>;
+  waitFor: <T>(callback: () => T | Promise<T>, options?: WaitForOptions) => Promise<T>;
   /**
    * Asserts something about the element.
    * @param el The element to assert on
