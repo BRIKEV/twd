@@ -1,3 +1,8 @@
+## <small>1.7.0 (2026-04-15)</small>
+
+* feat: add twd.waitFor() polling utility (#212) ([f596e4d](https://github.com/BRIKEV/twd/commit/f596e4d)), closes [#212](https://github.com/BRIKEV/twd/issues/212)
+
+
 ## <small>1.6.6 (2026-04-13)</small>
 
 * feat: migrate sidebar inline styles to CSS classes (#211) ([180eab7](https://github.com/BRIKEV/twd/commit/180eab7)), closes [#211](https://github.com/BRIKEV/twd/issues/211)
