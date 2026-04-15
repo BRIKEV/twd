@@ -101,4 +101,24 @@ describe('waitFor', () => {
       vi.useRealTimers();
     }
   });
+
+  it('returns the callback value when it succeeds', async () => {
+    const result = await waitFor(() => 42);
+    expect(result).toBe(42);
+  });
+
+  it('returns the callback value from an async callback', async () => {
+    const result = await waitFor(async () => ({ name: 'test' }));
+    expect(result).toEqual({ name: 'test' });
+  });
+
+  it('returns the value from the successful retry', async () => {
+    let count = 0;
+    const result = await waitFor(() => {
+      count++;
+      if (count < 3) throw new Error('not yet');
+      return `attempt-${count}`;
+    }, { interval: 10 });
+    expect(result).toBe('attempt-3');
+  });
 });
