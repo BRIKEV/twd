@@ -105,9 +105,9 @@ export type ShouldFn = {
  * ```ts
  * const btn = await twd.get("button");
  * btn.should("have.text", "Clicked").click();
- * 
+ *
  * ```
- * 
+ *
  */
 export interface TWDElemAPI {
   /** The underlying DOM element. */
@@ -117,14 +117,26 @@ export interface TWDElemAPI {
    * @param name The name of the assertion.
    * @param args Arguments for the assertion.
    * @returns The same API for chaining.
-   * 
+   *
    * @example
    * ```ts
    * const btn = await twd.get("button");
    * btn.should("have.text", "Click me").should("not.be.disabled");
-   * 
+   *
    * ```
-   * 
+   *
    */
   should: ShouldFn;
+}
+
+/**
+ * Options for `twd.waitFor()`.
+ */
+export interface WaitForOptions {
+  /** Max time to wait in ms. Default: 2000 */
+  timeout?: number;
+  /** Poll interval in ms. Default: 50 */
+  interval?: number;
+  /** Context message included in timeout errors */
+  message?: string;
 }

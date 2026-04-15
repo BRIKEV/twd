@@ -444,15 +444,101 @@ modal.should("be.visible");
 #### Best Practices
 
 ```ts
-// ✅ Good - Wait for specific conditions
-const spinner = await twd.get(".loading-spinner");
-spinner.should("be.visible");
-await twd.wait(1000);
-spinner.should("not.be.visible");
+// ✅ Use twd.wait for intentional fixed delays
+await twd.wait(300); // Wait for CSS exit animation to finish
 
-// ❌ Avoid - Arbitrary waits without context
-await twd.wait(5000); // Why 5 seconds?
+// ❌ Avoid - Use twd.waitFor() instead for condition-based waiting
+await twd.wait(1000); // Hoping the spinner is gone by now
 ```
+
+::: tip
+For condition-based waiting (waiting for an element to change, an event to fire, etc.), use [`twd.waitFor()`](#twd-waitfor-callback-options) instead.
+:::
+
+---
+
+### twd.waitFor(callback, options?)
+
+Retries a callback until it stops throwing or the timeout expires. Use this instead of `twd.wait(ms)` to avoid blind delays — `waitFor` resolves as soon as your condition is met, making tests faster and more reliable.
+
+#### Syntax
+
+```ts
+twd.waitFor(
+  callback: () => void | Promise<void>,
+  options?: {
+    timeout?: number;   // Default: 2000
+    interval?: number;  // Default: 50
+    message?: string;
+  }
+): Promise<void>
+```
+
+#### Parameters
+
+- **callback** (`() => void | Promise<void>`) - Function to retry. Should throw if the condition is not yet met. Can be sync or async.
+- **options** (`object`, optional):
+  - **timeout** (`number`) - Max time to wait in milliseconds. Default: `2000`
+  - **interval** (`number`) - Poll interval in milliseconds. Default: `50`
+  - **message** (`string`) - Context message included in timeout errors for easier debugging
+
+#### Returns
+
+`Promise<void>` - Resolves when the callback succeeds. Rejects with a timeout error if the callback keeps throwing past the timeout.
+
+#### Error Format
+
+```
+// Without message:
+waitFor timed out after 2000ms.
+Last error: expected undefined to exist
+
+// With message:
+waitFor timed out after 2000ms waiting for: purchase event to fire.
+Last error: expected undefined to exist
+```
+
+#### Examples
+
+```ts
+// DOM assertion - wait for attribute to update
+const heading = await screenDom.findByText("Checkout");
+await twd.waitFor(() => {
+  expect(heading).to.have.attribute("data-loaded", "true");
+});
+
+// Analytics event - wait for dataLayer event to fire
+await twd.waitFor(() => {
+  const event = findEvent("purchase"); // your analytics helper
+  expect(event).to.exist;
+}, { message: "purchase event to fire" });
+
+// Custom timeout for slow operations
+await twd.waitFor(() => {
+  const dropin = document.querySelector(".adyen-checkout__dropin");
+  if (!dropin) throw new Error("Adyen dropin not rendered");
+}, { timeout: 5000 });
+
+// UI state change after action
+const submitButton = screenDom.getByRole("button", { name: /submit/i });
+await userEvent.click(submitButton);
+await twd.waitFor(() => {
+  expect(submitButton.disabled).to.be.false;
+}, { message: "submit button to re-enable" });
+```
+
+#### `waitFor` vs `twd.wait`
+
+| | `twd.waitFor(fn)` | `twd.wait(ms)` |
+|---|---|---|
+| **Resolves when** | Callback stops throwing | Fixed time elapses |
+| **Speed** | As fast as the condition is met | Always waits the full duration |
+| **Reliability** | Adapts to timing variations | Fails if operation is slower than the wait |
+| **Use for** | Any async condition (DOM, events, state) | Intentional delays (animations, debounce testing) |
+
+::: tip Prefer waitFor over twd.wait
+Most uses of `twd.wait(ms)` can be replaced with `twd.waitFor()`. The callback should be a **pure check** — don't perform actions inside it, only assertions or reads.
+:::
 
 ---
 
@@ -1174,14 +1260,18 @@ describe("Component Tests", () => {
 ### 3. Wait Appropriately
 
 ```ts
-// ✅ Good - Wait for specific conditions
-const spinner = await twd.get(".loading");
-spinner.should("be.visible");
-await twd.waitForRequest("getData");
-spinner.should("not.be.visible");
+// ✅ Best - Use waitFor for condition-based waiting
+await userEvent.click(loadButton.el);
+await twd.waitFor(() => {
+  const spinner = screenDom.queryByRole("progressbar");
+  expect(spinner).not.to.exist;
+}, { message: "loading to complete" });
 
-// ❌ Avoid - Arbitrary waits
-await twd.wait(3000); // Why 3 seconds?
+// ✅ OK - Use twd.wait only for intentional fixed delays
+await twd.wait(300); // Wait for CSS transition to finish
+
+// ❌ Avoid - Blind waits for async conditions
+await twd.wait(2000); // Hoping the API responded by now
 ```
 
 ### 4. Use Realistic Mock Data
