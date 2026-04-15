@@ -162,5 +162,12 @@ describe("Screen Queries Demo", () => {
     const allHeadings = screenDom.getAllByRole("heading");
     expect(allHeadings.length).to.be.greaterThan(2);
   });
+
+  it("should return a value from twd.waitFor", async () => {
+    await twd.visit("/screen-queries");
+
+    const heading = await twd.waitFor(() => screenDom.getByRole("heading", { name: /screen queries demo/i }));
+    twd.should(heading, "be.visible");
+  });
 });
 
