@@ -43,7 +43,7 @@ The relay is a WebSocket server that routes messages between the **browser** (wh
 
 ::: warning Version requirements
 - **twd-js** `>=1.5.2` — earlier versions do not support the relay protocol
-- **twd-relay** `>=1.0.0` — previous versions do not support `--test` filtering
+- **twd-relay** `>=1.1.0` — earlier versions lack throttle-abort detection, heartbeat-based run recovery, and the tab indicator. `>=1.0.0` still works but without those safety features.
 :::
 
 ## Installation
@@ -100,6 +100,19 @@ const client = createBrowserClient({
 });
 client.connect();
 ```
+
+## Tab Identifier
+
+Once the browser client connects, the tab's favicon turns blue and its title gains a `[TWD]` prefix. The prefix reflects the current state so you can spot the active TWD tab at a glance, especially when multiple tabs are open to the same origin (a common dev scenario).
+
+| Favicon | Title prefix | State |
+|---|---|---|
+| Blue | `[TWD]` | Connected, idle |
+| Orange | `[TWD ...]` | Tests running |
+| Green | `[TWD ✓]` | Last run passed |
+| Red | `[TWD ✗]` | Last run failed or was aborted |
+
+On disconnect or eviction (another tab taking over the relay slot), the original favicon and title are restored automatically. The indicator requires no configuration — it's on by default when the browser client is connected.
 
 ## Triggering a Test Run
 
@@ -167,6 +180,66 @@ TWD handles this automatically. The `userEvent` proxy detects when the document 
 
 This happens transparently — your tests don't need to change. It currently applies to `userEvent.type()`. Other methods like `click()` work normally even when the tab is in the background.
 
+## Handling Throttled or Stuck Runs
+
+Chrome aggressively throttles timers in backgrounded tabs. A test run that normally finishes in ~1 second can stretch to 20+ seconds when the TWD tab isn't focused. The relay and browser client cooperate on two recovery mechanisms so AI agents and CI scripts never hang silently waiting on a frozen or throttled tab.
+
+### Throttle-abort
+
+The browser client monitors wall-clock time for each test. If any single test exceeds **5 seconds** (default, configurable), it aborts the run and emits a new `run:aborted` event. The CLI prints a clear multi-line error and exits with code 1:
+
+```
+Run aborted: test "App interactions > test button" ran for 5.4s — threshold exceeded.
+The TWD browser tab is likely backgrounded and throttled by the browser.
+Foreground the TWD tab (identified by the "[TWD …]" title prefix) and keep it active, then retry.
+For unattended runs, prefer `twd-cli` which drives a headless browser with no tab throttling.
+```
+
+Tune the threshold when a test legitimately needs longer:
+
+```bash
+# Raise the threshold to 15 seconds
+npx twd-relay run --max-test-duration 15000
+
+# Disable abort detection entirely
+npx twd-relay run --max-test-duration 0
+```
+
+Or per-project via the browser client option:
+
+```ts
+createBrowserClient({ maxTestDurationMs: 15000 });
+```
+
+Detection fires on two triggers for reliability: the 3-second heartbeat tick (for in-flight tests) and on every test completion (for tests that just barely stay under the heartbeat window). This catches the common throttling pattern where each test stretches to 4–8 seconds individually.
+
+::: tip Prefer `twd-cli` for CI and unattended agents
+`npx twd-cli run` drives a headless Chrome where the page is always foregrounded, so tab throttling never applies. No abort threshold needed. Use the relay for interactive dev, `twd-cli` for automated runs.
+:::
+
+### Frozen-tab recovery
+
+While a run is in progress the browser client sends a heartbeat every 3 seconds. If the relay stops receiving heartbeats for 120 seconds (e.g. the tab was closed, crashed, or Chrome froze it completely), the relay marks the run as abandoned and broadcasts a `run:abandoned` event. The CLI surfaces this with a clear error and exits 1:
+
+```
+Run abandoned — browser tab appears frozen. Refresh the browser tab and retry.
+```
+
+The run lock is cleared automatically so the next run can start without a manual reset.
+
+### Improved `RUN_IN_PROGRESS` error
+
+If a second `run` command arrives while one is already active, the relay now returns a detailed recovery message instead of the old bare sentence:
+
+```
+[RUN_IN_PROGRESS] A test run is already in progress. If the previous run appears
+stuck, the browser tab may be backgrounded and throttled — foreground the TWD tab
+(identified by the "[TWD …]" title prefix) or reload it. The relay also auto-clears
+the lock after 120s of heartbeat silence.
+```
+
+The error `code` is unchanged (`RUN_IN_PROGRESS`) — only the human-readable `message` is richer. Existing code that dispatches on `code` continues to work.
+
 ## Protocol Reference
 
 All messages are JSON over WebSocket. The `twd-relay run` CLI handles this protocol for you, but if you want to build a custom client:
@@ -178,6 +251,14 @@ All messages are JSON over WebSocket. The `twd-relay run` CLI handles this proto
 | `{ type: "hello", role: "client" }` | Identify as an external client |
 | `{ type: "run", scope: "all" }` | Run all tests |
 | `{ type: "run", scope: "all", testNames: ["..."] }` | Run tests matching names (substring, case-insensitive) |
+| `{ type: "run", scope: "all", maxTestDurationMs: 15000 }` | Run all tests with a custom per-test abort threshold (ms). `0` disables detection. Omit to use the browser client's default (5000). |
+
+### Browser → Relay
+
+| Message | Description |
+|---------|-------------|
+| `{ type: "hello", role: "browser" }` | Identify as the browser |
+| `{ type: "heartbeat" }` | Sent every 3 seconds during a run. Not forwarded to clients; drives the relay's 120-second `run:abandoned` timeout. |
 
 ### Browser → Relay → Client
 
@@ -187,7 +268,10 @@ All messages are JSON over WebSocket. The `twd-relay run` CLI handles this proto
 | `{ type: "test:start", testId, name }` | A test started running |
 | `{ type: "test:pass", testId, name }` | A test passed |
 | `{ type: "test:fail", testId, name, error }` | A test failed |
-| `{ type: "run:complete", results }` | All tests finished |
+| `{ type: "test:skip", testId, name }` | A test was skipped |
+| `{ type: "run:complete", passed, failed, skipped, duration }` | All tests finished (also emitted after `run:aborted`, so the lock clears) |
+| `{ type: "run:aborted", reason: "throttled", durationMs, testName }` | Browser aborted because a test exceeded the threshold. Followed immediately by `run:complete`. |
+| `{ type: "run:abandoned", reason: "heartbeat_timeout" }` | Relay declared the run abandoned after 120 s of heartbeat silence. |
 
 ## Sidebar Integration
 
