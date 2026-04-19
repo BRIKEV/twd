@@ -67,22 +67,29 @@ TWD has two build modes that behave differently, and **both must be tested manua
 
 #### Testing with twd-test-app (React / dev mode)
 
-1. Navigate to the test app and start it:
+1. Build the library and sync the mock service worker to all example apps (run once from the repo root):
+   ```bash
+   npm install
+   npm run build
+   npm run copy:mock-sw
+   ```
+
+2. Install and start the test app:
    ```bash
    cd examples/twd-test-app
    npm install
    npm run dev
    ```
 
-2. The test app imports TWD directly from source (`../../../../src/`), so changes are immediately reflected.
+3. The test app imports TWD directly from source (`../../../../src/`), so subsequent changes to the library are immediately reflected via HMR.
 
-3. Write or modify test files in `examples/twd-test-app/src/twd-tests/` with the `.twd.test.ts` extension:
+4. Write or modify test files in `examples/twd-test-app/src/twd-tests/` with the `.twd.test.ts` extension:
    ```typescript
-   import { twd, userEvent } from "../../../../src";
+   import { twd, screenDom, userEvent } from "../../../../src";
    import { describe, it } from "../../../../src/runner";
    ```
 
-4. Open the app in your browser (usually `http://localhost:5173`) and use the TWD sidebar to run your tests.
+5. Open the app in your browser (usually `http://localhost:5173`) and use the TWD sidebar to run your tests. **Include a screenshot of the green sidebar in your PR.**
 
 #### Testing with vue-twd-example (Preact / bundled build)
 
@@ -165,6 +172,7 @@ We welcome the use of AI tools (GitHub Copilot, Claude Code, Cursor, etc.) to as
 - Add comments for complex logic
 - Keep functions focused and small
 - Write self-documenting code when possible
+- **Prefer `screenDom` (Testing Library) for element queries in example tests.** Only fall back to `twd.get()` when a query cannot be expressed through Testing Library.
 
 ## Conduct
 
