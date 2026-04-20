@@ -145,6 +145,7 @@ describe('mockBridge mock request methods', () => {
       method: 'POST',
       status: 201,
       response: { id: 1 },
+      responseHeaders: undefined,
       urlRegex: false,
       testId: testId,
     });
@@ -187,7 +188,51 @@ describe('mockBridge mock request methods', () => {
       method: 'GET',
       status: 200,
       response: [],
+      responseHeaders: undefined,
       urlRegex: true,
+      testId: testId,
+    });
+
+    delete window.__twdCollectMock;
+    delete window.__TWD_STATE__;
+  });
+
+  it('should call __twdCollectMock with responseHeaders when provided', async () => {
+    const collectMock = vi.fn();
+    window.__twdCollectMock = collectMock;
+
+    const testId = 'test-headers789';
+    window.__TWD_STATE__ = {
+      handlers: new Map([
+        [testId, { id: testId, name: 'headers test', type: 'test', status: 'running', logs: [], depth: 1 }],
+      ]),
+      beforeEachHooks: new Map(),
+      afterEachHooks: new Map(),
+      stack: [],
+    };
+
+    const postMessageMock = vi.fn();
+    Object.defineProperty(navigator.serviceWorker, 'controller', {
+      configurable: true,
+      get: () => ({ postMessage: postMessageMock }),
+    });
+
+    await mockRequest('qrCode', {
+      url: '/v1/esims/123/qr_code',
+      method: 'GET',
+      status: 200,
+      response: 'fake-qr-data',
+      responseHeaders: { 'Content-Type': 'image/png' },
+    });
+
+    expect(collectMock).toHaveBeenCalledWith({
+      alias: 'qrCode',
+      url: '/v1/esims/123/qr_code',
+      method: 'GET',
+      status: 200,
+      response: 'fake-qr-data',
+      responseHeaders: { 'Content-Type': 'image/png' },
+      urlRegex: false,
       testId: testId,
     });
 
