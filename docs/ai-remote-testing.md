@@ -186,20 +186,22 @@ Chrome aggressively throttles timers in backgrounded tabs. A test run that norma
 
 ### Throttle-abort
 
-The browser client monitors wall-clock time for each test. If any single test exceeds **5 seconds** (default, configurable), it aborts the run and emits a new `run:aborted` event. The CLI prints a clear multi-line error and exits with code 1:
+The browser client monitors wall-clock time for each test. If any single test exceeds **10 seconds** (default, configurable), it aborts the run and emits a new `run:aborted` event. The CLI prints a clear multi-line error and exits with code 1:
 
 ```
-Run aborted: test "App interactions > test button" ran for 5.4s — threshold exceeded.
+Run aborted: test "App interactions > test button" ran for 12.4s — threshold exceeded.
 The TWD browser tab is likely backgrounded and throttled by the browser.
 Foreground the TWD tab (identified by the "[TWD …]" title prefix) and keep it active, then retry.
 For unattended runs, prefer `twd-cli` which drives a headless browser with no tab throttling.
 ```
 
+The 10 s default sits above Testing Library's default `findBy*` timeout (3 s) so a legitimately failing test with one or two missed selectors does not false-abort. Throttled runs — where tests typically cluster in the 10–30 s band — still trip the abort reliably.
+
 Tune the threshold when a test legitimately needs longer:
 
 ```bash
-# Raise the threshold to 15 seconds
-npx twd-relay run --max-test-duration 15000
+# Raise the threshold to 20 seconds
+npx twd-relay run --max-test-duration 20000
 
 # Disable abort detection entirely
 npx twd-relay run --max-test-duration 0
@@ -208,10 +210,10 @@ npx twd-relay run --max-test-duration 0
 Or per-project via the browser client option:
 
 ```ts
-createBrowserClient({ maxTestDurationMs: 15000 });
+createBrowserClient({ maxTestDurationMs: 20000 });
 ```
 
-Detection fires on two triggers for reliability: the 3-second heartbeat tick (for in-flight tests) and on every test completion (for tests that just barely stay under the heartbeat window). This catches the common throttling pattern where each test stretches to 4–8 seconds individually.
+Detection fires on two triggers for reliability: the 3-second heartbeat tick (for in-flight tests) and on every test completion (for tests that finish just over threshold between heartbeat ticks).
 
 ::: tip Prefer `twd-cli` for CI and unattended agents
 `npx twd-cli run` drives a headless Chrome where the page is always foregrounded, so tab throttling never applies. No abort threshold needed. Use the relay for interactive dev, `twd-cli` for automated runs.
