@@ -149,6 +149,7 @@ export const mockRequest = async (alias: string, options: Options) => {
         method: options.method,
         status: options.status || 200,
         response: options.response,
+        responseHeaders: options.responseHeaders,
         urlRegex: options.urlRegex || false,
         testId: running.id,
       });
