@@ -1,4 +1,4 @@
-## <small>1.7.2 (2026-04-20)</small>
+## <small>1.7.2 (2026-04-21)</small>
 
 * fix(mockBridge): forward `responseHeaders` to `__twdCollectMock` so downstream contract validation can apply Content-Type-aware schema selection.
 * fix(screenDom): prioritize known app roots (`#root`, `#app`, `app-root`) and skip empty containers when scoping queries; add `rootSelector` option to `initTWD` for non-standard roots (e.g. sandbox environments that inject overlay siblings).
