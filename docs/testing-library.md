@@ -42,67 +42,41 @@ import { screenDom, screenDomGlobal } from "twd-js";
 
 ### How screenDom Works
 
-`screenDom` automatically finds your app's root container by searching for the **first direct child of `<body>`** that is not excluded. This works for common patterns like:
-- `<div id="root"></div>`
-- `<app-root></app-root>`
-- `<main></main>`
-- Any other container element
+`screenDom` resolves the app's root container in this priority order:
 
-**Excluded elements:** The following tags are automatically excluded from container selection (as they're not app content):
-- `script` - JavaScript files
-- `style` - CSS stylesheets
-- `svg` - SVG graphics
-- `path` - SVG path elements
-- `noscript` - Fallback content (e.g., Google Tag Manager)
-- `link` - Stylesheet links, favicons
-- `iframe` - Embedded content, analytics widgets
-- `template` - Web component templates
-- `meta` - Metadata tags
+1. **Configured selector** — if you pass `rootSelector` to `initTWD` (e.g. `initTWD(tests, { rootSelector: '#my-app' })`), that selector is tried first.
+2. **Known framework roots** — `#root` (Vite / CRA / Solid), `#app` (Vue), then `app-root` (Angular). Most apps fall into this bucket and need no configuration.
+3. **Heuristic fallback** — the first direct child of `<body>` that isn't the TWD sidebar, isn't an excluded tag, and isn't empty.
+4. **Last resort** — `document.body`.
+
+If resolution reaches step 3 or 4 without a configured `rootSelector`, `screenDom` logs a one-time console warning pointing you to the `rootSelector` option.
+
+**Excluded elements:** The following tags are ignored during the heuristic fallback (they're never app content):
+
+- `script`, `style`, `svg`, `path`, `noscript`, `link`, `iframe`, `template`, `meta`
+
+### Configuring a custom root
+
+If your app mounts into a non-standard element, pass `rootSelector` to `initTWD`:
+
+```ts
+initTWD(tests, {
+  rootSelector: '#my-app',
+});
+```
+
+This is the simplest way to handle apps whose root isn't `#root`, `#app`, or `app-root`.
 
 ### Troubleshooting: When screenDom Can't Find Your Container
 
-If `screenDom` queries fail or return unexpected results, it might be because:
+If `screenDom` queries fail unexpectedly:
 
-1. **Your app root is not the first non-excluded element in `<body>`**
-   
-   ```html
-   <!-- ❌ Problem: Analytics container comes before #root -->
-   <body>
-     <div id="analytics-container"></div>
-     <div id="root"></div>
-   </body>
-   ```
-   
-   **Solution:** Use `screenDomGlobal` instead, or ensure your app root is the first element:
-   
-   ```html
-   <!-- ✅ Good: #root is first -->
-   <body>
-     <div id="root"></div>
-     <div id="analytics-container"></div>
-   </body>
-   ```
-
-2. **You have other elements before your app root**
-   
-   ```html
-   <!-- ❌ Problem: Header or other wrapper before #root -->
-   <body>
-     <header>Site Header</header>
-     <div id="root"></div>
-   </body>
-   ```
-   
-   **Solution:** Use `screenDomGlobal` for queries, or move your app root to be first.
-
-3. **Your app uses a non-standard structure**
-   
-   If your app doesn't follow the standard pattern, `screenDom` will fall back to searching `document.body` (which includes the sidebar). In this case, use `screenDomGlobal` and make your queries more specific to avoid matching sidebar elements.
+1. **Your app uses a non-standard root selector.** Pass it via `initTWD({ rootSelector: '#your-root' })`.
+2. **Your app root exists but hasn't mounted yet.** `screenDom` queries inside a `twd.visit()` flow should run after the route mounts — make sure you `await twd.visit(...)` before querying.
+3. **You need portal-rendered elements (modals, tooltips).** Use `screenDomGlobal` for those; `screenDom` only searches inside the resolved root container.
 
 **When to use `screenDomGlobal` instead:**
-- Your app root is not the first element in `<body>`
 - You need to query portal-rendered elements (modals, dialogs)
-- Your HTML structure doesn't match the expected pattern
 
 ⚠️ **Remember:** When using `screenDomGlobal`, make your queries specific (e.g., `getByRole('button', { name: 'Submit' })`) to avoid accidentally matching elements in the TWD sidebar.
 
