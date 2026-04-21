@@ -18,8 +18,13 @@ vi.mock('../../commands/mockBridge', () => ({
   initRequestMocking: vi.fn().mockResolvedValue(undefined),
 }));
 
+vi.mock('../../proxies/screenDom', () => ({
+  setRootSelector: vi.fn(),
+}));
+
 import { initTests } from '../../initializers/initTests';
 import { initRequestMocking } from '../../commands/mockBridge';
+import { setRootSelector } from '../../proxies/screenDom';
 
 describe('initTWD', () => {
   const mockInitRequestMocking = vi.mocked(initRequestMocking);
@@ -101,6 +106,20 @@ describe('initTWD', () => {
     expect(initTests).toHaveBeenCalled();
     const callArgs = (initTests as any).mock.calls[0];
     expect(callArgs[1].props).toEqual({ open: true, position: 'left', search: true });
+  });
+
+  it('should call setRootSelector when rootSelector option is provided', () => {
+    const files = {};
+    initTWD(files, { rootSelector: '#my-app' });
+
+    expect(setRootSelector).toHaveBeenCalledWith('#my-app');
+  });
+
+  it('should not call setRootSelector when rootSelector option is omitted', () => {
+    const files = {};
+    initTWD(files);
+
+    expect(setRootSelector).not.toHaveBeenCalled();
   });
 });
 

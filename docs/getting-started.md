@@ -52,7 +52,8 @@ if (import.meta.env.DEV) {
     position: 'left',
     search: true,                   // Enable search/filter in the sidebar (default: false)
     serviceWorker: true,            // Enable request mocking (default: true)
-    serviceWorkerUrl: '/mock-sw.js' // Custom service worker path (default: '/mock-sw.js')
+    serviceWorkerUrl: '/mock-sw.js',// Custom service worker path (default: '/mock-sw.js')
+    // rootSelector: '#my-app',     // (Optional) Override the app root for screenDom queries
   });
 }
 

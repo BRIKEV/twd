@@ -1,12 +1,13 @@
 import { describe, it, beforeEach, vi, expect } from 'vitest';
 import * as twd from '../../runner';
-import { screenDom, screenDomGlobal } from '../../proxies/screenDom';
+import { screenDom, screenDomGlobal, setRootSelector, resetScreenDomState } from '../../proxies/screenDom';
 
 describe('screenDom', () => {
   beforeEach(() => {
     twd.clearTests();
     vi.clearAllMocks();
     document.body.innerHTML = '';
+    resetScreenDomState();
   });
 
   it('should not select buton in sidebar', () => {
@@ -23,6 +24,145 @@ describe('screenDom', () => {
     button.textContent = 'Click me';
     document.body.appendChild(button);
     expect(screenDom.getByText('Click me')).toBeInTheDocument();
+  });
+
+  it('should prefer #root over other body children regardless of order', () => {
+    const decoy = document.createElement('div');
+    decoy.id = 'highlighter';
+    const decoyButton = document.createElement('button');
+    decoyButton.textContent = 'Click me';
+    decoy.appendChild(decoyButton);
+    document.body.appendChild(decoy);
+
+    const root = document.createElement('div');
+    root.id = 'root';
+    const rootButton = document.createElement('button');
+    rootButton.textContent = 'Submit';
+    root.appendChild(rootButton);
+    document.body.appendChild(root);
+
+    expect(screenDom.getByText('Submit')).toBeInTheDocument();
+    expect(screenDom.queryByText('Click me')).toBeNull();
+  });
+
+  it('should prefer #app when #root is absent', () => {
+    const app = document.createElement('div');
+    app.id = 'app';
+    const appButton = document.createElement('button');
+    appButton.textContent = 'Vue button';
+    app.appendChild(appButton);
+    document.body.appendChild(app);
+
+    expect(screenDom.getByText('Vue button')).toBeInTheDocument();
+  });
+
+  it('should prefer app-root when #root and #app are absent', () => {
+    const ng = document.createElement('app-root');
+    const ngButton = document.createElement('button');
+    ngButton.textContent = 'Angular button';
+    ng.appendChild(ngButton);
+    document.body.appendChild(ng);
+
+    expect(screenDom.getByText('Angular button')).toBeInTheDocument();
+  });
+
+  it('should skip empty body children in the heuristic fallback', () => {
+    // No #root / #app / app-root — must fall back to the heuristic
+    const empty = document.createElement('div');
+    empty.id = 'highlighter';
+    document.body.appendChild(empty);
+
+    const custom = document.createElement('div');
+    custom.id = 'custom-app';
+    const customText = document.createElement('span');
+    customText.textContent = 'Hello custom';
+    custom.appendChild(customText);
+    document.body.appendChild(custom);
+
+    expect(screenDom.getByText('Hello custom')).toBeInTheDocument();
+  });
+
+  it('should use configured rootSelector when provided', () => {
+    const custom = document.createElement('div');
+    custom.id = 'my-app';
+    const customText = document.createElement('span');
+    customText.textContent = 'Custom app content';
+    custom.appendChild(customText);
+    document.body.appendChild(custom);
+
+    const root = document.createElement('div');
+    root.id = 'root';
+    const rootText = document.createElement('span');
+    rootText.textContent = 'Default root content';
+    root.appendChild(rootText);
+    document.body.appendChild(root);
+
+    setRootSelector('#my-app');
+
+    expect(screenDom.getByText('Custom app content')).toBeInTheDocument();
+    expect(screenDom.queryByText('Default root content')).toBeNull();
+  });
+
+  it('should warn exactly once when falling back to the heuristic', () => {
+    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    // No #root / #app / app-root — heuristic will fire
+    const custom = document.createElement('div');
+    custom.id = 'custom-app';
+    custom.textContent = 'Hello';
+    document.body.appendChild(custom);
+
+    screenDom.getByText('Hello');
+    screenDom.getByText('Hello');
+    screenDom.getByText('Hello');
+
+    expect(warnSpy).toHaveBeenCalledTimes(1);
+    expect(warnSpy.mock.calls[0][0]).toContain('[TWD]');
+    expect(warnSpy.mock.calls[0][0]).toContain('rootSelector');
+
+    warnSpy.mockRestore();
+  });
+
+  it('should not warn when a configured rootSelector matches', () => {
+    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    const custom = document.createElement('div');
+    custom.id = 'my-app';
+    custom.textContent = 'Hello';
+    document.body.appendChild(custom);
+
+    setRootSelector('#my-app');
+    screenDom.getByText('Hello');
+
+    expect(warnSpy).not.toHaveBeenCalled();
+    warnSpy.mockRestore();
+  });
+
+  it('should fall through to priority list without warning when configured rootSelector does not match but priority list matches', () => {
+    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    const root = document.createElement('div');
+    root.id = 'root';
+    root.textContent = 'Priority hit';
+    document.body.appendChild(root);
+
+    setRootSelector('#does-not-exist');
+
+    // #root is matched via priority list — no warn because priority list succeeded
+    expect(screenDom.getByText('Priority hit')).toBeInTheDocument();
+    expect(warnSpy).not.toHaveBeenCalled();
+    warnSpy.mockRestore();
+  });
+
+  it('should warn when configured selector misses AND priority list misses', () => {
+    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    const custom = document.createElement('div');
+    custom.id = 'custom-app';
+    custom.textContent = 'Heuristic hit';
+    document.body.appendChild(custom);
+
+    setRootSelector('#does-not-exist');
+
+    expect(screenDom.getByText('Heuristic hit')).toBeInTheDocument();
+    expect(warnSpy).toHaveBeenCalledTimes(1);
+    warnSpy.mockRestore();
   });
 
   it('should throw an error if we have two buttons one in sidebar and one in the body using global screen selector', () => {

@@ -4,11 +4,67 @@ import { domMessage } from './domMessage';
 
 type ScreenDom = typeof screen;
 
+// Known app-root selectors in priority order (framework semantic signals)
+const ROOT_SELECTOR_PRIORITY = ['#root', '#app', 'app-root'] as const;
+
+const EXCLUDED_FALLBACK_SELECTOR =
+  "body > :not(#twd-sidebar-root):not(script):not(style):not(svg):not(path):not(noscript):not(link):not(meta):not(iframe):not(template)";
+
+const FALLBACK_WARNING =
+  '[TWD] screenDom could not find a known app root (#root / #app / app-root). ' +
+  'Falling back to best-guess container — if queries behave unexpectedly, pass ' +
+  "rootSelector to initTWD: initTWD(modules, { rootSelector: '#my-app' }).";
+
+const state = {
+  rootSelector: null as string | null,
+  warnedOnFallback: false,
+};
+
+/**
+ * Set the app root selector used by screenDom queries. Package-internal —
+ * wired through `initTWD({ rootSelector })`. Not re-exported from `src/index.ts`.
+ */
+export const setRootSelector = (selector: string) => {
+  state.rootSelector = selector;
+};
+
+/**
+ * Reset screenDom module state. Only use in tests.
+ * @internal
+ */
+export const resetScreenDomState = () => {
+  state.rootSelector = null;
+  state.warnedOnFallback = false;
+};
+
+const isNonEmpty = (el: Element): boolean =>
+  el.childElementCount > 0 || (el.textContent?.trim().length ?? 0) > 0;
+
+const warnOnFallbackOnce = () => {
+  if (state.warnedOnFallback) return;
+  state.warnedOnFallback = true;
+  console.warn(FALLBACK_WARNING);
+};
+
 // Define which container to use (anything except the sidebar)
-const getFilteredContainer = () => {
-  // Generic strategy: Find the first direct child of body that isn't the TWD sidebar
-  // This works for <div id="root">, <app-root>, <main>, etc.
-  return document.querySelector("body > :not(#twd-sidebar-root):not(script):not(style):not(svg):not(path):not(noscript):not(link):not(meta):not(iframe):not(template)") ?? document.body;
+const getFilteredContainer = (): HTMLElement => {
+  // 1. User-configured selector (if it matches)
+  if (state.rootSelector) {
+    const configured = document.querySelector(state.rootSelector);
+    if (configured) return configured as HTMLElement;
+  }
+  // 2. Priority list: trust semantic app-root selectors
+  for (const selector of ROOT_SELECTOR_PRIORITY) {
+    const match = document.querySelector(selector);
+    if (match) return match as HTMLElement;
+  }
+  // 3. Fallback heuristic: first non-empty direct body child
+  warnOnFallbackOnce();
+  const candidates = document.querySelectorAll(EXCLUDED_FALLBACK_SELECTOR);
+  for (const candidate of Array.from(candidates)) {
+    if (isNonEmpty(candidate)) return candidate as HTMLElement;
+  }
+  return document.body;
 };
 
 // It takes whatever RTL query the user calls (like getByText) and calls the same function from within(filteredContainer), so the search happens only inside the allowed part of the DOM.
