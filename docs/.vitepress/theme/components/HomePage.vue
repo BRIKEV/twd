@@ -322,6 +322,17 @@ const faqs = [
             <p class="faq-answer">{{ faq.a }}</p>
           </details>
         </div>
+
+        <div class="faq-cta">
+          <h3 class="faq-cta-title">Still have questions?</h3>
+          <p class="faq-cta-desc">
+            Have questions or want a deeper dive? Schedule a session with the maintainer.
+            Happy to walk you through TWD or run a tailored workshop for your team.
+          </p>
+          <a href="https://calendly.com/kevinccbsg/30min" target="_blank" rel="noopener" class="btn btn-outline">
+            Book a session <span class="visually-hidden">(opens in new tab)</span>
+          </a>
+        </div>
       </section>
 
       <!-- Section 6: Manifesto Quote -->
@@ -967,6 +978,31 @@ details[open] .faq-question::before {
   font-size: 0.8125rem;
   line-height: 1.7;
   color: var(--vp-c-text-2);
+}
+
+.faq-cta {
+  margin-top: 36px;
+  padding: 32px 28px;
+  border-radius: var(--hp-radius);
+  border: 1px solid var(--hp-border);
+  background: var(--hp-surface);
+  text-align: center;
+}
+
+.faq-cta-title {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--vp-c-text-1);
+  letter-spacing: -0.01em;
+  margin-bottom: 10px;
+}
+
+.faq-cta-desc {
+  font-size: 0.875rem;
+  line-height: 1.65;
+  color: var(--vp-c-text-2);
+  max-width: 520px;
+  margin: 0 auto 20px;
 }
 
 /* ============================================
