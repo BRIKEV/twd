@@ -12,21 +12,21 @@
   "commitType": "docs",
   "contributors": [
     {
-      "login": "DamonCaos",
-      "name": "Javier Rodriguez",
-      "avatar_url": "https://avatars.githubusercontent.com/u/169996368?v=4",
-      "profile": "https://github.com/DamonCaos",
-      "contributions": [
-        "doc"
-      ]
-    },
-    {
       "login": "kevinccbsg",
       "name": "Kevin Julián Martínez Escobar",
       "avatar_url": "https://avatars.githubusercontent.com/u/12685053?v=4",
       "profile": "https://github.com/kevinccbsg",
       "contributions": [
         "code"
+      ]
+    },
+    {
+      "login": "DamonCaos",
+      "name": "Javier Rodriguez",
+      "avatar_url": "https://avatars.githubusercontent.com/u/169996368?v=4",
+      "profile": "https://github.com/DamonCaos",
+      "contributions": [
+        "doc"
       ]
     }
   ],
