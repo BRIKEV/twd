@@ -1,4 +1,4 @@
-# TWD
+# TWD (Testing while developing)
 
 [![CI](https://github.com/BRIKEV/twd/actions/workflows/ci.yml/badge.svg)](https://github.com/BRIKEV/twd/actions/workflows/ci.yml)
 [![npm version](https://img.shields.io/npm/v/twd-js.svg)](https://www.npmjs.com/package/twd-js)
@@ -6,11 +6,11 @@
 [![Maintainability](https://qlty.sh/gh/BRIKEV/projects/twd/maintainability.svg)](https://qlty.sh/gh/BRIKEV/projects/twd)
 [![Code Coverage](https://qlty.sh/gh/BRIKEV/projects/twd/coverage.svg)](https://qlty.sh/gh/BRIKEV/projects/twd)
 
-<p>
-  <img src="./images/logo_full_sized.png" alt="TWD Logo" width="400">
+<p align="center">
+  <img src="./images/twd-skill.gif" alt="TWD running with an AI agent" width="800">
 </p>
 
-TWD (Testing Web Development) is a library designed to seamlessly integrate testing into your web development workflow. It streamlines the process of writing, running, and managing tests directly in your application, with a modern UI and powerful mocking capabilities.
+TWD is a library designed to seamlessly integrate testing into your web development workflow. It streamlines the process of writing, running, and managing tests directly in your application, with a modern UI and powerful mocking capabilities.
 
 **📖 [Full Documentation](https://brikev.github.io/twd/) | 🚀 [Getting Started](https://brikev.github.io/twd/getting-started) | 📚 [API Reference](https://brikev.github.io/twd/api/)**
 
@@ -165,6 +165,27 @@ Each example includes a complete setup guide and demonstrates best practices for
 ## Contributing
 
 Contributions are welcome! Please open issues or pull requests on [GitHub](https://github.com/BRIKEV/twd).
+
+## Contributors ✨
+
+<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+<!-- prettier-ignore-start -->
+<!-- markdownlint-disable -->
+<table>
+  <tbody>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/kevinccbsg"><img src="https://avatars.githubusercontent.com/u/12685053?v=4?s=100" width="100px;" alt="Kevin Julián Martínez Escobar"/><br /><sub><b>Kevin Julián Martínez Escobar</b></sub></a><br /><a href="https://github.com/BRIKEV/twd/commits?author=kevinccbsg" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/DamonCaos"><img src="https://avatars.githubusercontent.com/u/169996368?v=4?s=100" width="100px;" alt="Javier Rodriguez"/><br /><sub><b>Javier Rodriguez</b></sub></a><br /><a href="https://github.com/BRIKEV/twd/commits?author=DamonCaos" title="Documentation">📖</a></td>
+    </tr>
+  </tbody>
+</table>
+
+<!-- markdownlint-restore -->
+<!-- prettier-ignore-end -->
+
+<!-- ALL-CONTRIBUTORS-LIST:END -->
+
+This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind are welcome!
 
 ## License
 
