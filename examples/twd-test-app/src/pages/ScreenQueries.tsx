@@ -111,6 +111,15 @@ const ScreenQueries: React.FC = () => {
         <h5>Heading Level 5</h5>
       </section>
 
+      <section style={{ marginTop: '2rem', padding: '1rem', border: '1px solid #ddd', borderRadius: 8 }}>
+        <h2>3 items list</h2>
+        <ul>
+          <li>List Item 1</li>
+          <li>List Item 2</li>
+          <li>List Item 3</li>
+        </ul>
+      </section>
+
       {searchTerm && (
         <section style={{ marginTop: '2rem', padding: '1rem', border: '1px solid #4CAF50', borderRadius: 8, backgroundColor: '#f0f8f0' }}>
           <p>You searched for: <strong>{searchTerm}</strong></p>
