@@ -46,6 +46,7 @@ describe("assertion examples", () => {
     // be.visible
     const beVisible = await twd.get("#be-visible");
     beVisible.should("be.visible");
+
   
     // have.class
     const haveClass = await twd.get("#have-class");

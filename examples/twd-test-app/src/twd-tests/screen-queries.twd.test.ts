@@ -54,6 +54,13 @@ describe("Screen Queries Demo", () => {
     twd.should(emailPlaceholder, "be.visible");
   });
 
+  it.only("should query elements and assert have.length", async () => {
+    await twd.visit("/screen-queries");
+    // Query all buttons and assert length
+    const allButtons = screenDom.getAllByRole("listitem");
+    expect(allButtons).to.have.lengthOf(3);
+  });
+
   it("should query elements using screenDom.getByTestId", async () => {
     await twd.visit("/screen-queries");
 
