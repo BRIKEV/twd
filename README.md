@@ -173,6 +173,14 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
 <!-- prettier-ignore-start -->
 <!-- markdownlint-disable -->
+<table>
+  <tbody>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/DamonCaos"><img src="https://avatars.githubusercontent.com/u/169996368?v=4?s=100" width="100px;" alt="Javier Rodriguez"/><br /><sub><b>Javier Rodriguez</b></sub></a><br /><a href="https://github.com/BRIKEV/twd/commits?author=DamonCaos" title="Documentation">📖</a></td>
+    </tr>
+  </tbody>
+</table>
+
 <!-- markdownlint-restore -->
 <!-- prettier-ignore-end -->
 

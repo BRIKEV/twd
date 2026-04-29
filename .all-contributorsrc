@@ -10,7 +10,17 @@
   "commit": true,
   "commitConvention": "angular",
   "commitType": "docs",
-  "contributors": [],
+  "contributors": [
+    {
+      "login": "DamonCaos",
+      "name": "Javier Rodriguez",
+      "avatar_url": "https://avatars.githubusercontent.com/u/169996368?v=4",
+      "profile": "https://github.com/DamonCaos",
+      "contributions": [
+        "doc"
+      ]
+    }
+  ],
   "contributorsPerLine": 7,
   "skipCi": true
 }
