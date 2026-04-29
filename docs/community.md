@@ -7,6 +7,14 @@ description: Real-world examples, tutorials, and community content for TWD
 
 Real-world examples, tutorials, and community content for TWD.
 
+## Contributors
+
+People from the community who have shipped code, docs, or other improvements to TWD. If you're starting out in tech and looking for a beginner-friendly first PR, see the [open issues](https://github.com/BRIKEV/twd/issues) — reach out and I'll help with setup and walk you through it.
+
+| Contributor | Contribution |
+|-------------|--------------|
+| [Francisco Javier Rodriguez](https://github.com/DamonCaos) | Documentation — [PR #230](https://github.com/BRIKEV/twd/pull/230) |
+
 ## Live Showcase
 
 See TWD testing real shadcn/ui components with live code and tests running in the browser:
