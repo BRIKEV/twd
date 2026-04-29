@@ -177,6 +177,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
   <tbody>
     <tr>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/DamonCaos"><img src="https://avatars.githubusercontent.com/u/169996368?v=4?s=100" width="100px;" alt="Javier Rodriguez"/><br /><sub><b>Javier Rodriguez</b></sub></a><br /><a href="https://github.com/BRIKEV/twd/commits?author=DamonCaos" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/kevinccbsg"><img src="https://avatars.githubusercontent.com/u/12685053?v=4?s=100" width="100px;" alt="Kevin Julián Martínez Escobar"/><br /><sub><b>Kevin Julián Martínez Escobar</b></sub></a><br /><a href="https://github.com/BRIKEV/twd/commits?author=kevinccbsg" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
