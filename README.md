@@ -5,6 +5,9 @@
 [![license](https://img.shields.io/github/license/brikev/twd.svg)](./LICENSE)
 [![Maintainability](https://qlty.sh/gh/BRIKEV/projects/twd/maintainability.svg)](https://qlty.sh/gh/BRIKEV/projects/twd)
 [![Code Coverage](https://qlty.sh/gh/BRIKEV/projects/twd/coverage.svg)](https://qlty.sh/gh/BRIKEV/projects/twd)
+<!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
+[![All Contributors](https://img.shields.io/badge/all_contributors-0-orange.svg?style=flat-square)](#contributors-)
+<!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 <p>
   <img src="./images/logo_full_sized.png" alt="TWD Logo" width="400">
@@ -165,6 +168,26 @@ Each example includes a complete setup guide and demonstrates best practices for
 ## Contributing
 
 Contributions are welcome! Please open issues or pull requests on [GitHub](https://github.com/BRIKEV/twd).
+
+## Contributors ✨
+
+Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
+
+<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+<!-- prettier-ignore-start -->
+<!-- markdownlint-disable -->
+<!-- markdownlint-restore -->
+<!-- prettier-ignore-end -->
+
+<!-- ALL-CONTRIBUTORS-LIST:END -->
+
+This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind are welcome!
+
+To add a contributor, comment on an issue or PR with:
+
+```
+@all-contributors please add @username for code, doc, test
+```
 
 ## License
 
