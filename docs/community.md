@@ -14,6 +14,7 @@ People from the community who have shipped code, docs, or other improvements to 
 | Contributor | Contribution |
 |-------------|--------------|
 | [Francisco Javier Rodriguez](https://github.com/DamonCaos) | Documentation — [PR #230](https://github.com/BRIKEV/twd/pull/230) |
+| [Guillermo Ruiz Arranz](https://github.com/codesthenos) | Code — [PR #232](https://github.com/BRIKEV/twd/pull/232) |
 
 ## Live Showcase
 

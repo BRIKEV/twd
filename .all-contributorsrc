@@ -28,6 +28,15 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "codesthenos",
+      "name": "Guillermo Ruiz Arranz",
+      "avatar_url": "https://avatars.githubusercontent.com/u/166174180?v=4",
+      "profile": "https://github.com/codesthenos",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
