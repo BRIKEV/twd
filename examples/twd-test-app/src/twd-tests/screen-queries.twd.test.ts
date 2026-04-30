@@ -6,9 +6,15 @@ describe("Screen Queries Demo", () => {
     await twd.visit("/screen-queries");
 
     // Query buttons by role
-    const primaryButton = screenDom.getByRole("button", { name: /primary button/i });
-    const toggleButton = screenDom.getByRole("button", { name: /toggle visibility/i });
-    const disabledButton = screenDom.getByRole("button", { name: /disabled button/i });
+    const primaryButton = screenDom.getByRole("button", {
+      name: /primary button/i,
+    });
+    const toggleButton = screenDom.getByRole("button", {
+      name: /toggle visibility/i,
+    });
+    const disabledButton = screenDom.getByRole("button", {
+      name: /disabled button/i,
+    });
 
     // Verify buttons exist
     twd.should(primaryButton, "be.visible");
@@ -47,14 +53,15 @@ describe("Screen Queries Demo", () => {
     await twd.visit("/screen-queries");
 
     // Query inputs by placeholder
-    const searchPlaceholder = screenDom.getByPlaceholderText("Enter search term");
+    const searchPlaceholder =
+      screenDom.getByPlaceholderText("Enter search term");
     const emailPlaceholder = screenDom.getByPlaceholderText("user@example.com");
 
     twd.should(searchPlaceholder, "be.visible");
     twd.should(emailPlaceholder, "be.visible");
   });
 
-  it.only("should query elements and assert have.length", async () => {
+  it("should query elements and assert have.length", async () => {
     await twd.visit("/screen-queries");
     // Query all buttons and assert length
     const allButtons = screenDom.getAllByRole("listitem");
@@ -88,8 +95,12 @@ describe("Screen Queries Demo", () => {
 
     // Query links by role
     const contactLink = screenDom.getByRole("link", { name: /contact page/i });
-    const assertionsLink = screenDom.getByRole("link", { name: /assertions page/i });
-    const externalLink = screenDom.getByRole("link", { name: /external link/i });
+    const assertionsLink = screenDom.getByRole("link", {
+      name: /assertions page/i,
+    });
+    const externalLink = screenDom.getByRole("link", {
+      name: /external link/i,
+    });
 
     twd.should(contactLink, "be.visible");
     twd.should(assertionsLink, "be.visible");
@@ -100,9 +111,18 @@ describe("Screen Queries Demo", () => {
     await twd.visit("/screen-queries");
 
     // Query headings by role and level
-    const h1 = screenDom.getByRole("heading", { name: "Screen Queries Demo", level: 1 });
-    const h2 = screenDom.getByRole("heading", { name: "Buttons and Actions", level: 2 });
-    const h3 = screenDom.getByRole("heading", { name: "Heading Level 3", level: 3 });
+    const h1 = screenDom.getByRole("heading", {
+      name: "Screen Queries Demo",
+      level: 1,
+    });
+    const h2 = screenDom.getByRole("heading", {
+      name: "Buttons and Actions",
+      level: 2,
+    });
+    const h3 = screenDom.getByRole("heading", {
+      name: "Heading Level 3",
+      level: 3,
+    });
 
     twd.should(h1, "be.visible");
     twd.should(h2, "be.visible");
@@ -113,10 +133,14 @@ describe("Screen Queries Demo", () => {
     await twd.visit("/screen-queries");
 
     // Query checkbox and radio buttons
-    const checkbox = screenDom.getByRole("checkbox", { name: /i agree to the terms/i });
+    const checkbox = screenDom.getByRole("checkbox", {
+      name: /i agree to the terms/i,
+    });
     const radio1 = screenDom.getByRole("radio", { name: /option 1/i });
     const radio2 = screenDom.getByRole("radio", { name: /option 2/i });
-    const combobox = screenDom.getByRole("combobox", { name: /choose an option/i });
+    const combobox = screenDom.getByRole("combobox", {
+      name: /choose an option/i,
+    });
 
     twd.should(checkbox, "be.visible");
     twd.should(radio1, "be.visible");
@@ -136,7 +160,9 @@ describe("Screen Queries Demo", () => {
     expect(searchInput).to.have.property("value", "test query");
 
     // Find and click the toggle button
-    const toggleButton = screenDom.getByRole("button", { name: /toggle visibility/i });
+    const toggleButton = screenDom.getByRole("button", {
+      name: /toggle visibility/i,
+    });
     await user.click(toggleButton);
 
     // The conditional element should disappear
@@ -173,8 +199,20 @@ describe("Screen Queries Demo", () => {
   it("should return a value from twd.waitFor", async () => {
     await twd.visit("/screen-queries");
 
-    const heading = await twd.waitFor(() => screenDom.getByRole("heading", { name: /screen queries demo/i }));
+    const heading = await twd.waitFor(() =>
+      screenDom.getByRole("heading", { name: /screen queries demo/i }),
+    );
     twd.should(heading, "be.visible");
   });
-});
 
+  it("should assert be.hidden on an element that is not visible", async () => {
+    await twd.visit("/screen-queries");
+    const toggleButton = screenDom.getByRole("button", {
+      name: /toggle hidden/i,
+    });
+    const hiddenElement = screenDom.queryByTestId("hidden-element");
+    twd.should(hiddenElement as HTMLElement, "not.be.hidden");
+    await userEvent.click(toggleButton);
+    twd.should(hiddenElement as HTMLElement, "be.hidden");
+  });
+});
