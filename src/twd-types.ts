@@ -23,6 +23,7 @@ export type AssertionName =
   | "be.selected"
   | "be.focused"
   | "be.visible"
+  | "be.hidden"
   | "have.class";
 
 /**
@@ -50,6 +51,7 @@ export type AssertionArgs = {
   "be.selected": [];
   "be.focused": [];
   "be.visible": [];
+  "be.hidden": [];
   "have.class": [className: string];
 };
 
@@ -60,8 +62,8 @@ export type ArgsFor<A extends AnyAssertion> =
   A extends `not.${infer Base extends AssertionName}`
     ? AssertionArgs[Base]
     : A extends AssertionName
-    ? AssertionArgs[A]
-    : never;
+      ? AssertionArgs[A]
+      : never;
 
 /**
  * Overloads for the `should` function, for best IntelliSense.
@@ -94,6 +96,8 @@ export type ShouldFn = {
   (name: "not.be.focused"): TWDElemAPI;
   (name: "be.visible"): TWDElemAPI;
   (name: "not.be.visible"): TWDElemAPI;
+  (name: "be.hidden"): TWDElemAPI;
+  (name: "not.be.hidden"): TWDElemAPI;
   (name: "have.class", className: string): TWDElemAPI;
   (name: "not.have.class", className: string): TWDElemAPI;
 };

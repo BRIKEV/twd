@@ -1,26 +1,49 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 
 const ScreenQueries: React.FC = () => {
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
   const [isVisible, setIsVisible] = useState(true);
+  const [isHidden, setIsHidden] = useState(false);
 
   return (
-    <div style={{ maxWidth: 800, margin: '2rem auto', padding: '2rem' }}>
+    <div style={{ maxWidth: 800, margin: "2rem auto", padding: "2rem" }}>
       <h1>Screen Queries Demo</h1>
-      <p>This page demonstrates various elements that can be queried using screenDom.</p>
+      <p>
+        This page demonstrates various elements that can be queried using
+        screenDom.
+      </p>
 
-      <section style={{ marginTop: '2rem', padding: '1rem', border: '1px solid #ddd', borderRadius: 8 }}>
+      <section
+        style={{
+          marginTop: "2rem",
+          padding: "1rem",
+          border: "1px solid #ddd",
+          borderRadius: 8,
+        }}
+      >
         <h2>Buttons and Actions</h2>
-        <button onClick={() => alert('Primary clicked')}>Primary Button</button>
-        <button onClick={() => setIsVisible(!isVisible)} style={{ marginLeft: '1rem' }}>
+        <button onClick={() => alert("Primary clicked")}>Primary Button</button>
+        <button
+          onClick={() => setIsVisible(!isVisible)}
+          style={{ marginLeft: "1rem" }}
+        >
           Toggle Visibility
         </button>
-        <button disabled style={{ marginLeft: '1rem' }}>Disabled Button</button>
+        <button disabled style={{ marginLeft: "1rem" }}>
+          Disabled Button
+        </button>
       </section>
 
-      <section style={{ marginTop: '2rem', padding: '1rem', border: '1px solid #ddd', borderRadius: 8 }}>
+      <section
+        style={{
+          marginTop: "2rem",
+          padding: "1rem",
+          border: "1px solid #ddd",
+          borderRadius: 8,
+        }}
+      >
         <h2>Form Elements</h2>
-        <div style={{ marginBottom: '1rem' }}>
+        <div style={{ marginBottom: "1rem" }}>
           <label htmlFor="search-input">Search:</label>
           <input
             id="search-input"
@@ -28,37 +51,49 @@ const ScreenQueries: React.FC = () => {
             placeholder="Enter search term"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            style={{ marginLeft: '0.5rem', padding: '0.5rem' }}
+            style={{ marginLeft: "0.5rem", padding: "0.5rem" }}
           />
         </div>
-        <div style={{ marginBottom: '1rem' }}>
+        <div style={{ marginBottom: "1rem" }}>
           <label htmlFor="email-field">Email Address:</label>
           <input
             id="email-field"
             type="email"
             placeholder="user@example.com"
-            style={{ marginLeft: '0.5rem', padding: '0.5rem' }}
+            style={{ marginLeft: "0.5rem", padding: "0.5rem" }}
           />
         </div>
-        <div style={{ marginBottom: '1rem' }}>
+        <div style={{ marginBottom: "1rem" }}>
           <label>
-            <input type="checkbox" id="agree-checkbox" />
-            I agree to the terms
+            <input type="checkbox" id="agree-checkbox" />I agree to the terms
           </label>
         </div>
-        <div style={{ marginBottom: '1rem' }}>
+        <div style={{ marginBottom: "1rem" }}>
           <label>
-            <input type="radio" name="option" value="option1" id="radio-option1" />
+            <input
+              type="radio"
+              name="option"
+              value="option1"
+              id="radio-option1"
+            />
             Option 1
           </label>
-          <label style={{ marginLeft: '1rem' }}>
-            <input type="radio" name="option" value="option2" id="radio-option2" />
+          <label style={{ marginLeft: "1rem" }}>
+            <input
+              type="radio"
+              name="option"
+              value="option2"
+              id="radio-option2"
+            />
             Option 2
           </label>
         </div>
-        <div style={{ marginBottom: '1rem' }}>
+        <div style={{ marginBottom: "1rem" }}>
           <label htmlFor="select-dropdown">Choose an option:</label>
-          <select id="select-dropdown" style={{ marginLeft: '0.5rem', padding: '0.5rem' }}>
+          <select
+            id="select-dropdown"
+            style={{ marginLeft: "0.5rem", padding: "0.5rem" }}
+          >
             <option value="">Select...</option>
             <option value="option1">Option 1</option>
             <option value="option2">Option 2</option>
@@ -67,7 +102,14 @@ const ScreenQueries: React.FC = () => {
         </div>
       </section>
 
-      <section style={{ marginTop: '2rem', padding: '1rem', border: '1px solid #ddd', borderRadius: 8 }}>
+      <section
+        style={{
+          marginTop: "2rem",
+          padding: "1rem",
+          border: "1px solid #ddd",
+          borderRadius: 8,
+        }}
+      >
         <h2>Text Content</h2>
         <p>This is a paragraph with some text content.</p>
         <p data-testid="custom-paragraph">This paragraph has a test ID.</p>
@@ -75,43 +117,81 @@ const ScreenQueries: React.FC = () => {
           <span>Inline text element</span>
         </div>
         {isVisible && (
-          <div data-testid="conditional-element" style={{ color: 'green', marginTop: '1rem' }}>
+          <div
+            data-testid="conditional-element"
+            style={{ color: "green", marginTop: "1rem" }}
+          >
             This element appears conditionally
           </div>
         )}
       </section>
 
-      <section style={{ marginTop: '2rem', padding: '1rem', border: '1px solid #ddd', borderRadius: 8 }}>
+      <section
+        style={{
+          marginTop: "2rem",
+          padding: "1rem",
+          border: "1px solid #ddd",
+          borderRadius: 8,
+        }}
+      >
         <h2>Links and Navigation</h2>
         <a href="/contact">Contact Page</a>
-        <a href="/assertions" style={{ marginLeft: '1rem' }}>Assertions Page</a>
-        <a href="https://example.com" target="_blank" rel="noopener noreferrer" style={{ marginLeft: '1rem' }}>
+        <a href="/assertions" style={{ marginLeft: "1rem" }}>
+          Assertions Page
+        </a>
+        <a
+          href="https://example.com"
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{ marginLeft: "1rem" }}
+        >
           External Link
         </a>
       </section>
 
-      <section style={{ marginTop: '2rem', padding: '1rem', border: '1px solid #ddd', borderRadius: 8 }}>
+      <section
+        style={{
+          marginTop: "2rem",
+          padding: "1rem",
+          border: "1px solid #ddd",
+          borderRadius: 8,
+        }}
+      >
         <h2>Images</h2>
         <img
           src="/vite.svg"
           alt="Vite Logo"
-          style={{ width: '50px', height: '50px' }}
+          style={{ width: "50px", height: "50px" }}
         />
         <img
           src="/vite.svg"
           alt="Application Logo"
-          style={{ width: '50px', height: '50px', marginLeft: '1rem' }}
+          style={{ width: "50px", height: "50px", marginLeft: "1rem" }}
         />
       </section>
 
-      <section style={{ marginTop: '2rem', padding: '1rem', border: '1px solid #ddd', borderRadius: 8 }}>
+      <section
+        style={{
+          marginTop: "2rem",
+          padding: "1rem",
+          border: "1px solid #ddd",
+          borderRadius: 8,
+        }}
+      >
         <h2>Headings</h2>
         <h3>Heading Level 3</h3>
         <h4>Heading Level 4</h4>
         <h5>Heading Level 5</h5>
       </section>
 
-      <section style={{ marginTop: '2rem', padding: '1rem', border: '1px solid #ddd', borderRadius: 8 }}>
+      <section
+        style={{
+          marginTop: "2rem",
+          padding: "1rem",
+          border: "1px solid #ddd",
+          borderRadius: 8,
+        }}
+      >
         <h2>3 items list</h2>
         <ul>
           <li>List Item 1</li>
@@ -121,13 +201,46 @@ const ScreenQueries: React.FC = () => {
       </section>
 
       {searchTerm && (
-        <section style={{ marginTop: '2rem', padding: '1rem', border: '1px solid #4CAF50', borderRadius: 8, backgroundColor: '#f0f8f0' }}>
-          <p>You searched for: <strong>{searchTerm}</strong></p>
+        <section
+          style={{
+            marginTop: "2rem",
+            padding: "1rem",
+            border: "1px solid #4CAF50",
+            borderRadius: 8,
+            backgroundColor: "#f0f8f0",
+          }}
+        >
+          <p>
+            You searched for: <strong>{searchTerm}</strong>
+          </p>
         </section>
       )}
+
+      <section
+        style={{
+          marginTop: "2rem",
+          padding: "1rem",
+          border: "1px solid #ddd",
+          borderRadius: 8,
+        }}
+      >
+        <h2>Hidden Element</h2>
+        <button
+          data-testid="toggle-hidden"
+          onClick={() => setIsHidden(!isHidden)}
+          style={{ marginBottom: "1rem" }}
+        >
+          Toggle Hidden
+        </button>
+        <div
+          data-testid="hidden-element"
+          style={{ display: isHidden ? "none" : "block" }}
+        >
+          This element is hidden and should not be visible.
+        </div>
+      </section>
     </div>
   );
 };
 
 export default ScreenQueries;
-

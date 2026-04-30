@@ -516,6 +516,44 @@ spinner.should("not.be.visible");
 
 ---
 
+### be.hidden
+
+Verifies that an element is hidden on the page.
+
+#### Syntax
+
+```ts
+element.should("be.hidden"): TWDElemAPI
+```
+
+#### Examples
+
+```ts
+// Hidden elements
+const hiddenDiv = await twd.get(".hidden");
+hiddenDiv.should("be.hidden");
+
+// After hiding modal
+const user = userEvent.setup();
+const showModalButton = await twd.get("button[data-action='show-modal']");
+await user.click(showModalButton.el);
+const modal = await twd.get(".modal");
+modal.should("be.visible");
+const closeModalButton = await twd.get("button[data-action='close-modal']");
+await user.click(closeModalButton.el);
+modal.should("be.hidden");
+```
+
+#### Negation
+
+```ts
+// Visible elements
+const visibleDiv = await twd.get(".visible");
+visibleDiv.should("not.be.hidden");
+```
+
+---
+
 ## URL Assertions
 
 ### eq (URL)
@@ -540,7 +578,9 @@ await twd.url().should("eq", "http://localhost:3000/products");
 
 // With query parameters
 twd.visit("/search?q=laptop&sort=price");
-await twd.url().should("eq", "http://localhost:3000/search?q=laptop&sort=price");
+await twd
+  .url()
+  .should("eq", "http://localhost:3000/search?q=laptop&sort=price");
 
 // After navigation
 const user = userEvent.setup();
@@ -636,7 +676,7 @@ describe("Form Validation", () => {
 
     const user = userEvent.setup();
     const submitButton = await twd.get("button[type='submit']");
-    
+
     // Submit empty form
     await user.click(submitButton.el);
 
@@ -648,9 +688,7 @@ describe("Form Validation", () => {
       .should("have.class", "error-message");
 
     const messageError = await twd.get(".error-message");
-    messageError
-      .should("be.visible")
-      .should("not.be.empty");
+    messageError.should("be.visible").should("not.be.empty");
 
     // Fix one error
     const emailInput = await twd.get("#email");
@@ -671,23 +709,17 @@ describe("Shopping Cart", () => {
 
     // Initial empty state
     const cartCount = await twd.get(".cart-count");
-    cartCount
-      .should("have.text", "0")
-      .should("be.visible");
+    cartCount.should("have.text", "0").should("be.visible");
 
     const emptyMessage = await twd.get(".cart-empty");
-    emptyMessage
-      .should("be.visible")
-      .should("contain.text", "empty");
+    emptyMessage.should("be.visible").should("contain.text", "empty");
 
     // Add item to cart
     const addButton = await twd.get("button[data-product='123']");
     await userEvent.click(addButton.el);
 
     // Verify cart updates
-    cartCount
-      .should("have.text", "1")
-      .should("not.have.text", "0");
+    cartCount.should("have.text", "1").should("not.have.text", "0");
 
     emptyMessage.should("not.be.visible");
 
@@ -719,9 +751,7 @@ describe("Modal Dialog", () => {
     // Show modal
     await userEvent.click(showButton.el);
 
-    modal
-      .should("be.visible")
-      .should("have.class", "modal-open");
+    modal.should("be.visible").should("have.class", "modal-open");
 
     overlay.should("be.visible");
 
@@ -731,9 +761,7 @@ describe("Modal Dialog", () => {
 
     // Close modal
     const closeButton = await twd.get(".modal button[data-action='close']");
-    closeButton
-      .should("be.visible")
-      .should("be.enabled");
+    closeButton.should("be.visible").should("be.enabled");
 
     await userEvent.click(closeButton.el);
 
@@ -755,7 +783,10 @@ element.should("have.value", "exact@email.com"); // Exact value
 element.should("be.checked"); // Boolean state
 
 // ❌ Wrong assertion type
-element.should("have.text", "Welcome to our amazing website with lots of features!"); // Too specific
+element.should(
+  "have.text",
+  "Welcome to our amazing website with lots of features!",
+); // Too specific
 element.should("contain.text", "exact@email.com"); // Should be exact match
 ```
 
