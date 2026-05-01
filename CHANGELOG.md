@@ -1,3 +1,20 @@
+## <small>1.7.3 (2026-05-01)</small>
+
+* feat: add hidden assertion and improve test coverage (#232) ([425dd66](https://github.com/BRIKEV/twd/commit/425dd66), closes [#232](https://github.com/BRIKEV/twd/issues/232)
+* docs: add @codesthenos as a contributor ([2dde515](https://github.com/BRIKEV/twd/commit/2dde515))
+* docs: add Contributors section to community page ([16f66ec](https://github.com/BRIKEV/twd/commit/16f66ec))
+* docs: have length example (#230) ([130f2eb](https://github.com/BRIKEV/twd/commit/130f2eb)), closes [#230](https://github.com/BRIKEV/twd/issues/230)
+* docs(landing): add Calendly CTA after FAQ section ([5614fe1](https://github.com/BRIKEV/twd/commit/5614fe1))
+* chore(examples): remove unused and lint-only dependencies (#234) ([be1a152](https://github.com/BRIKEV/twd/commit/be1a152)), closes [#234](https://github.com/BRIKEV/twd/issues/234)
+* chore: add eslint, prettier, husky pre-commit, and CI lint job (#233) ([a374b43](https://github.com/BRIKEV/twd/commit/a374b43)), closes [#233](https://github.com/BRIKEV/twd/issues/233)
+* chore: add all-contributors bot setup (#231) ([e9fdf34](https://github.com/BRIKEV/twd/commit/e9fdf34)), closes [#231](https://github.com/BRIKEV/twd/issues/231)
+* chore(deps): bump postcss from 8.5.6 to 8.5.12 in /examples/twd-test-app (#229) ([752939a](https://github.com/BRIKEV/twd/commit/752939a)), closes [#229](https://github.com/BRIKEV/twd/issues/229)
+* chore(deps-dev): bump @vitest/coverage-v8 from 4.1.4 to 4.1.5 (#228) ([69edc9e](https://github.com/BRIKEV/twd/commit/69edc9e)), closes [#228](https://github.com/BRIKEV/twd/issues/228)
+* chore(deps-dev): bump vite from 8.0.8 to 8.0.10 (#227) ([2f51cf2](https://github.com/BRIKEV/twd/commit/2f51cf2)), closes [#227](https://github.com/BRIKEV/twd/issues/227)
+* chore(deps-dev): bump vitest from 4.1.4 to 4.1.5 (#226) ([7ca6a1b](https://github.com/BRIKEV/twd/commit/7ca6a1b)), closes [#226](https://github.com/BRIKEV/twd/issues/226)
+* chore(deps): bump follow-redirects in /examples/tutorial-example (#224) ([419b2fc](https://github.com/BRIKEV/twd/commit/419b2fc)), closes [#224](https://github.com/BRIKEV/twd/issues/224)
+
+
 ## <small>1.7.2 (2026-04-21)</small>
 
 * fix(mockBridge): forward `responseHeaders` to `__twdCollectMock` so downstream contract validation can apply Content-Type-aware schema selection.
