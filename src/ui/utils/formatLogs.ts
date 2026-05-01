@@ -1,7 +1,7 @@
 export enum LogType {
-  CHAI_DIFF = "chai-diff",
-  CHAI_MESSAGE = "chai-message",
-  ERROR = "error",
+  CHAI_DIFF = 'chai-diff',
+  CHAI_MESSAGE = 'chai-message',
+  ERROR = 'error',
 }
 
 interface ChaiDiffLog {
@@ -25,7 +25,7 @@ export type ParsedLog = ChaiDiffLog | ChaiMessageLog | ErrorLog;
 export const parseLogEntry = (log: string): ParsedLog | null => {
   try {
     const parsed = JSON.parse(log);
-    if (parsed && typeof parsed === "object" && "type" in parsed) {
+    if (parsed && typeof parsed === 'object' && 'type' in parsed) {
       return parsed as ParsedLog;
     }
   } catch {
@@ -35,10 +35,10 @@ export const parseLogEntry = (log: string): ParsedLog | null => {
 };
 
 export const formatValue = (value: unknown): string => {
-  if (value === null) return "null";
-  if (value === undefined) return "undefined";
-  if (typeof value === "string") return value;
-  if (typeof value === "object") {
+  if (value === null) return 'null';
+  if (value === undefined) return 'undefined';
+  if (typeof value === 'string') return value;
+  if (typeof value === 'object') {
     try {
       return JSON.stringify(value, null, 2);
     } catch {
@@ -49,10 +49,10 @@ export const formatValue = (value: unknown): string => {
 };
 
 export const assertStyles = (text: string) => {
-  if (text.startsWith("Assertion passed") || text.startsWith("Event fired")) {
-    return { color: "var(--twd-success)", fontWeight: "var(--twd-font-weight-bold)" };
-  } else if (text.startsWith("Test failed")) {
-    return { color: "var(--twd-error)", fontWeight: "var(--twd-font-weight-bold)" };
+  if (text.startsWith('Assertion passed') || text.startsWith('Event fired')) {
+    return { color: 'var(--twd-success)', fontWeight: 'var(--twd-font-weight-bold)' };
+  } else if (text.startsWith('Test failed')) {
+    return { color: 'var(--twd-error)', fontWeight: 'var(--twd-font-weight-bold)' };
   }
   return {};
 };
@@ -65,10 +65,10 @@ export const getDisplayText = (log: string, parsedLog: ParsedLog | null): string
   if (!parsedLog) {
     return log;
   }
-  
+
   if (isMessageLog(parsedLog)) {
     return parsedLog.message;
   }
-  
+
   return log;
 };

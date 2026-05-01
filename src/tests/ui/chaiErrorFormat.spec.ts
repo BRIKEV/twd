@@ -9,11 +9,11 @@ describe('chaiErrorFormat', () => {
     } catch (error) {
       if (isChaiAssertionError(error)) {
         const formattedError = formatChaiError(error);
-        expect(formattedError).to.deep.equal({
+        expect(formattedError).toEqual({
           actual: 1,
           expected: 2,
-          operator: "strictEqual",
-          type: "diff",
+          operator: 'strictEqual',
+          type: 'diff',
         });
       }
     }
@@ -25,7 +25,7 @@ describe('chaiErrorFormat', () => {
     } catch (error) {
       if (isChaiAssertionError(error)) {
         const formattedError = formatChaiError(error);
-        expect(formattedError).to.deep.equal({
+        expect(formattedError).toEqual({
           actual: { a: 1 },
           expected: { a: 2 },
           operator: 'deepStrictEqual',
@@ -41,7 +41,7 @@ describe('chaiErrorFormat', () => {
     } catch (error) {
       if (isChaiAssertionError(error)) {
         const formattedError = formatChaiError(error);
-        expect(formattedError).to.deep.equal({
+        expect(formattedError).toEqual({
           actual: 3,
           expected: 4,
           operator: undefined,
@@ -53,11 +53,12 @@ describe('chaiErrorFormat', () => {
 
   it('should format a chai assertion not have existence error', () => {
     try {
+      // eslint-disable-next-line @typescript-eslint/no-unused-expressions -- chai's .exist is a property getter that throws; it has no return value
       chaiExpect(undefined).to.exist;
     } catch (error) {
       if (isChaiAssertionError(error)) {
         const formattedError = formatChaiError(error);
-        expect(formattedError).to.deep.equal({
+        expect(formattedError).toEqual({
           message: 'expected undefined to exist',
           type: 'message',
         });

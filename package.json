@@ -64,6 +64,11 @@
     "build": "vite build && vite build -c vite.sw.config.js && NODE_ENV=production vite build -c vite.bundle.config.ts && cp src/cli/installsw.js dist/cli.js",
     "test": "vitest",
     "test:ci": "vitest --run --coverage",
+    "lint": "eslint src",
+    "lint:fix": "eslint src --fix",
+    "format": "prettier --write \"src/**/*.{ts,tsx,js,json,md}\"",
+    "format:check": "prettier --check \"src/**/*.{ts,tsx,js,json,md}\"",
+    "check:only": "scripts/check-only-tests.sh",
     "conventional-changelog": "conventional-changelog -i CHANGELOG.md",
     "dev": "vite",
     "docs:dev": "vitepress dev docs",
@@ -72,27 +77,46 @@
     "copy:mock-sw": "cp dist/mock-sw.js examples/twd-test-app/public/mock-sw.js && cp dist/mock-sw.js examples/tutorial-example/public/mock-sw.js && cp dist/mock-sw.js examples/vue-twd-example/public/mock-sw.js",
     "copy:dist:vue-twd-example": "cp -r dist examples/vue-twd-example/src",
     "copy:dist:tutorial-example": "cp -r dist examples/tutorial-example/src",
-    "copy:dist:examples": "npm run copy:dist:vue-twd-example && npm run copy:dist:tutorial-example"
+    "copy:dist:examples": "npm run copy:dist:vue-twd-example && npm run copy:dist:tutorial-example",
+    "prepare": "husky"
+  },
+  "lint-staged": {
+    "src/**/*.{ts,tsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "src/**/*.{json,md}": [
+      "prettier --write"
+    ]
   },
   "peerDependencies": {
     "react": ">=17.0.0",
     "react-dom": ">=17.0.0"
   },
   "devDependencies": {
+    "@eslint/js": "^9.39.4",
     "@preact/preset-vite": "^2.10.5",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^6.0.1",
-    "@vitest/coverage-v8": "^4.1.4",
+    "@vitest/coverage-v8": "^4.1.5",
+    "@vitest/eslint-plugin": "^1.6.16",
     "conventional-changelog": "^7.2.0",
-    "jsdom": "^29.0.2",
+    "eslint": "^9.39.4",
+    "eslint-config-prettier": "^10.1.8",
+    "globals": "^17.6.0",
+    "husky": "^9.1.7",
+    "jsdom": "^29.1.1",
+    "lint-staged": "^16.4.0",
+    "prettier": "^3.8.3",
     "typescript": "~5.9.3",
-    "vite": "^8.0.8",
-    "vite-plugin-dts": "^4.5.4",
+    "typescript-eslint": "^8.59.1",
+    "vite": "^8.0.10",
+    "vite-plugin-dts": "^5.0.0",
     "vitepress": "^2.0.0-alpha.12",
-    "vitest": "^4.1.4"
+    "vitest": "^4.1.5"
   },
   "keywords": [
     "testing",

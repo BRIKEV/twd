@@ -1,15 +1,15 @@
-import { describe, it, expect, vi } from "vitest";
+import { describe, it, expect, vi } from 'vitest';
 import userEvent from '@testing-library/user-event';
-import { render, screen } from '@testing-library/react'
-import { ClosedSidebar } from "../../ui/ClosedSidebar";
+import { render, screen } from '@testing-library/react';
+import { ClosedSidebar } from '../../ui/ClosedSidebar';
 
-describe("ClosedSidebar", () => {
-  it("should render ClosedSidebar component", async () => {
+describe('ClosedSidebar', () => {
+  it('should render ClosedSidebar component', async () => {
     const mockSetOpen = vi.fn();
-    const user = userEvent.setup()
+    const user = userEvent.setup();
 
     render(<ClosedSidebar setOpen={mockSetOpen} position="left" />);
-    const sidebarElement = screen.getByText("TWD");
+    const sidebarElement = screen.getByText('TWD');
     expect(sidebarElement).toBeInTheDocument();
     // Simulate a click event
     await user.click(sidebarElement);
@@ -19,12 +19,12 @@ describe("ClosedSidebar", () => {
     expect(sidebarElement).toHaveStyle({ left: '0' });
   });
 
-  it("should render ClosedSidebar component right position", async () => {
+  it('should render ClosedSidebar component right position', async () => {
     const mockSetOpen = vi.fn();
-    const user = userEvent.setup()
+    const user = userEvent.setup();
 
     render(<ClosedSidebar setOpen={mockSetOpen} position="right" />);
-    const sidebarElement = screen.getByText("TWD");
+    const sidebarElement = screen.getByText('TWD');
     expect(sidebarElement).toBeInTheDocument();
     // Simulate a click event
     await user.click(sidebarElement);
@@ -34,4 +34,3 @@ describe("ClosedSidebar", () => {
     expect(sidebarElement).toHaveStyle({ right: '0' });
   });
 });
-

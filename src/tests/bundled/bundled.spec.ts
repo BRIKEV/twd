@@ -36,7 +36,7 @@ describe('initTWD', () => {
   it('should initialize tests with default options', () => {
     const files = {};
     initTWD(files);
-    
+
     expect(initTests).toHaveBeenCalled();
     const callArgs = (initTests as any).mock.calls[0];
     expect(callArgs[0]).toBe(files);
@@ -48,7 +48,7 @@ describe('initTWD', () => {
   it('should initialize tests with custom options', () => {
     const files = {};
     initTWD(files, { open: false, position: 'right' });
-    
+
     expect(initTests).toHaveBeenCalled();
     const callArgs = (initTests as any).mock.calls[0];
     expect(callArgs[1].props).toEqual({ open: false, position: 'right' });
@@ -58,7 +58,7 @@ describe('initTWD', () => {
   it('should initialize request mocking with default service worker URL when serviceWorker is true', () => {
     const files = {};
     initTWD(files, { serviceWorker: true });
-    
+
     expect(mockInitRequestMocking).toHaveBeenCalledWith('/mock-sw.js');
   });
 
@@ -66,21 +66,21 @@ describe('initTWD', () => {
     const files = {};
     const customUrl = '/custom-mock-sw.js';
     initTWD(files, { serviceWorker: true, serviceWorkerUrl: customUrl });
-    
+
     expect(mockInitRequestMocking).toHaveBeenCalledWith(customUrl);
   });
 
   it('should not initialize request mocking when serviceWorker is false', () => {
     const files = {};
     initTWD(files, { serviceWorker: false });
-    
+
     expect(mockInitRequestMocking).not.toHaveBeenCalled();
   });
 
   it('should initialize request mocking by default when serviceWorker option is not provided', () => {
     const files = {};
     initTWD(files);
-    
+
     expect(mockInitRequestMocking).toHaveBeenCalledWith('/mock-sw.js');
   });
 
@@ -90,7 +90,7 @@ describe('initTWD', () => {
       open: false,
       position: 'right',
       serviceWorker: true,
-      serviceWorkerUrl: '/custom-sw.js'
+      serviceWorkerUrl: '/custom-sw.js',
     });
 
     expect(initTests).toHaveBeenCalled();
@@ -122,4 +122,3 @@ describe('initTWD', () => {
     expect(setRootSelector).not.toHaveBeenCalled();
   });
 });
-

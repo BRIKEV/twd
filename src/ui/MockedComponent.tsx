@@ -1,4 +1,4 @@
-import { getMockForComponent } from "./componentMocks";
+import { getMockForComponent } from './componentMocks';
 
 interface MockedComponentProps<TProps = any> {
   name: string;

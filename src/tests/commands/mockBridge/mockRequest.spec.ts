@@ -1,5 +1,9 @@
 import { describe, expect, it, vi, beforeEach } from 'vitest';
-import { clearRequestMockRules, getRequestMockRules, mockRequest } from '../../../commands/mockBridge';
+import {
+  clearRequestMockRules,
+  getRequestMockRules,
+  mockRequest,
+} from '../../../commands/mockBridge';
 import { TWD_VERSION } from '../../../constants/version';
 
 describe('mockBridge mock request methods', () => {
@@ -11,7 +15,6 @@ describe('mockBridge mock request methods', () => {
     const mockUrl = 'https://api.example.com/data';
     const alias = 'getData';
     const mockResponse = { message: 'Hello, World!' };
-
 
     // Ensure navigator.serviceWorker exists
     if (!('serviceWorker' in navigator)) {
@@ -46,7 +49,7 @@ describe('mockBridge mock request methods', () => {
       responseHeaders: { 'Content-Type': 'application/json' },
       urlRegex: true,
     });
-    
+
     expect(postMessageMock).toHaveBeenNthCalledWith(1, {
       type: 'ADD_RULE',
       rule: expect.objectContaining({
@@ -102,7 +105,10 @@ describe('mockBridge mock request methods', () => {
     clearRequestMockRules();
     expect(getRequestMockRules().length).toBe(0);
     expect(postMessageMock).toHaveBeenCalledTimes(4);
-    expect(postMessageMock).toHaveBeenNthCalledWith(4, { type: "CLEAR_RULES", version: TWD_VERSION });
+    expect(postMessageMock).toHaveBeenNthCalledWith(4, {
+      type: 'CLEAR_RULES',
+      version: TWD_VERSION,
+    });
 
     // Restore original controller
     Object.defineProperty(navigator.serviceWorker, 'controller', {
@@ -119,7 +125,10 @@ describe('mockBridge mock request methods', () => {
     const testId = 'test-abc123';
     window.__TWD_STATE__ = {
       handlers: new Map([
-        [testId, { id: testId, name: 'my test', type: 'test', status: 'running', logs: [], depth: 1 }],
+        [
+          testId,
+          { id: testId, name: 'my test', type: 'test', status: 'running', logs: [], depth: 1 },
+        ],
       ]),
       beforeEachHooks: new Map(),
       afterEachHooks: new Map(),
@@ -161,7 +170,10 @@ describe('mockBridge mock request methods', () => {
     const testId = 'test-regex456';
     window.__TWD_STATE__ = {
       handlers: new Map([
-        [testId, { id: testId, name: 'regex test', type: 'test', status: 'running', logs: [], depth: 1 }],
+        [
+          testId,
+          { id: testId, name: 'regex test', type: 'test', status: 'running', logs: [], depth: 1 },
+        ],
       ]),
       beforeEachHooks: new Map(),
       afterEachHooks: new Map(),
@@ -204,7 +216,10 @@ describe('mockBridge mock request methods', () => {
     const testId = 'test-headers789';
     window.__TWD_STATE__ = {
       handlers: new Map([
-        [testId, { id: testId, name: 'headers test', type: 'test', status: 'running', logs: [], depth: 1 }],
+        [
+          testId,
+          { id: testId, name: 'headers test', type: 'test', status: 'running', logs: [], depth: 1 },
+        ],
       ]),
       beforeEachHooks: new Map(),
       afterEachHooks: new Map(),
@@ -247,7 +262,10 @@ describe('mockBridge mock request methods', () => {
     // Set up TWD state with no running test
     window.__TWD_STATE__ = {
       handlers: new Map([
-        ['idle-test', { id: 'idle-test', name: 'idle test', type: 'test', status: 'idle', logs: [], depth: 1 }],
+        [
+          'idle-test',
+          { id: 'idle-test', name: 'idle test', type: 'test', status: 'idle', logs: [], depth: 1 },
+        ],
       ]),
       beforeEachHooks: new Map(),
       afterEachHooks: new Map(),

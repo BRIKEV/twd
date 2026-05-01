@@ -28,7 +28,7 @@ describe('twd getAll command', () => {
     item3.textContent = '!';
     container.appendChild(item3);
   });
-  
+
   it('should get all elements', async () => {
     const items = await twd.getAll('.item');
     expect(items).toHaveLength(3);

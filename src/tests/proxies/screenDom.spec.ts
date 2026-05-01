@@ -1,6 +1,11 @@
 import { describe, it, beforeEach, vi, expect } from 'vitest';
 import * as twd from '../../runner';
-import { screenDom, screenDomGlobal, setRootSelector, resetScreenDomState } from '../../proxies/screenDom';
+import {
+  screenDom,
+  screenDomGlobal,
+  setRootSelector,
+  resetScreenDomState,
+} from '../../proxies/screenDom';
 
 describe('screenDom', () => {
   beforeEach(() => {
@@ -187,11 +192,11 @@ describe('screenDom', () => {
     document.body.appendChild(div);
 
     twd.describe('Screen Queries', () => {
-      twd.it('should log getByText', async () => {
+      twd.it('should log getByText', () => {
         screenDom.getByText('Hello World');
-        screenDom.logTestingPlaygroundURL;
+        void screenDom.logTestingPlaygroundURL;
         // @ts-expect-error - prettyDOM is not a function but we want to test the call within
-        screenDom.prettyDOM;
+        void screenDom.prettyDOM;
       });
     });
 
@@ -199,7 +204,9 @@ describe('screenDom', () => {
     const testArray = Array.from(tests.values());
     testArray[1].status = 'running';
     await testArray[1].handler();
-    expect(testArray[1].logs).toContainEqual(expect.stringContaining('query: getByText("Hello World")'));
+    expect(testArray[1].logs).toContainEqual(
+      expect.stringContaining('query: getByText("Hello World")'),
+    );
   });
 
   it('should log query messages for queryBy methods', async () => {
@@ -208,7 +215,7 @@ describe('screenDom', () => {
     document.body.appendChild(button);
 
     twd.describe('Screen Queries', () => {
-      twd.it('should log queryByRole', async () => {
+      twd.it('should log queryByRole', () => {
         screenDom.queryByRole('button');
       });
     });
@@ -217,7 +224,9 @@ describe('screenDom', () => {
     const testArray = Array.from(tests.values());
     testArray[1].status = 'running';
     await testArray[1].handler();
-    expect(testArray[1].logs).toContainEqual(expect.stringContaining('query: queryByRole("button")'));
+    expect(testArray[1].logs).toContainEqual(
+      expect.stringContaining('query: queryByRole("button")'),
+    );
   });
 
   it('should log query messages for getAllBy methods', async () => {
@@ -229,10 +238,10 @@ describe('screenDom', () => {
     document.body.appendChild(div2);
 
     twd.describe('Screen Queries', () => {
-      twd.it('should log getAllByText', async () => {
+      twd.it('should log getAllByText', () => {
         try {
           screenDom.getAllByText('Item 1');
-        } catch (e) {
+        } catch {
           // getAllByText might throw if elements don't match exactly, but we still want to test the log
         }
       });
@@ -242,7 +251,9 @@ describe('screenDom', () => {
     const testArray = Array.from(tests.values());
     testArray[1].status = 'running';
     await testArray[1].handler();
-    expect(testArray[1].logs).toContainEqual(expect.stringContaining('query: getAllByText("Item 1")'));
+    expect(testArray[1].logs).toContainEqual(
+      expect.stringContaining('query: getAllByText("Item 1")'),
+    );
   });
 
   it('should log query messages for queryAllBy methods', async () => {
@@ -254,7 +265,7 @@ describe('screenDom', () => {
     document.body.appendChild(button2);
 
     twd.describe('Screen Queries', () => {
-      twd.it('should log queryAllByRole', async () => {
+      twd.it('should log queryAllByRole', () => {
         screenDom.queryAllByRole('button');
       });
     });
@@ -263,14 +274,16 @@ describe('screenDom', () => {
     const testArray = Array.from(tests.values());
     testArray[1].status = 'running';
     await testArray[1].handler();
-    expect(testArray[1].logs).toContainEqual(expect.stringContaining('query: queryAllByRole("button")'));
+    expect(testArray[1].logs).toContainEqual(
+      expect.stringContaining('query: queryAllByRole("button")'),
+    );
   });
 
   it('should log debug message for prettyDOM if available', async () => {
     // prettyDOM might not be on screen, so we'll test if it exists
     if (typeof (screenDom as any).prettyDOM === 'function') {
       twd.describe('Screen Queries', () => {
-        twd.it('should log prettyDOM', async () => {
+        twd.it('should log prettyDOM', () => {
           (screenDom as any).prettyDOM();
         });
       });
@@ -287,7 +300,7 @@ describe('screenDom', () => {
     // logDOM might not be on screen, so we'll test if it exists
     if (typeof (screenDom as any).logDOM === 'function') {
       twd.describe('Screen Queries', () => {
-        twd.it('should log logDOM', async () => {
+        twd.it('should log logDOM', () => {
           (screenDom as any).logDOM();
         });
       });
@@ -315,13 +328,15 @@ describe('screenDom', () => {
       const testArray = Array.from(tests.values());
       testArray[1].status = 'running';
       await testArray[1].handler();
-      expect(testArray[1].logs).toContainEqual(expect.stringContaining('async utility: waitFor executed'));
+      expect(testArray[1].logs).toContainEqual(
+        expect.stringContaining('async utility: waitFor executed'),
+      );
     }
   });
 
   it('should not log for non-function properties', async () => {
     twd.describe('Screen Queries', () => {
-      twd.it('should not log non-function properties', async () => {
+      twd.it('should not log non-function properties', () => {
         // Access a non-function property - screenDom itself is an object, not a function call
         // So accessing it shouldn't trigger logging
       });
@@ -341,13 +356,13 @@ describe('screenDom', () => {
     document.body.appendChild(div);
 
     twd.describe('Screen Queries', () => {
-      twd.it('should log multiple queries', async () => {
+      twd.it('should log multiple queries', () => {
         screenDom.getByText('Test');
         // queryByRole might not find anything, but should still log
         screenDom.queryByRole('button');
         try {
           screenDom.getAllByText('Test');
-        } catch (e) {
+        } catch {
           // getAllByText might throw, but we still want to test the log
         }
       });
@@ -358,8 +373,11 @@ describe('screenDom', () => {
     testArray[1].status = 'running';
     await testArray[1].handler();
     expect(testArray[1].logs).toContainEqual(expect.stringContaining('query: getByText("Test")'));
-    expect(testArray[1].logs).toContainEqual(expect.stringContaining('query: queryByRole("button")'));
-    expect(testArray[1].logs).toContainEqual(expect.stringContaining('query: getAllByText("Test")'));
+    expect(testArray[1].logs).toContainEqual(
+      expect.stringContaining('query: queryByRole("button")'),
+    );
+    expect(testArray[1].logs).toContainEqual(
+      expect.stringContaining('query: getAllByText("Test")'),
+    );
   });
 });
-

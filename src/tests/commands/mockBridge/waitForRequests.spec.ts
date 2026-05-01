@@ -1,5 +1,10 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { waitForRequests, mockRequest, clearRequestMockRules, getRequestMockRules } from '../../../commands/mockBridge';
+import {
+  waitForRequests,
+  mockRequest,
+  clearRequestMockRules,
+  getRequestMockRules,
+} from '../../../commands/mockBridge';
 
 describe('waitForRequests', () => {
   beforeEach(() => {
@@ -12,8 +17,7 @@ describe('waitForRequests', () => {
       });
     }
 
-    // Save original controller (may be undefined)
-    const originalController = navigator.serviceWorker.controller;
+    // Note: the original controller is saved and overridden below
     const postMessageMock = vi.fn();
     Object.defineProperty(navigator.serviceWorker, 'controller', {
       configurable: true,
@@ -58,6 +62,8 @@ describe('waitForRequests', () => {
       // Simulate waiter callback (directly resolve the promise by marking executed)
       // The waitFor promise will resolve on next tick after executed is set
     }, 50);
-    await expect(waitForRequests([alias, secondAlias])).rejects.toThrow(`Rule "${secondAlias}" was not executed within 1000ms.`);
+    await expect(waitForRequests([alias, secondAlias])).rejects.toThrow(
+      `Rule "${secondAlias}" was not executed within 1000ms.`,
+    );
   });
 });

@@ -10,13 +10,13 @@ describe('twd not Exists command', () => {
     const appContainer = document.createElement('div');
     appContainer.id = 'app';
     document.body.appendChild(appContainer);
-    
+
     // append a div inside the app container
     div = document.createElement('div');
     div.className = 'inner';
     appContainer.appendChild(div);
   });
-  
+
   it('should get throw exception as element exists', async () => {
     div.textContent = 'Hello World';
     await expect(twd.notExists('div')).rejects.toThrow();

@@ -115,6 +115,42 @@ TWD has two build modes that behave differently, and **both must be tested manua
 
 twd-js's [open issues are here](https://github.com/BRIKEV/twd/issues). Look for issues labeled `good first issue` if you're new to the project.
 
+## Code Style and Linting
+
+This project uses **ESLint** + **Prettier** for the main library source (`src/`). Examples are not strictly linted, but `it.only` / `describe.only` is blocked everywhere via a pre-commit hook and CI check.
+
+### What runs automatically
+
+When you run `npm install`, Husky sets up a Git pre-commit hook that:
+
+1. Greps the entire repo for focused tests (`it.only`, `describe.only`, etc.) and rejects the commit if any are found.
+2. Runs ESLint with `--fix` and Prettier with `--write` on staged `src/` files.
+
+You don't need to enable format-on-save in your editor — the hook handles formatting at commit time.
+
+### If your editor has a different formatter
+
+Most editors with a Prettier extension auto-detect `.prettierrc.json` and use the project's rules. If you have another formatter set as default, please either:
+
+- Install the Prettier extension and let it own formatting, OR
+- Disable format-on-save in this project (an editor-local override is fine — do not commit it).
+
+The committed `.editorconfig` ensures correct indent / EOL / charset regardless of your editor.
+
+### Manual commands
+
+```bash
+npm run lint            # check src/ for ESLint errors
+npm run lint:fix        # auto-fix what ESLint can
+npm run format          # apply Prettier to src/
+npm run format:check    # verify src/ is Prettier-clean (used by CI)
+npm run check:only      # grep for focused tests across src/ and examples/
+```
+
+### CI
+
+Every PR runs a `lint` job that calls `lint`, `format:check`, and `check:only`. PRs that fail any of these are blocked from merging.
+
 ## Submitting Changes
 
 ### Before Submitting

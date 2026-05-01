@@ -12,19 +12,19 @@
  * api.should("be.empty");
  */
 export type AssertionName =
-  | "have.text"
-  | "contain.text"
-  | "be.empty"
-  | "have.attr"
-  | "have.value"
-  | "be.disabled"
-  | "be.enabled"
-  | "be.checked"
-  | "be.selected"
-  | "be.focused"
-  | "be.visible"
-  | "be.hidden"
-  | "have.class";
+  | 'have.text'
+  | 'contain.text'
+  | 'be.empty'
+  | 'have.attr'
+  | 'have.value'
+  | 'be.disabled'
+  | 'be.enabled'
+  | 'be.checked'
+  | 'be.selected'
+  | 'be.focused'
+  | 'be.visible'
+  | 'be.hidden'
+  | 'have.class';
 
 /**
  * Negatable assertion names (e.g., 'not.have.text').
@@ -40,30 +40,29 @@ export type AnyAssertion = Negatable<AssertionName>;
  * Argument types for each assertion.
  */
 export type AssertionArgs = {
-  "have.text": [expected: string];
-  "contain.text": [expected: string];
-  "be.empty": [];
-  "have.attr": [attr: string, value: string];
-  "have.value": [value: string];
-  "be.disabled": [];
-  "be.enabled": [];
-  "be.checked": [];
-  "be.selected": [];
-  "be.focused": [];
-  "be.visible": [];
-  "be.hidden": [];
-  "have.class": [className: string];
+  'have.text': [expected: string];
+  'contain.text': [expected: string];
+  'be.empty': [];
+  'have.attr': [attr: string, value: string];
+  'have.value': [value: string];
+  'be.disabled': [];
+  'be.enabled': [];
+  'be.checked': [];
+  'be.selected': [];
+  'be.focused': [];
+  'be.visible': [];
+  'be.hidden': [];
+  'have.class': [className: string];
 };
 
 /**
  * Maps assertion name to its argument tuple.
  */
-export type ArgsFor<A extends AnyAssertion> =
-  A extends `not.${infer Base extends AssertionName}`
-    ? AssertionArgs[Base]
-    : A extends AssertionName
-      ? AssertionArgs[A]
-      : never;
+export type ArgsFor<A extends AnyAssertion> = A extends `not.${infer Base extends AssertionName}`
+  ? AssertionArgs[Base]
+  : A extends AssertionName
+    ? AssertionArgs[A]
+    : never;
 
 /**
  * Overloads for the `should` function, for best IntelliSense.
@@ -74,32 +73,32 @@ export type ArgsFor<A extends AnyAssertion> =
  * twd.should("have.class", "active");
  */
 export type ShouldFn = {
-  (name: "have.text", expected: string): TWDElemAPI;
-  (name: "not.have.text", expected: string): TWDElemAPI;
-  (name: "contain.text", expected: string): TWDElemAPI;
-  (name: "not.contain.text", expected: string): TWDElemAPI;
-  (name: "be.empty"): TWDElemAPI;
-  (name: "not.be.empty"): TWDElemAPI;
-  (name: "have.attr", attr: string, value: string): TWDElemAPI;
-  (name: "not.have.attr", attr: string, value: string): TWDElemAPI;
-  (name: "have.value", value: string): TWDElemAPI;
-  (name: "not.have.value", value: string): TWDElemAPI;
-  (name: "be.disabled"): TWDElemAPI;
-  (name: "not.be.disabled"): TWDElemAPI;
-  (name: "be.enabled"): TWDElemAPI;
-  (name: "not.be.enabled"): TWDElemAPI;
-  (name: "be.checked"): TWDElemAPI;
-  (name: "not.be.checked"): TWDElemAPI;
-  (name: "be.selected"): TWDElemAPI;
-  (name: "not.be.selected"): TWDElemAPI;
-  (name: "be.focused"): TWDElemAPI;
-  (name: "not.be.focused"): TWDElemAPI;
-  (name: "be.visible"): TWDElemAPI;
-  (name: "not.be.visible"): TWDElemAPI;
-  (name: "be.hidden"): TWDElemAPI;
-  (name: "not.be.hidden"): TWDElemAPI;
-  (name: "have.class", className: string): TWDElemAPI;
-  (name: "not.have.class", className: string): TWDElemAPI;
+  (name: 'have.text', expected: string): TWDElemAPI;
+  (name: 'not.have.text', expected: string): TWDElemAPI;
+  (name: 'contain.text', expected: string): TWDElemAPI;
+  (name: 'not.contain.text', expected: string): TWDElemAPI;
+  (name: 'be.empty'): TWDElemAPI;
+  (name: 'not.be.empty'): TWDElemAPI;
+  (name: 'have.attr', attr: string, value: string): TWDElemAPI;
+  (name: 'not.have.attr', attr: string, value: string): TWDElemAPI;
+  (name: 'have.value', value: string): TWDElemAPI;
+  (name: 'not.have.value', value: string): TWDElemAPI;
+  (name: 'be.disabled'): TWDElemAPI;
+  (name: 'not.be.disabled'): TWDElemAPI;
+  (name: 'be.enabled'): TWDElemAPI;
+  (name: 'not.be.enabled'): TWDElemAPI;
+  (name: 'be.checked'): TWDElemAPI;
+  (name: 'not.be.checked'): TWDElemAPI;
+  (name: 'be.selected'): TWDElemAPI;
+  (name: 'not.be.selected'): TWDElemAPI;
+  (name: 'be.focused'): TWDElemAPI;
+  (name: 'not.be.focused'): TWDElemAPI;
+  (name: 'be.visible'): TWDElemAPI;
+  (name: 'not.be.visible'): TWDElemAPI;
+  (name: 'be.hidden'): TWDElemAPI;
+  (name: 'not.be.hidden'): TWDElemAPI;
+  (name: 'have.class', className: string): TWDElemAPI;
+  (name: 'not.have.class', className: string): TWDElemAPI;
 };
 
 /**

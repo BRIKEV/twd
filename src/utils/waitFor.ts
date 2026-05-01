@@ -18,9 +18,7 @@ export const waitFor = <T>(
         const result = await callback();
         if (settled) return;
         settled = true;
-        const logMsg = message
-          ? `waitFor: resolved (${message})`
-          : 'waitFor: resolved';
+        const logMsg = message ? `waitFor: resolved (${message})` : 'waitFor: resolved';
         log(logMsg);
         resolve(result);
       } catch (err) {
@@ -40,6 +38,6 @@ export const waitFor = <T>(
       }
     };
 
-    attempt();
+    void attempt();
   });
 };

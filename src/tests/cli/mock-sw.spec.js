@@ -9,7 +9,6 @@ import { handleFetch, handleMessage, rules, ruleHitCount } from '../../cli/mock-
 import { notifyClients } from '../../cli/utils/notifyClients.js';
 import { TWD_VERSION } from '../../constants/version_cli.js';
 
-
 global.self = {
   clients: {
     matchAll: vi.fn(() => Promise.resolve([])),
@@ -18,10 +17,10 @@ global.self = {
 
 global.Response = class {
   constructor(body, init) {
-    this.body = body
-    this.init = init
+    this.body = body;
+    this.init = init;
   }
-}
+};
 
 const mockEvent = (overrides = {}) => ({
   request: {
@@ -60,7 +59,9 @@ describe('Service Worker', () => {
       expect.stringContaining('This may lead to unexpected behavior.'),
     );
     expect(consoleWarnSpy).toHaveBeenCalledWith(
-      expect.stringContaining('Please unregister the Service Worker and reload the page to ensure compatibility.'),
+      expect.stringContaining(
+        'Please unregister the Service Worker and reload the page to ensure compatibility.',
+      ),
     );
     expect(consoleWarnSpy).toHaveBeenCalledWith(
       expect.stringContaining('npx twd-js init public --save'),
@@ -103,7 +104,7 @@ describe('Service Worker', () => {
         headers: {
           get: () => 'application/json',
         },
-      }
+      },
     });
     await handleFetch(event);
     const responsePromise = event.respondWith.mock.calls[0][0];
@@ -112,12 +113,7 @@ describe('Service Worker', () => {
     // Wait a tick for the notifyClients to be called
     await Promise.resolve();
 
-    expect(notifyClients).toHaveBeenCalledWith(
-      expect.any(Array),
-      rule,
-      { foo: 'bar' },
-      1,
-    );
+    expect(notifyClients).toHaveBeenCalledWith(expect.any(Array), rule, { foo: 'bar' }, 1);
   });
 
   it('should return the request when it is a form data content type', async () => {
@@ -139,7 +135,7 @@ describe('Service Worker', () => {
         headers: {
           get: () => 'multipart/form-data',
         },
-      }
+      },
     });
     await handleFetch(event);
     const responsePromise = event.respondWith.mock.calls[0][0];
@@ -170,7 +166,7 @@ describe('Service Worker', () => {
         headers: {
           get: () => 'text/plain',
         },
-      }
+      },
     });
     await handleFetch(event);
     const responsePromise = event.respondWith.mock.calls[0][0];
@@ -179,12 +175,7 @@ describe('Service Worker', () => {
     // Wait a tick for the notifyClients to be called
     await Promise.resolve();
 
-    expect(notifyClients).toHaveBeenCalledWith(
-      expect.any(Array),
-      rule,
-      'plain text',
-      1,
-    );
+    expect(notifyClients).toHaveBeenCalledWith(expect.any(Array), rule, 'plain text', 1);
   });
 
   it('should return the request when it is a octet-stream content type', async () => {
@@ -202,7 +193,7 @@ describe('Service Worker', () => {
         headers: {
           get: () => 'application/octet-stream',
         },
-      }
+      },
     });
     await handleFetch(event);
     const responsePromise = event.respondWith.mock.calls[0][0];
@@ -211,12 +202,7 @@ describe('Service Worker', () => {
     // Wait a tick for the notifyClients to be called
     await Promise.resolve();
 
-    expect(notifyClients).toHaveBeenCalledWith(
-      expect.any(Array),
-      rule,
-      arrayBuffer,
-      1,
-    );
+    expect(notifyClients).toHaveBeenCalledWith(expect.any(Array), rule, arrayBuffer, 1);
   });
 
   it('should return the request when it is a image content type', async () => {
@@ -234,7 +220,7 @@ describe('Service Worker', () => {
         headers: {
           get: () => 'image/png',
         },
-      }
+      },
     });
     await handleFetch(event);
     const responsePromise = event.respondWith.mock.calls[0][0];
@@ -243,12 +229,7 @@ describe('Service Worker', () => {
     // Wait a tick for the notifyClients to be called
     await Promise.resolve();
 
-    expect(notifyClients).toHaveBeenCalledWith(
-      expect.any(Array),
-      rule,
-      blob,
-      1,
-    );
+    expect(notifyClients).toHaveBeenCalledWith(expect.any(Array), rule, blob, 1);
   });
 
   it('should return request text when is non valid content type', async () => {
@@ -265,7 +246,7 @@ describe('Service Worker', () => {
         headers: {
           get: () => 'unknown/type',
         },
-      }
+      },
     });
     await handleFetch(event);
     const responsePromise = event.respondWith.mock.calls[0][0];
@@ -274,12 +255,7 @@ describe('Service Worker', () => {
     // Wait a tick for the notifyClients to be called
     await Promise.resolve();
 
-    expect(notifyClients).toHaveBeenCalledWith(
-      expect.any(Array),
-      rule,
-      'some text',
-      1,
-    );
+    expect(notifyClients).toHaveBeenCalledWith(expect.any(Array), rule, 'some text', 1);
   });
 
   it('does not respond when no rule matches', async () => {
@@ -302,7 +278,7 @@ describe('Service Worker', () => {
         headers: {
           get: () => 'application/json',
         },
-      }
+      },
     });
 
     await handleFetch(event);
@@ -311,11 +287,6 @@ describe('Service Worker', () => {
 
     // notifyClients should have been called BEFORE response resolved
     // (without needing an extra await Promise.resolve())
-    expect(notifyClients).toHaveBeenCalledWith(
-      expect.any(Array),
-      rule,
-      { test: 'data' },
-      1,
-    );
+    expect(notifyClients).toHaveBeenCalledWith(expect.any(Array), rule, { test: 'data' }, 1);
   });
-})
+});

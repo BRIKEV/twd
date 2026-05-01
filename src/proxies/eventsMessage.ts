@@ -1,7 +1,7 @@
 export function eventsMessage(prefix: string, prop: PropertyKey, args: any[]): string {
   switch (prop) {
     case 'type':
-      return `Event fired: Typed \"${args[1]}\" into element`;
+      return `Event fired: Typed "${args[1]}" into element`;
     case 'selectOptions':
       return `Event fired: Selected option(s) ${JSON.stringify(args[1])}`;
     case 'click':

@@ -1,13 +1,13 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { expect as chaiExpect } from 'chai';
 import userEvent from '@testing-library/user-event';
-import { render, screen, waitFor, act } from '@testing-library/react'
+import { render, screen, waitFor, act } from '@testing-library/react';
 import * as twd from '../../runner';
-import { TWDSidebar } from "../../ui/TWDSidebar";
+import { TWDSidebar } from '../../ui/TWDSidebar';
 import * as mockBridge from '../../commands/mockBridge';
 import * as componentMocks from '../../ui/componentMocks';
 
-describe("TWDSidebar", () => {
+describe('TWDSidebar', () => {
   beforeEach(() => {
     // Clear all registered tests before each test case
     twd.clearTests();
@@ -15,10 +15,10 @@ describe("TWDSidebar", () => {
     sessionStorage.clear();
   });
 
-  describe("component" , () => {
-    it("should render TWDSidebar right position", async () => {
+  describe('component', () => {
+    it('should render TWDSidebar right position', () => {
       render(<TWDSidebar open position="right" />);
-      const sidebarElement = screen.getByTestId("twd-sidebar");
+      const sidebarElement = screen.getByTestId('twd-sidebar');
       // position is now handled by .twd-sidebar CSS class; inline style carries only the positional offset
       expect(sidebarElement).toHaveClass('twd-sidebar');
       expect(sidebarElement).toHaveStyle({ right: '0' });
@@ -28,41 +28,41 @@ describe("TWDSidebar", () => {
       expect(document.documentElement).not.toHaveStyle({ marginLeft: '280px' });
     });
 
-    it("should render TWDSidebar component closed", async () => {
+    it('should render TWDSidebar component closed', () => {
       render(<TWDSidebar open={false} />);
-      const sidebarElement = screen.getByText("TWD");
+      const sidebarElement = screen.getByText('TWD');
       expect(sidebarElement).toBeInTheDocument();
     });
 
-    it("should render based on the sessionStorage property if exists", async () => {
+    it('should render based on the sessionStorage property if exists', () => {
       sessionStorage.setItem('twd-sidebar-open', 'true');
       render(<TWDSidebar open={false} />);
-      const sidebarElement = screen.getByText("Run All");
+      const sidebarElement = screen.getByText('Run All');
       expect(sidebarElement).toBeInTheDocument();
     });
 
-    it("should render TWDSidebar component open", async () => {
+    it('should render TWDSidebar component open', () => {
       render(<TWDSidebar open={true} />);
-      const sidebarElement = screen.getByText("Run All");
+      const sidebarElement = screen.getByText('Run All');
       expect(sidebarElement).toBeInTheDocument();
     });
 
-    it("should open the sidebar when clicking the closed sidebar", async () => {
+    it('should open the sidebar when clicking the closed sidebar', async () => {
       const user = userEvent.setup();
       render(<TWDSidebar open={false} />);
-      const closedSidebarElement = screen.getByText("TWD");
+      const closedSidebarElement = screen.getByText('TWD');
       expect(closedSidebarElement).toBeInTheDocument();
       // Simulate a click event
       await user.click(closedSidebarElement);
-      const openSidebarElement = screen.getByText("Run All");
+      const openSidebarElement = screen.getByText('Run All');
       expect(openSidebarElement).toBeInTheDocument();
       expect(sessionStorage.getItem('twd-sidebar-open')).toBe('true');
       // simulate a click event to close the sidebar
-      const closeButton = screen.getByText("✖");
+      const closeButton = screen.getByText('✖');
       await user.click(closeButton);
-      expect(screen.getByText("TWD")).toBeInTheDocument();
+      expect(screen.getByText('TWD')).toBeInTheDocument();
       // Run all not visible
-      expect(screen.queryByText("Run All")).not.toBeInTheDocument();
+      expect(screen.queryByText('Run All')).not.toBeInTheDocument();
       expect(sessionStorage.getItem('twd-sidebar-open')).toBe('false');
     });
 
@@ -73,9 +73,9 @@ describe("TWDSidebar", () => {
         twd.it('Test 1.1', firstTest);
         twd.it.skip('Test 1.2', secondTest);
       });
-      const user = userEvent.setup()
+      const user = userEvent.setup();
       render(<TWDSidebar open={true} />);
-      const runAllButton = screen.getByText("Run All");
+      const runAllButton = screen.getByText('Run All');
       expect(runAllButton).toBeInTheDocument();
       // Simulate a click event
       await user.click(runAllButton);
@@ -90,9 +90,9 @@ describe("TWDSidebar", () => {
         twd.it('Test no only', firstTest);
         twd.it.only('Test only', secondTest);
       });
-      const user = userEvent.setup()
+      const user = userEvent.setup();
       render(<TWDSidebar open={true} />);
-      const runAllButton = screen.getByText("Run All");
+      const runAllButton = screen.getByText('Run All');
       expect(runAllButton).toBeInTheDocument();
       // Simulate a click event
       await user.click(runAllButton);
@@ -100,7 +100,7 @@ describe("TWDSidebar", () => {
       expect(secondTest).toHaveBeenCalled();
     });
 
-    it('should render the total number of tests', async () => {
+    it('should render the total number of tests', () => {
       twd.describe('Group test', () => {
         twd.it('Test 1', vi.fn());
         twd.it('Test 2', vi.fn());
@@ -152,7 +152,7 @@ describe("TWDSidebar", () => {
         twd.it('Test 1', vi.fn());
       });
       render(<TWDSidebar open={true} />);
-      const runAllButton = screen.getByText("Run All");
+      const runAllButton = screen.getByText('Run All');
       await user.click(runAllButton);
       expect(sessionStorage.getItem('twd-last-run-test-name')).toBeNull();
     });
@@ -166,8 +166,12 @@ describe("TWDSidebar", () => {
 
     it('should call clearRequestMockRules and clearComponentMocks when clicking Clear mocks', async () => {
       const user = userEvent.setup();
-      const clearRequestSpy = vi.spyOn(mockBridge, 'clearRequestMockRules').mockImplementation(() => {});
-      const clearComponentSpy = vi.spyOn(componentMocks, 'clearComponentMocks').mockImplementation(() => {});
+      const clearRequestSpy = vi
+        .spyOn(mockBridge, 'clearRequestMockRules')
+        .mockImplementation(() => {});
+      const clearComponentSpy = vi
+        .spyOn(componentMocks, 'clearComponentMocks')
+        .mockImplementation(() => {});
       render(<TWDSidebar open={true} />);
       const clearMocksButton = screen.getByRole('button', { name: 'Clear all mocks' });
       await user.click(clearMocksButton);
@@ -176,15 +180,15 @@ describe("TWDSidebar", () => {
     });
   });
 
-  describe("fail scenarios", () => {
+  describe('fail scenarios', () => {
     it('should handle throw exceptions in tests', async () => {
-      const errorTest = vi.fn().mockRejectedValue(new Error("Test error"));
+      const errorTest = vi.fn().mockRejectedValue(new Error('Test error'));
       twd.describe('Group test error', () => {
         twd.it('Test error', errorTest);
       });
-      const user = userEvent.setup()
+      const user = userEvent.setup();
       render(<TWDSidebar open={true} />);
-      const runAllButton = screen.getByText("Run All");
+      const runAllButton = screen.getByText('Run All');
       expect(runAllButton).toBeInTheDocument();
       // Simulate a click event
       await user.click(runAllButton);
@@ -199,9 +203,9 @@ describe("TWDSidebar", () => {
           chaiExpect(1).to.equal(2);
         });
       });
-      const user = userEvent.setup()
+      const user = userEvent.setup();
       render(<TWDSidebar open={true} />);
-      const runAllButton = screen.getByText("Run All");
+      const runAllButton = screen.getByText('Run All');
       expect(runAllButton).toBeInTheDocument();
       // Simulate a click event
       await user.click(runAllButton);
@@ -214,7 +218,7 @@ describe("TWDSidebar", () => {
     });
   });
 
-  describe("accessibility - screen reader announcements", () => {
+  describe('accessibility - screen reader announcements', () => {
     it('should announce when a single test passes', async () => {
       const user = userEvent.setup();
       const testFn1 = vi.fn();
@@ -224,7 +228,7 @@ describe("TWDSidebar", () => {
       render(<TWDSidebar open={true} />);
       const runTestButton = screen.getByTestId('play-icon');
       await user.click(runTestButton);
-      
+
       await waitFor(() => {
         const liveRegion = screen.getByText(/Test "My Passing Test" passed/);
         expect(liveRegion).toBeInTheDocument();
@@ -235,13 +239,13 @@ describe("TWDSidebar", () => {
       const user = userEvent.setup();
       twd.describe('Group test', () => {
         twd.it('My Failing Test', () => {
-          throw new Error("Something went wrong");
+          throw new Error('Something went wrong');
         });
       });
       render(<TWDSidebar open={true} />);
       const runTestButton = screen.getByTestId('play-icon');
       await user.click(runTestButton);
-      
+
       await waitFor(() => {
         const liveRegion = screen.getByText(/Test "My Failing Test" failed.*Something went wrong/);
         expect(liveRegion).toBeInTheDocument();
@@ -258,7 +262,7 @@ describe("TWDSidebar", () => {
       render(<TWDSidebar open={true} />);
       const runTestButton = screen.getByTestId('play-icon');
       await user.click(runTestButton);
-      
+
       await waitFor(() => {
         const liveRegion = screen.getByText(/Test "Chai Assertion Test" failed/);
         expect(liveRegion).toBeInTheDocument();
@@ -275,9 +279,11 @@ describe("TWDSidebar", () => {
       render(<TWDSidebar open={true} />);
       const runTestButton = screen.getByTestId('play-icon');
       await user.click(runTestButton);
-      
+
       await waitFor(() => {
-        const liveRegion = screen.getByText(/Test "Chai Deep Equal Test" failed.*Expected value does not match actual value/);
+        const liveRegion = screen.getByText(
+          /Test "Chai Deep Equal Test" failed.*Expected value does not match actual value/,
+        );
         expect(liveRegion).toBeInTheDocument();
       });
     });
@@ -290,9 +296,9 @@ describe("TWDSidebar", () => {
         twd.it('Test 3', vi.fn());
       });
       render(<TWDSidebar open={true} />);
-      const runAllButton = screen.getByText("Run All");
+      const runAllButton = screen.getByText('Run All');
       await user.click(runAllButton);
-      
+
       await waitFor(() => {
         const liveRegion = screen.getByText(/All tests passed.*3 tests completed/);
         expect(liveRegion).toBeInTheDocument();
@@ -311,9 +317,9 @@ describe("TWDSidebar", () => {
         });
       });
       render(<TWDSidebar open={true} />);
-      const runAllButton = screen.getByText("Run All");
+      const runAllButton = screen.getByText('Run All');
       await user.click(runAllButton);
-      
+
       await waitFor(() => {
         const liveRegion = screen.getByText(/Test run completed.*1 test passed.*2 tests failed/);
         expect(liveRegion).toBeInTheDocument();
@@ -328,9 +334,9 @@ describe("TWDSidebar", () => {
         twd.it.skip('Skip Test 2', vi.fn());
       });
       render(<TWDSidebar open={true} />);
-      const runAllButton = screen.getByText("Run All");
+      const runAllButton = screen.getByText('Run All');
       await user.click(runAllButton);
-      
+
       await waitFor(() => {
         const liveRegion = screen.getByText(/All tests passed.*1 test completed.*2 tests skipped/);
         expect(liveRegion).toBeInTheDocument();
@@ -344,13 +350,13 @@ describe("TWDSidebar", () => {
       });
       render(<TWDSidebar open={true} />);
       const runTestButton = screen.getByTestId('play-icon');
-      
+
       // Run first time
       await user.click(runTestButton);
       await waitFor(() => {
         expect(screen.getByText(/Test "Test 1" passed/)).toBeInTheDocument();
       });
-      
+
       // Clear and run again
       await user.click(runTestButton);
       // The message should still appear (may be same text, but it should re-announce)
@@ -360,103 +366,103 @@ describe("TWDSidebar", () => {
     });
   });
 
-  describe("search feature", () => {
-    it("should not render search input when search prop is false", () => {
+  describe('search feature', () => {
+    it('should not render search input when search prop is false', () => {
       render(<TWDSidebar open={true} />);
-      expect(screen.queryByLabelText("Filter tests")).not.toBeInTheDocument();
+      expect(screen.queryByLabelText('Filter tests')).not.toBeInTheDocument();
     });
 
-    it("should render search input when search prop is true", () => {
+    it('should render search input when search prop is true', () => {
       render(<TWDSidebar open={true} search={true} />);
-      expect(screen.getByLabelText("Filter tests")).toBeInTheDocument();
+      expect(screen.getByLabelText('Filter tests')).toBeInTheDocument();
     });
 
-    it("should filter tests when typing in search input", async () => {
+    it('should filter tests when typing in search input', async () => {
       const user = userEvent.setup();
-      twd.describe("Auth", () => {
-        twd.it("login test", () => {});
-        twd.it("error test", () => {});
+      twd.describe('Auth', () => {
+        twd.it('login test', () => {});
+        twd.it('error test', () => {});
       });
       render(<TWDSidebar open={true} search={true} />);
-      const input = screen.getByLabelText("Filter tests");
-      await user.type(input, "error");
-      expect(screen.getByText("error test")).toBeInTheDocument();
-      expect(screen.queryByText("login test")).not.toBeInTheDocument();
+      const input = screen.getByLabelText('Filter tests');
+      await user.type(input, 'error');
+      expect(screen.getByText('error test')).toBeInTheDocument();
+      expect(screen.queryByText('login test')).not.toBeInTheDocument();
     });
 
-    it("should persist search query to sessionStorage", async () => {
+    it('should persist search query to sessionStorage', async () => {
       const user = userEvent.setup();
-      twd.describe("Group", () => {
-        twd.it("test 1", () => {});
+      twd.describe('Group', () => {
+        twd.it('test 1', () => {});
       });
       render(<TWDSidebar open={true} search={true} />);
-      const input = screen.getByLabelText("Filter tests");
-      await user.type(input, "test");
-      expect(sessionStorage.getItem("twd-search-filter")).toBe("test");
+      const input = screen.getByLabelText('Filter tests');
+      await user.type(input, 'test');
+      expect(sessionStorage.getItem('twd-search-filter')).toBe('test');
     });
 
-    it("should restore search query from sessionStorage on mount", () => {
-      sessionStorage.setItem("twd-search-filter", "error");
-      twd.describe("Auth", () => {
-        twd.it("error test", () => {});
-        twd.it("login test", () => {});
+    it('should restore search query from sessionStorage on mount', () => {
+      sessionStorage.setItem('twd-search-filter', 'error');
+      twd.describe('Auth', () => {
+        twd.it('error test', () => {});
+        twd.it('login test', () => {});
       });
       render(<TWDSidebar open={true} search={true} />);
-      expect(screen.getByLabelText("Filter tests")).toHaveValue("error");
-      expect(screen.getByText("error test")).toBeInTheDocument();
-      expect(screen.queryByText("login test")).not.toBeInTheDocument();
+      expect(screen.getByLabelText('Filter tests')).toHaveValue('error');
+      expect(screen.getByText('error test')).toBeInTheDocument();
+      expect(screen.queryByText('login test')).not.toBeInTheDocument();
     });
 
-    it("should clear sessionStorage when search prop is false", () => {
-      sessionStorage.setItem("twd-search-filter", "old-query");
+    it('should clear sessionStorage when search prop is false', () => {
+      sessionStorage.setItem('twd-search-filter', 'old-query');
       render(<TWDSidebar open={true} search={false} />);
-      expect(sessionStorage.getItem("twd-search-filter")).toBeNull();
+      expect(sessionStorage.getItem('twd-search-filter')).toBeNull();
     });
 
     it("should show 'Run Filtered' button when search is active", async () => {
       const user = userEvent.setup();
-      twd.describe("Group", () => {
-        twd.it("test 1", () => {});
+      twd.describe('Group', () => {
+        twd.it('test 1', () => {});
       });
       render(<TWDSidebar open={true} search={true} />);
-      const input = screen.getByLabelText("Filter tests");
-      await user.type(input, "test");
-      expect(screen.getByText("Run Filtered")).toBeInTheDocument();
-      expect(screen.queryByText("Run All")).not.toBeInTheDocument();
+      const input = screen.getByLabelText('Filter tests');
+      await user.type(input, 'test');
+      expect(screen.getByText('Run Filtered')).toBeInTheDocument();
+      expect(screen.queryByText('Run All')).not.toBeInTheDocument();
     });
 
-    it("should show filtered counters when search is active", async () => {
+    it('should show filtered counters when search is active', async () => {
       const user = userEvent.setup();
-      twd.describe("Auth", () => {
-        twd.it("error test", () => {});
-        twd.it("login test", () => {});
-        twd.it("another error", () => {});
+      twd.describe('Auth', () => {
+        twd.it('error test', () => {});
+        twd.it('login test', () => {});
+        twd.it('another error', () => {});
       });
       render(<TWDSidebar open={true} search={true} />);
-      const input = screen.getByLabelText("Filter tests");
-      await user.type(input, "error");
+      const input = screen.getByLabelText('Filter tests');
+      await user.type(input, 'error');
       expect(screen.getByText(/Total:\s*2/)).toBeInTheDocument();
     });
 
-    it("should run only filtered tests when clicking Run Filtered", async () => {
+    it('should run only filtered tests when clicking Run Filtered', async () => {
       const user = userEvent.setup();
       const errorFn = vi.fn();
       const loginFn = vi.fn();
-      twd.describe("Auth", () => {
-        twd.it("error test", errorFn);
-        twd.it("login test", loginFn);
+      twd.describe('Auth', () => {
+        twd.it('error test', errorFn);
+        twd.it('login test', loginFn);
       });
       render(<TWDSidebar open={true} search={true} />);
-      const input = screen.getByLabelText("Filter tests");
-      await user.type(input, "error");
-      const runButton = screen.getByText("Run Filtered");
+      const input = screen.getByLabelText('Filter tests');
+      await user.type(input, 'error');
+      const runButton = screen.getByText('Run Filtered');
       await user.click(runButton);
       expect(errorFn).toHaveBeenCalled();
       expect(loginFn).not.toHaveBeenCalled();
     });
   });
 
-  describe("relay state-change event", () => {
+  describe('relay state-change event', () => {
     it('should re-render sidebar when twd:state-change is dispatched', async () => {
       twd.describe('Relay group', () => {
         twd.it('Relay test', vi.fn());
@@ -465,7 +471,7 @@ describe("TWDSidebar", () => {
 
       // Manually mark the test as passed (simulating what the relay does)
       const tests = Array.from(twd.handlers.values());
-      const test = tests.find(t => t.type === 'test')!;
+      const test = tests.find((t) => t.type === 'test')!;
       test.status = 'pass';
 
       // Sidebar hasn't re-rendered yet

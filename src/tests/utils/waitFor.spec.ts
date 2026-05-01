@@ -22,12 +22,12 @@ describe('waitFor', () => {
     const callback = () => {
       throw new Error('still failing');
     };
-    await expect(
-      waitFor(callback, { timeout: 100, interval: 10 })
-    ).rejects.toThrow('waitFor timed out after 100ms.');
-    await expect(
-      waitFor(callback, { timeout: 100, interval: 10 })
-    ).rejects.toThrow('Last error: still failing');
+    await expect(waitFor(callback, { timeout: 100, interval: 10 })).rejects.toThrow(
+      'waitFor timed out after 100ms.',
+    );
+    await expect(waitFor(callback, { timeout: 100, interval: 10 })).rejects.toThrow(
+      'Last error: still failing',
+    );
   });
 
   it('includes custom message in timeout error', async () => {
@@ -35,13 +35,13 @@ describe('waitFor', () => {
       throw new Error('nope');
     };
     await expect(
-      waitFor(callback, { timeout: 100, interval: 10, message: 'button to be enabled' })
+      waitFor(callback, { timeout: 100, interval: 10, message: 'button to be enabled' }),
     ).rejects.toThrow('waitFor timed out after 100ms waiting for: button to be enabled.');
   });
 
   it('works with async callbacks', async () => {
     let count = 0;
-    const callback = async () => {
+    const callback = () => {
       count++;
       if (count < 2) throw new Error('not yet');
     };
@@ -51,11 +51,12 @@ describe('waitFor', () => {
 
   it('handles non-Error throws by wrapping them', async () => {
     const callback = () => {
+      // eslint-disable-next-line @typescript-eslint/only-throw-error -- intentionally testing non-Error throw handling
       throw 'string error';
     };
-    await expect(
-      waitFor(callback, { timeout: 100, interval: 10 })
-    ).rejects.toThrow('Last error: string error');
+    await expect(waitFor(callback, { timeout: 100, interval: 10 })).rejects.toThrow(
+      'Last error: string error',
+    );
   });
 
   it('respects custom timeout and interval options', async () => {
@@ -63,9 +64,9 @@ describe('waitFor', () => {
     const callback = () => {
       throw new Error('fail');
     };
-    await expect(
-      waitFor(callback, { timeout: 200, interval: 50 })
-    ).rejects.toThrow('waitFor timed out after 200ms.');
+    await expect(waitFor(callback, { timeout: 200, interval: 50 })).rejects.toThrow(
+      'waitFor timed out after 200ms.',
+    );
     const elapsed = Date.now() - start;
     expect(elapsed).toBeGreaterThanOrEqual(180);
     expect(elapsed).toBeLessThan(400);
@@ -87,7 +88,9 @@ describe('waitFor', () => {
 
   it('uses default timeout of 2000ms', async () => {
     vi.useFakeTimers();
-    const callback = vi.fn(() => { throw new Error('fail'); });
+    const callback = vi.fn(() => {
+      throw new Error('fail');
+    });
 
     const promise = waitFor(callback);
     // Attach catch immediately so the rejection is never "unhandled"
@@ -108,17 +111,20 @@ describe('waitFor', () => {
   });
 
   it('returns the callback value from an async callback', async () => {
-    const result = await waitFor(async () => ({ name: 'test' }));
+    const result = await waitFor(() => ({ name: 'test' }));
     expect(result).toEqual({ name: 'test' });
   });
 
   it('returns the value from the successful retry', async () => {
     let count = 0;
-    const result = await waitFor(() => {
-      count++;
-      if (count < 3) throw new Error('not yet');
-      return `attempt-${count}`;
-    }, { interval: 10 });
+    const result = await waitFor(
+      () => {
+        count++;
+        if (count < 3) throw new Error('not yet');
+        return `attempt-${count}`;
+      },
+      { interval: 10 },
+    );
     expect(result).toBe('attempt-3');
   });
 });

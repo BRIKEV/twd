@@ -24,9 +24,10 @@ describe('twdHmr', () => {
 
   it('should trigger full reload for TWD test files', () => {
     const plugin = twdHmr();
-    const handleHotUpdate = typeof plugin.handleHotUpdate === 'function'
-      ? plugin.handleHotUpdate
-      : plugin.handleHotUpdate?.handler;
+    const handleHotUpdate =
+      typeof plugin.handleHotUpdate === 'function'
+        ? plugin.handleHotUpdate
+        : plugin.handleHotUpdate?.handler;
 
     const context = {
       file: '/path/to/test.twd.test.ts',
@@ -46,9 +47,10 @@ describe('twdHmr', () => {
 
   it('should not trigger reload for non-TWD test files', () => {
     const plugin = twdHmr();
-    const handleHotUpdate = typeof plugin.handleHotUpdate === 'function'
-      ? plugin.handleHotUpdate
-      : plugin.handleHotUpdate?.handler;
+    const handleHotUpdate =
+      typeof plugin.handleHotUpdate === 'function'
+        ? plugin.handleHotUpdate
+        : plugin.handleHotUpdate?.handler;
 
     const context = {
       file: '/path/to/component.tsx',
@@ -64,9 +66,10 @@ describe('twdHmr', () => {
 
   it('should support custom test file pattern', () => {
     const plugin = twdHmr({ testFilePattern: (file) => file.includes('.twd.test.') });
-    const handleHotUpdate = typeof plugin.handleHotUpdate === 'function'
-      ? plugin.handleHotUpdate
-      : plugin.handleHotUpdate?.handler;
+    const handleHotUpdate =
+      typeof plugin.handleHotUpdate === 'function'
+        ? plugin.handleHotUpdate
+        : plugin.handleHotUpdate?.handler;
 
     const context = {
       file: '/path/to/test.twd.test.tsx',
@@ -80,4 +83,3 @@ describe('twdHmr', () => {
     expect(mockSend).toHaveBeenCalled();
   });
 });
-

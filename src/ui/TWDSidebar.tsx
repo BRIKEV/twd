@@ -1,18 +1,21 @@
-import { useState, useEffect, useMemo } from "react";
-import { TestList } from "./TestList";
-import { ClosedSidebar } from "./ClosedSidebar";
-import { useLayout } from "./hooks/useLayout";
-import { handlers, TestRunner, type Handler } from "../runner";
-import { MockRulesButton } from "./MockRulesButton";
-import { clearRequestMockRules } from "../commands/mockBridge";
-import { clearComponentMocks } from "./componentMocks";
-import { isChaiAssertionError, printChaiError, formatChaiError } from "./utils/chaiErrorFormat";
-import { LogType } from "./utils/formatLogs";
-import { displaySRMessageSpecificTest, displaySRMessageAllTests } from "./utils/screenReaderMessages";
-import { TWD_VERSION } from "../constants/version";
-import { SearchInput } from "./SearchInput";
-import { filterTree } from "./utils/filterTree";
-import { buildTreeFromHandlers, type Node } from "./utils/buildTreeFromHandlers";
+import { useState, useEffect, useMemo } from 'react';
+import { TestList } from './TestList';
+import { ClosedSidebar } from './ClosedSidebar';
+import { useLayout } from './hooks/useLayout';
+import { handlers, TestRunner } from '../runner';
+import { MockRulesButton } from './MockRulesButton';
+import { clearRequestMockRules } from '../commands/mockBridge';
+import { clearComponentMocks } from './componentMocks';
+import { isChaiAssertionError, printChaiError, formatChaiError } from './utils/chaiErrorFormat';
+import { LogType } from './utils/formatLogs';
+import {
+  displaySRMessageSpecificTest,
+  displaySRMessageAllTests,
+} from './utils/screenReaderMessages';
+import { TWD_VERSION } from '../constants/version';
+import { SearchInput } from './SearchInput';
+import { filterTree } from './utils/filterTree';
+import { buildTreeFromHandlers, type Node } from './utils/buildTreeFromHandlers';
 
 interface TWDSidebarProps {
   /**
@@ -26,7 +29,7 @@ interface TWDSidebarProps {
    *
    * @default "left"
    */
-  position?: "left" | "right";
+  position?: 'left' | 'right';
   /**
    * Whether to show the search/filter input
    */
@@ -34,8 +37,8 @@ interface TWDSidebarProps {
 }
 
 const positionStyles = {
-  left: { left: 0, borderRight: "1px solid var(--twd-border)" },
-  right: { right: 0, borderLeft: "1px solid var(--twd-border)" },
+  left: { left: 0, borderRight: '1px solid var(--twd-border)' },
+  right: { right: 0, borderLeft: '1px solid var(--twd-border)' },
 };
 
 const getSearchQuery = (search?: boolean) => {
@@ -62,7 +65,7 @@ const collectTestIds = (nodes: Node[]): string[] => {
   return ids;
 };
 
-export const TWDSidebar = ({ open, position = "left", search }: TWDSidebarProps) => {
+export const TWDSidebar = ({ open, position = 'left', search }: TWDSidebarProps) => {
   const [refreshKey, setRefresh] = useState(0);
   const [isOpen, setIsOpen] = useState(getOpenState(open));
   useLayout({ isOpen, position });
@@ -77,44 +80,50 @@ export const TWDSidebar = ({ open, position = "left", search }: TWDSidebarProps)
 
   const runner = new TestRunner({
     onStart: (test) => {
-      test.status = "running";
+      test.status = 'running';
       setRefresh((n) => n + 1);
     },
     onPass: (test) => {
-      test.status = "pass";
+      test.status = 'pass';
       setRefresh((n) => n + 1);
     },
     onFail: (test, err) => {
-      test.status = "fail";
-      console.group(`%c❌ Test failed: ${test.name}`, "color: red; font-weight: bold;");
+      test.status = 'fail';
+      console.group(`%c❌ Test failed: ${test.name}`, 'color: red; font-weight: bold;');
       if (isChaiAssertionError(err)) {
         printChaiError(err);
         const formattedError = formatChaiError(err);
-        if (formattedError.type === "diff") {
+        if (formattedError.type === 'diff') {
           // Store structured error data as JSON string with prefix
-          test.logs.push(JSON.stringify({
-            type: LogType.CHAI_DIFF,
-            expected: formattedError.expected,
-            actual: formattedError.actual,
-          }));
+          test.logs.push(
+            JSON.stringify({
+              type: LogType.CHAI_DIFF,
+              expected: formattedError.expected,
+              actual: formattedError.actual,
+            }),
+          );
         } else {
-          test.logs.push(JSON.stringify({
-            type: LogType.CHAI_MESSAGE,
-            message: `Test failed: ${formattedError.message}`,
-          }));
+          test.logs.push(
+            JSON.stringify({
+              type: LogType.CHAI_MESSAGE,
+              message: `Test failed: ${formattedError.message}`,
+            }),
+          );
         }
       } else {
         console.error(err.message);
-        test.logs.push(JSON.stringify({
-          type: LogType.ERROR,
-          message: `Test failed: ${err.message}`,
-        }));
+        test.logs.push(
+          JSON.stringify({
+            type: LogType.ERROR,
+            message: `Test failed: ${err.message}`,
+          }),
+        );
       }
       console.groupEnd();
       setRefresh((n) => n + 1);
     },
     onSkip: (test) => {
-      test.status = "skip";
+      test.status = 'skip';
       setRefresh((n) => n + 1);
     },
   });
@@ -135,16 +144,9 @@ export const TWDSidebar = ({ open, position = "left", search }: TWDSidebarProps)
 
   const tests = Array.from(handlers.values());
 
-  const roots = useMemo(
-    () => buildTreeFromHandlers(tests),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [refreshKey]
-  );
+  const roots = useMemo(() => buildTreeFromHandlers(tests), [refreshKey]);
 
-  const filteredRoots = useMemo(
-    () => filterTree(roots, searchQuery),
-    [roots, searchQuery]
-  );
+  const filteredRoots = useMemo(() => filterTree(roots, searchQuery), [roots, searchQuery]);
 
   const { filteredTestIds, displayTests } = useMemo(() => {
     if (searchQuery) {
@@ -152,14 +154,13 @@ export const TWDSidebar = ({ open, position = "left", search }: TWDSidebarProps)
       const idSet = new Set(ids);
       return {
         filteredTestIds: ids,
-        displayTests: tests.filter(t => t.type === 'test' && idSet.has(t.id)),
+        displayTests: tests.filter((t) => t.type === 'test' && idSet.has(t.id)),
       };
     }
     return {
       filteredTestIds: null as string[] | null,
-      displayTests: tests.filter(t => t.type === 'test'),
+      displayTests: tests.filter((t) => t.type === 'test'),
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filteredRoots, searchQuery, refreshKey]);
 
   const runAll = async () => {
@@ -176,7 +177,9 @@ export const TWDSidebar = ({ open, position = "left", search }: TWDSidebarProps)
   };
 
   const runTest = async (id: string) => {
-    const test = Array.from(handlers.values()).filter(h => h.type === "test").find(t => t.id === id);
+    const test = Array.from(handlers.values())
+      .filter((h) => h.type === 'test')
+      .find((t) => t.id === id);
     if (!test) return;
     // Save test name to session storage for scroll persistence
     setMessage('');
@@ -200,18 +203,32 @@ export const TWDSidebar = ({ open, position = "left", search }: TWDSidebarProps)
       role="complementary"
       aria-label="Test While Developing sidebar"
     >
-      <div aria-live="polite" aria-atomic="true" style={{ position: "absolute", width: "1px", height: "1px", margin: "-1px", border: "0", padding: "0", overflow: "hidden", clip: "rect(0 0 0 0)" }}>{message}</div>
       <div
-        data-testid="twd-sidebar-header"
-        className="twd-sidebar-header"
+        aria-live="polite"
+        aria-atomic="true"
+        style={{
+          position: 'absolute',
+          width: '1px',
+          height: '1px',
+          margin: '-1px',
+          border: '0',
+          padding: '0',
+          overflow: 'hidden',
+          clip: 'rect(0 0 0 0)',
+        }}
       >
+        {message}
+      </div>
+      <div data-testid="twd-sidebar-header" className="twd-sidebar-header">
         <div className="twd-sidebar-header-row">
           <div className="twd-sidebar-header-buttons">
             <button
-              onClick={runAll}
+              onClick={() => {
+                void runAll();
+              }}
               className="twd-btn twd-btn-primary"
             >
-              <span aria-live="polite">{searchQuery ? "Run Filtered" : "Run All"}</span>
+              <span aria-live="polite">{searchQuery ? 'Run Filtered' : 'Run All'}</span>
             </button>
             <button
               onClick={() => {
@@ -234,23 +251,21 @@ export const TWDSidebar = ({ open, position = "left", search }: TWDSidebarProps)
           </button>
         </div>
         <div className="twd-sidebar-stats">
-          <span style={{ color: "var(--twd-text)" }}>Total: {totalTests}</span>
+          <span style={{ color: 'var(--twd-text)' }}>Total: {totalTests}</span>
           <div className="twd-sidebar-stats-counts">
-            <span style={{ color: "var(--twd-success)" }}>&#10003; {displayTests.filter(test => test.status === "pass").length}</span>
-            <span style={{ color: "var(--twd-error)" }}>&#10007; {displayTests.filter(test => test.status === "fail").length}</span>
+            <span style={{ color: 'var(--twd-success)' }}>
+              &#10003; {displayTests.filter((test) => test.status === 'pass').length}
+            </span>
+            <span style={{ color: 'var(--twd-error)' }}>
+              &#10007; {displayTests.filter((test) => test.status === 'fail').length}
+            </span>
           </div>
         </div>
         <MockRulesButton />
-        {search && (
-          <SearchInput value={searchQuery} onChange={handleSearchChange} />
-        )}
+        {search && <SearchInput value={searchQuery} onChange={handleSearchChange} />}
       </div>
       <div className="twd-sidebar-content">
-        <TestList
-          roots={filteredRoots}
-          runTest={runTest}
-          searchQuery={searchQuery}
-        />
+        <TestList roots={filteredRoots} runTest={runTest} searchQuery={searchQuery} />
       </div>
     </div>
   );

@@ -1,7 +1,7 @@
-import { log } from "../utils/log";
+import { log } from '../utils/log';
 
-const STYLE_ID = "twd-viewport-styles";
-const IFRAME_ID = "twd-viewport-iframe";
+const STYLE_ID = 'twd-viewport-styles';
+const IFRAME_ID = 'twd-viewport-iframe';
 
 let originalStyles: {
   maxWidth: string;
@@ -47,7 +47,7 @@ const saveOriginalStyles = () => {
 const injectBadge = (width: number, height?: number) => {
   let styleEl = document.getElementById(STYLE_ID);
   if (!styleEl) {
-    styleEl = document.createElement("style");
+    styleEl = document.createElement('style');
     styleEl.id = STYLE_ID;
     document.head.appendChild(styleEl);
   }
@@ -72,10 +72,10 @@ const injectBadge = (width: number, height?: number) => {
 }
 `;
 
-  let badge = document.getElementById("twd-viewport-badge");
+  let badge = document.getElementById('twd-viewport-badge');
   if (!badge) {
-    badge = document.createElement("div");
-    badge.id = "twd-viewport-badge";
+    badge = document.createElement('div');
+    badge.id = 'twd-viewport-badge';
     document.body.appendChild(badge);
   }
   badge.textContent = label;
@@ -83,19 +83,16 @@ const injectBadge = (width: number, height?: number) => {
 
 const removeBadge = () => {
   document.getElementById(STYLE_ID)?.remove();
-  document.getElementById("twd-viewport-badge")?.remove();
+  document.getElementById('twd-viewport-badge')?.remove();
 };
 
-const createViewportIframe = (
-  width: number,
-  height: number
-): HTMLIFrameElement => {
+const createViewportIframe = (width: number, height: number): HTMLIFrameElement => {
   let iframe = document.getElementById(IFRAME_ID) as HTMLIFrameElement | null;
   if (!iframe) {
-    iframe = document.createElement("iframe");
+    iframe = document.createElement('iframe');
     iframe.id = IFRAME_ID;
     iframe.style.cssText =
-      "position:fixed;top:-9999px;left:-9999px;visibility:hidden;pointer-events:none;border:none;";
+      'position:fixed;top:-9999px;left:-9999px;visibility:hidden;pointer-events:none;border:none;';
     document.body.appendChild(iframe);
   }
   iframe.style.width = `${width}px`;
@@ -107,28 +104,18 @@ const removeViewportIframe = () => {
   document.getElementById(IFRAME_ID)?.remove();
 };
 
-const overrideJSAPIs = (
-  state: ViewportOverrideState,
-  width: number,
-  height?: number
-) => {
-  state.originalInnerWidthDesc = Object.getOwnPropertyDescriptor(
-    window,
-    "innerWidth"
-  );
-  state.originalInnerHeightDesc = Object.getOwnPropertyDescriptor(
-    window,
-    "innerHeight"
-  );
+const overrideJSAPIs = (state: ViewportOverrideState, width: number, height?: number) => {
+  state.originalInnerWidthDesc = Object.getOwnPropertyDescriptor(window, 'innerWidth');
+  state.originalInnerHeightDesc = Object.getOwnPropertyDescriptor(window, 'innerHeight');
   state.originalMatchMedia = window.matchMedia ?? null;
 
-  Object.defineProperty(window, "innerWidth", {
+  Object.defineProperty(window, 'innerWidth', {
     get: () => width,
     configurable: true,
   });
 
   if (height !== undefined) {
-    Object.defineProperty(window, "innerHeight", {
+    Object.defineProperty(window, 'innerHeight', {
       get: () => height,
       configurable: true,
     });
@@ -136,24 +123,22 @@ const overrideJSAPIs = (
 
   const iframe = state.iframe;
   if (iframe?.contentWindow?.matchMedia) {
-    const iframeMatchMedia =
-      iframe.contentWindow.matchMedia.bind(iframe.contentWindow);
-    window.matchMedia = ((query: string): MediaQueryList =>
-      iframeMatchMedia(query)) as typeof window.matchMedia;
+    const iframeMatchMedia = iframe.contentWindow.matchMedia.bind(iframe.contentWindow);
+    window.matchMedia = (query: string): MediaQueryList => iframeMatchMedia(query);
   }
 };
 
 const restoreJSAPIs = (state: ViewportOverrideState) => {
   if (state.originalInnerWidthDesc) {
-    Object.defineProperty(window, "innerWidth", state.originalInnerWidthDesc);
+    Object.defineProperty(window, 'innerWidth', state.originalInnerWidthDesc);
   } else {
-    delete (window as unknown as Record<string, unknown>)["innerWidth"];
+    delete (window as unknown as Record<string, unknown>)['innerWidth'];
   }
 
   if (state.originalInnerHeightDesc) {
-    Object.defineProperty(window, "innerHeight", state.originalInnerHeightDesc);
+    Object.defineProperty(window, 'innerHeight', state.originalInnerHeightDesc);
   } else {
-    delete (window as unknown as Record<string, unknown>)["innerHeight"];
+    delete (window as unknown as Record<string, unknown>)['innerHeight'];
   }
 
   if (state.originalMatchMedia) {
@@ -164,7 +149,7 @@ const restoreJSAPIs = (state: ViewportOverrideState) => {
 const rewriteCSSMediaRules = (
   state: ViewportOverrideState,
   iframeMatchMedia: (query: string) => MediaQueryList,
-  realMatchMedia: typeof window.matchMedia
+  realMatchMedia: typeof window.matchMedia,
 ) => {
   const sheets = document.styleSheets;
   for (let s = 0; s < sheets.length; s++) {
@@ -193,7 +178,7 @@ const processMediaRule = (
   index: number,
   rule: CSSMediaRule,
   iframeMatchMedia: (query: string) => MediaQueryList,
-  realMatchMedia: typeof window.matchMedia
+  realMatchMedia: typeof window.matchMedia,
 ) => {
   const mediaText = rule.conditionText ?? rule.media.mediaText;
   if (!mediaText) return;
@@ -284,22 +269,19 @@ const applyMediaOverrides = (width: number, height?: number) => {
   overrideState = state;
 
   // Capture real matchMedia before overriding (may be undefined in jsdom)
-  const realMatchMedia = window.matchMedia
-    ? window.matchMedia.bind(window)
-    : null;
+  const realMatchMedia = window.matchMedia ? window.matchMedia.bind(window) : null;
 
   // Override JS APIs (innerWidth, innerHeight, matchMedia)
   overrideJSAPIs(state, width, height);
 
   // Rewrite CSS @media rules (requires matchMedia support)
   if (realMatchMedia && iframe.contentWindow?.matchMedia) {
-    const iframeMatchMedia =
-      iframe.contentWindow.matchMedia.bind(iframe.contentWindow);
+    const iframeMatchMedia = iframe.contentWindow.matchMedia.bind(iframe.contentWindow);
     rewriteCSSMediaRules(state, iframeMatchMedia, realMatchMedia);
   }
 
   // Dispatch resize event so JS resize listeners respond
-  window.dispatchEvent(new Event("resize"));
+  window.dispatchEvent(new Event('resize'));
 };
 
 const restoreMediaOverrides = () => {
@@ -311,7 +293,7 @@ const restoreMediaOverrides = () => {
 
   overrideState = null;
 
-  window.dispatchEvent(new Event("resize"));
+  window.dispatchEvent(new Event('resize'));
 };
 
 export const viewport = (width?: number, height?: number): void => {
@@ -324,10 +306,10 @@ export const viewport = (width?: number, height?: number): void => {
 
   const { style } = document.body;
   style.maxWidth = `${width}px`;
-  style.margin = "0 auto";
-  style.overflow = "auto";
-  style.boxSizing = "border-box";
-  style.boxShadow = "0 0 0 1px rgba(37, 99, 235, 0.4)";
+  style.margin = '0 auto';
+  style.overflow = 'auto';
+  style.boxSizing = 'border-box';
+  style.boxShadow = '0 0 0 1px rgba(37, 99, 235, 0.4)';
 
   if (height !== undefined) {
     style.minHeight = `${height}px`;
@@ -340,7 +322,7 @@ export const viewport = (width?: number, height?: number): void => {
   applyMediaOverrides(width, height);
 
   injectBadge(width, height);
-  log(`viewport(${width}${height !== undefined ? `, ${height}` : ""})`);
+  log(`viewport(${width}${height !== undefined ? `, ${height}` : ''})`);
 };
 
 export const resetViewport = (): void => {
@@ -359,5 +341,5 @@ export const resetViewport = (): void => {
 
   originalStyles = null;
   removeBadge();
-  log("resetViewport()");
+  log('resetViewport()');
 };
