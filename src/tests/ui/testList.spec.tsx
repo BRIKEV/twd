@@ -1,17 +1,17 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import userEvent from '@testing-library/user-event';
-import { render, screen } from '@testing-library/react'
+import { render, screen } from '@testing-library/react';
 import * as twd from '../../runner';
-import { TestList } from "../../ui/TestList";
-import { buildTreeFromHandlers } from "../../ui/utils/buildTreeFromHandlers";
-import { filterTree } from "../../ui/utils/filterTree";
+import { TestList } from '../../ui/TestList';
+import { buildTreeFromHandlers } from '../../ui/utils/buildTreeFromHandlers';
+import { filterTree } from '../../ui/utils/filterTree';
 
-describe("TestList", () => {
+describe('TestList', () => {
   beforeEach(() => {
     twd.clearTests();
     sessionStorage.clear();
   });
-  it("should render TestList component with tests", async () => {
+  it('should render TestList component with tests', async () => {
     twd.describe('Group 1', () => {
       twd.it('Test 1.1', () => {});
       twd.it('Test 1.2', () => {});
@@ -54,54 +54,54 @@ describe("TestList", () => {
     const roots = buildTreeFromHandlers(testArray);
 
     render(<TestList roots={roots} runTest={mockRunTest} />);
-    
+
     const testItem = screen.getByText('Test 1.1').closest('[data-test-name]');
     expect(testItem).toBeInTheDocument();
     expect(testItem).toHaveAttribute('data-test-name', 'Test 1.1');
   });
 
-  it("should filter tests by search query preserving hierarchy", () => {
-    twd.describe("Auth", () => {
-      twd.describe("Login", () => {
-        twd.it("shows error on invalid password", () => {});
-        twd.it("redirects on success", () => {});
+  it('should filter tests by search query preserving hierarchy', () => {
+    twd.describe('Auth', () => {
+      twd.describe('Login', () => {
+        twd.it('shows error on invalid password', () => {});
+        twd.it('redirects on success', () => {});
       });
-      twd.describe("Signup", () => {
-        twd.it("validates email format", () => {});
+      twd.describe('Signup', () => {
+        twd.it('validates email format', () => {});
       });
     });
     const mockRunTest = vi.fn();
     const tests = Array.from(twd.handlers.values());
 
-    const roots = filterTree(buildTreeFromHandlers(tests), "error");
+    const roots = filterTree(buildTreeFromHandlers(tests), 'error');
 
     render(<TestList roots={roots} runTest={mockRunTest} searchQuery="error" />);
 
-    expect(screen.getByTestId("test-group-Auth")).toBeInTheDocument();
-    expect(screen.getByTestId("test-group-Login")).toBeInTheDocument();
-    expect(screen.getByText("shows error on invalid password")).toBeInTheDocument();
-    expect(screen.queryByText("redirects on success")).not.toBeInTheDocument();
-    expect(screen.queryByTestId("test-group-Signup")).not.toBeInTheDocument();
+    expect(screen.getByTestId('test-group-Auth')).toBeInTheDocument();
+    expect(screen.getByTestId('test-group-Login')).toBeInTheDocument();
+    expect(screen.getByText('shows error on invalid password')).toBeInTheDocument();
+    expect(screen.queryByText('redirects on success')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('test-group-Signup')).not.toBeInTheDocument();
   });
 
-  it("should show empty state when no tests match search query", () => {
-    twd.describe("Auth", () => {
-      twd.it("login test", () => {});
+  it('should show empty state when no tests match search query', () => {
+    twd.describe('Auth', () => {
+      twd.it('login test', () => {});
     });
     const mockRunTest = vi.fn();
     const tests = Array.from(twd.handlers.values());
 
-    const roots = filterTree(buildTreeFromHandlers(tests), "zzzzz");
+    const roots = filterTree(buildTreeFromHandlers(tests), 'zzzzz');
 
     render(<TestList roots={roots} runTest={mockRunTest} searchQuery="zzzzz" />);
 
     expect(screen.getByText(/No tests match "zzzzz"/)).toBeInTheDocument();
   });
 
-  it("should show all tests when searchQuery is empty", () => {
-    twd.describe("Auth", () => {
-      twd.it("test 1", () => {});
-      twd.it("test 2", () => {});
+  it('should show all tests when searchQuery is empty', () => {
+    twd.describe('Auth', () => {
+      twd.it('test 1', () => {});
+      twd.it('test 2', () => {});
     });
     const mockRunTest = vi.fn();
     const tests = Array.from(twd.handlers.values());
@@ -110,7 +110,7 @@ describe("TestList", () => {
 
     render(<TestList roots={roots} runTest={mockRunTest} searchQuery="" />);
 
-    expect(screen.getByText("test 1")).toBeInTheDocument();
-    expect(screen.getByText("test 2")).toBeInTheDocument();
+    expect(screen.getByText('test 1')).toBeInTheDocument();
+    expect(screen.getByText('test 2')).toBeInTheDocument();
   });
 });

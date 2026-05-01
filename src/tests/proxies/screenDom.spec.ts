@@ -1,6 +1,11 @@
 import { describe, it, beforeEach, vi, expect } from 'vitest';
 import * as twd from '../../runner';
-import { screenDom, screenDomGlobal, setRootSelector, resetScreenDomState } from '../../proxies/screenDom';
+import {
+  screenDom,
+  screenDomGlobal,
+  setRootSelector,
+  resetScreenDomState,
+} from '../../proxies/screenDom';
 
 describe('screenDom', () => {
   beforeEach(() => {
@@ -199,7 +204,9 @@ describe('screenDom', () => {
     const testArray = Array.from(tests.values());
     testArray[1].status = 'running';
     await testArray[1].handler();
-    expect(testArray[1].logs).toContainEqual(expect.stringContaining('query: getByText("Hello World")'));
+    expect(testArray[1].logs).toContainEqual(
+      expect.stringContaining('query: getByText("Hello World")'),
+    );
   });
 
   it('should log query messages for queryBy methods', async () => {
@@ -217,7 +224,9 @@ describe('screenDom', () => {
     const testArray = Array.from(tests.values());
     testArray[1].status = 'running';
     await testArray[1].handler();
-    expect(testArray[1].logs).toContainEqual(expect.stringContaining('query: queryByRole("button")'));
+    expect(testArray[1].logs).toContainEqual(
+      expect.stringContaining('query: queryByRole("button")'),
+    );
   });
 
   it('should log query messages for getAllBy methods', async () => {
@@ -242,7 +251,9 @@ describe('screenDom', () => {
     const testArray = Array.from(tests.values());
     testArray[1].status = 'running';
     await testArray[1].handler();
-    expect(testArray[1].logs).toContainEqual(expect.stringContaining('query: getAllByText("Item 1")'));
+    expect(testArray[1].logs).toContainEqual(
+      expect.stringContaining('query: getAllByText("Item 1")'),
+    );
   });
 
   it('should log query messages for queryAllBy methods', async () => {
@@ -263,7 +274,9 @@ describe('screenDom', () => {
     const testArray = Array.from(tests.values());
     testArray[1].status = 'running';
     await testArray[1].handler();
-    expect(testArray[1].logs).toContainEqual(expect.stringContaining('query: queryAllByRole("button")'));
+    expect(testArray[1].logs).toContainEqual(
+      expect.stringContaining('query: queryAllByRole("button")'),
+    );
   });
 
   it('should log debug message for prettyDOM if available', async () => {
@@ -315,7 +328,9 @@ describe('screenDom', () => {
       const testArray = Array.from(tests.values());
       testArray[1].status = 'running';
       await testArray[1].handler();
-      expect(testArray[1].logs).toContainEqual(expect.stringContaining('async utility: waitFor executed'));
+      expect(testArray[1].logs).toContainEqual(
+        expect.stringContaining('async utility: waitFor executed'),
+      );
     }
   });
 
@@ -358,8 +373,11 @@ describe('screenDom', () => {
     testArray[1].status = 'running';
     await testArray[1].handler();
     expect(testArray[1].logs).toContainEqual(expect.stringContaining('query: getByText("Test")'));
-    expect(testArray[1].logs).toContainEqual(expect.stringContaining('query: queryByRole("button")'));
-    expect(testArray[1].logs).toContainEqual(expect.stringContaining('query: getAllByText("Test")'));
+    expect(testArray[1].logs).toContainEqual(
+      expect.stringContaining('query: queryByRole("button")'),
+    );
+    expect(testArray[1].logs).toContainEqual(
+      expect.stringContaining('query: getAllByText("Test")'),
+    );
   });
 });
-

@@ -17,7 +17,7 @@ describe('twd visit command', () => {
     expect(window.location.pathname).toBe('/');
     await twd.visit('/same-page');
     expect(window.location.pathname).toBe('/same-page');
-    
+
     // Visit the same page again - should still work
     await twd.visit('/same-page');
     expect(window.location.pathname).toBe('/same-page');
@@ -26,7 +26,7 @@ describe('twd visit command', () => {
   it('should handle visiting root path from different pages', async () => {
     await twd.visit('/some-page');
     expect(window.location.pathname).toBe('/some-page');
-    
+
     await twd.visit('/');
     expect(window.location.pathname).toBe('/');
   });
@@ -53,27 +53,27 @@ describe('twd visit command', () => {
   it('should dispatch popstate events when navigating', async () => {
     const popstateHandler = vi.fn();
     window.addEventListener('popstate', popstateHandler);
-    
+
     await twd.visit('/test-page');
-    
+
     // Should have dispatched at least one popstate event
     expect(popstateHandler).toHaveBeenCalled();
-    
+
     window.removeEventListener('popstate', popstateHandler);
   });
 
   it('should dispatch multiple popstate events when visiting the same page', async () => {
     const popstateHandler = vi.fn();
     window.addEventListener('popstate', popstateHandler);
-    
+
     await twd.visit('/same-path');
-    
+
     popstateHandler.mockClear();
     await twd.visit('/same-path');
-    
+
     // Should dispatch more events when visiting same path (dummy route + target route)
     expect(popstateHandler.mock.calls.length).toBeGreaterThan(1);
-    
+
     window.removeEventListener('popstate', popstateHandler);
   });
 
@@ -98,39 +98,39 @@ describe('twd visit command', () => {
 
   it('should preserve history stack when navigating', async () => {
     const initialLength = window.history.length;
-    
+
     await twd.visit('/page1');
     await twd.visit('/page2');
     await twd.visit('/page3');
-    
+
     // Each visit should add to history
     expect(window.history.length).toBeGreaterThan(initialLength);
   });
 
   it('should handle rapid successive visits', async () => {
     const visits = ['/rapid1', '/rapid2', '/rapid3', '/rapid4'];
-    
+
     // Visit multiple pages rapidly
     for (const path of visits) {
       await twd.visit(path);
     }
-    
+
     // Should end up on the last visited page
     expect(window.location.pathname).toBe('/rapid4');
   });
 
   it('should handle visiting the same page from different states', async () => {
     const targetPage = '/target-page';
-    
+
     // Visit from root
     await twd.visit(targetPage);
     expect(window.location.pathname).toBe(targetPage);
-    
+
     // Visit from another page
     await twd.visit('/intermediate');
     await twd.visit(targetPage);
     expect(window.location.pathname).toBe(targetPage);
-    
+
     // Visit same page again (this tests the dummy route logic)
     await twd.visit(targetPage);
     expect(window.location.pathname).toBe(targetPage);

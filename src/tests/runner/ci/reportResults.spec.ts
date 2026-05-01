@@ -24,7 +24,7 @@ describe('twd Test Runner ci - reportResults', () => {
   afterEach(() => {
     console.log = originalConsoleLog;
   });
-  
+
   it('should execute tests and report results', async () => {
     const afterEachFn = vi.fn();
     const testFn1 = vi.fn();

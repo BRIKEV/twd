@@ -1,5 +1,5 @@
-import { wait } from "../utils/wait";
-import { TWD_VERSION } from "../constants/version";
+import { wait } from '../utils/wait';
+import { TWD_VERSION } from '../constants/version';
 
 export type Rule = {
   /** HTTP method to match (e.g. `"GET"`, `"POST"`). */
@@ -62,7 +62,7 @@ const getMockState = (): MockState => {
     }
     return window.__TWD_MOCK_STATE__ as MockState;
   }
-  
+
   return {
     rules: [],
     counts: {},
@@ -84,18 +84,18 @@ export const initRequestMocking = async (path?: string) => {
     return;
   }
 
-  if ("serviceWorker" in navigator) {
+  if ('serviceWorker' in navigator) {
     initialized = true;
     const workerPath = path ?? '/mock-sw.js';
     await navigator.serviceWorker.register(`${workerPath}?v=${TWD_VERSION}`);
     // Wait for the service worker to actually control the page
     if (!navigator.serviceWorker.controller) {
-      await new Promise(resolve => {
+      await new Promise((resolve) => {
         navigator.serviceWorker.addEventListener('controllerchange', resolve, { once: true });
       });
     }
-    navigator.serviceWorker.addEventListener("message", (event) => {
-      if (event.data?.type === "EXECUTED") {
+    navigator.serviceWorker.addEventListener('message', (event) => {
+      if (event.data?.type === 'EXECUTED') {
         const { alias, request, hitCount } = event.data;
         const rule = rules.find((r) => r.alias === alias);
         if (rule) {
@@ -103,7 +103,7 @@ export const initRequestMocking = async (path?: string) => {
           rule.request = request;
           rule.hitCount = hitCount;
         }
-        state.counts[alias] = hitCount ?? ((state.counts[alias] ?? 0) + 1);
+        state.counts[alias] = hitCount ?? (state.counts[alias] ?? 0) + 1;
       }
     });
   }
@@ -157,7 +157,7 @@ export const mockRequest = async (alias: string, options: Options) => {
   }
   // Push to SW
   navigator.serviceWorker.controller?.postMessage({
-    type: "ADD_RULE",
+    type: 'ADD_RULE',
     rule,
     version: TWD_VERSION,
   });
@@ -175,9 +175,7 @@ export const mockRequest = async (alias: string, options: Options) => {
  * ```
  */
 export const waitForRequests = async (aliases: string[]): Promise<Rule[]> => {
-  const rules = await Promise.all(
-    aliases.map((alias) => waitForRequest(alias))
-  );
+  const rules = await Promise.all(aliases.map((alias) => waitForRequest(alias)));
   return rules;
 };
 
@@ -206,7 +204,7 @@ export const waitForRequest = async (
     }
     // Wait before next retry (except on last iteration)
     if (i < retries - 1) {
-      await new Promise(resolve => setTimeout(resolve, retryDelay));
+      await new Promise((resolve) => setTimeout(resolve, retryDelay));
     }
   }
   const timeout = retries * retryDelay;
@@ -241,7 +239,7 @@ export const getRequestMockRules = () => rules;
 export const clearRequestMockRules = () => {
   // Also tell the SW
   navigator.serviceWorker.controller?.postMessage({
-    type: "CLEAR_RULES",
+    type: 'CLEAR_RULES',
     version: TWD_VERSION,
   });
   rules.length = 0;

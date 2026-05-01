@@ -11,7 +11,7 @@ interface TestModule {
 
 interface InitTWDOptions {
   open?: boolean;
-  position?: "left" | "right";
+  position?: 'left' | 'right';
   serviceWorker?: boolean;
   serviceWorkerUrl?: string;
   theme?: Partial<TWDTheme>;
@@ -48,18 +48,31 @@ const createRoot = (el: HTMLElement) => ({
  * initTWD(testModules, { rootSelector: '#my-app' });
  */
 export const initTWD = (files: TestModule, options?: InitTWDOptions) => {
-  const { open = true, position = "left", serviceWorker = true, serviceWorkerUrl = '/mock-sw.js', theme, search, rootSelector } = options || {};
+  const {
+    open = true,
+    position = 'left',
+    serviceWorker = true,
+    serviceWorkerUrl = '/mock-sw.js',
+    theme,
+    search,
+    rootSelector,
+  } = options || {};
   if (rootSelector) {
     setRootSelector(rootSelector);
   }
-  initTests(files, <TWDSidebar open={open} position={position} {...(search !== undefined && { search })} />, createRoot, theme);
+  initTests(
+    files,
+    <TWDSidebar open={open} position={position} {...(search !== undefined && { search })} />,
+    createRoot,
+    theme,
+  );
   if (serviceWorker) {
-  initRequestMocking(serviceWorkerUrl)
-    .then(() => {
-      console.log("Request mocking initialized");
-    })
+    initRequestMocking(serviceWorkerUrl)
+      .then(() => {
+        console.log('Request mocking initialized');
+      })
       .catch((err) => {
-        console.error("Error initializing request mocking:", err);
+        console.error('Error initializing request mocking:', err);
       });
   }
 };

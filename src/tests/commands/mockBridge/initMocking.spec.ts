@@ -1,5 +1,12 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { clearRequestMockRules, getRequestMockRules, initRequestMocking, mockRequest, waitForRequest, resetMockingState } from '../../../commands/mockBridge';
+import {
+  clearRequestMockRules,
+  getRequestMockRules,
+  initRequestMocking,
+  mockRequest,
+  waitForRequest,
+  resetMockingState,
+} from '../../../commands/mockBridge';
 import { TWD_VERSION } from '../../../constants/version';
 
 // Fake service worker API
@@ -14,11 +21,11 @@ class FakeServiceWorker {
   }
 
   dispatchMessage(data: any) {
-    this.listeners["message"]?.forEach((cb) => cb({ data }));
+    this.listeners['message']?.forEach((cb) => cb({ data }));
   }
 
   dispatchControllerChange() {
-    this.listeners["controllerchange"]?.forEach((cb) => cb());
+    this.listeners['controllerchange']?.forEach((cb) => cb());
   }
 
   async register() {
@@ -51,7 +58,7 @@ describe('initRequestMocking', () => {
   it('registers the service worker and sets up message listener when version matches', async () => {
     // Set current version in localStorage
     localStorage.setItem('twd-sw-version', TWD_VERSION);
-    
+
     // Mock navigator.serviceWorker
     const registerMock = vi.fn().mockResolvedValue({});
     const addEventListenerMock = vi.fn();
@@ -68,11 +75,14 @@ describe('initRequestMocking', () => {
     });
 
     await initRequestMocking();
-    
+
     expect(registerMock).toHaveBeenCalledWith(`/mock-sw.js?v=${TWD_VERSION}`);
     expect(addEventListenerMock).toHaveBeenCalledWith('message', expect.any(Function));
     expect(getRegistrationsMock).not.toHaveBeenCalled(); // No update needed
-    expect(consoleLogSpy).not.toHaveBeenCalledWith("[TWD] Updating service worker to version", TWD_VERSION);
+    expect(consoleLogSpy).not.toHaveBeenCalledWith(
+      '[TWD] Updating service worker to version',
+      TWD_VERSION,
+    );
 
     // Restore
     Object.defineProperty(navigator, 'serviceWorker', {
@@ -84,7 +94,7 @@ describe('initRequestMocking', () => {
   it('registers the service worker and sets up message listener when version matches and custom path config is sent', async () => {
     // Set current version in localStorage
     localStorage.setItem('twd-sw-version', TWD_VERSION);
-    
+
     // Mock navigator.serviceWorker
     const registerMock = vi.fn().mockResolvedValue({});
     const addEventListenerMock = vi.fn();
@@ -101,25 +111,28 @@ describe('initRequestMocking', () => {
     });
 
     await initRequestMocking('/test-path/mock-sw.js');
-    
+
     expect(registerMock).toHaveBeenCalledWith(`/test-path/mock-sw.js?v=${TWD_VERSION}`);
     expect(addEventListenerMock).toHaveBeenCalledWith('message', expect.any(Function));
     expect(getRegistrationsMock).not.toHaveBeenCalled(); // No update needed
-    expect(consoleLogSpy).not.toHaveBeenCalledWith("[TWD] Updating service worker to version", TWD_VERSION);
+    expect(consoleLogSpy).not.toHaveBeenCalledWith(
+      '[TWD] Updating service worker to version',
+      TWD_VERSION,
+    );
 
     // Restore
     Object.defineProperty(navigator, 'serviceWorker', {
       configurable: true,
       value: originalSW,
-    }); 
+    });
   });
 
-  it('handles first install when no version is stored', async () => {    
+  it('handles first install when no version is stored', async () => {
     const registerMock = vi.fn().mockResolvedValue({});
     const addEventListenerMock = vi.fn();
     const getRegistrationsMock = vi.fn().mockResolvedValue([]);
     const originalSW = navigator.serviceWorker;
-    
+
     Object.defineProperty(navigator, 'serviceWorker', {
       configurable: true,
       value: {
@@ -131,7 +144,7 @@ describe('initRequestMocking', () => {
     });
 
     await initRequestMocking();
-    
+
     expect(registerMock).toHaveBeenCalledWith(`/mock-sw.js?v=${TWD_VERSION}`);
 
     // Restore
@@ -143,7 +156,7 @@ describe('initRequestMocking', () => {
 
   it('waits for controller when not immediately available', async () => {
     localStorage.setItem('twd-sw-version', TWD_VERSION);
-    
+
     let controllerChangeHandler: Function;
     const registerMock = vi.fn().mockResolvedValue({});
     const addEventListenerMock = vi.fn((type: string, handler: Function, options?: any) => {
@@ -153,7 +166,7 @@ describe('initRequestMocking', () => {
     });
     const getRegistrationsMock = vi.fn().mockResolvedValue([]);
     const originalSW = navigator.serviceWorker;
-    
+
     Object.defineProperty(navigator, 'serviceWorker', {
       configurable: true,
       value: {
@@ -166,15 +179,17 @@ describe('initRequestMocking', () => {
 
     // Start the initialization
     const initPromise = initRequestMocking();
-    
+
     // Simulate controller becoming available
     setTimeout(() => {
       controllerChangeHandler!();
     }, 50);
-    
+
     await initPromise;
-    
-    expect(addEventListenerMock).toHaveBeenCalledWith('controllerchange', expect.any(Function), { once: true });
+
+    expect(addEventListenerMock).toHaveBeenCalledWith('controllerchange', expect.any(Function), {
+      once: true,
+    });
     expect(registerMock).toHaveBeenCalledWith(`/mock-sw.js?v=${TWD_VERSION}`);
 
     // Restore
@@ -184,7 +199,7 @@ describe('initRequestMocking', () => {
     });
   });
 
-  it("should mark rule as executed and update request when EXECUTED message is received", async () => {
+  it('should mark rule as executed and update request when EXECUTED message is received', async () => {
     // Set up proper service worker mock
     localStorage.setItem('twd-sw-version', TWD_VERSION);
     let messageHandler: Function;
@@ -205,10 +220,10 @@ describe('initRequestMocking', () => {
 
     await initRequestMocking();
 
-    await mockRequest("getUser", {
-      method: "GET",
-      url: "/api/user/1",
-      response: { id: 1, name: "Kevin" },
+    await mockRequest('getUser', {
+      method: 'GET',
+      url: '/api/user/1',
+      response: { id: 1, name: 'Kevin' },
     });
 
     // Initially not executed
@@ -218,16 +233,16 @@ describe('initRequestMocking', () => {
     // Fire EXECUTED message through the registered handler
     messageHandler!({
       data: {
-        type: "EXECUTED",
-        alias: "getUser",
-        request: { headers: { foo: "bar" } },
+        type: 'EXECUTED',
+        alias: 'getUser',
+        request: { headers: { foo: 'bar' } },
         hitCount: 1,
-      }
+      },
     });
 
     rule = getRequestMockRules()[0];
     expect(rule.executed).toBe(true);
-    expect(rule.request).toEqual({ headers: { foo: "bar" } });
+    expect(rule.request).toEqual({ headers: { foo: 'bar' } });
     expect(rule.hitCount).toBe(1);
 
     // Restore
@@ -237,7 +252,7 @@ describe('initRequestMocking', () => {
     });
   });
 
-  it("should store hitCount from EXECUTED message on the rule", async () => {
+  it('should store hitCount from EXECUTED message on the rule', async () => {
     // Set up proper service worker mock
     localStorage.setItem('twd-sw-version', TWD_VERSION);
     let messageHandler: Function;
@@ -258,20 +273,20 @@ describe('initRequestMocking', () => {
 
     await initRequestMocking();
 
-    await mockRequest("getUser", {
-      method: "GET",
-      url: "/api/user/1",
-      response: { id: 1, name: "Kevin" },
+    await mockRequest('getUser', {
+      method: 'GET',
+      url: '/api/user/1',
+      response: { id: 1, name: 'Kevin' },
     });
 
     // Simulate multiple EXECUTED messages with increasing hitCount
     messageHandler!({
       data: {
-        type: "EXECUTED",
-        alias: "getUser",
+        type: 'EXECUTED',
+        alias: 'getUser',
         request: null,
         hitCount: 1,
-      }
+      },
     });
 
     let rule = getRequestMockRules()[0];
@@ -279,11 +294,11 @@ describe('initRequestMocking', () => {
 
     messageHandler!({
       data: {
-        type: "EXECUTED",
-        alias: "getUser",
+        type: 'EXECUTED',
+        alias: 'getUser',
         request: null,
         hitCount: 5,
-      }
+      },
     });
 
     rule = getRequestMockRules()[0];
@@ -296,7 +311,7 @@ describe('initRequestMocking', () => {
     });
   });
 
-  it("should resolve waitForRequest when EXECUTED arrives", async () => {
+  it('should resolve waitForRequest when EXECUTED arrives', async () => {
     // Set up proper service worker mock
     localStorage.setItem('twd-sw-version', TWD_VERSION);
     let messageHandler: Function;
@@ -317,9 +332,9 @@ describe('initRequestMocking', () => {
 
     await initRequestMocking();
 
-    await mockRequest("createUser", {
-      method: "POST",
-      url: "/api/user",
+    await mockRequest('createUser', {
+      method: 'POST',
+      url: '/api/user',
       response: { ok: true },
     });
 
@@ -327,16 +342,16 @@ describe('initRequestMocking', () => {
     setTimeout(() => {
       messageHandler!({
         data: {
-          type: "EXECUTED",
-          alias: "createUser",
-          request: { body: { name: "Alice" } },
-        }
+          type: 'EXECUTED',
+          alias: 'createUser',
+          request: { body: { name: 'Alice' } },
+        },
       });
     }, 50);
 
-    const rule = await waitForRequest("createUser");
+    const rule = await waitForRequest('createUser');
     expect(rule.executed).toBe(true);
-    expect(rule.request).toEqual({ body: { name: "Alice" } });
+    expect(rule.request).toEqual({ body: { name: 'Alice' } });
 
     // Restore
     Object.defineProperty(navigator, 'serviceWorker', {
@@ -359,7 +374,6 @@ describe('initRequestMocking', () => {
       value: originalSW,
     });
   });
-
 });
 
 describe('initRequestMocking - multiple calls protection', () => {
@@ -400,8 +414,9 @@ describe('initRequestMocking - multiple calls protection', () => {
     await initRequestMocking();
 
     // Count message listener registrations
-    const messageListenerCalls = addEventListenerMock.mock.calls
-      .filter((call: any[]) => call[0] === 'message');
+    const messageListenerCalls = addEventListenerMock.mock.calls.filter(
+      (call: any[]) => call[0] === 'message',
+    );
 
     // Should only have 1 message listener, not 3
     expect(messageListenerCalls.length).toBe(1);

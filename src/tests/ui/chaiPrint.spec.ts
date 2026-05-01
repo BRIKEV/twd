@@ -48,7 +48,7 @@ describe('chaiPrint', () => {
       }
       expect(consoleErrorSpy).toHaveBeenCalledWith('expected undefined to exist');
     }
-  }); 
+  });
 
   it('should format a chai assertion deep equal error', () => {
     try {
@@ -56,7 +56,9 @@ describe('chaiPrint', () => {
     } catch (error) {
       if (isChaiAssertionError(error)) {
         printChaiError(error);
-        expect(consoleErrorSpy).toHaveBeenCalledWith('Assertion failed with operator: deepStrictEqual');
+        expect(consoleErrorSpy).toHaveBeenCalledWith(
+          'Assertion failed with operator: deepStrictEqual',
+        );
         expect(consoleGroupSpy).toHaveBeenCalledWith('Expected:');
         expect(consoleLogSpy).toHaveBeenCalledWith({ a: 2 });
         expect(consoleGroupEndSpy).toHaveBeenCalled();

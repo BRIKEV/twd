@@ -189,8 +189,12 @@ function createLoggedProxy(obj: any, prefix = 'userEvent') {
                 typingFallback(active, currentValue.slice(0, -1));
               } else if (mappedKey) {
                 flushText();
-                active.dispatchEvent(new KeyboardEvent('keydown', { bubbles: true, cancelable: true, key: mappedKey }));
-                active.dispatchEvent(new KeyboardEvent('keyup', { bubbles: true, cancelable: true, key: mappedKey }));
+                active.dispatchEvent(
+                  new KeyboardEvent('keydown', { bubbles: true, cancelable: true, key: mappedKey }),
+                );
+                active.dispatchEvent(
+                  new KeyboardEvent('keyup', { bubbles: true, cancelable: true, key: mappedKey }),
+                );
               } else {
                 // Regular character — accumulate for a single flush
                 textBuffer += token;

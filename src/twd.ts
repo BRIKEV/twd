@@ -1,38 +1,49 @@
-import { waitForElement, wait, waitForElements } from "./utils/wait";
-import { waitFor } from "./utils/waitFor";
-import { runAssertion } from "./asserts";
-import { log } from "./utils/log";
-import { mockRequest, Options, Rule, waitForRequest, initRequestMocking, clearRequestMockRules, getRequestMockRules, waitForRequests, getRequestCount, getRequestCounts } from "./commands/mockBridge";
-import type { AnyAssertion, ArgsFor, TWDElemAPI, WaitForOptions } from "./twd-types";
-import urlCommand, { type URLCommandAPI } from "./commands/url";
-import { visit } from "./commands/visit";
-import { mockComponent, clearComponentMocks } from "./ui/componentMocks";
-import { viewport, resetViewport } from "./commands/viewport";
+import { waitForElement, wait, waitForElements } from './utils/wait';
+import { waitFor } from './utils/waitFor';
+import { runAssertion } from './asserts';
+import { log } from './utils/log';
+import {
+  mockRequest,
+  Options,
+  Rule,
+  waitForRequest,
+  initRequestMocking,
+  clearRequestMockRules,
+  getRequestMockRules,
+  waitForRequests,
+  getRequestCount,
+  getRequestCounts,
+} from './commands/mockBridge';
+import type { AnyAssertion, ArgsFor, TWDElemAPI, WaitForOptions } from './twd-types';
+import urlCommand, { type URLCommandAPI } from './commands/url';
+import { visit } from './commands/visit';
+import { mockComponent, clearComponentMocks } from './ui/componentMocks';
+import { viewport, resetViewport } from './commands/viewport';
 
 interface TWDAPI {
   /**
    * Finds an element by selector and returns the TWD API for it.
    * @param selector CSS selector
    * @returns {Promise<TWDElemAPI>} The TWD API for the element
-   * 
+   *
    * @example
    * ```ts
    * const btn = await twd.get("button");
-   * 
+   *
    * ```
-   * 
+   *
    */
   get: (selector: string) => Promise<TWDElemAPI>;
   /**
    * Sets the value of an input element and dispatches an input event. We recommend using this only for range, color, time inputs.
    * @param el The input element
    * @param value The value to set
-   * 
+   *
    * @example
    * ```ts
    * const input = await twd.get("input[type='time']");
    * twd.setInputValue(input.el, "13:30");
-   * 
+   *
    * ```
    */
   setInputValue: (el: Element, value: string) => void;
@@ -40,7 +51,7 @@ interface TWDAPI {
    * Finds multiple elements by selector and returns an array of TWD APIs for them.
    * @param selector CSS selector
    * @returns {Promise<TWDElemAPI[]>} Array of TWD APIs for the elements
-   * 
+   *
    * @example
    * ```ts
    * const items = await twd.getAll(".item");
@@ -121,7 +132,7 @@ interface TWDAPI {
    * ```ts
    * twd.url().should("eq", "http://localhost:3000/contact");
    * twd.url().should("contain.url", "/contact");
-   * 
+   *
    * ```
    */
   url: () => URLCommandAPI;
@@ -143,7 +154,7 @@ interface TWDAPI {
    * @example
    * ```ts
    * twd.clearRequestMockRules();
-   * 
+   *
    * ```
    */
   clearRequestMockRules: () => void;
@@ -315,9 +326,9 @@ export const twd: TWDAPI = {
   },
   setInputValue: (el: Element, value: string) => {
     const { set } = Object.getOwnPropertyDescriptor(
-       // @ts-expect-error we ignore this error because __proto__ exists
+      // @ts-expect-error we ignore this error because __proto__ exists
       el.__proto__,
-      'value'
+      'value',
     )!;
     // @ts-expect-error we ignore this error because we know set exists
     set.call(el, value);

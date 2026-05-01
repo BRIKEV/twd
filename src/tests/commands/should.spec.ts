@@ -10,11 +10,11 @@ describe('twd should', () => {
     const appContainer = document.createElement('div');
     appContainer.id = 'app';
     document.body.appendChild(appContainer);
-    
+
     div = document.createElement('div');
     appContainer.appendChild(div);
   });
-  
+
   it('should assert have.text', async () => {
     div.textContent = 'Hello World';
     const elem = await screenDom.getByText('Hello World');

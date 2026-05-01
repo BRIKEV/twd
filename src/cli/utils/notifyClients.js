@@ -26,10 +26,10 @@
 export function notifyClients(clients, rule, body, hitCount) {
   clients.forEach((client) =>
     client.postMessage({
-      type: "EXECUTED",
+      type: 'EXECUTED',
       alias: rule.alias,
       request: body,
       hitCount,
-    })
+    }),
   );
 }

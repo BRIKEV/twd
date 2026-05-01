@@ -1,5 +1,5 @@
-import { initSidebar } from "./initSidebar";
-import { TWDTheme } from "../ui/utils/theme";
+import { initSidebar } from './initSidebar';
+import { TWDTheme } from '../ui/utils/theme';
 
 /**
  * A record of test module paths to their loader functions.
@@ -37,7 +37,7 @@ export const initTests = async (
   testModules: TestModule,
   Component: React.ReactNode,
   createRoot: (el: HTMLElement) => { render: (el: React.ReactNode) => void },
-  theme?: Partial<TWDTheme>
+  theme?: Partial<TWDTheme>,
 ) => {
   for (const path in testModules) await testModules[path]();
   initSidebar({ Component, createRoot, theme });

@@ -25,8 +25,12 @@ describe('userEvent', () => {
     const testArray = Array.from(tests.values());
     testArray[1].status = 'running';
     await testArray[1].handler();
-    expect(testArray[1].logs).toContainEqual(expect.stringContaining('Event fired: Clicked element'));
-    expect(testArray[1].logs).toContainEqual(expect.stringContaining('Event fired: Typed "Hello" into element'));
+    expect(testArray[1].logs).toContainEqual(
+      expect.stringContaining('Event fired: Clicked element'),
+    );
+    expect(testArray[1].logs).toContainEqual(
+      expect.stringContaining('Event fired: Typed "Hello" into element'),
+    );
   });
 });
 

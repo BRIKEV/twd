@@ -12,8 +12,8 @@ describe('chaiErrorFormat', () => {
         expect(formattedError).to.deep.equal({
           actual: 1,
           expected: 2,
-          operator: "strictEqual",
-          type: "diff",
+          operator: 'strictEqual',
+          type: 'diff',
         });
       }
     }

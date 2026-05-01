@@ -60,7 +60,7 @@ describe('removeMockServiceWorker', () => {
   it('should remove mock-sw.js when file exists', () => {
     const plugin = removeMockServiceWorker();
     const resolvedPath = 'dist/mock-sw.js';
-    
+
     mockResolve.mockReturnValue(resolvedPath);
     mockRmSync.mockImplementation(() => {}); // Success case
 
@@ -75,7 +75,7 @@ describe('removeMockServiceWorker', () => {
   it('should handle error gracefully when file does not exist', () => {
     const plugin = removeMockServiceWorker();
     const resolvedPath = 'dist/mock-sw.js';
-    
+
     mockResolve.mockReturnValue(resolvedPath);
     mockRmSync.mockImplementation(() => {
       throw new Error('File not found');

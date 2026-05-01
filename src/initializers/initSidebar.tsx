@@ -1,5 +1,5 @@
-import { injectTheme, TWDTheme } from "../ui/utils/theme";
-import { injectStyles } from "../ui/utils/styles";
+import { injectTheme, TWDTheme } from '../ui/utils/theme';
+import { injectStyles } from '../ui/utils/styles';
 
 interface Options {
   Component: React.ReactNode;
@@ -17,7 +17,7 @@ interface Options {
  * @example
  * ```ts
  * import { initSidebar } from 'twd-js';
- * 
+ *
  * // Initialize the sidebar (e.g., in your main app file)
  * initSidebar({
  *   Component: <TWDSidebar open={true} position="left" />,

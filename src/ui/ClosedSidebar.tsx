@@ -1,22 +1,22 @@
 interface ClosedSidebarProps {
   setOpen: (open: boolean) => void;
-  position: "left" | "right";
+  position: 'left' | 'right';
 }
 
 const positionStyles = {
   left: {
     left: 0,
-    borderTopRightRadius: "var(--twd-border-radius-lg)",
-    borderBottomRightRadius: "var(--twd-border-radius-lg)",
-    borderTopLeftRadius: "0",
-    borderBottomLeftRadius: "0",
+    borderTopRightRadius: 'var(--twd-border-radius-lg)',
+    borderBottomRightRadius: 'var(--twd-border-radius-lg)',
+    borderTopLeftRadius: '0',
+    borderBottomLeftRadius: '0',
   },
   right: {
     right: 0,
-    borderTopLeftRadius: "var(--twd-border-radius-lg)",
-    borderBottomLeftRadius: "var(--twd-border-radius-lg)",
-    borderTopRightRadius: "0",
-    borderBottomRightRadius: "0",
+    borderTopLeftRadius: 'var(--twd-border-radius-lg)',
+    borderBottomLeftRadius: 'var(--twd-border-radius-lg)',
+    borderTopRightRadius: '0',
+    borderBottomRightRadius: '0',
   },
 };
 
@@ -26,7 +26,7 @@ export const ClosedSidebar = ({ setOpen, position }: ClosedSidebarProps) => {
       aria-label="Open TWD sidebar"
       className="twd-btn twd-sidebar-closed"
       style={{
-        ...positionStyles[position]
+        ...positionStyles[position],
       }}
       onClick={() => setOpen(true)}
     >
