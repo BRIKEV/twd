@@ -6,7 +6,6 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
-    "lint": "eslint .",
     "preview": "vite preview",
     "dev:ci": "CI=true VITE_COVERAGE=true vite",
     "test:ci": "node scripts/run-tests-ci.js",
@@ -21,20 +20,12 @@
     "react-router": "^7.14.2"
   },
   "devDependencies": {
-    "@eslint/js": "^10.0.1",
-    "@types/chai": "^5.2.3",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^6.0.1",
-    "chai": "^6.2.2",
-    "eslint": "^10.2.1",
-    "eslint-plugin-react-hooks": "^7.1.1",
-    "eslint-plugin-react-refresh": "^0.5.2",
-    "globals": "^17.5.0",
     "puppeteer": "^24.42.0",
     "twd-relay": "^1.1.1",
     "typescript": "~6.0.3",
-    "typescript-eslint": "^8.59.1",
     "vite": "^8.0.10",
     "vite-plugin-istanbul": "^8.0.0"
   }
