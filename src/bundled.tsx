@@ -60,7 +60,7 @@ export const initTWD = (files: TestModule, options?: InitTWDOptions) => {
   if (rootSelector) {
     setRootSelector(rootSelector);
   }
-  initTests(
+  void initTests(
     files,
     <TWDSidebar open={open} position={position} {...(search !== undefined && { search })} />,
     createRoot,

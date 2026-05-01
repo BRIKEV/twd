@@ -124,8 +124,7 @@ const overrideJSAPIs = (state: ViewportOverrideState, width: number, height?: nu
   const iframe = state.iframe;
   if (iframe?.contentWindow?.matchMedia) {
     const iframeMatchMedia = iframe.contentWindow.matchMedia.bind(iframe.contentWindow);
-    window.matchMedia = ((query: string): MediaQueryList =>
-      iframeMatchMedia(query)) as typeof window.matchMedia;
+    window.matchMedia = (query: string): MediaQueryList => iframeMatchMedia(query);
   }
 };
 

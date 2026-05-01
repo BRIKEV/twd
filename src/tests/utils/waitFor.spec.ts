@@ -41,7 +41,7 @@ describe('waitFor', () => {
 
   it('works with async callbacks', async () => {
     let count = 0;
-    const callback = async () => {
+    const callback = () => {
       count++;
       if (count < 2) throw new Error('not yet');
     };
@@ -51,6 +51,7 @@ describe('waitFor', () => {
 
   it('handles non-Error throws by wrapping them', async () => {
     const callback = () => {
+      // eslint-disable-next-line @typescript-eslint/only-throw-error -- intentionally testing non-Error throw handling
       throw 'string error';
     };
     await expect(waitFor(callback, { timeout: 100, interval: 10 })).rejects.toThrow(
@@ -110,7 +111,7 @@ describe('waitFor', () => {
   });
 
   it('returns the callback value from an async callback', async () => {
-    const result = await waitFor(async () => ({ name: 'test' }));
+    const result = await waitFor(() => ({ name: 'test' }));
     expect(result).toEqual({ name: 'test' });
   });
 

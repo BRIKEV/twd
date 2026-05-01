@@ -2,8 +2,6 @@ import { beforeEach, describe, it } from 'vitest';
 import { twd } from '../..';
 
 describe('twd setInputValue command', () => {
-  let div: HTMLDivElement;
-
   beforeEach(() => {
     document.body.innerHTML = '';
     const appContainer = document.createElement('div');
@@ -18,11 +16,6 @@ describe('twd setInputValue command', () => {
 
   it('should set input value and trigger input event', async () => {
     const rangeInput = await twd.get('input[type="range"]');
-    let inputEventFired = false;
-    rangeInput.el.addEventListener('input', () => {
-      inputEventFired = true;
-    });
-
     twd.setInputValue(rangeInput.el, '75');
 
     rangeInput.should('have.value', '75');

@@ -78,9 +78,11 @@ function typingFallback(element: HTMLElement, text: string) {
   const isTextarea = element instanceof HTMLTextAreaElement;
 
   if (isInput || isTextarea) {
+    /* eslint-disable @typescript-eslint/unbound-method -- set is called via .call(), so this-binding is explicit */
     const nativeSetter = isInput
       ? Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value')?.set
       : Object.getOwnPropertyDescriptor(HTMLTextAreaElement.prototype, 'value')?.set;
+    /* eslint-enable @typescript-eslint/unbound-method */
 
     if (nativeSetter) {
       nativeSetter.call(element, text);

@@ -68,7 +68,9 @@ export const TestList = ({ roots, runTest, searchQuery = '' }: TestListProps) =>
           node={node}
           depth={depth}
           id={node.id}
-          runTest={() => runTest(node.id)}
+          runTest={() => {
+            void runTest(node.id);
+          }}
         />
       );
     }

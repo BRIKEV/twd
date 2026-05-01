@@ -8,9 +8,9 @@ describe('initSidebar', () => {
     vi.clearAllMocks();
   });
 
-  it('should append a div to the document body', async () => {
+  it('should append a div to the document body', () => {
     const createRoot = vi.fn().mockReturnValue({ render: vi.fn() });
-    await initSidebar({
+    initSidebar({
       Component: <TWDSidebar open={true} position="left" />,
       createRoot,
     });

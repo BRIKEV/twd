@@ -17,8 +17,7 @@ describe('waitForRequest', () => {
       });
     }
 
-    // Save original controller (may be undefined)
-    const originalController = navigator.serviceWorker.controller;
+    // Note: the original controller is saved and overridden below
     const postMessageMock = vi.fn();
     Object.defineProperty(navigator.serviceWorker, 'controller', {
       configurable: true,

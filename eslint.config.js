@@ -47,5 +47,53 @@ export default defineConfig(
       globals: { ...vitest.environments.env.globals },
     },
   },
+
+  // Files that wrap external untyped APIs (chai, testing-library, MSW, Vite plugins).
+  // Typing these properly is upstream work; we accept the unsafe boundary
+  // and rely on integration tests to catch real bugs.
+  {
+    files: [
+      'src/asserts/**/*.ts',
+      'src/proxies/**/*.ts',
+      'src/commands/mockBridge.ts',
+      'src/commands/visit.ts',
+      'src/runner-ci.ts',
+      'src/twd.ts',
+      'src/ui/utils/formatLogs.ts',
+      'src/ui/utils/screenReaderMessages.ts',
+      'src/utils/waitFor.ts',
+      'src/plugin/removeMockServiceWorker.ts',
+      'src/plugin/twdHmr.ts',
+      'src/bundled.tsx',
+    ],
+    rules: {
+      '@typescript-eslint/no-unsafe-assignment': 'off',
+      '@typescript-eslint/no-unsafe-member-access': 'off',
+      '@typescript-eslint/no-unsafe-call': 'off',
+      '@typescript-eslint/no-unsafe-return': 'off',
+      '@typescript-eslint/no-unsafe-argument': 'off',
+      '@typescript-eslint/no-unsafe-function-type': 'off',
+      '@typescript-eslint/no-base-to-string': 'off',
+    },
+  },
+
+  // Test files: chai's expect() returns `any` and tests use conditional
+  // assertion patterns that vitest/no-conditional-expect flags. The strict
+  // type-aware rules add noise without catching real bugs in test code.
+  {
+    files: ['src/tests/**/*.{ts,tsx}', 'src/**/*.spec.{ts,tsx}'],
+    rules: {
+      '@typescript-eslint/no-unsafe-assignment': 'off',
+      '@typescript-eslint/no-unsafe-member-access': 'off',
+      '@typescript-eslint/no-unsafe-call': 'off',
+      '@typescript-eslint/no-unsafe-return': 'off',
+      '@typescript-eslint/no-unsafe-argument': 'off',
+      '@typescript-eslint/no-unsafe-function-type': 'off',
+      'vitest/no-conditional-expect': 'off',
+      'vitest/expect-expect': 'off',
+      'vitest/valid-expect': 'off',
+    },
+  },
+
   prettier,
 );

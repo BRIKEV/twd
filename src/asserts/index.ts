@@ -222,7 +222,7 @@ export const runAssertion = (el: Element, name: AnyAssertion, ...args: any[]): s
       result = (el as HTMLElement).classList.contains(args[0]);
       break;
     default:
-      throw new Error(`Unknown assertion: ${baseName}`);
+      throw new Error(`Unknown assertion: ${String(baseName)}`);
   }
 
   return assertionMessage(

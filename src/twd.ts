@@ -325,13 +325,13 @@ export const twd: TWDAPI = {
     return api;
   },
   setInputValue: (el: Element, value: string) => {
-    const { set } = Object.getOwnPropertyDescriptor(
-      // @ts-expect-error we ignore this error because __proto__ exists
+    const descriptor = Object.getOwnPropertyDescriptor(
+      // @ts-expect-error -- accessing __proto__ to get the native value descriptor
       el.__proto__,
       'value',
     )!;
-    // @ts-expect-error we ignore this error because we know set exists
-    set.call(el, value);
+    // @ts-expect-error -- descriptor.set exists for input elements
+    descriptor.set.call(el, value);
     el.dispatchEvent(new Event('input', { bubbles: true }));
   },
   getAll: async (selector: string): Promise<TWDElemAPI[]> => {
@@ -342,9 +342,9 @@ export const twd: TWDAPI = {
 
     return els.map((el) => {
       const api: TWDElemAPI = {
-        el: el as HTMLElement,
+        el,
         should: (name: AnyAssertion, ...args: ArgsFor<AnyAssertion>) => {
-          const message = runAssertion(el as HTMLElement, name, ...args);
+          const message = runAssertion(el, name, ...args);
           log(message);
           return api;
         },
@@ -372,14 +372,15 @@ export const twd: TWDAPI = {
   clearComponentMocks,
   viewport,
   resetViewport,
-  notExists: async (selector: string): Promise<void> => {
+  notExists: (selector: string): Promise<void> => {
     // Prepend selector to exclude TWD sidebar elements
     const enhancedSelector = `body > div:not(#twd-sidebar-root) ${selector}`;
     log(`Checking notExists("${selector}")`);
     const existingElement = document.querySelector(enhancedSelector);
     if (existingElement) {
-      throw new Error(`Element "${selector}" exists in the DOM.`);
+      return Promise.reject(new Error(`Element "${selector}" exists in the DOM.`));
     }
     log(`Assertion passed: Element "${selector}" does not exist in the DOM.`);
+    return Promise.resolve();
   },
 };

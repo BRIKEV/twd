@@ -41,6 +41,7 @@ describe('chaiPrint', () => {
 
   it('should format a chai assertion error with no actual and no expected values', () => {
     try {
+      // eslint-disable-next-line @typescript-eslint/no-unused-expressions -- chai's .exist is a property getter that throws; it has no return value
       chaiExpect(undefined).to.exist;
     } catch (error) {
       if (isChaiAssertionError(error)) {

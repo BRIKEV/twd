@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
-import { injectStyles, CSS_STYLES } from '../../../ui/utils/styles';
+import { injectStyles } from '../../../ui/utils/styles';
 
 describe('injectStyles', () => {
   beforeEach(() => {

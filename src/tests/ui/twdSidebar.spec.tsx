@@ -16,7 +16,7 @@ describe('TWDSidebar', () => {
   });
 
   describe('component', () => {
-    it('should render TWDSidebar right position', async () => {
+    it('should render TWDSidebar right position', () => {
       render(<TWDSidebar open position="right" />);
       const sidebarElement = screen.getByTestId('twd-sidebar');
       // position is now handled by .twd-sidebar CSS class; inline style carries only the positional offset
@@ -28,20 +28,20 @@ describe('TWDSidebar', () => {
       expect(document.documentElement).not.toHaveStyle({ marginLeft: '280px' });
     });
 
-    it('should render TWDSidebar component closed', async () => {
+    it('should render TWDSidebar component closed', () => {
       render(<TWDSidebar open={false} />);
       const sidebarElement = screen.getByText('TWD');
       expect(sidebarElement).toBeInTheDocument();
     });
 
-    it('should render based on the sessionStorage property if exists', async () => {
+    it('should render based on the sessionStorage property if exists', () => {
       sessionStorage.setItem('twd-sidebar-open', 'true');
       render(<TWDSidebar open={false} />);
       const sidebarElement = screen.getByText('Run All');
       expect(sidebarElement).toBeInTheDocument();
     });
 
-    it('should render TWDSidebar component open', async () => {
+    it('should render TWDSidebar component open', () => {
       render(<TWDSidebar open={true} />);
       const sidebarElement = screen.getByText('Run All');
       expect(sidebarElement).toBeInTheDocument();
@@ -100,7 +100,7 @@ describe('TWDSidebar', () => {
       expect(secondTest).toHaveBeenCalled();
     });
 
-    it('should render the total number of tests', async () => {
+    it('should render the total number of tests', () => {
       twd.describe('Group test', () => {
         twd.it('Test 1', vi.fn());
         twd.it('Test 2', vi.fn());

@@ -7,7 +7,6 @@ import {
   mockRequest,
   resetMockingState,
 } from '../../../commands/mockBridge';
-import { TWD_VERSION } from '../../../constants/version';
 
 describe('request count tracking', () => {
   let messageHandler: Function;

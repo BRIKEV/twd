@@ -70,7 +70,7 @@ const getFilteredContainer = (): HTMLElement => {
 // It takes whatever RTL query the user calls (like getByText) and calls the same function from within(filteredContainer), so the search happens only inside the allowed part of the DOM.
 const callWithin = (prop: string | symbol, args: any[]) => {
   const container = getFilteredContainer();
-  const scoped = within(container as HTMLElement);
+  const scoped = within(container);
 
   // Try using the within() version
   const scopedFn = (scoped as any)[prop];

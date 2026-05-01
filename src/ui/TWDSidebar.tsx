@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo } from 'react';
 import { TestList } from './TestList';
 import { ClosedSidebar } from './ClosedSidebar';
 import { useLayout } from './hooks/useLayout';
-import { handlers, TestRunner, type Handler } from '../runner';
+import { handlers, TestRunner } from '../runner';
 import { MockRulesButton } from './MockRulesButton';
 import { clearRequestMockRules } from '../commands/mockBridge';
 import { clearComponentMocks } from './componentMocks';
@@ -144,11 +144,7 @@ export const TWDSidebar = ({ open, position = 'left', search }: TWDSidebarProps)
 
   const tests = Array.from(handlers.values());
 
-  const roots = useMemo(
-    () => buildTreeFromHandlers(tests),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [refreshKey],
-  );
+  const roots = useMemo(() => buildTreeFromHandlers(tests), [refreshKey]);
 
   const filteredRoots = useMemo(() => filterTree(roots, searchQuery), [roots, searchQuery]);
 
@@ -165,7 +161,6 @@ export const TWDSidebar = ({ open, position = 'left', search }: TWDSidebarProps)
       filteredTestIds: null as string[] | null,
       displayTests: tests.filter((t) => t.type === 'test'),
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filteredRoots, searchQuery, refreshKey]);
 
   const runAll = async () => {
@@ -227,7 +222,12 @@ export const TWDSidebar = ({ open, position = 'left', search }: TWDSidebarProps)
       <div data-testid="twd-sidebar-header" className="twd-sidebar-header">
         <div className="twd-sidebar-header-row">
           <div className="twd-sidebar-header-buttons">
-            <button onClick={runAll} className="twd-btn twd-btn-primary">
+            <button
+              onClick={() => {
+                void runAll();
+              }}
+              className="twd-btn twd-btn-primary"
+            >
               <span aria-live="polite">{searchQuery ? 'Run Filtered' : 'Run All'}</span>
             </button>
             <button

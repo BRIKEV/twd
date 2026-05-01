@@ -192,11 +192,11 @@ describe('screenDom', () => {
     document.body.appendChild(div);
 
     twd.describe('Screen Queries', () => {
-      twd.it('should log getByText', async () => {
+      twd.it('should log getByText', () => {
         screenDom.getByText('Hello World');
-        screenDom.logTestingPlaygroundURL;
+        void screenDom.logTestingPlaygroundURL;
         // @ts-expect-error - prettyDOM is not a function but we want to test the call within
-        screenDom.prettyDOM;
+        void screenDom.prettyDOM;
       });
     });
 
@@ -215,7 +215,7 @@ describe('screenDom', () => {
     document.body.appendChild(button);
 
     twd.describe('Screen Queries', () => {
-      twd.it('should log queryByRole', async () => {
+      twd.it('should log queryByRole', () => {
         screenDom.queryByRole('button');
       });
     });
@@ -238,10 +238,10 @@ describe('screenDom', () => {
     document.body.appendChild(div2);
 
     twd.describe('Screen Queries', () => {
-      twd.it('should log getAllByText', async () => {
+      twd.it('should log getAllByText', () => {
         try {
           screenDom.getAllByText('Item 1');
-        } catch (e) {
+        } catch {
           // getAllByText might throw if elements don't match exactly, but we still want to test the log
         }
       });
@@ -265,7 +265,7 @@ describe('screenDom', () => {
     document.body.appendChild(button2);
 
     twd.describe('Screen Queries', () => {
-      twd.it('should log queryAllByRole', async () => {
+      twd.it('should log queryAllByRole', () => {
         screenDom.queryAllByRole('button');
       });
     });
@@ -283,7 +283,7 @@ describe('screenDom', () => {
     // prettyDOM might not be on screen, so we'll test if it exists
     if (typeof (screenDom as any).prettyDOM === 'function') {
       twd.describe('Screen Queries', () => {
-        twd.it('should log prettyDOM', async () => {
+        twd.it('should log prettyDOM', () => {
           (screenDom as any).prettyDOM();
         });
       });
@@ -300,7 +300,7 @@ describe('screenDom', () => {
     // logDOM might not be on screen, so we'll test if it exists
     if (typeof (screenDom as any).logDOM === 'function') {
       twd.describe('Screen Queries', () => {
-        twd.it('should log logDOM', async () => {
+        twd.it('should log logDOM', () => {
           (screenDom as any).logDOM();
         });
       });
@@ -336,7 +336,7 @@ describe('screenDom', () => {
 
   it('should not log for non-function properties', async () => {
     twd.describe('Screen Queries', () => {
-      twd.it('should not log non-function properties', async () => {
+      twd.it('should not log non-function properties', () => {
         // Access a non-function property - screenDom itself is an object, not a function call
         // So accessing it shouldn't trigger logging
       });
@@ -356,13 +356,13 @@ describe('screenDom', () => {
     document.body.appendChild(div);
 
     twd.describe('Screen Queries', () => {
-      twd.it('should log multiple queries', async () => {
+      twd.it('should log multiple queries', () => {
         screenDom.getByText('Test');
         // queryByRole might not find anything, but should still log
         screenDom.queryByRole('button');
         try {
           screenDom.getAllByText('Test');
-        } catch (e) {
+        } catch {
           // getAllByText might throw, but we still want to test the log
         }
       });

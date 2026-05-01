@@ -38,6 +38,6 @@ export const waitFor = <T>(
       }
     };
 
-    attempt();
+    void attempt();
   });
 };

@@ -43,7 +43,7 @@ describe('initRequestMocking', () => {
 
   beforeEach(() => {
     fakeSW = new FakeServiceWorker();
-    // @ts-ignore
+    // @ts-expect-error -- replacing navigator.serviceWorker with a fake for testing
     navigator.serviceWorker = fakeSW;
     clearRequestMockRules();
     resetMockingState();
@@ -159,7 +159,7 @@ describe('initRequestMocking', () => {
 
     let controllerChangeHandler: Function;
     const registerMock = vi.fn().mockResolvedValue({});
-    const addEventListenerMock = vi.fn((type: string, handler: Function, options?: any) => {
+    const addEventListenerMock = vi.fn((type: string, handler: Function, _options?: any) => {
       if (type === 'controllerchange') {
         controllerChangeHandler = handler;
       }
@@ -362,7 +362,7 @@ describe('initRequestMocking', () => {
 
   it('handles service worker not supported', async () => {
     const originalSW = navigator.serviceWorker;
-    // @ts-ignore
+    // @ts-expect-error -- deleting navigator.serviceWorker to simulate unsupported environment
     delete navigator.serviceWorker;
 
     // Should not throw and should complete successfully

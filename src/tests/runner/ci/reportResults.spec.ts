@@ -13,7 +13,7 @@ describe('twd Test Runner ci - reportResults', () => {
   const ICON_FAIL = `${RED}✗${RESET}`;
   const ICON_SKIP = `${YELLOW}○${RESET}`;
 
-  let originalConsoleLog = console.log;
+  const originalConsoleLog = console.log;
   beforeEach(() => {
     // Clear all handlers before each test
     twd.clearTests();
@@ -114,7 +114,7 @@ describe('twd Test Runner ci - reportResults', () => {
     expect(console.log).toHaveBeenNthCalledWith(6, `    ${ICON_PASS} test 4`);
   });
 
-  it('should only report tests marked as only', async () => {
+  it('should skip tests not marked as only including skipped tests', async () => {
     const testFn1 = vi.fn();
     const testFn2 = vi.fn();
     const testFn3 = vi.fn();
