@@ -77,7 +77,17 @@
     "copy:mock-sw": "cp dist/mock-sw.js examples/twd-test-app/public/mock-sw.js && cp dist/mock-sw.js examples/tutorial-example/public/mock-sw.js && cp dist/mock-sw.js examples/vue-twd-example/public/mock-sw.js",
     "copy:dist:vue-twd-example": "cp -r dist examples/vue-twd-example/src",
     "copy:dist:tutorial-example": "cp -r dist examples/tutorial-example/src",
-    "copy:dist:examples": "npm run copy:dist:vue-twd-example && npm run copy:dist:tutorial-example"
+    "copy:dist:examples": "npm run copy:dist:vue-twd-example && npm run copy:dist:tutorial-example",
+    "prepare": "husky"
+  },
+  "lint-staged": {
+    "src/**/*.{ts,tsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "src/**/*.{json,md}": [
+      "prettier --write"
+    ]
   },
   "peerDependencies": {
     "react": ">=17.0.0",
@@ -97,7 +107,9 @@
     "eslint": "^9.39.4",
     "eslint-config-prettier": "^10.1.8",
     "globals": "^17.6.0",
+    "husky": "^9.1.7",
     "jsdom": "^29.0.2",
+    "lint-staged": "^16.4.0",
     "prettier": "^3.8.3",
     "typescript": "~5.9.3",
     "typescript-eslint": "^8.59.1",
