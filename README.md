@@ -7,7 +7,7 @@
 [![Code Coverage](https://qlty.sh/gh/BRIKEV/projects/twd/coverage.svg)](https://qlty.sh/gh/BRIKEV/projects/twd)
 
 <p align="center">
-  <img src="./images/twd-skill.gif" alt="TWD running with an AI agent" width="800">
+  <img src="https://raw.githubusercontent.com/BRIKEV/twd/main/images/twd-skill.gif" alt="TWD running with an AI agent" width="800">
 </p>
 
 TWD is a library designed to seamlessly integrate testing into your web development workflow. It streamlines the process of writing, running, and managing tests directly in your application, with a modern UI and powerful mocking capabilities.
@@ -101,7 +101,7 @@ describe("Hello World Page", () => {
 3. **Run your app** - The TWD sidebar will appear automatically in development mode!
 
 <p align="center">
-  <img src="./images/twd_side_bar_success.png" alt="TWD Sidebar in action" width="800">
+  <img src="https://raw.githubusercontent.com/BRIKEV/twd/main/images/twd_side_bar_success.png" alt="TWD Sidebar in action" width="800">
 </p>
 
 ## Key Concepts
@@ -155,7 +155,7 @@ Full documentation is available at [twd.dev](https://twd.dev) (coming soon) or i
 
 Check out our working examples for various frameworks:
 
-- **[Examples Directory](./examples)** - Local examples for React, Vue, and Astro
+- **[Examples Directory](https://github.com/BRIKEV/twd/tree/main/examples)** - Local examples for React, Vue, and Astro
 - **[Vue Example](https://github.com/BRIKEV/twd-vue-example)** - Vue 3 with advanced scenarios
 - **[Solid Example](https://github.com/BRIKEV/twd-solid-example)** - Solid.js integration
 - **[Angular Example](https://github.com/BRIKEV/twd-angular-example)** - Angular setup
