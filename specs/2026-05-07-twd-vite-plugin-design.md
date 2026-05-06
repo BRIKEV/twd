@@ -216,6 +216,18 @@ One serialization note for the relay's eventual plugin: options like `url: \`${w
 
 **POC target:** `examples/twd-test-app/` (in-repo playground). Imports directly from `../../../../src/`, so plugin source changes are reflected immediately — fastest iteration loop.
 
+**In-repo / local-dist alias caveat.** Real consumers install `twd-js` as a package, so the bare specifier `import 'twd-js/bundled'` resolves automatically via the package's `exports` map. Consumers without an installed `twd-js` package (e.g. the in-repo `examples/` playground, or apps that copy `dist/` into their tree) must alias the specifier to the **built** `dist/bundled.es.js`, not to the source `src/bundled.tsx`:
+
+```ts
+resolve: {
+  alias: {
+    'twd-js/bundled': path.resolve(__dirname, '../../dist/bundled.es.js'),
+  },
+}
+```
+
+Aliasing to source breaks at runtime because `bundled.tsx`'s JSX is transformed by the consumer's vite config (typically `@vitejs/plugin-react`), producing React vnodes that Preact's `render()` cannot mutate (Preact tries to attach `__` and friends; React.createElement freezes vnodes in dev → `TypeError: Cannot add property __, object is not extensible`). The published artifact already has Preact JSX baked in via `@preact/preset-vite`, sidestepping the mismatch.
+
 **Manual success criteria:**
 
 1. Remove the `if (import.meta.env.DEV) { initTWD(...) }` block from the example's main entry.

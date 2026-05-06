@@ -21,7 +21,7 @@ export default defineConfig({
   ],
   resolve: {
     alias: {
-      'twd-js/bundled': path.resolve(__dirname, '../../src/bundled.tsx'),
+      'twd-js/bundled': path.resolve(__dirname, '../../dist/bundled.es.js'),
     },
   },
 });
