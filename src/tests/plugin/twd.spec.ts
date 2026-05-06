@@ -44,5 +44,34 @@ describe('twd vite plugin', () => {
       const load = plugin.load as (id: string) => string | null;
       expect(load.call({}, 'something-else')).toBeNull();
     });
+
+    it('inlines a custom testFilePattern into the glob call', () => {
+      const plugin = twd({ testFilePattern: '/src/**/*.twd.test.{ts,tsx}' });
+      const load = plugin.load as (id: string) => string | null;
+      const code = load.call({}, '\0virtual:twd/init');
+      expect(code).toContain(`import.meta.glob("/src/**/*.twd.test.{ts,tsx}")`);
+    });
+
+    it('serializes custom init options into initTWD args', () => {
+      const plugin = twd({
+        position: 'right',
+        search: true,
+        theme: { primary: '#ff0000' },
+        rootSelector: '#my-app',
+      });
+      const load = plugin.load as (id: string) => string | null;
+      const code = load.call({}, '\0virtual:twd/init');
+      expect(code).toContain(`"position":"right"`);
+      expect(code).toContain(`"search":true`);
+      expect(code).toContain(`"theme":{"primary":"#ff0000"}`);
+      expect(code).toContain(`"rootSelector":"#my-app"`);
+    });
+
+    it('omits testFilePattern from the inlined initTWD options', () => {
+      const plugin = twd({ testFilePattern: '/src/**/*.twd.test.ts' });
+      const load = plugin.load as (id: string) => string | null;
+      const code = load.call({}, '\0virtual:twd/init');
+      expect(code).not.toContain(`"testFilePattern"`);
+    });
   });
 });
