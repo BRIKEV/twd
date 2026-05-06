@@ -7,6 +7,7 @@ import react from '@vitejs/plugin-react'
 import istanbul from 'vite-plugin-istanbul';
 // TWD HMR plugin to prevent test duplication on hot reload
 import { twdHmr } from '../../src/plugin/twdHmr';
+import { twd } from '../../src/plugin/twd';
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -22,10 +23,12 @@ export default defineConfig({
       extension: ['.ts', '.tsx'],
       requireEnv: process.env.CI ? true : false,
     }),
+    twd({ testFilePattern: '/**/*.twd.test.{ts,tsx}', open: false, search: true }),
   ],
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
+      'twd-js/bundled': path.resolve(__dirname, './src/dist/bundled.es.js'),
     },
   },
   server: {
