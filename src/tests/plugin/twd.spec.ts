@@ -74,4 +74,19 @@ describe('twd vite plugin', () => {
       expect(code).not.toContain(`"testFilePattern"`);
     });
   });
+
+  describe('transformIndexHtml', () => {
+    it('injects a script tag pointing at the virtual module', () => {
+      const plugin = twd();
+      const transform = plugin.transformIndexHtml as () => unknown;
+      const result = transform.call({});
+      expect(result).toEqual([
+        {
+          tag: 'script',
+          attrs: { type: 'module', src: '/@id/virtual:twd/init' },
+          injectTo: 'head',
+        },
+      ]);
+    });
+  });
 });

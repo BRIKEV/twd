@@ -46,5 +46,14 @@ export function twd(options: TwdPluginOptions = {}): Plugin {
         `initTWD(tests, ${optionsLiteral});`,
       ].join('\n');
     },
+    transformIndexHtml() {
+      return [
+        {
+          tag: 'script',
+          attrs: { type: 'module', src: `/@id/${VIRTUAL_ID}` },
+          injectTo: 'head' as const,
+        },
+      ];
+    },
   };
 }
