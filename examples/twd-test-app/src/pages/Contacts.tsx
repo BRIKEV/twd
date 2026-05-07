@@ -1,11 +1,10 @@
 import React from 'react';
-import { useLoaderData,  } from 'react-router';
+import { useLoaderData, } from 'react-router';
 import type { contactsLoader } from '../loaders/contactsLoader';
 import Pagination from '../components/Pagination';
 
 const Contacts: React.FC = () => {
   const { contacts, currentPage, totalPages } = useLoaderData<typeof contactsLoader>();
-
 
   const getPageHref = (page: number) => `/contacts?page=${page}`;
 
@@ -122,8 +121,6 @@ const Contacts: React.FC = () => {
             ))
           )}
         </div>
-
-       
 
         <Pagination
           currentPage={currentPage}

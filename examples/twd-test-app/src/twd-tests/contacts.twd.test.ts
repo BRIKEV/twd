@@ -1,4 +1,4 @@
-import { twd, expect, screenDom, userEvent } from "../../../../src";
+import { twd, screenDom, userEvent } from "../../../../src";
 import { describe, it, beforeEach } from "../../../../src/runner";
 
 const contactsResponse = [
@@ -8,16 +8,16 @@ const contactsResponse = [
   { id: 4, name: "Javier Romero", email: "javier.romero@example.com" },
 ];
 
-describe("contactsPage", () => {
+describe("Contacts Page pagination tests", () => {
   beforeEach(() => {
     twd.clearRequestMockRules();
   });
 
-  it("renders the contacts list from the loader response", async () => {
+  it("renders the contacts list from the loader response and navigates to the second page", async () => {
     await twd.mockRequest("contactsList", {
       method: "GET",
       response: {
-        contacts: contactsResponse,
+        contacts: contactsResponse.slice(0, 2),
         currentPage: 2,
         totalPages: 2,
       },
@@ -38,11 +38,26 @@ describe("contactsPage", () => {
       twd.should(email, "be.visible");
     }
 
+    await twd.mockRequest("contactsList", {
+      method: "GET",
+      response: {
+        contacts: contactsResponse.slice(2, 4),
+        currentPage: 2,
+        totalPages: 2,
+      },
+      url: "/v1/contacts?page=2",
+    });
     const pageTwoLink = screenDom.getByRole("link", { name: "2" });
     await userEvent.click(pageTwoLink);
-
-    // TODO: there is a bug with twd assertion
-    // await twd.url().should("contain.url", "/contacts?page=2");
-
+    
+    await twd.waitForRequest("contactsList");
+    for (const contact of contactsResponse.slice(2, 4)) {
+      const name = screenDom.getByText(contact.name);
+      const email = screenDom.getByText(contact.email);
+      
+      twd.should(name, "be.visible");
+      twd.should(email, "be.visible");
+    }
+    await twd.url().should("contain.url", "/contacts?page=2");
   });
 });
