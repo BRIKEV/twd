@@ -17,7 +17,7 @@ Install the plugin:
 npm i --save-dev vite-plugin-istanbul
 ```
 
-Then add it to your `vite.config.ts`:
+Then add it to your `vite.config.ts` alongside the `twd()` plugin:
 
 ```ts
 /// <reference types="vitest" />
@@ -25,14 +25,18 @@ import path from "path"
 import tailwindcss from "@tailwindcss/vite"
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
-// add plugin for code coverage
+// add plugins for code coverage and TWD
 import istanbul from 'vite-plugin-istanbul';
+import { twd } from 'twd-js/vite-plugin';
 
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [
     react(),
     tailwindcss(),
+    twd({
+      testFilePattern: '/**/*.twd.test.{ts,tsx}',
+    }),
     // configure istanbul plugin
     istanbul({
       include: 'src/**/*',

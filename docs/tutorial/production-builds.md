@@ -42,19 +42,20 @@ The mock service worker file (`mock-sw.js`) needs to be manually removed from pr
 
 ### Using the Vite Plugin (Recommended)
 
-Install and configure the TWD Vite plugin:
+Add `removeMockServiceWorker()` alongside the `twd()` plugin you already configured for development:
 
 ```ts
 // vite.config.ts
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
-import { removeMockServiceWorker } from 'twd-js';
+import { twd, removeMockServiceWorker } from 'twd-js/vite-plugin';
 
 export default defineConfig({
   plugins: [
     react(),
-    removeMockServiceWorker() // Removes mock-sw.js from build
-  ]
+    twd(),                     // dev: sidebar + tests + service worker registration
+    removeMockServiceWorker(), // build: strips mock-sw.js from dist
+  ],
 });
 ```
 
@@ -99,7 +100,7 @@ If `mock-sw.js` appears in your production build:
 1. **Check Vite plugin configuration**:
    ```ts
    // Make sure plugin is added correctly
-   import { removeMockServiceWorker } from 'twd-js';
+   import { removeMockServiceWorker } from 'twd-js/vite-plugin';
    
    export default defineConfig({
      plugins: [
@@ -129,7 +130,7 @@ If `mock-sw.js` appears in your production build:
 
 ```ts
 // ✅ Recommended approach
-import { removeMockServiceWorker } from 'twd-js';
+import { removeMockServiceWorker } from 'twd-js/vite-plugin';
 
 export default defineConfig({
   plugins: [

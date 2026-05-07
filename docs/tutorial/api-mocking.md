@@ -54,24 +54,19 @@ npx twd-js init public --save
 This command creates a `mock-sw.js` file in the folder you specify.
 Since we're using Vite, it will be stored inside the `public` folder.
 
-After that, initialize the worker in your `src/main.tsx` file:
+If you're using the `twd()` Vite plugin (recommended in this tutorial), you don't need to do anything else — request mocking is enabled by default. The plugin's `serviceWorker: true` option (also the default) registers the worker for you in dev.
 
 ```ts
-if (import.meta.env.DEV) {
-  // You choose how to load the tests; this example uses Vite's glob import
-  const testModules = import.meta.glob("./**/*.twd.test.ts");
-  const { initTests, twd, TWDSidebar } = await import('twd-js');
-  // You need to pass the test modules, the sidebar component, and createRoot function
-  initTests(testModules, <TWDSidebar open={true} position="left" />, createRoot);
-  // if you want to use mock requests, you can initialize it here
-  twd.initRequestMocking()
-    .then(() => {
-      console.log("Request mocking initialized");
-    })
-    .catch((err) => {
-      console.error("Error initializing request mocking:", err);
-    });
-}
+// vite.config.ts
+import { twd } from 'twd-js/vite-plugin';
+
+export default defineConfig({
+  plugins: [
+    twd({
+      // serviceWorker: true is the default
+    }),
+  ],
+});
 ```
 
 ---

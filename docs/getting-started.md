@@ -29,40 +29,37 @@ pnpm add twd-js
 
 ## Quick Setup
 
-### 1. Bundled Setup
+### 1. Add the Vite Plugin
 
-The bundled setup works with all supported frameworks (React, Vue, Angular, Solid.js). It handles React dependencies internally and automatically initializes request mocking, keeping your main entry file clean and simple.
+For Vite-based projects (React, Vue, Solid.js, and other Vite-native frameworks), add the `twd()` plugin to your `vite.config.ts`. The plugin auto-loads the sidebar and discovers test files in dev — no entry-file changes required.
 
-```tsx{7-20}
-// src/main.tsx
-import { StrictMode } from 'react';
-import { createRoot } from 'react-dom/client';
-import './index.css';
-import App from './App';
+```ts
+// vite.config.ts
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react'; // or vue, solid, etc.
+import { twd } from 'twd-js/vite-plugin';
 
-// Only load the test sidebar and tests in development mode
-if (import.meta.env.DEV) {
-  const { initTWD } = await import('twd-js/bundled');
-  const tests = import.meta.glob("./**/*.twd.test.ts");
-  
-  // Initialize TWD with tests and optional configuration
-  // Request mocking is automatically initialized by default
-  initTWD(tests, {
-    open: true,
-    position: 'left',
-    search: true,                   // Enable search/filter in the sidebar (default: false)
-    serviceWorker: true,            // Enable request mocking (default: true)
-    serviceWorkerUrl: '/mock-sw.js',// Custom service worker path (default: '/mock-sw.js')
-    // rootSelector: '#my-app',     // (Optional) Override the app root for screenDom queries
-  });
-}
-
-createRoot(document.getElementById('root')!).render(
-  <StrictMode>
-    <App />
-  </StrictMode>,
-);
+export default defineConfig({
+  plugins: [
+    react(),
+    twd({
+      testFilePattern: '/**/*.twd.test.{ts,tsx}',
+      open: true,
+      position: 'left',
+      search: true,                    // Enable search/filter in the sidebar (default: false)
+      serviceWorker: true,             // Enable request mocking (default: true)
+      serviceWorkerUrl: '/mock-sw.js', // Custom service worker path (default: '/mock-sw.js')
+      // rootSelector: '#my-app',      // (Optional) Override the app root for screenDom queries
+    }),
+  ],
+});
 ```
+
+The plugin only runs in `vite dev` (`apply: 'serve'`), so production builds never include any TWD code.
+
+::: tip Using Angular or another non-Vite tool?
+Skip to [Manual setup for non-Vite projects](#manual-setup-for-non-vite-projects) below.
+:::
 
 ### 2. Set Up Mock Service Worker (Optional but recommended)
 
@@ -122,6 +119,41 @@ You should now see the TWD sidebar in your browser automatically in development 
 </p>
 
 
+## Manual setup for non-Vite projects
+
+If your project doesn't use Vite (e.g. Angular CLI, Webpack, custom bundler), initialize TWD manually in your dev entry point. The `twd()` Vite plugin doesn't apply here, but the underlying `initTWD` API works the same way the plugin does internally.
+
+```tsx
+// src/main.tsx (or main.ts)
+import { StrictMode } from 'react';
+import { createRoot } from 'react-dom/client';
+import './index.css';
+import App from './App';
+
+// Only load the test sidebar and tests in development mode
+if (import.meta.env.DEV) {
+  const { initTWD } = await import('twd-js/bundled');
+  const tests = import.meta.glob('./**/*.twd.test.ts');
+
+  initTWD(tests, {
+    open: true,
+    position: 'left',
+    search: true,                    // Enable search/filter in the sidebar (default: false)
+    serviceWorker: true,             // Enable request mocking (default: true)
+    serviceWorkerUrl: '/mock-sw.js', // Custom service worker path (default: '/mock-sw.js')
+    // rootSelector: '#my-app',      // (Optional) Override the app root for screenDom queries
+  });
+}
+
+createRoot(document.getElementById('root')!).render(
+  <StrictMode>
+    <App />
+  </StrictMode>,
+);
+```
+
+The bundled setup ships React internally, so it works with any framework — the entry-file integration is the only difference.
+
 ## File Naming Convention
 
 We recommend naming your test files using the following patterns:
@@ -154,20 +186,22 @@ You can customize this pattern in your test loader using different glob patterns
 ### Tests Not Loading
 
 Make sure you:
-1. Are running in development mode (`import.meta.env.DEV` is true)
-2. Used the correct file naming pattern (`.twd.test.ts`)
-3. Have the `initTWD` logic in your main entry file
+1. Are running in development mode (`vite dev` / `import.meta.env.DEV` is true)
+2. Used the correct file naming pattern that matches your `testFilePattern` (default: `.twd.test.ts` / `.tsx`)
+3. Added `twd()` to the `plugins` array in your `vite.config.ts` (Vite projects), or have the manual `initTWD` logic in your entry file (non-Vite projects)
 
 ### Mock Service Worker Issues
 
 If API mocking isn't working:
 1. Run `npx twd-js init public` to install the service worker
-2. Make sure request mocking is enabled in your `initTWD` options (`serviceWorker: true` is the default)
+2. Make sure request mocking is enabled (`serviceWorker: true` is the default in both the plugin and `initTWD`)
 3. Check the browser console for service worker registration errors
 
 ### Test Duplication on HMR
 
-If you notice test entries duplicating when you edit test files during development (this typically happens when you have components initialized in your `main.tsx`), add the TWD HMR plugin to your Vite config:
+If you're using the `twd()` Vite plugin, full-reload on test edits is handled automatically — no extra plugin needed.
+
+For manual (non-Vite) setups where you notice test entries duplicating when you edit test files during development, add the TWD HMR plugin alongside `initTWD`:
 
 ```ts
 // vite.config.ts

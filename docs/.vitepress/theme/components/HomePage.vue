@@ -249,19 +249,19 @@ const faqs = [
               <span class="step-line"></span>
             </div>
             <div class="step-content">
-              <h3 class="step-title">Install and add to your entry point</h3>
+              <h3 class="step-title">Install and add the Vite plugin</h3>
               <div class="code-block">
                 <div class="code-header"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span><span class="code-filename">terminal</span></div>
                 <pre><code>npm install twd-js</code></pre>
               </div>
               <div class="code-block">
-                <div class="code-header"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span><span class="code-filename">src/main.tsx</span></div>
-                <pre><code><span class="hl-comment">// Only load TWD in development</span>
-<span class="hl-keyword">if</span> (<span class="hl-meta">import.meta.env.DEV</span>) {
-  <span class="hl-keyword">const</span> { initTWD } = <span class="hl-keyword">await</span> <span class="hl-keyword">import</span>(<span class="hl-string">'twd-js/bundled'</span>);
-  <span class="hl-keyword">const</span> tests = <span class="hl-meta">import.meta.glob</span>(<span class="hl-string">"./**/*.twd.test.ts"</span>);
-  <span class="hl-func">initTWD</span>(tests, { <span class="hl-prop">open</span>: <span class="hl-keyword">true</span> });
-}</code></pre>
+                <div class="code-header"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span><span class="code-filename">vite.config.ts</span></div>
+                <pre><code><span class="hl-keyword">import</span> { defineConfig } <span class="hl-keyword">from</span> <span class="hl-string">'vite'</span>;
+<span class="hl-keyword">import</span> { twd } <span class="hl-keyword">from</span> <span class="hl-string">'twd-js/vite-plugin'</span>;
+
+<span class="hl-keyword">export default</span> <span class="hl-func">defineConfig</span>({
+  <span class="hl-prop">plugins</span>: [<span class="hl-func">twd</span>({ <span class="hl-prop">open</span>: <span class="hl-keyword">true</span> })],
+});</code></pre>
               </div>
             </div>
           </div>
