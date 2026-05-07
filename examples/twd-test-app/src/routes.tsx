@@ -8,11 +8,18 @@ import MockComponent from "./pages/MockComponent";
 import Responsive from "./pages/Responsive";
 import BlurValidation from "./pages/BlurValidation";
 import ComboboxSelect from "./pages/ComboboxSelect";
+import Contacts from "./pages/Contacts";
+import { contactsLoader } from "./loaders/contactsLoader";
 
 const router = createBrowserRouter([
   {
     path: "/",
     Component: App,
+  },
+  {
+    path: "/contacts",
+    loader: contactsLoader,
+    Component: Contacts,
   },
   {
     path: "/assertions",
