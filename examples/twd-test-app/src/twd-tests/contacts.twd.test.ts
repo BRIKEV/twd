@@ -52,9 +52,13 @@ describe("Contacts Page pagination tests", () => {
     
     await twd.waitForRequest("contactsList");
     for (const contact of contactsResponse.slice(2, 4)) {
-      const name = screenDom.getByText(contact.name);
-      const email = screenDom.getByText(contact.email);
-      
+      // Use findByText (polls) instead of getByText (synchronous) to avoid
+      // racing the React Router loader-driven re-render. After waitForRequest
+      // resolves, MSW has intercepted the request but React still needs to
+      // receive the response, update route data, and commit DOM updates.
+      const name = await screenDom.findByText(contact.name);
+      const email = await screenDom.findByText(contact.email);
+
       twd.should(name, "be.visible");
       twd.should(email, "be.visible");
     }
