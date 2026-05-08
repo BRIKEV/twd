@@ -88,5 +88,51 @@ describe('twd vite plugin', () => {
         },
       ]);
     });
+
+    it('prefixes the script src with a non-root resolved base', () => {
+      const plugin = twd();
+      const configResolved = plugin.configResolved as (config: { base: string }) => void;
+      configResolved.call({}, { base: '/platform-admin/' });
+      const transform = plugin.transformIndexHtml as () => unknown;
+      const result = transform.call({});
+      expect(result).toEqual([
+        {
+          tag: 'script',
+          attrs: { type: 'module', src: '/platform-admin/@id/virtual:twd/init' },
+          injectTo: 'head',
+        },
+      ]);
+    });
+  });
+
+  describe('base path handling for serviceWorkerUrl', () => {
+    it('prefixes the default serviceWorkerUrl with a non-root base', () => {
+      const plugin = twd();
+      const configResolved = plugin.configResolved as (config: { base: string }) => void;
+      configResolved.call({}, { base: '/platform-admin/' });
+      const load = plugin.load as (id: string) => string | null;
+      const code = load.call({}, '\0virtual:twd/init');
+      expect(code).toContain(`"serviceWorkerUrl":"/platform-admin/mock-sw.js"`);
+    });
+
+    it('leaves the default serviceWorkerUrl unchanged when base is "/"', () => {
+      const plugin = twd();
+      const configResolved = plugin.configResolved as (config: { base: string }) => void;
+      configResolved.call({}, { base: '/' });
+      const load = plugin.load as (id: string) => string | null;
+      const code = load.call({}, '\0virtual:twd/init');
+      expect(code).toContain(`"serviceWorkerUrl":"/mock-sw.js"`);
+    });
+
+    it('preserves a user-supplied serviceWorkerUrl regardless of base', () => {
+      const plugin = twd({ serviceWorkerUrl: '/custom/path/mock-sw.js' });
+      const configResolved = plugin.configResolved as (config: { base: string }) => void;
+      configResolved.call({}, { base: '/platform-admin/' });
+      const load = plugin.load as (id: string) => string | null;
+      const code = load.call({}, '\0virtual:twd/init');
+      // Not double-prefixed — user-supplied value wins.
+      expect(code).toContain(`"serviceWorkerUrl":"/custom/path/mock-sw.js"`);
+      expect(code).not.toContain(`/platform-admin/custom`);
+    });
   });
 });

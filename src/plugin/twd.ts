@@ -1,4 +1,4 @@
-import type { Plugin } from 'vite';
+import type { Plugin, ResolvedConfig } from 'vite';
 import type { TWDTheme } from '../ui/utils/theme';
 
 /**
@@ -99,11 +99,28 @@ const DEFAULT_INIT_OPTIONS = {
  */
 export function twd(options: TwdPluginOptions = {}): Plugin {
   const { testFilePattern = DEFAULT_PATTERN, ...userInitOptions } = options;
+  // Track whether the user explicitly set serviceWorkerUrl so we don't
+  // double-prefix when applying the resolved Vite base path.
+  const userSetServiceWorkerUrl = userInitOptions.serviceWorkerUrl !== undefined;
   const initOptions = { ...DEFAULT_INIT_OPTIONS, ...userInitOptions };
+
+  // Captured from configResolved. Vite normalizes this to start and end
+  // with "/" (default "/"). Used to prefix dev-server-relative URLs so
+  // the plugin works under non-root `base` configs (e.g. "/platform-admin/").
+  let resolvedBase = '/';
 
   return {
     name: 'twd',
     apply: 'serve',
+    configResolved(config: ResolvedConfig) {
+      resolvedBase = config.base;
+      // If the user didn't override serviceWorkerUrl, prefix the default
+      // with the resolved base so the SW resolves under non-root deployments.
+      if (!userSetServiceWorkerUrl && resolvedBase !== '/') {
+        const trimmed = DEFAULT_INIT_OPTIONS.serviceWorkerUrl.replace(/^\//, '');
+        initOptions.serviceWorkerUrl = `${resolvedBase}${trimmed}`;
+      }
+    },
     resolveId(id) {
       if (id === VIRTUAL_ID) {
         return RESOLVED_VIRTUAL_ID;
@@ -124,7 +141,7 @@ export function twd(options: TwdPluginOptions = {}): Plugin {
       return [
         {
           tag: 'script',
-          attrs: { type: 'module', src: `/@id/${VIRTUAL_ID}` },
+          attrs: { type: 'module', src: `${resolvedBase}@id/${VIRTUAL_ID}` },
           injectTo: 'head' as const,
         },
       ];
