@@ -1,12 +1,17 @@
-## <small>1.8.0 (2026-05-01)</small>
+## <small>1.8.0 (2026-05-08)</small>
 
 * feat(plugin): export twd from twd-js/vite-plugin ([9c90803](https://github.com/BRIKEV/twd/commit/9c90803))
 * feat(plugin): inject virtual init script via transformIndexHtml ([4cdc7e5](https://github.com/BRIKEV/twd/commit/4cdc7e5))
 * feat(plugin): add virtual module for twd init ([4674cdb](https://github.com/BRIKEV/twd/commit/4674cdb))
 * feat(plugin): scaffold twd Vite plugin (name + apply: serve) ([7da3ccd](https://github.com/BRIKEV/twd/commit/7da3ccd))
 * feat: add Contacts page with pagination and loader functionality (#239) ([d22b144](https://github.com/BRIKEV/twd/commit/d22b144)), closes [#239](https://github.com/BRIKEV/twd/issues/239)
+* fix(plugin): respect Vite base path in script injection and SW URL ([f3c7a00](https://github.com/BRIKEV/twd/commit/f3c7a00))
+* fix(examples): use findByText for post-pagination queries to avoid CI flake ([7851b0d](https://github.com/BRIKEV/twd/commit/7851b0d))
 * fix(examples): alias twd-js/bundled to dist (not source) in test app ([75f2e0d](https://github.com/BRIKEV/twd/commit/75f2e0d))
 * docs: lead with twd() Vite plugin across docs site and README ([55e1d72](https://github.com/BRIKEV/twd/commit/55e1d72))
+* docs(plugin): add @example for serviceWorker option in twd() JSDoc ([9ad9e40](https://github.com/BRIKEV/twd/commit/9ad9e40))
+* docs: add Rober040992 as a contributor for doc (#240) ([4f9bab7](https://github.com/BRIKEV/twd/commit/4f9bab7)), closes [#240](https://github.com/BRIKEV/twd/issues/240)
+* docs(community): add Roberto Gomez Fabrega to contributors table ([79c16bd](https://github.com/BRIKEV/twd/commit/79c16bd))
 * docs: add better tests for pagination example ([0276d05](https://github.com/BRIKEV/twd/commit/0276d05))
 * docs: add design spec for TWD Vite plugin auto-init POC ([f89ace4](https://github.com/BRIKEV/twd/commit/f89ace4))
 * docs: use absolute GitHub URLs for README images and examples link ([b4278d4](https://github.com/BRIKEV/twd/commit/b4278d4))

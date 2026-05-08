@@ -1,1 +1,1 @@
-export const TWD_VERSION = '1.8.0-beta.1';
+export const TWD_VERSION = '1.8.0';
