@@ -84,6 +84,18 @@ const DEFAULT_INIT_OPTIONS = {
  *   open: false,
  * })
  * ```
+ * @example
+ * ```ts
+ * // Disable the Mock Service Worker (e.g. when the project doesn't use request mocking)
+ * twd({
+ *   serviceWorker: false,
+ * })
+ *
+ * // Or point to a custom service worker path
+ * twd({
+ *   serviceWorkerUrl: '/custom/mock-sw.js',
+ * })
+ * ```
  */
 export function twd(options: TwdPluginOptions = {}): Plugin {
   const { testFilePattern = DEFAULT_PATTERN, ...userInitOptions } = options;
