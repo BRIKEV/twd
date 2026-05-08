@@ -44,7 +44,7 @@ import { screenDom, screenDomGlobal } from "twd-js";
 
 `screenDom` resolves the app's root container in this priority order:
 
-1. **Configured selector** — if you pass `rootSelector` to `initTWD` (e.g. `initTWD(tests, { rootSelector: '#my-app' })`), that selector is tried first.
+1. **Configured selector** — if you pass `rootSelector` (to the `twd()` Vite plugin or to `initTWD`), that selector is tried first.
 2. **Known framework roots** — `#root` (Vite / CRA / Solid), `#app` (Vue), then `app-root` (Angular). Most apps fall into this bucket and need no configuration.
 3. **Heuristic fallback** — the first direct child of `<body>` that isn't the TWD sidebar, isn't an excluded tag, and isn't empty.
 4. **Last resort** — `document.body`.
@@ -57,9 +57,18 @@ If resolution reaches step 3 or 4 without a configured `rootSelector`, `screenDo
 
 ### Configuring a custom root
 
-If your app mounts into a non-standard element, pass `rootSelector` to `initTWD`:
+If your app mounts into a non-standard element, pass `rootSelector` to the `twd()` plugin (Vite projects) or to `initTWD` (manual setup):
 
 ```ts
+// vite.config.ts (Vite projects)
+import { twd } from 'twd-js/vite-plugin';
+export default defineConfig({
+  plugins: [twd({ rootSelector: '#my-app' })],
+});
+```
+
+```ts
+// Manual setup (Angular / Webpack / non-Vite)
 initTWD(tests, {
   rootSelector: '#my-app',
 });
@@ -71,7 +80,7 @@ This is the simplest way to handle apps whose root isn't `#root`, `#app`, or `ap
 
 If `screenDom` queries fail unexpectedly:
 
-1. **Your app uses a non-standard root selector.** Pass it via `initTWD({ rootSelector: '#your-root' })`.
+1. **Your app uses a non-standard root selector.** Pass it via `twd({ rootSelector: '#your-root' })` (Vite plugin) or `initTWD({ rootSelector: '#your-root' })` (manual setup).
 2. **Your app root exists but hasn't mounted yet.** `screenDom` queries inside a `twd.visit()` flow should run after the route mounts — make sure you `await twd.visit(...)` before querying.
 3. **You need portal-rendered elements (modals, tooltips).** Use `screenDomGlobal` for those; `screenDom` only searches inside the resolved root container.
 

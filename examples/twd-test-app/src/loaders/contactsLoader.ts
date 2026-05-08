@@ -14,9 +14,8 @@ type ContactResponse = {
 
 export const contactsLoader = async ({ request }: LoaderFunctionArgs) => {
   const url = new URL(request.url);
-	const pageParam = url.searchParams.get("page");
-  console.log(pageParam)
-  const response = await fetch("http://localhost:3000/v1/contacts");
+  const pageParam = url.searchParams.get("page");
+  const response = await fetch(`http://localhost:3000/v1/contacts?page=${pageParam}`);
 
   if (!response.ok) {
     throw new Response("Failed to load contacts", {

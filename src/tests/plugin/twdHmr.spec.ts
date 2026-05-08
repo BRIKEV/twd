@@ -59,7 +59,7 @@ describe('twdHmr', () => {
       timestamp: Date.now(),
     };
 
-    handleHotUpdate!.call({} as any, context as any);
+    void handleHotUpdate!.call({} as any, context as any);
 
     expect(mockSend).not.toHaveBeenCalled();
   });
@@ -78,7 +78,7 @@ describe('twdHmr', () => {
       timestamp: Date.now(),
     };
 
-    handleHotUpdate!.call({} as any, context as any);
+    void handleHotUpdate!.call({} as any, context as any);
 
     expect(mockSend).toHaveBeenCalled();
   });

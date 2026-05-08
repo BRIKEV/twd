@@ -36,25 +36,26 @@ pnpm add twd-js
 
 ## Quick Start
 
-### React / Vue / Angular / Other Frameworks (Bundled / recommended)
+### Vite-based projects (React, Vue, Solid, and more)
 
-TWD now supports any framework via its bundled version.
+Add the `twd()` plugin to your `vite.config.ts`. The plugin auto-loads the sidebar and discovers test files in dev — no entry-file changes required.
 
 ```ts
-// Only load the test sidebar and tests in development mode
-if (import.meta.env.DEV) {
-  const { initTWD } = await import('twd-js/bundled');
-  const tests = import.meta.glob("./**/*.twd.test.ts");
-  
-  // Initialize TWD with tests and optional configuration
-  // Request mocking is automatically initialized by default
-  initTWD(tests, { 
-    open: true, 
-    position: 'left',
-    serviceWorker: true,           // Enable request mocking (default: true)
-    serviceWorkerUrl: '/mock-sw.js' // Custom service worker path (default: '/mock-sw.js')
-  });
-}
+// vite.config.ts
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react'; // or vue, solid, etc.
+import { twd } from 'twd-js/vite-plugin';
+
+export default defineConfig({
+  plugins: [
+    react(),
+    twd({
+      testFilePattern: '/**/*.twd.test.{ts,tsx}',
+      open: true,
+      position: 'left',
+    }),
+  ],
+});
 ```
 
 ### Set Up Mock Service Worker
@@ -63,6 +64,25 @@ If you plan to use API mocking, set up the mock service worker:
 
 ```bash
 npx twd-js init public
+```
+
+### Non-Vite projects (Angular, Webpack, etc.)
+
+If your project doesn't use Vite, initialize TWD manually in your dev entry point:
+
+```ts
+// Only load the test sidebar and tests in development mode
+if (import.meta.env.DEV) {
+  const { initTWD } = await import('twd-js/bundled');
+  const tests = import.meta.glob('./**/*.twd.test.ts');
+
+  initTWD(tests, {
+    open: true,
+    position: 'left',
+    serviceWorker: true,             // Enable request mocking (default: true)
+    serviceWorkerUrl: '/mock-sw.js', // Custom service worker path (default: '/mock-sw.js')
+  });
+}
 ```
 
 Check the [Framework Integration Guide](https://brikev.github.io/twd/frameworks) for more details.

@@ -69,8 +69,8 @@ After generating the patterns file, setup can also:
 
 - Install `twd-js` and `twd-relay` packages
 - Run `npx twd-js init public` to install the service worker
-- Add TWD initialization to your entry point
-- Add `twdHmr()` and `twdRemote()` to your Vite config
+- Add the `twd()` plugin to your `vite.config.ts` (or fall back to manual `initTWD` in your entry point for non-Vite projects)
+- Add `twdRemote()` to your Vite config
 - Create a first test file to validate the setup
 
 You can accept or skip each step.

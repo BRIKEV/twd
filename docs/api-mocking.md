@@ -30,13 +30,13 @@ The service worker file (`mock-sw.js`) is only needed during development for API
 ```ts
 // vite.config.ts
 import { defineConfig } from 'vite';
-import { removeMockServiceWorker } from 'twd-js';
+import { twd, removeMockServiceWorker } from 'twd-js/vite-plugin';
 
 export default defineConfig({
   plugins: [
-    // ... other plugins
-    removeMockServiceWorker()
-  ]
+    twd(), // dev: discovery + sidebar + request mocking
+    removeMockServiceWorker(), // build: strip mock-sw.js from prod dist
+  ],
 });
 ```
 
@@ -48,26 +48,46 @@ The plugin only runs during build time (`apply: 'build'`) and will not affect yo
 
 ### 3. Initialize Mocking
 
-Initialize request mocking in your main entry file using the standard TWD setup:
+The `twd()` Vite plugin (recommended) initializes request mocking automatically — no entry-file changes required. Mocking is enabled by default (`serviceWorker: true`).
 
 ```ts
-// src/main.tsx (or your main entry file)
+// vite.config.ts
+import { defineConfig } from 'vite';
+import { twd } from 'twd-js/vite-plugin';
+
+export default defineConfig({
+  plugins: [
+    twd({
+      serviceWorker: true,             // default — request mocking enabled
+      serviceWorkerUrl: '/mock-sw.js', // default
+    }),
+  ],
+});
+```
+
+For non-Vite projects, initialize manually in your entry file. Both `initTWD` and the standard setup register the service worker for you:
+
+```ts
+// Bundled (recommended for non-Vite projects)
 if (import.meta.env.DEV) {
-  const testModules = import.meta.glob("./**/*.twd.test.ts");
+  const { initTWD } = await import('twd-js/bundled');
+  const tests = import.meta.glob('./**/*.twd.test.ts');
+  initTWD(tests, { serviceWorker: true });
+}
+```
+
+```ts
+// Standard (React-only, full control)
+if (import.meta.env.DEV) {
+  const testModules = import.meta.glob('./**/*.twd.test.ts');
   const { initTests, twd, TWDSidebar } = await import('twd-js');
   initTests(testModules, <TWDSidebar open={true} position="left" />, createRoot);
-  twd.initRequestMocking()
-    .then(() => {
-      console.log("Request mocking initialized");
-    })
-    .catch((err) => {
-      console.error("Error initializing request mocking:", err);
-    });
+  twd.initRequestMocking().catch(console.error);
 }
 ```
 
 ::: tip
-You only need to call `initRequestMocking()` once in your main entry file, not in individual tests.
+You only need to register request mocking once (via the plugin or `initTWD`/`initRequestMocking`), not per test.
 :::
 
 ## Basic Mocking

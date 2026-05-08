@@ -56,16 +56,20 @@ npm install --save-dev twd-relay
 
 ### Option A: Vite Plugin (recommended)
 
-If you already use Vite, attach the relay to your dev server — the WebSocket runs on the same host/port:
+If you already use Vite, attach the relay to your dev server alongside the `twd()` plugin — the WebSocket runs on the same host/port:
 
 ```ts
 // vite.config.ts
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+import { twd } from 'twd-js/vite-plugin';
 import { twdRemote } from 'twd-relay/vite';
 
 export default defineConfig({
   plugins: [
     react(),
-    twdRemote(),  // adds /__twd/ws to your dev server
+    twd(),         // sidebar + test discovery
+    twdRemote(),   // adds /__twd/ws to your dev server
   ],
 });
 ```
@@ -76,8 +80,10 @@ Then connect the browser client in your app entry:
 // main.ts
 import { createBrowserClient } from 'twd-relay/browser';
 
-const client = createBrowserClient();
-client.connect();
+if (import.meta.env.DEV) {
+  const client = createBrowserClient();
+  client.connect();
+}
 ```
 
 When using the Vite plugin the URL is auto-detected — no configuration needed.

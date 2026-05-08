@@ -9,35 +9,41 @@ TWD is designed to work with any Vite-based application. Currently, **react, vue
 
 ## React
 
-TWD works seamlessly with any Vite-based React application. **We recommend using the bundled setup** for all frameworks, including React, as it's simpler and handles dependencies automatically. The standard setup is available for React applications that need more control.
+TWD works seamlessly with any Vite-based React application. **We recommend using the `twd()` Vite plugin** — it auto-loads the sidebar and discovers test files in dev with no entry-file changes. Manual setup is available for projects that need full control.
 
 **[View React Examples](https://github.com/BRIKEV/twd/tree/main/examples)** - Multiple React examples available in the repository.
 
-### Recommended: Bundled Setup
+### Recommended: Vite Plugin
 
-The bundled setup is the recommended approach for all frameworks, including React. It handles React dependencies internally, automatically initializes request mocking, and keeps your main entry file clean and simple.
+Add the `twd()` plugin to your `vite.config.ts`:
 
-```tsx
-// src/main.tsx
-if (import.meta.env.DEV) {
-  const { initTWD } = await import('twd-js/bundled');
-  const tests = import.meta.glob("./**/*.twd.test.ts")
-  
-  // Initialize TWD with tests and optional configuration
-  // Request mocking is automatically initialized by default
-  initTWD(tests, { 
-    open: true, 
-    position: 'left',
-    serviceWorker: true,           // Enable request mocking (default: true)
-    serviceWorkerUrl: '/mock-sw.js' // Custom service worker path (default: '/mock-sw.js')
-  });
-}
+```ts
+// vite.config.ts
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+import { twd } from 'twd-js/vite-plugin';
+
+export default defineConfig({
+  plugins: [
+    react(),
+    twd({
+      testFilePattern: '/**/*.twd.test.{ts,tsx}',
+      open: true,
+      position: 'left',
+      serviceWorker: true,             // Enable request mocking (default: true)
+      serviceWorkerUrl: '/mock-sw.js', // Custom service worker path (default: '/mock-sw.js')
+    }),
+  ],
+});
 ```
 
-#### initTWD Options
+The plugin only runs in `vite dev` (`apply: 'serve'`) — it's a no-op in production builds.
 
-The `initTWD` function accepts the following options:
+#### twd() Plugin Options
 
+The `twd()` plugin accepts the following options:
+
+- **`testFilePattern`** (`string`, optional) - Glob pattern for discovering test files. Default: `'/**/*.twd.test.ts'`
 - **`open`** (`boolean`, optional) - Whether the sidebar is open by default. Default: `true`
 - **`position`** (`"left" | "right"`, optional) - Sidebar position. Default: `"left"`
 - **`serviceWorker`** (`boolean`, optional) - Whether to initialize request mocking. Default: `true`
@@ -47,29 +53,30 @@ The `initTWD` function accepts the following options:
 
 **Examples:**
 
-```tsx
-// Minimal setup - uses all defaults
-initTWD(tests);
+```ts
+// Minimal setup — uses all defaults
+twd();
 
 // Custom sidebar configuration
-initTWD(tests, { open: false, position: 'right' });
+twd({ open: false, position: 'right' });
+
+// Custom test file pattern
+twd({ testFilePattern: '/**/*.spec.{ts,tsx}' });
 
 // Disable request mocking
-initTWD(tests, { serviceWorker: false });
-
-// Custom service worker path
-initTWD(tests, { serviceWorkerUrl: '/custom-path/mock-sw.js' });
+twd({ serviceWorker: false });
 
 // Enable test filtering in the sidebar
-initTWD(tests, { search: true });
+twd({ search: true });
 
 // All options together
-initTWD(tests, {
+twd({
+  testFilePattern: '/**/*.twd.test.{ts,tsx}',
   open: true,
   position: 'right',
   serviceWorker: true,
   serviceWorkerUrl: '/my-mock-sw.js',
-  theme: { primary: '#2563eb', background: '#ffffff' }
+  theme: { primary: '#2563eb', background: '#ffffff' },
 });
 ```
 
@@ -77,9 +84,30 @@ initTWD(tests, {
 Learn more about customizing the TWD sidebar appearance in the [Theming](/theming) guide.
 :::
 
+### Alternative: Manual Bundled Setup
+
+If you need full control, you can call `initTWD` directly in your entry file instead of using the plugin. This is the same code the plugin runs internally:
+
+```tsx
+// src/main.tsx
+if (import.meta.env.DEV) {
+  const { initTWD } = await import('twd-js/bundled');
+  const tests = import.meta.glob('./**/*.twd.test.ts');
+
+  initTWD(tests, {
+    open: true,
+    position: 'left',
+    serviceWorker: true,
+    serviceWorkerUrl: '/mock-sw.js',
+  });
+}
+```
+
+`initTWD` accepts the same options as the plugin (minus `testFilePattern`, which is handled by `import.meta.glob` here). Use this approach when you need conditional init, custom test discovery, or any logic the plugin doesn't expose.
+
 ### Alternative: Standard Setup (React Only)
 
-The standard setup is available for React applications that need full control over the initialization. This setup requires you to manually handle React dependencies and initialize request mocking.
+The standard setup gives full control over the React root and request-mocking lifecycle. React-only.
 
 ```tsx
 // src/main.tsx
@@ -95,8 +123,8 @@ if (import.meta.env.DEV) {
 }
 ```
 
-::: warning
-The standard setup is **React-only**. For Vue, Angular, Solid.js, and other frameworks, you must use the bundled setup.
+::: tip
+For Vue, Solid.js, and other Vite-based frameworks, use the `twd()` plugin (recommended) or the manual bundled setup. The standard setup above is React-only.
 :::
 
 ## Testing shadcn Components
@@ -107,68 +135,103 @@ If you're using shadcn/ui components in your React application, we've created a 
 
 ## Vue
 
-For Vue applications, use the bundled version of TWD. This ensures that the React runtime required by TWD's UI is handled correctly without conflicting with your Vue app.
+For Vue applications, use the `twd()` Vite plugin. The plugin is framework-agnostic and the bundled version it uses internally ships React separately, so it doesn't conflict with your Vue runtime.
 
 **[Vue Example Repository](https://github.com/BRIKEV/twd-vue-example)** - Complete working example with advanced scenarios.
 
 ```ts
+// vite.config.ts
+import { defineConfig } from 'vite';
+import vue from '@vitejs/plugin-vue';
+import { twd } from 'twd-js/vite-plugin';
+
+export default defineConfig({
+  plugins: [
+    vue(),
+    twd({
+      testFilePattern: '/**/*.twd.test.ts',
+      open: true,
+      position: 'left',
+    }),
+  ],
+});
+```
+
+Your `src/main.ts` stays untouched — no `initTWD` import needed:
+
+```ts
 // src/main.ts
-import { createApp } from 'vue'
-import App from './App.vue'
+import { createApp } from 'vue';
+import App from './App.vue';
+
+createApp(App).mount('#app');
+```
+
+### Alternative: Manual Bundled Setup (Vue)
+
+If you can't use the Vite plugin, fall back to manual `initTWD` in `src/main.ts`:
+
+```ts
+import { createApp } from 'vue';
+import App from './App.vue';
 
 if (import.meta.env.DEV) {
-  // Use the bundled version
   const { initTWD } = await import('twd-js/bundled');
-  const tests = import.meta.glob("./**/*.twd.test.ts")
-  
-  // Initialize TWD - request mocking is automatically initialized by default
+  const tests = import.meta.glob('./**/*.twd.test.ts');
   initTWD(tests, { open: true, position: 'left' });
 }
 
-createApp(App).mount('#app')
+createApp(App).mount('#app');
 ```
 
 ## Solid
 
-For Solid.js applications, use the bundled version of TWD. This ensures that the React runtime required by TWD's UI is handled correctly without conflicting with your Solid app.
+For Solid.js applications, use the `twd()` Vite plugin. The bundled version handles its React runtime internally and doesn't conflict with your Solid runtime.
 
 **[Solid Example Repository](https://github.com/BRIKEV/twd-solid-example)** - Complete Solid.js integration example.
+
+```ts
+// vite.config.ts
+import { defineConfig } from 'vite';
+import solid from 'vite-plugin-solid';
+import { twd } from 'twd-js/vite-plugin';
+
+export default defineConfig({
+  plugins: [
+    solid(),
+    twd({
+      testFilePattern: '/**/*.twd.test.ts',
+      open: true,
+      position: 'left',
+    }),
+  ],
+});
+```
+
+Your `src/main.tsx` stays untouched:
 
 ```tsx
 // src/main.tsx
 /* @refresh reload */
 import { render } from 'solid-js/web';
-import 'solid-devtools';
-
 import App from './App';
 
-if (import.meta.env.DEV) {
-  const { initTWD } = await import('twd-js/bundled');
-  const tests = import.meta.glob("./**/*.twd.test.ts");
-  
-  // Initialize TWD - request mocking is automatically initialized by default
-  initTWD(tests, { open: true, position: 'left' });
-}
-
 const root = document.getElementById('root');
-
-if (import.meta.env.DEV && !(root instanceof HTMLElement)) {
-  throw new Error(
-    'Root element not found. Did you forget to add it to your index.html? Or maybe the id attribute got misspelled?',
-  );
+if (!(root instanceof HTMLElement)) {
+  throw new Error('Root element not found.');
 }
 
-render(() => <App />, root!);
+render(() => <App />, root);
 ```
 
 ### Notes for Solid
 
-- This setup works with **Solid + Vite** applications
-- Solid Start compatibility has not been tested yet, but may work with similar configuration
+- This setup works with **Solid + Vite** applications.
+- Solid Start compatibility has not been tested yet, but may work with similar configuration.
 
 ## Angular
 
-Angular applications can also use the bundled version. Note that you might need to manually construct the `tests` object if your build tool doesn't support glob imports in the same way.
+Angular CLI uses esbuild, not vanilla Vite, so the `twd()` Vite plugin doesn't apply. Angular projects use the manual bundled setup with `initTWD`. You'll typically need to build the `tests` object explicitly since Angular's build tooling doesn't support `import.meta.glob` the same way.
 
 **[Angular Example Repository](https://github.com/BRIKEV/twd-angular-example)** - Working Angular integration example.
 
@@ -238,64 +301,31 @@ if (process.env.NODE_ENV === "development") {
 
 ## Astro
 
-TWD works with Astro when using React components. Create a React component to initialize the test sidebar:
+Astro uses Vite under the hood, so you can register the `twd()` plugin via Astro's `vite.plugins` config block.
 
 **[Astro Example](https://github.com/BRIKEV/twd/tree/main/examples/astro-example)** - Astro + React integration example.
 
-```tsx
-// src/components/TestSidebar.tsx
-import { useEffect } from 'react';
-import { createRoot } from 'react-dom/client';
-
-export default function TestSidebar() {
-  useEffect(() => {
-    if (import.meta.env.DEV) {
-      const initializeTests = async () => {
-        const testModules = import.meta.glob("../**/*.twd.test.ts");
-        const { initTests, twd, TWDSidebar } = await import('twd-js');
-        initTests(testModules, <TWDSidebar open={true} position="left" />, createRoot);
-        
-        twd.initRequestMocking()
-          .then(() => console.log("Request mocking initialized"))
-          .catch((err) => console.error("Error initializing request mocking:", err));
-      };
-      initializeTests();
-    }
-  }, []);
-
-  return <div id="test-sidebar-container"></div>;
-}
-```
-
-Configure Astro's Vite plugin to handle test file hot reload:
-
 ```js
 // astro.config.mjs
-import { twdHmr } from 'twd-js/vite-plugin';
+import { defineConfig } from 'astro/config';
+import react from '@astrojs/react';
+import { twd } from 'twd-js/vite-plugin';
 
 export default defineConfig({
   integrations: [react()],
   vite: {
     plugins: [
-      twdHmr(), // Prevents test duplication on HMR
+      twd({
+        testFilePattern: '/**/*.twd.test.{ts,tsx}',
+        open: true,
+        position: 'left',
+      }),
     ],
   },
 });
 ```
 
-Include the component in your Astro pages:
-
-```astro
----
-import TestSidebar from '../components/TestSidebar.tsx';
-const isDev = import.meta.env.DEV
----
-
-<Layout>
-  <!-- your content -->
-  {isDev && <TestSidebar client:load />}
-</Layout>
-```
+The plugin handles test discovery, sidebar mounting, and HMR full-reload — no per-page component or `useEffect` boilerplate required.
 
 ## React Router (Framework Mode)
 

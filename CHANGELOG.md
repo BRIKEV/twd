@@ -1,3 +1,24 @@
+## <small>1.8.0 (2026-05-01)</small>
+
+* feat(plugin): export twd from twd-js/vite-plugin ([9c90803](https://github.com/BRIKEV/twd/commit/9c90803))
+* feat(plugin): inject virtual init script via transformIndexHtml ([4cdc7e5](https://github.com/BRIKEV/twd/commit/4cdc7e5))
+* feat(plugin): add virtual module for twd init ([4674cdb](https://github.com/BRIKEV/twd/commit/4674cdb))
+* feat(plugin): scaffold twd Vite plugin (name + apply: serve) ([7da3ccd](https://github.com/BRIKEV/twd/commit/7da3ccd))
+* feat: add Contacts page with pagination and loader functionality (#239) ([d22b144](https://github.com/BRIKEV/twd/commit/d22b144)), closes [#239](https://github.com/BRIKEV/twd/issues/239)
+* fix(examples): alias twd-js/bundled to dist (not source) in test app ([75f2e0d](https://github.com/BRIKEV/twd/commit/75f2e0d))
+* docs: lead with twd() Vite plugin across docs site and README ([55e1d72](https://github.com/BRIKEV/twd/commit/55e1d72))
+* docs: add better tests for pagination example ([0276d05](https://github.com/BRIKEV/twd/commit/0276d05))
+* docs: add design spec for TWD Vite plugin auto-init POC ([f89ace4](https://github.com/BRIKEV/twd/commit/f89ace4))
+* docs: use absolute GitHub URLs for README images and examples link ([b4278d4](https://github.com/BRIKEV/twd/commit/b4278d4))
+* chore(deps): bump lint-staged to 17 and typescript-eslint patch ([b9a6daa](https://github.com/BRIKEV/twd/commit/b9a6daa))
+* chore: switch tsconfig moduleResolution to Bundler ([69b2861](https://github.com/BRIKEV/twd/commit/69b2861))
+* chore(examples): adopt twd() plugin in tutorial and vue examples ([4cd58f3](https://github.com/BRIKEV/twd/commit/4cd58f3))
+* chore(examples): switch twd-test-app to twd() Vite plugin ([5377325](https://github.com/BRIKEV/twd/commit/5377325))
+* chore(deps-dev): bump @eslint/js from 9.39.4 to 10.0.1 (#236) ([4147382](https://github.com/BRIKEV/twd/commit/4147382)), closes [#236](https://github.com/BRIKEV/twd/issues/236)
+* chore(deps-dev): bump eslint from 9.39.4 to 10.3.0 (#237) ([14348da](https://github.com/BRIKEV/twd/commit/14348da)), closes [#237](https://github.com/BRIKEV/twd/issues/237)
+* test(plugin): cover custom options + testFilePattern round-trip ([6adc100](https://github.com/BRIKEV/twd/commit/6adc100))
+
+
 ## <small>1.7.3 (2026-05-01)</small>
 
 * feat: add hidden assertion and improve test coverage (#232) ([425dd66](https://github.com/BRIKEV/twd/commit/425dd66), closes [#232](https://github.com/BRIKEV/twd/issues/232)
