@@ -37,6 +37,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "Rober040992",
+      "name": "Roberto Gomez Fabrega",
+      "avatar_url": "https://avatars.githubusercontent.com/u/157389533?v=4",
+      "profile": "https://portfolio-pi-ruby-7alj81l6dp.vercel.app/",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,
