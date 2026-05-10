@@ -39,7 +39,10 @@ export default defineConfig({
 
     // Additional Meta Tags (TWD brand: darker teal for light theme)
     ['meta', { name: 'theme-color', content: '#123956' }],
-    ['meta', { name: 'viewport', content: 'width=device-width, initial-scale=1.0' }]
+    ['meta', { name: 'viewport', content: 'width=device-width, initial-scale=1.0' }],
+
+    // Umami analytics (cookieless, EU region)
+    ['script', { defer: '', src: 'https://cloud.umami.is/script.js', 'data-website-id': '3d4e6e8c-3498-4652-8a3b-f49a734004c8' }]
   ],
   themeConfig: {
     // https://vitepress.dev/reference/default-theme-config
