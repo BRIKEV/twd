@@ -89,6 +89,7 @@ export default defineConfig({
           { text: 'Theming', link: '/theming' },
           { text: 'CI Execution', link: '/ci-execution' },
           { text: 'Coverage', link: '/coverage' },
+          { text: 'AI Integration', link: '/ai-overview' },
           { text: 'Contract Testing Setup', link: '/contract-testing-setup' },
           { text: 'Framework Integration', link: '/frameworks' },
           { text: 'Testing Library', link: '/testing-library' },
