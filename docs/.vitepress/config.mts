@@ -50,10 +50,26 @@ export default defineConfig({
       { text: 'Home', link: '/' },
       { text: 'Core Concepts', link: '/getting-started' },
       { text: 'AI Workflow', link: '/twd-ai/setup' },
+      {
+        text: 'Products',
+        items: [
+          { text: 'twd-js', link: '/twd-js' },
+          { text: 'twd-relay', link: '/twd-relay' },
+          { text: 'Contract Testing', link: '/contract-testing' },
+        ],
+      },
       { text: 'API Reference', link: '/api/' }
     ],
 
     sidebar: [
+      {
+        text: 'Sub-products',
+        items: [
+          { text: 'twd-js', link: '/twd-js' },
+          { text: 'twd-relay', link: '/twd-relay' },
+          { text: 'Contract Testing', link: '/contract-testing' },
+        ],
+      },
       {
         text: 'Philosophy',
         items: [
