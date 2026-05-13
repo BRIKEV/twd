@@ -1,4 +1,4 @@
-# TWD (Testing while developing)
+# TWD — Test While Developing
 
 [![CI](https://github.com/BRIKEV/twd/actions/workflows/ci.yml/badge.svg)](https://github.com/BRIKEV/twd/actions/workflows/ci.yml)
 [![npm version](https://img.shields.io/npm/v/twd-js.svg)](https://www.npmjs.com/package/twd-js)
@@ -7,184 +7,96 @@
 [![Code Coverage](https://qlty.sh/gh/BRIKEV/projects/twd/coverage.svg)](https://qlty.sh/gh/BRIKEV/projects/twd)
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/BRIKEV/twd/main/images/twd-skill.gif" alt="TWD running with an AI agent" width="800">
+  <img src="https://raw.githubusercontent.com/BRIKEV/twd/main/images/twd-skill.gif" alt="TWD running with an AI agent: tests written and executed in a real browser sidebar" width="800">
 </p>
 
-TWD is a library designed to seamlessly integrate testing into your web development workflow. It streamlines the process of writing, running, and managing tests directly in your application, with a modern UI and powerful mocking capabilities.
+> **Frontend tests that run in your real browser.** Same DOM, same routes, same state as your dev server — for React, Vue, Angular, and Solid.
 
-**📖 [Full Documentation](https://brikev.github.io/twd/) | 🚀 [Getting Started](https://brikev.github.io/twd/getting-started) | 📚 [API Reference](https://brikev.github.io/twd/api/)**
+## The problem
 
-## Features
+Testing gets pushed to next week. Next week never comes. When it does happen, tests usually run in a different environment from where you're building, so testing feels like overhead the moment you finish a feature.
 
-- 🧪 **In-browser test runner** with a beautiful sidebar UI
-- ⚡ **Instant feedback** as you develop
-- 🔥 **Mock Service Worker** integration for API/request mocking
-- 📝 **Simple, readable test syntax** (inspired by popular test frameworks)
-- 🧩 **Automatic test discovery** with Vite support
-- 🎯 **Testing Library support** - Use `screenDom` for semantic, accessible queries
-- 🛠️ **Works with React** (support for more frameworks coming)
+AI makes it worse: agents generate test files that look correct but never execute in a real browser. No one notices until production does. And the mocks those tests rely on quietly drift from the real API over time — fields get renamed, mocks stay frozen, tests pass, production breaks.
 
-## Installation
+## The solution
+
+TWD puts tests inside your dev server. A sidebar appears in your real browser, runs tests against the same DOM your users see, and updates as you code. When you're ready, plug in an AI agent that writes tests, runs them via a WebSocket bridge, and iterates until they pass. When you ship, validate every mock against your OpenAPI spec to catch drift before a user does.
+
+> **Test what you own. Mock what you don't.**
+
+Full pitch and docs at **[twd.dev](https://twd.dev)**.
+
+## Quick start
 
 ```bash
-npm install twd-js
-# or
-yarn add twd-js
-# or
-pnpm add twd-js
+npm install --save-dev twd-js
 ```
 
-## Quick Start
-
-### Vite-based projects (React, Vue, Solid, and more)
-
-Add the `twd()` plugin to your `vite.config.ts`. The plugin auto-loads the sidebar and discovers test files in dev — no entry-file changes required.
+Add the Vite plugin (auto-loads the sidebar and discovers your test files):
 
 ```ts
 // vite.config.ts
-import { defineConfig } from 'vite';
-import react from '@vitejs/plugin-react'; // or vue, solid, etc.
-import { twd } from 'twd-js/vite-plugin';
+import { defineConfig } from 'vite'
+import { twd } from 'twd-js/vite-plugin'
 
 export default defineConfig({
-  plugins: [
-    react(),
-    twd({
-      testFilePattern: '/**/*.twd.test.{ts,tsx}',
-      open: true,
-      position: 'left',
-    }),
-  ],
-});
+  plugins: [twd({ open: true })],
+})
 ```
 
-### Set Up Mock Service Worker
-
-If you plan to use API mocking, set up the mock service worker:
-
-```bash
-npx twd-js init public
-```
-
-### Non-Vite projects (Angular, Webpack, etc.)
-
-If your project doesn't use Vite, initialize TWD manually in your dev entry point:
+Write a test next to your code:
 
 ```ts
-// Only load the test sidebar and tests in development mode
-if (import.meta.env.DEV) {
-  const { initTWD } = await import('twd-js/bundled');
-  const tests = import.meta.glob('./**/*.twd.test.ts');
+// src/App.twd.test.ts
+import { twd, screenDom } from 'twd-js'
+import { describe, it } from 'twd-js/runner'
 
-  initTWD(tests, {
-    open: true,
-    position: 'left',
-    serviceWorker: true,             // Enable request mocking (default: true)
-    serviceWorkerUrl: '/mock-sw.js', // Custom service worker path (default: '/mock-sw.js')
-  });
-}
+describe('App', () => {
+  it('shows the heading', async () => {
+    await twd.visit('/')
+    const heading = await screenDom.findByRole('heading', { level: 1 })
+    twd.should(heading, 'be.visible')
+  })
+})
 ```
 
-Check the [Framework Integration Guide](https://brikev.github.io/twd/frameworks) for more details.
+Run `npm run dev` and open the app. The TWD sidebar appears in your browser; click play to run the test.
 
-## Writing Tests
+→ **[Full setup guide](https://twd.dev/getting-started)** · **[Framework integration](https://twd.dev/frameworks)** (Angular, non-Vite, Astro, React Router)
 
-```ts
-// src/app.twd.test.ts
-import { twd, userEvent, screenDom } from "twd-js";
-import { describe, it } from "twd-js/runner";
+## The TWD ecosystem
 
-describe("Hello World Page", () => {
-  it("should display the welcome title and counter button", async () => {
-    await twd.visit("/");
-    
-    // Use Testing Library queries (Recommended - semantic & accessible)
-    const title = screenDom.getByRole("heading", { name: /welcome to twd/i });
-    twd.should(title, "be.visible");
-    twd.should(title, "have.text", "Welcome to TWD");
-    
-    const counterButton = screenDom.getByRole("button", { name: /count is/i });
-    twd.should(counterButton, "be.visible");
-    twd.should(counterButton, "have.text", "Count is 0");
-    
-    const user = userEvent.setup();
-    await user.click(counterButton);
-    twd.should(counterButton, "have.text", "Count is 1");
+One package today. The rest when you need it.
 
-    // Alternative: Use TWD's native selectors for direct element access
-    // const title = await twd.get("h1");
-    // title.should("be.visible").should("have.text", "Welcome to TWD");
-  });
-});
-```
+| Tool | What it does |
+| --- | --- |
+| **[twd-js](https://twd.dev/twd-js)** | The core sidebar. Frontend tests that run in your real browser. |
+| **[twd-relay](https://twd.dev/twd-relay)** | Token-efficient browser testing for AI agents. Structured pass/fail over WebSocket — no Playwright, no screenshots. |
+| **[twd-cli](https://twd.dev/contract-testing)** | Headless CI runs with coverage and OpenAPI contract validation. |
 
-3. **Run your app** - The TWD sidebar will appear automatically in development mode!
+## Examples & showcase
 
-<p align="center">
-  <img src="https://raw.githubusercontent.com/BRIKEV/twd/main/images/twd_side_bar_success.png" alt="TWD Sidebar in action" width="800">
-</p>
+- **[twd-shadcn](https://github.com/BRIKEV/twd-shadcn)** — React + shadcn/ui with a [live demo](https://brikev.github.io/twd-shadcn/) you can interact with
+- **[twd-react-router](https://github.com/BRIKEV/twd-react-router)** — React Router (Framework Mode) with `createRoutesStub` and loader mocking
+- **[twd-tanstack-example](https://github.com/BRIKEV/twd-tanstack-example)** — TanStack Router integration
+- **[twd-vue-example](https://github.com/BRIKEV/twd-vue-example)** — Vue 3
+- **[twd-angular-example](https://github.com/BRIKEV/twd-angular-example)** — Angular
+- **[twd-auth0](https://github.com/BRIKEV/twd-auth0)** — Auth0 session mocking
 
-## Key Concepts
-
-### Element Selection
-
-TWD supports two approaches:
-
-**Testing Library Queries (Recommended):**
-```ts
-const button = screenDom.getByRole("button", { name: /submit/i });
-twd.should(button, "be.visible");
-```
-
-**Native Selectors:**
-```ts
-const button = await twd.get("button");
-button.should("be.visible");
-```
-
-### User Interactions
-
-```ts
-const user = userEvent.setup();
-await user.click(button);
-await user.type(input, "Hello World");
-```
-
-### API Mocking
-
-```ts
-twd.mockRequest("getUser", {
-  method: "GET",
-  url: "/api/user",
-  response: { id: 1, name: "John" }
-});
-
-const rule = await twd.waitForRequest("getUser");
-```
+→ **[All examples and community content](https://twd.dev/community)**
 
 ## Documentation
 
-Full documentation is available at [twd.dev](https://twd.dev) (coming soon) or in the `docs` folder.
-
-- [Getting Started](docs/getting-started.md)
-- [Framework Integration](docs/frameworks.md)
-- [Writing Tests](docs/writing-tests.md)
-- [API Mocking](docs/api-mocking.md)
-
-## Examples
-
-Check out our working examples for various frameworks:
-
-- **[Examples Directory](https://github.com/BRIKEV/twd/tree/main/examples)** - Local examples for React, Vue, and Astro
-- **[Vue Example](https://github.com/BRIKEV/twd-vue-example)** - Vue 3 with advanced scenarios
-- **[Solid Example](https://github.com/BRIKEV/twd-solid-example)** - Solid.js integration
-- **[Angular Example](https://github.com/BRIKEV/twd-angular-example)** - Angular setup
-
-Each example includes a complete setup guide and demonstrates best practices for testing with TWD including ci integration.
+- **[Getting Started](https://twd.dev/getting-started)** — Install, set up, write your first test
+- **[Writing Tests](https://twd.dev/writing-tests)** — Selectors, assertions, interactions, navigation
+- **[API Mocking](https://twd.dev/api-mocking)** — Mock Service Worker patterns
+- **[AI Integration](https://twd.dev/ai-overview)** — Connect Claude Code (or any agent) via twd-relay
+- **[Contract Testing Setup](https://twd.dev/contract-testing-setup)** — Validate mocks against OpenAPI specs in CI
+- **[API Reference](https://twd.dev/api/)** — Test functions, commands, assertions
 
 ## Contributing
 
-Contributions are welcome! Please open issues or pull requests on [GitHub](https://github.com/BRIKEV/twd).
+Open issues or pull requests on [GitHub](https://github.com/BRIKEV/twd). If you're starting out in tech and looking for a beginner-friendly first PR, see the [open issues](https://github.com/BRIKEV/twd/issues) — reach out and the maintainer will help with setup and walk you through it.
 
 ## Contributors ✨
 
@@ -207,8 +119,8 @@ Contributions are welcome! Please open issues or pull requests on [GitHub](https
 
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 
-This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind are welcome!
+This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind are welcome.
 
 ## License
 
-This project is licensed under the [MIT License](./LICENSE).
+[MIT](./LICENSE)
