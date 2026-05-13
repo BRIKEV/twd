@@ -1,67 +1,76 @@
 # TWD (Test While Developing)
 
-> TWD is an in-browser testing ecosystem for SPAs that runs tests directly in the browser with a sidebar UI for instant visual feedback. It supports React, Vue, Angular, and Solid.js with deterministic, client-side UI testing — and includes an AI workflow that lets agents write, run, and iterate on tests autonomously.
+> TWD is an in-browser testing ecosystem for SPAs that runs tests directly in the browser with a sidebar UI for instant visual feedback. It supports React, Vue, Angular, and Solid.js with deterministic, client-side UI testing — and includes an AI workflow that lets agents write, run, and iterate on tests autonomously, plus contract testing that validates every mock against the real OpenAPI spec.
 
 Key features:
 - In-browser test execution with visual sidebar UI
 - API mocking via Mock Service Worker
 - Component and module mocking
 - Testing Library integration
-- CI/CD execution with twd-cli
+- CI/CD execution with twd-cli (headless Puppeteer, coverage)
+- Contract testing — validate mocks against OpenAPI specs
+- Token-efficient AI agent testing via WebSocket relay (no Playwright, no screenshots)
 - Multi-framework support (React, Vue, Angular, Solid.js)
-- AI-assisted testing with Claude Code plugin and skills
+- Claude Code plugin and skills for autonomous test writing
 
 ## Philosophy
 
-- [TWD Manifesto](https://twd.dev/twd-manifesto.html): Core principles — test while building, test what you own mock what you don't
-- [Why Test While Developing](https://twd.dev/motivation.html): Motivation, philosophy, and what changes in the AI era
+- [TWD Manifesto](https://twd.dev/twd-manifesto): Core principles — test while building, test what you own mock what you don't
+- [Why Test While Developing](https://twd.dev/motivation): Motivation, philosophy, and what changes in the AI era
+
+## Tools
+
+- [twd-js](https://twd.dev/twd-js): Core sidebar — frontend tests that run in your real browser (React, Vue, Angular, Solid)
+- [twd-relay](https://twd.dev/twd-relay): Token-efficient browser testing for AI agents — Claude Code (or any agent) triggers test runs in your live app and streams structured pass/fail results back over WebSocket
+- [Contract Testing](https://twd.dev/contract-testing): Validate every mock against your OpenAPI spec — drift surfaces in CI, not in production
 
 ## Core Concepts
 
-- [Getting Started](https://twd.dev/getting-started.html): Installation, setup (bundled vs standard), first test, troubleshooting
-- [Writing Tests](https://twd.dev/writing-tests.html): Test structure, element selection (TWD native + Testing Library), assertions, user interactions, navigation
-- [API Mocking](https://twd.dev/api-mocking.html): Mock Service Worker setup, request mocking patterns, dynamic responses, error handling
-- [Component Mocking](https://twd.dev/component-mocking.html): MockedComponent wrapper, conditional mocking, error states
-- [Module Mocking](https://twd.dev/module-mocking.html): Sinon-based module mocking for ESM
-- [Framework Integration](https://twd.dev/frameworks.html): React, Vue, Angular, Solid.js, CRA, Astro, React Router setup
-- [Testing Library](https://twd.dev/testing-library.html): Testing Library integration and selectors
-- [CI Execution](https://twd.dev/ci-execution.html): twd-cli setup, Puppeteer, GitHub Actions
-- [Coverage](https://twd.dev/coverage.html): Code coverage reporting
-- [Contract Testing](https://twd.dev/contract-testing.html): Validate mocks against OpenAPI specs
-- [Theming](https://twd.dev/theming.html): Customizing TWD sidebar appearance
+- [Getting Started](https://twd.dev/getting-started): Installation, setup (bundled vs standard), first test, troubleshooting
+- [Writing Tests](https://twd.dev/writing-tests): Test structure, element selection (TWD native + Testing Library), assertions, user interactions, navigation
+- [API Mocking](https://twd.dev/api-mocking): Mock Service Worker setup, request mocking patterns, dynamic responses, error handling
+- [Component Mocking](https://twd.dev/component-mocking): MockedComponent wrapper, conditional mocking, error states
+- [Module Mocking](https://twd.dev/module-mocking): Sinon-based module mocking for ESM
+- [Framework Integration](https://twd.dev/frameworks): React, Vue, Angular, Solid.js, CRA, Astro, React Router setup
+- [Testing Library](https://twd.dev/testing-library): Testing Library integration and selectors
+- [CI Execution](https://twd.dev/ci-execution): twd-cli setup, Puppeteer, GitHub Actions
+- [Coverage](https://twd.dev/coverage): Code coverage reporting
+- [AI Integration](https://twd.dev/ai-overview): Connecting AI agents — relay, Claude plugin, skills, context prompts
+- [Contract Testing Setup](https://twd.dev/contract-testing-setup): OpenAPI validation setup, contract options, supported validations, PR reports
+- [Theming](https://twd.dev/theming): Customizing TWD sidebar appearance
 
 ## AI Workflow
 
-- [Project Setup](https://twd.dev/twd-ai/setup.html): Configure your project for AI-driven testing with /twd:setup
-- [Writing Tests](https://twd.dev/twd-ai/writing-tests.html): Write and execute tests with the /twd skill via twd-relay
-- [CI Setup](https://twd.dev/twd-ai/ci-setup.html): Generate GitHub Actions workflows with /twd:ci-setup
-- [Test Gap Analysis](https://twd.dev/twd-ai/test-gaps.html): Find untested routes and classify risk with /twd:test-gaps
-- [Test Quality](https://twd.dev/twd-ai/test-quality.html): Grade test quality across four dimensions with /twd:test-quality
-- [Test Flow Gallery](https://twd.dev/twd-ai/flow-gallery.html): Generate visual flowcharts of test coverage with /twd:test-flow-gallery
+- [Project Setup](https://twd.dev/twd-ai/setup): Configure your project for AI-driven testing with /twd:setup
+- [Writing Tests](https://twd.dev/twd-ai/writing-tests): Write and execute tests with the /twd skill via twd-relay
+- [CI Setup](https://twd.dev/twd-ai/ci-setup): Generate GitHub Actions workflows with /twd:ci-setup
+- [Test Gap Analysis](https://twd.dev/twd-ai/test-gaps): Find untested routes and classify risk with /twd:test-gaps
+- [Test Quality](https://twd.dev/twd-ai/test-quality): Grade test quality across four dimensions with /twd:test-quality
+- [Test Flow Gallery](https://twd.dev/twd-ai/flow-gallery): Generate visual flowcharts of test coverage with /twd:test-flow-gallery
 
 ## AI Reference
 
-- [AI Overview](https://twd.dev/ai-overview.html): Using TWD with AI tools
-- [Claude Plugin](https://twd.dev/claude-plugin.html): Claude Code plugin for TWD
-- [AI Agents & Context](https://twd.dev/agents.html): Context and prompts for AI agents
-- [AI Remote Testing](https://twd.dev/ai-remote-testing.html): Remote testing patterns
+- [AI Overview](https://twd.dev/ai-overview): Using TWD with AI tools
+- [Claude Plugin](https://twd.dev/claude-plugin): Claude Code plugin for TWD
+- [AI Agents & Context](https://twd.dev/agents): Context and prompts for AI agents
+- [AI Remote Testing](https://twd.dev/ai-remote-testing): Remote testing patterns
 
 ## API Reference
 
 - [API Overview](https://twd.dev/api/): Imports, initialization, type definitions, core concepts
-- [Test Functions](https://twd.dev/api/test-functions.html): describe, it, beforeEach, afterEach, only, skip
-- [TWD Commands](https://twd.dev/api/twd-commands.html): Element selection, navigation, mocking commands
-- [Assertions](https://twd.dev/api/assertions.html): Text, attribute, state, and URL assertions
+- [Test Functions](https://twd.dev/api/test-functions): describe, it, beforeEach, afterEach, only, skip
+- [TWD Commands](https://twd.dev/api/twd-commands): Element selection, navigation, mocking commands
+- [Assertions](https://twd.dev/api/assertions): Text, attribute, state, and URL assertions
 
 ## Tutorial
 
 - [Tutorial Overview](https://twd.dev/tutorial/): Step-by-step learning path
-- [Installation](https://twd.dev/tutorial/installation.html): Project setup
-- [First Test](https://twd.dev/tutorial/first-test.html): Writing your first test
-- [API Mocking Tutorial](https://twd.dev/tutorial/api-mocking.html): Learning to mock HTTP requests
-- [CI Integration](https://twd.dev/tutorial/ci-integration.html): Setting up CI/CD
-- [Production Builds](https://twd.dev/tutorial/production-builds.html): Removing test code from production
+- [Installation](https://twd.dev/tutorial/installation): Project setup
+- [First Test](https://twd.dev/tutorial/first-test): Writing your first test
+- [API Mocking Tutorial](https://twd.dev/tutorial/api-mocking): Learning to mock HTTP requests
+- [CI Integration](https://twd.dev/tutorial/ci-integration): Setting up CI/CD
+- [Production Builds](https://twd.dev/tutorial/production-builds): Removing test code from production
 
 ## Community
 
-- [Community & Examples](https://twd.dev/community.html): Example apps and community links
+- [Community & Examples](https://twd.dev/community): Example apps and community links

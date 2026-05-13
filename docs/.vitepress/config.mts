@@ -5,6 +5,7 @@ export default defineConfig({
   title: "TWD",
   description: "Test While Developing (TWD) - in-browser testing for React, Vue, Angular, and Solid.js applications",
   base: '/',
+  cleanUrls: true,
   sitemap: {
     hostname: 'https://twd.dev'
   },
@@ -50,10 +51,26 @@ export default defineConfig({
       { text: 'Home', link: '/' },
       { text: 'Core Concepts', link: '/getting-started' },
       { text: 'AI Workflow', link: '/twd-ai/setup' },
+      {
+        text: 'Tools',
+        items: [
+          { text: 'twd-js', link: '/twd-js' },
+          { text: 'twd-relay', link: '/twd-relay' },
+          { text: 'Contract Testing', link: '/contract-testing' },
+        ],
+      },
       { text: 'API Reference', link: '/api/' }
     ],
 
     sidebar: [
+      {
+        text: 'Tools',
+        items: [
+          { text: 'twd-js', link: '/twd-js' },
+          { text: 'twd-relay', link: '/twd-relay' },
+          { text: 'Contract Testing', link: '/contract-testing' },
+        ],
+      },
       {
         text: 'Philosophy',
         items: [
@@ -72,7 +89,8 @@ export default defineConfig({
           { text: 'Theming', link: '/theming' },
           { text: 'CI Execution', link: '/ci-execution' },
           { text: 'Coverage', link: '/coverage' },
-          { text: 'Contract Testing', link: '/contract-testing' },
+          { text: 'AI Integration', link: '/ai-overview' },
+          { text: 'Contract Testing Setup', link: '/contract-testing-setup' },
           { text: 'Framework Integration', link: '/frameworks' },
           { text: 'Testing Library', link: '/testing-library' },
         ]
