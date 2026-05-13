@@ -16,7 +16,7 @@
 
 Testing gets pushed to next week, and next week never comes. When it does happen, tests usually run in a different environment from where you're building, so testing feels like overhead the moment you finish a feature.
 
-The tooling pushes you the same way. You end up writing more code for the tests than for the feature itself, between setup, harnesses, mocks, and helpers. Adding tests starts to feel like shipping a second app on top of the one you already finished.
+The tooling pushes you the same way. You end up writing more code for the tests than for the feature itself, between setup, mocks, and helpers. Adding tests starts to feel like shipping a second app on top of the one you already finished.
 
 As AI writes more of your code, the gap widens. Agents generate test files that look correct but never actually execute in a real browser. The mocks those tests rely on quietly drift from the real API over time. Fields get renamed, mocks stay frozen, tests pass, production breaks.
 

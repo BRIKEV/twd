@@ -105,6 +105,16 @@ const faqs = [
           </div>
           <div class="pain-card">
             <div class="pain-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3" y="6" width="9" height="13" rx="1.5" stroke="currentColor" stroke-width="2"/><rect x="10" y="3" width="11" height="14" rx="1.5" stroke="var(--hp-danger)" stroke-width="2"/><path d="M13 7h5M13 10h5M13 13h5" stroke="var(--hp-danger)" stroke-width="2" stroke-linecap="round"/></svg>
+            </div>
+            <h3 class="pain-title">Tests outweigh features</h3>
+            <p class="pain-desc">
+              Setup. Mocks. Helpers. You end up writing more code for the tests
+              than for the feature itself. Like shipping a second app.
+            </p>
+          </div>
+          <div class="pain-card">
+            <div class="pain-icon">
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="2" stroke="currentColor" stroke-width="2"/><path d="M9 9l6 6M15 9l-6 6" stroke="var(--hp-danger)" stroke-width="2" stroke-linecap="round"/></svg>
             </div>
             <h3 class="pain-title">AI writes tests that don't run</h3>
@@ -472,8 +482,14 @@ const faqs = [
 
 .pain-cards {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: 20px;
+}
+
+@media (max-width: 1024px) {
+  .pain-cards {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
 .pain-card {
