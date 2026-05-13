@@ -22,13 +22,13 @@ const stages = [
   },
   {
     state: 'optional',
-    eyebrow: 'CI',
+    eyebrow: 'CONTRACT TESTING',
     package: 'twd-cli',
     description: 'Add when you want CI, coverage, and contract validation.',
     badge: '',
     cta: 'Learn more',
-    href: '/ci-execution',
-    umamiEvent: 'home_ecosystem_ci',
+    href: '/contract-testing',
+    umamiEvent: 'home_ecosystem_contract_testing',
   },
   {
     state: 'ship',
