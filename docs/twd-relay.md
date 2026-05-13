@@ -16,6 +16,8 @@ head:
   subtitle="Claude Code (or any agent) triggers test runs in your live app and streams structured pass/fail results back. No Playwright, no screenshots, no token bleed. Just write → run → read → fix."
   cta-label="Read the setup guide"
   cta-href="/ai-remote-testing"
+  image-src="/images/twd-skill.gif"
+  image-alt="AI agent driving TWD: writing tests and watching them pass in the browser sidebar"
 />
 
 ## The problem
