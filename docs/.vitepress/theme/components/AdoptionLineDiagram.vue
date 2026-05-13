@@ -58,7 +58,9 @@ const stages = [
           <span class="adopt-eyebrow">{{ stage.eyebrow }}</span>
           <span class="adopt-pkg">{{ stage.package }}</span>
           <span class="adopt-desc">{{ stage.description }}</span>
-          <span v-if="stage.cta" class="adopt-cta">{{ stage.cta }} →</span>
+          <span v-if="stage.cta" class="adopt-cta">
+            {{ stage.cta }}<span class="adopt-cta__sr"> about {{ stage.package }}</span><span aria-hidden="true"> →</span>
+          </span>
         </component>
       </li>
       <li v-if="i < stages.length - 1" class="adopt-arrow" aria-hidden="true"></li>
@@ -171,6 +173,18 @@ a.adopt-stage:focus-visible {
   font-size: 0.8125rem;
   font-weight: 600;
   color: var(--vp-c-brand-1);
+}
+
+.adopt-cta__sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 
 /* Arrow between cards (desktop only) */
