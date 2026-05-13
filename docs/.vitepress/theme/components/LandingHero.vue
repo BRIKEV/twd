@@ -27,7 +27,7 @@ defineProps({
 <style scoped>
 .landing-hero {
   display: grid;
-  grid-template-columns: 1.1fr 1fr;
+  grid-template-columns: 1fr 1.25fr;
   gap: 40px;
   align-items: center;
   padding: 32px 0 48px;
