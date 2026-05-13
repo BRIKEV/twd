@@ -5,6 +5,7 @@ export default defineConfig({
   title: "TWD",
   description: "Test While Developing (TWD) - in-browser testing for React, Vue, Angular, and Solid.js applications",
   base: '/',
+  cleanUrls: true,
   sitemap: {
     hostname: 'https://twd.dev'
   },
@@ -51,7 +52,7 @@ export default defineConfig({
       { text: 'Core Concepts', link: '/getting-started' },
       { text: 'AI Workflow', link: '/twd-ai/setup' },
       {
-        text: 'Products',
+        text: 'Tools',
         items: [
           { text: 'twd-js', link: '/twd-js' },
           { text: 'twd-relay', link: '/twd-relay' },
@@ -63,7 +64,7 @@ export default defineConfig({
 
     sidebar: [
       {
-        text: 'Sub-products',
+        text: 'Tools',
         items: [
           { text: 'twd-js', link: '/twd-js' },
           { text: 'twd-relay', link: '/twd-relay' },

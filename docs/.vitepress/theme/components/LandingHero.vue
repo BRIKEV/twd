@@ -31,8 +31,7 @@ defineProps({
   gap: 40px;
   align-items: center;
   padding: 32px 0 48px;
-  border-bottom: 1px solid var(--vp-c-divider);
-  margin-bottom: 40px;
+  margin-bottom: 8px;
 }
 
 .landing-hero--no-image {

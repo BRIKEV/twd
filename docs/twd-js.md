@@ -32,7 +32,7 @@ twd-js fixes this by putting the tests where the feature lives: in your real bro
 
 You install `twd-js`, add the Vite plugin, and write tests next to your code in `*.twd.test.ts` files. When you run `npm run dev`, the TWD sidebar appears in your browser. Click play to run any test. Tests use the same DOM, routes, and state your users will — there's no separate test environment to keep in sync.
 
-Selectors come from Testing Library (`screenDom.getByRole`, `getByLabelText`, …); assertions are chainable (`twd.should(el, 'be.visible')`). Mocking is built in: `twd.mockRequest(...)` intercepts fetch/XHR via Mock Service Worker so you can develop and test features without a running backend.
+Selectors come from Testing Library (`screenDom.findByRole`, `findByLabelText`, …); assertions are chainable (`twd.should(el, 'be.visible')`). Mocking is built in: `twd.mockRequest(...)` intercepts fetch/XHR via Mock Service Worker so you can develop and test features without a running backend.
 
 Nothing TWD ships to production — every `twd-js` import is dev-only (`import.meta.env.DEV`-guarded), so your prod bundle is untouched.
 
@@ -60,7 +60,7 @@ import { describe, it } from 'twd-js/runner'
 describe('App', () => {
   it('shows the heading', async () => {
     await twd.visit('/')
-    const heading = screenDom.getByRole('heading', { level: 1 })
+    const heading = await screenDom.findByRole('heading', { level: 1 })
     twd.should(heading, 'be.visible')
   })
 })
@@ -70,16 +70,8 @@ Run `npm run dev` and open the app. The sidebar appears in your browser; click p
 
 <LandingCrossLinks
   :links='[
-    { href: "/twd-relay", title: "Add an AI agent to the loop", blurb: "Let Claude Code run tests in your real browser and stream structured results back." },
+    { href: "/twd-relay", title: "Add an AI agent to the loop", blurb: "Let AI agents run tests in your real browser and stream structured results back." },
     { href: "/contract-testing", title: "Validate every mock", blurb: "Catch mock-vs-API drift in CI before it reaches production." },
     { href: "/getting-started", title: "Read the full setup guide", blurb: "Complete twd-js installation, configuration, and patterns reference." }
   ]'
 />
-
-## Get started
-
-```bash
-npm install --save-dev twd-js
-```
-
-[Read the setup guide →](/getting-started)

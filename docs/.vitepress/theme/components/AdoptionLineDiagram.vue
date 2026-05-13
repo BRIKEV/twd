@@ -4,8 +4,9 @@ const stages = [
     state: 'start',
     eyebrow: 'SIDEBAR',
     package: 'twd-js',
-    description: 'Sidebar in your browser, updates as you code.',
+    description: 'Sidebar in your browser. Tests live where you build.',
     badge: 'START HERE',
+    cta: 'Learn more',
     href: '/twd-js',
     umamiEvent: 'home_ecosystem_sidebar',
   },
@@ -13,8 +14,9 @@ const stages = [
     state: 'optional',
     eyebrow: 'AI AGENT',
     package: 'twd-relay + twd-ai',
-    description: 'Add when you use Claude Code.',
-    badge: 'optional',
+    description: 'Add when you use AI coding agents.',
+    badge: '',
+    cta: 'Learn more',
     href: '/twd-relay',
     umamiEvent: 'home_ecosystem_ai_agent',
   },
@@ -22,19 +24,21 @@ const stages = [
     state: 'optional',
     eyebrow: 'CI',
     package: 'twd-cli',
-    description: 'Add when you want headless CI.',
-    badge: 'optional',
+    description: 'Add when you want CI, coverage, and contract validation.',
+    badge: '',
+    cta: 'Learn more',
     href: '/ci-execution',
     umamiEvent: 'home_ecosystem_ci',
   },
   {
-    state: 'optional-gold',
-    eyebrow: 'CONTRACTS',
-    package: 'openapi-mock-validator',
-    description: 'Add if your team owns OpenAPI specs.',
-    badge: 'optional',
-    href: '/contract-testing',
-    umamiEvent: 'home_ecosystem_contracts',
+    state: 'ship',
+    eyebrow: 'SHIP',
+    package: 'Merge with confidence',
+    description: 'Contracts validated, tests green.',
+    badge: '',
+    cta: '',
+    href: '',
+    umamiEvent: '',
   },
 ];
 </script>
@@ -43,17 +47,19 @@ const stages = [
   <ol class="adopt-line" aria-label="TWD adoption path">
     <template v-for="(stage, i) in stages" :key="stage.eyebrow">
       <li class="adopt-stage-wrap">
-        <a
-          :href="stage.href"
+        <component
+          :is="stage.href ? 'a' : 'div'"
+          :href="stage.href || undefined"
           class="adopt-stage"
           :class="`adopt-stage--${stage.state}`"
-          :data-umami-event="stage.umamiEvent"
+          :data-umami-event="stage.umamiEvent || undefined"
         >
-          <span class="adopt-badge" :class="`adopt-badge--${stage.state}`">{{ stage.badge }}</span>
+          <span v-if="stage.badge" class="adopt-badge" :class="`adopt-badge--${stage.state}`">{{ stage.badge }}</span>
           <span class="adopt-eyebrow">{{ stage.eyebrow }}</span>
           <span class="adopt-pkg">{{ stage.package }}</span>
           <span class="adopt-desc">{{ stage.description }}</span>
-        </a>
+          <span v-if="stage.cta" class="adopt-cta">{{ stage.cta }} →</span>
+        </component>
       </li>
       <li v-if="i < stages.length - 1" class="adopt-arrow" aria-hidden="true"></li>
     </template>
@@ -100,12 +106,13 @@ const stages = [
   border: 1.5px dashed var(--vp-c-brand-1);
 }
 
-.adopt-stage--optional-gold {
-  border: 1.5px dashed var(--pipeline-gold);
+.adopt-stage--ship {
+  border: 2px solid var(--pipeline-green);
+  cursor: default;
 }
 
-.adopt-stage:hover,
-.adopt-stage:focus-visible {
+a.adopt-stage:hover,
+a.adopt-stage:focus-visible {
   transform: translateY(-2px);
   box-shadow: 0 6px 16px -8px rgba(0, 0, 0, 0.25);
   outline: none;
@@ -133,18 +140,6 @@ const stages = [
   color: #fff;
 }
 
-.adopt-badge--optional {
-  border: 1px solid var(--vp-c-brand-1);
-  color: var(--vp-c-brand-1);
-  opacity: 0.85;
-}
-
-.adopt-badge--optional-gold {
-  border: 1px solid var(--pipeline-gold);
-  color: var(--pipeline-gold);
-  opacity: 0.85;
-}
-
 .adopt-eyebrow {
   font-size: 0.6875rem;
   font-weight: 700;
@@ -153,8 +148,8 @@ const stages = [
   margin-top: 4px;
 }
 
-.adopt-stage--optional-gold .adopt-eyebrow {
-  color: var(--pipeline-gold);
+.adopt-stage--ship .adopt-eyebrow {
+  color: var(--pipeline-green);
 }
 
 .adopt-pkg {
@@ -166,8 +161,16 @@ const stages = [
 .adopt-desc {
   font-size: 0.8125rem;
   line-height: 1.55;
-  color: var(--vp-c-text-3);
+  color: var(--vp-c-text-2);
   margin-top: 4px;
+}
+
+.adopt-cta {
+  margin-top: auto;
+  padding-top: 14px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--vp-c-brand-1);
 }
 
 /* Arrow between cards (desktop only) */
