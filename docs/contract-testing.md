@@ -1,31 +1,43 @@
 ---
-title: Contract Testing
-description: Validate API mocks against OpenAPI specs to catch drift between your tests and the real API
+title: Validate every mock against your OpenAPI spec — TWD
+description: TWD collects every mock from your tests; twd-cli validates them against your OpenAPI specs so drift surfaces in CI, not in production.
+head:
+  - - meta
+    - property: og:title
+      content: Validate every mock against your OpenAPI spec — TWD
+  - - meta
+    - property: og:description
+      content: TWD collects every mock from your tests; twd-cli validates them against your OpenAPI specs so drift surfaces in CI, not in production.
 ---
 
-# Contract Testing
+<LandingHero
+  eyebrow="contract testing · for teams with backend separation"
+  title="Your mocks lie. Catch them before production does."
+  subtitle="TWD collects every mockRequest from your test suite. twd-cli validates them against your OpenAPI specs — so drift between your mocks and the real API surfaces in CI, not from a user."
+  cta-label="Read the setup"
+  cta-href="/contract-testing-setup"
+/>
+
+## The problem
 
 Frontend teams write mock responses in tests that drift from reality over time. Fields get renamed, removed, or added in the API — but mocks stay frozen. Tests pass, code ships, and the app breaks in production.
 
 Contract testing closes this gap: **test what you own, mock what you don't — then validate the mocks.**
 
-TWD collects every mock registered via `twd.mockRequest()` during the test run. After tests complete, `twd-cli` validates those mocks against your OpenAPI specs using [openapi-mock-validator](https://github.com/BRIKEV/openapi-mock-validator). If a mock response doesn't match the spec, you'll know immediately.
+## How it works
 
-## Setup
+During the test run, TWD collects every mock registered via `twd.mockRequest()`. After tests complete, `twd-cli` validates those mocks against your OpenAPI specs using [openapi-mock-validator](https://github.com/BRIKEV/openapi-mock-validator). Each mock either matches the spec (✓), fails (✗) with the precise field that broke, or warns (⚠) when the status code or schema isn't documented yet.
 
-### 1. Add your OpenAPI specs
+You pick the mode per spec. `"error"` fails the test run (use this for stable endpoints you trust). `"warn"` reports but doesn't fail (use this while you're catching up to a moving target). When the GitHub Action runs in CI, a summary table is posted as a PR comment so the breakage is visible to the reviewer, not just to whoever scrolled the CI log.
 
-Place your OpenAPI 3.0 or 3.1 spec files (JSON format) somewhere in your project:
+## Quick start
 
+```bash
+npm install --save-dev twd-cli openapi-mock-validator
 ```
-contracts/
-  users-3.0.json
-  posts-3.1.json
-```
-
-### 2. Configure contracts in `twd.config.json`
 
 ```json
+// twd.config.json
 {
   "url": "http://localhost:5173",
   "contractReportPath": ".twd/contract-report.md",
@@ -35,85 +47,27 @@ contracts/
       "baseUrl": "/api",
       "mode": "error",
       "strict": true
-    },
-    {
-      "source": "./contracts/posts-3.1.json",
-      "baseUrl": "/api",
-      "mode": "warn",
-      "strict": true
     }
   ]
 }
 ```
 
-### Contract Options
+Run TWD's CLI in CI; the contract report is generated alongside the test results.
 
-| Option | Type | Default | Description |
-|--------|------|---------|-------------|
-| `source` | string | — | Path to the OpenAPI spec file (JSON) |
-| `baseUrl` | string | `"/"` | Base URL prefix to strip when matching mock URLs to spec paths |
-| `mode` | `"error"` \| `"warn"` | `"warn"` | `"error"` fails the test run; `"warn"` reports but doesn't fail |
-| `strict` | boolean | `true` | When true, rejects unexpected properties not defined in the spec |
+[Full setup, options, validations, and PR reports →](/contract-testing-setup)
 
-## Example Output
+<LandingCrossLinks
+  :links='[
+    { href: "/twd-js", title: "Write the tests that collect mocks", blurb: "Get the core in-browser testing experience that powers contract testing." },
+    { href: "/twd-relay", title: "Let AI iterate on tests", blurb: "Have an AI agent author and stabilize tests before you gate on contracts." },
+    { href: "/contract-testing-setup", title: "Full setup reference", blurb: "Contract options, supported validations, PR report configuration." }
+  ]'
+/>
 
-When a mock response doesn't match the spec, you'll see detailed errors:
+## Get started
 
-```
-Source: ./contracts/users-3.0.json   ERROR
-
-  ✓ GET /users (200) — mock "getUsers"
-  ✗ GET /users/{userId} (200) — mock "getUserBadAddress"
-    → response.address.city: missing required property
-    → response.address.country: missing required property
-
-  ⚠ GET /users/{userId} (404) — mock "getUserNotFound"
-    Status 404 not documented for GET /users/{userId}
+```bash
+npm install --save-dev twd-cli openapi-mock-validator
 ```
 
-- **✓** Mock matches the spec
-- **✗** Mock has validation errors (fields that fail against the spec)
-- **⚠** Warning — the status code or schema isn't documented (mock isn't wrong, but it's not contract-tested either)
-
-## Supported Validations
-
-The validator checks all standard OpenAPI/JSON Schema constraints:
-
-- **Types**: `string`, `number`, `integer`, `boolean`, `array`, `object`
-- **String**: `minLength`, `maxLength`, `pattern`, `format` (date, date-time, email, uuid, uri, hostname, ipv4, ipv6)
-- **Number/Integer**: `minimum`, `maximum`, `exclusiveMinimum`, `exclusiveMaximum`, `multipleOf`
-- **Array**: `minItems`, `maxItems`, `uniqueItems`
-- **Object**: `required`, `additionalProperties`
-- **Composition**: `oneOf`, `anyOf`, `allOf`
-- **Enum**: validates against allowed values
-- **Nullable**: supports both OpenAPI 3.0 (`nullable: true`) and 3.1 (`type: ["string", "null"]`)
-
-::: tip Strict mode and allOf
-Strict mode (`additionalProperties: false`) can conflict with `allOf` schemas. When `allOf` branches define different properties, each branch rejects the other's properties as "additional." Use `{ strict: false }` for endpoints that use `allOf` composition, or define `additionalProperties` explicitly in your spec.
-:::
-
-## PR Reports
-
-When `contractReportPath` is set and you use the [GitHub Action](/ci-execution#github-action-recommended) with `contract-report: 'true'`, a summary table is posted as a PR comment:
-
-| Spec | Passed | Failed | Warnings | Mode |
-|------|--------|--------|----------|------|
-| `users-3.0.json` | 2 | 3 | 1 | `error` |
-| `posts-3.1.json` | 2 | 2 | 0 | `warn` |
-
-Failed validations are included in a collapsible details section with a link to the full CI log.
-
-```yaml
-- name: Run TWD tests
-  uses: BRIKEV/twd-cli/.github/actions/run@main
-  with:
-    contract-report: 'true'
-```
-
-See [CI Execution](/ci-execution#github-action-recommended) for the full workflow setup.
-
-## Next Steps
-
-- Run contract tests in CI with the [GitHub Action](/ci-execution#github-action-recommended)
-- Learn how to create mocks with [API Mocking](/api-mocking)
-- Collect [Code Coverage](/coverage) alongside contract validation
+[Read the setup guide →](/contract-testing-setup)
