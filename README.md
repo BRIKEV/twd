@@ -10,13 +10,15 @@
   <img src="https://raw.githubusercontent.com/BRIKEV/twd/main/images/twd-skill.gif" alt="TWD running with an AI agent: tests written and executed in a real browser sidebar" width="800">
 </p>
 
-> **Frontend tests that run in your real browser.** Same DOM, same routes, same state as your dev server — for React, Vue, Angular, and Solid.
+> **Frontend tests that run in your real browser.** Same DOM, same routes, same state as your dev server. For React, Vue, Angular, and Solid.
 
 ## The problem
 
-Testing gets pushed to next week. Next week never comes. When it does happen, tests usually run in a different environment from where you're building, so testing feels like overhead the moment you finish a feature.
+Testing gets pushed to next week, and next week never comes. When it does happen, tests usually run in a different environment from where you're building, so testing feels like overhead the moment you finish a feature.
 
-AI makes it worse: agents generate test files that look correct but never execute in a real browser. No one notices until production does. And the mocks those tests rely on quietly drift from the real API over time — fields get renamed, mocks stay frozen, tests pass, production breaks.
+The tooling pushes you the same way. You end up writing more code for the tests than for the feature itself, between setup, harnesses, mocks, and helpers. Adding tests starts to feel like shipping a second app on top of the one you already finished.
+
+As AI writes more of your code, the gap widens. Agents generate test files that look correct but never actually execute in a real browser. The mocks those tests rely on quietly drift from the real API over time. Fields get renamed, mocks stay frozen, tests pass, production breaks.
 
 ## The solution
 
@@ -71,7 +73,7 @@ One package today. The rest when you need it.
 | Tool | What it does |
 | --- | --- |
 | **[twd-js](https://twd.dev/twd-js)** | The core sidebar. Frontend tests that run in your real browser. |
-| **[twd-relay](https://twd.dev/twd-relay)** | Token-efficient browser testing for AI agents. Structured pass/fail over WebSocket — no Playwright, no screenshots. |
+| **[twd-relay](https://twd.dev/twd-relay)** | Token-efficient browser testing for AI agents. Structured pass/fail over WebSocket. No Playwright, no screenshots. |
 | **[twd-cli](https://twd.dev/contract-testing)** | Headless CI runs with coverage and OpenAPI contract validation. |
 
 ## Examples & showcase
@@ -96,7 +98,7 @@ One package today. The rest when you need it.
 
 ## Contributing
 
-Open issues or pull requests on [GitHub](https://github.com/BRIKEV/twd). If you're starting out in tech and looking for a beginner-friendly first PR, see the [open issues](https://github.com/BRIKEV/twd/issues) — reach out and the maintainer will help with setup and walk you through it.
+Open issues or pull requests on [GitHub](https://github.com/BRIKEV/twd). If you're starting out in tech and looking for a beginner-friendly first PR, see the [open issues](https://github.com/BRIKEV/twd/issues). Reach out and the maintainer will help with setup and walk you through it.
 
 ## Contributors ✨
 
