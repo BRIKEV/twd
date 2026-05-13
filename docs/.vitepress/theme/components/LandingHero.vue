@@ -11,7 +11,7 @@ defineProps({
 </script>
 
 <template>
-  <section class="landing-hero">
+  <section class="landing-hero" :class="{ 'landing-hero--no-image': !imageSrc }">
     <div class="landing-hero__content">
       <p v-if="eyebrow" class="landing-hero__eyebrow">{{ eyebrow }}</p>
       <h1 class="landing-hero__title">{{ title }}</h1>
@@ -33,6 +33,10 @@ defineProps({
   padding: 32px 0 48px;
   border-bottom: 1px solid var(--vp-c-divider);
   margin-bottom: 40px;
+}
+
+.landing-hero--no-image {
+  grid-template-columns: 1fr;
 }
 
 .landing-hero__eyebrow {
