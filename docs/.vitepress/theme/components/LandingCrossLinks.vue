@@ -25,9 +25,7 @@ defineProps({
 
 <style scoped>
 .landing-xlinks {
-  margin-top: 56px;
-  padding-top: 40px;
-  border-top: 1px solid var(--vp-c-divider);
+  margin-top: 24px;
 }
 
 .landing-xlinks__heading {

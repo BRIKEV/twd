@@ -84,6 +84,9 @@ defineProps({
 .landing-hero__cta:hover {
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  background: var(--vp-c-brand-btn);
+  color: #fff;
+  text-decoration: none;
 }
 
 .landing-hero__visual img {
