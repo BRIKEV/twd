@@ -329,30 +329,74 @@ The plugin handles test discovery, sidebar mounting, and HMR full-reload — no 
 
 ## React Router (Framework Mode)
 
-TWD works with React Router Framework mode applications, including SSR mode with explicit loaders and actions. Using `createRoutesStub`, you can mock loaders and actions to validate your route behavior at the frontend boundary.
+TWD works with React Router v7 in framework mode (including SSR), but the setup has one quirk that other Vite-based SPAs don't. The `twd()` and `twdRemote()` plugins inject their bootstrap scripts via Vite's `transformIndexHtml` hook — and that hook never fires for SSR-framework HTML, because React Router's dev middleware renders `app/root.tsx` itself instead of serving a Vite-controlled `index.html`. Plugin auto-injection silently no-ops. The fix is to point at the virtual modules manually from `app/root.tsx`.
+
+The rest of the testing model is the same as any TWD project: use `createRoutesStub` to mount a route with stubbed loaders/actions, and let your backend tests cover the real loader/action code as plain async functions.
 
 ::: info
-TWD focuses on **client-side UI behavior**. Server-side loaders and actions can be mocked with `createRoutesStub` and tested as pure functions separately.
+TWD focuses on **client-side UI behavior**. Server-side loaders and actions are tested separately as pure functions — they're plain async code that returns data.
 :::
 
-### Recommended: Testing Routes with createRoutesStub
+**[React Router + TWD Example](https://github.com/BRIKEV/twd-react-router)** — complete working repo, including CI with `twd-cli`.
 
-The best way to test React Router Framework Mode applications is using React Router's `createRoutesStub` API. This approach allows you to:
+### Setup
 
-- Mock routes with loaders and actions
-- Create different scenarios per test
-- Test frontend behavior realistically
-- Test loaders and actions separately as pure functions
-
-This separation of concerns makes testing straightforward, explicit, and predictable.
-
-**[React Router + TWD Example](https://github.com/BRIKEV/twd-react-router)** - Complete working example with this approach.
-
-#### Setup
-
-1. **Add a dedicated testing route** to your route configuration:
+1. **Add the plugins to `vite.config.ts`**:
 
 ```ts
+// vite.config.ts
+import { defineConfig, type PluginOption } from 'vite';
+import { reactRouter } from '@react-router/dev/vite';
+import { twd } from 'twd-js/vite-plugin';
+import { twdRemote } from 'twd-relay/vite';
+
+export default defineConfig({
+  plugins: [
+    reactRouter(),
+    twd({
+      testFilePattern: '/**/*.twd.test.{ts,tsx}',
+      serviceWorker: false, // unless you actually use API mocking
+    }),
+    twdRemote() as PluginOption, // optional, for twd-relay / AI agents
+  ],
+  server: {
+    warmup: {
+      clientFiles: [
+        './app/twd-tests/**/*.twd.test.{ts,tsx}',
+        './app/root.tsx',
+      ],
+    },
+  },
+  optimizeDeps: {
+    include: ['twd-js/bundled', 'twd-relay/browser'],
+  },
+});
+```
+
+The `server.warmup` and `optimizeDeps` blocks aren't cosmetic — they're a workaround for SSR mode. Vite's dep scanner doesn't walk virtual modules, so it discovers their transitive deps lazily on the first browser request, optimizes them, and triggers an auto-reload to serve the optimized bundle. Locally that's a quick refresh; in headless CI (twd-cli + Puppeteer with a 10s timeout) it's a hard failure — the bootstrap restarts mid-load and `waitForSelector('#twd-sidebar-root')` times out. Warming the client files and pre-bundling the two entries means no first-request optimization fires, so the sidebar mounts on first hit both locally and in CI.
+
+2. **Inject the bootstrap scripts in `app/root.tsx`**, dev-only:
+
+```tsx
+// app/root.tsx — inside <Layout>'s <head>
+{import.meta.env.DEV && (
+  <>
+    <script type="module" src="/@id/virtual:twd/init" />
+    <script type="module" src="/@id/virtual:twd-relay/connect" />
+  </>
+)}
+```
+
+The plugins still register the virtual modules and Vite still serves them at `/@id/...` — we just point at them ourselves from the SSR'd root template. The `import.meta.env.DEV` guard keeps the tags out of production. Drop the `twd-relay/connect` line if you're not using `twdRemote()`.
+
+::: tip
+The `/@id/...` URLs assume Vite `base` is `/`. If you change `base`, prefix accordingly. The same manual-injection pattern applies to other SSR frameworks that don't pipe through `transformIndexHtml` (SvelteKit, Nuxt, …).
+:::
+
+3. **Add a dedicated testing route** to your route configuration:
+
+```ts
+// app/routes.ts
 import { type RouteConfig, index, route } from "@react-router/dev/routes";
 
 export default [
@@ -362,31 +406,13 @@ export default [
 ] satisfies RouteConfig;
 ```
 
-2. **Create the testing page**:
+4. **Create the testing page** — an empty mount container. No `clientLoader` and no `initTWD` call: the plugin handles initialization through the `<script>` tags from step 2.
 
 ```tsx
 // app/routes/testing-page.tsx
-let twdInitialized = false;
-
-export async function clientLoader() {
-  if (import.meta.env.DEV) {
-    const testModules = import.meta.glob("../**/*.twd.test.{ts,tsx}");
-    if (!twdInitialized) {
-      const { initTWD } = await import('twd-js/bundled');
-      initTWD(testModules, {
-        serviceWorker: false, // Disable service worker if not needed
-      });
-      twdInitialized = true;
-    }
-    return {};
-  } else {
-    return {};
-  }
-}
-
 export default function TestPage() {
   return (
-    <div data-testid="testing-page">
+    <div data-testid="testing-page" style={{ width: '100%', height: '100vh', padding: '20px' }}>
       <h1 style={{ opacity: 0.5, fontFamily: 'system-ui, sans-serif' }}>TWD Test Page</h1>
       <p style={{ opacity: 0.5, fontFamily: 'system-ui, sans-serif' }}>
         This page is used as a mounting point for TWD tests.
@@ -396,10 +422,10 @@ export default function TestPage() {
 }
 ```
 
-3. **Create a test helper** to set up the React root:
+5. **Create a test helper** that navigates to `/testing` and gives each test a fresh React root:
 
 ```tsx
-// test-utils/setup-react-root.tsx
+// app/twd-tests/utils.ts
 import { createRoot } from "react-dom/client";
 import { twd, screenDomGlobal } from "twd-js";
 
@@ -411,23 +437,19 @@ export async function setupReactRoot() {
     root = undefined;
   }
 
-  // Navigate to the empty test page
   await twd.visit('/testing');
-  
-  // Get the container from the test page
   const container = await screenDomGlobal.findByTestId('testing-page');
   root = createRoot(container);
   return root;
 }
 ```
 
-#### Example Test
+### Example Test
 
 ```tsx
-import { createRoutesStub } from "@react-router/dev/routes";
-import { useLoaderData, useParams, useMatches } from "react-router";
+import { createRoutesStub, useLoaderData, useParams, useMatches } from "react-router";
 import { createRoot } from "react-dom/client";
-import { setupReactRoot } from "../test-utils/setup-react-root";
+import { setupReactRoot } from "./utils";
 import { twd, screenDom } from "twd-js";
 import { describe, it, beforeEach } from "twd-js/runner";
 import Home from "../routes/home";
