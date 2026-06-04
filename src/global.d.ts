@@ -12,7 +12,9 @@ declare global {
       method: string;
       status: number;
       response: unknown;
+      responseHeaders?: Record<string, string>;
       urlRegex: boolean;
+      testId: string;
     }) => void;
   }
 }

@@ -21,25 +21,29 @@ Here's a quick preview of the default theme:
 
 ![Default TWD Sidebar](/images/twd_side_bar_success.png)
 
-With the bundled setup, you can pass a `theme` option to `initTWD`:
+With the `twd()` Vite plugin, pass a `theme` option in your `vite.config.ts`:
 
-```tsx
-// src/main.tsx
-if (import.meta.env.DEV) {
-  const { initTWD } = await import('twd-js/bundled');
-  const tests = import.meta.glob("./**/*.twd.test.ts");
-  
-  const customTheme = {
-    primary: '#2563eb',
-    background: '#ffffff',
-    // ... more theme properties
-  };
-  
-  initTWD(tests, { 
-    open: true,
-    theme: customTheme
-  });
-}
+```ts
+// vite.config.ts
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+import { twd } from 'twd-js/vite-plugin';
+
+const customTheme = {
+  primary: '#2563eb',
+  background: '#ffffff',
+  // ... more theme properties
+};
+
+export default defineConfig({
+  plugins: [
+    react(),
+    twd({
+      open: true,
+      theme: customTheme,
+    }),
+  ],
+});
 ```
 
 ## Theme Properties
@@ -145,49 +149,47 @@ A complete dark theme for those who prefer dark mode:
 
 ![Dark Theme Preview](/images/dark_theme.png)
 
-```tsx
-if (import.meta.env.DEV) {
-  const { initTWD } = await import('twd-js/bundled');
-  const tests = import.meta.glob("./**/*.twd.test.ts");
-  
-  const darkTheme = {
-    primary: '#2dd4bf',
-    buttonPrimary: '#2dd4bf',
-    buttonPrimaryText: '#042f2e',
-    background: '#0b0f14',
-    backgroundSecondary: '#111827',
-    skipBg: '#111827',
-    border: 'rgba(255, 255, 255, 0.08)',
-    borderLight: 'rgba(255, 255, 255, 0.12)',
-    buttonBorder: 'rgba(255, 255, 255, 0.12)',
-    text: '#e5e7eb',
-    textSecondary: '#9ca3af',
-    textMuted: '#6b7280',
-    describeBg: '#0f172a',
-    describeText: '#94a3b8',
-    describeBorder: '#334155',
-    success: '#22c55e',
-    successBg: 'rgba(34, 197, 94, 0.15)',
-    error: '#f87171',
-    errorBg: 'rgba(248, 113, 113, 0.15)',
-    warning: '#facc15',
-    warningBg: 'rgba(250, 204, 21, 0.15)',
-    skip: '#6b7280',
-    buttonSecondary: '#111827',
-    buttonSecondaryText: '#e5e7eb',
-    sidebarWidth: '320px',
-    borderRadius: '10px',
-    shadow: '0 0 0 1px rgba(255,255,255,0.05), 0 8px 24px rgba(0,0,0,0.6)',
-    shadowSm: '0 1px 2px rgba(0,0,0,0.4)',
-    iconColor: '#e5e7eb',
-    iconColorSecondary: '#9ca3af',
-  };
-  
-  initTWD(tests, { 
-    open: true,
-    theme: darkTheme
-  });
-}
+```ts
+// vite.config.ts
+import { defineConfig } from 'vite';
+import { twd } from 'twd-js/vite-plugin';
+
+const darkTheme = {
+  primary: '#2dd4bf',
+  buttonPrimary: '#2dd4bf',
+  buttonPrimaryText: '#042f2e',
+  background: '#0b0f14',
+  backgroundSecondary: '#111827',
+  skipBg: '#111827',
+  border: 'rgba(255, 255, 255, 0.08)',
+  borderLight: 'rgba(255, 255, 255, 0.12)',
+  buttonBorder: 'rgba(255, 255, 255, 0.12)',
+  text: '#e5e7eb',
+  textSecondary: '#9ca3af',
+  textMuted: '#6b7280',
+  describeBg: '#0f172a',
+  describeText: '#94a3b8',
+  describeBorder: '#334155',
+  success: '#22c55e',
+  successBg: 'rgba(34, 197, 94, 0.15)',
+  error: '#f87171',
+  errorBg: 'rgba(248, 113, 113, 0.15)',
+  warning: '#facc15',
+  warningBg: 'rgba(250, 204, 21, 0.15)',
+  skip: '#6b7280',
+  buttonSecondary: '#111827',
+  buttonSecondaryText: '#e5e7eb',
+  sidebarWidth: '320px',
+  borderRadius: '10px',
+  shadow: '0 0 0 1px rgba(255,255,255,0.05), 0 8px 24px rgba(0,0,0,0.6)',
+  shadowSm: '0 1px 2px rgba(0,0,0,0.4)',
+  iconColor: '#e5e7eb',
+  iconColorSecondary: '#9ca3af',
+};
+
+export default defineConfig({
+  plugins: [twd({ open: true, theme: darkTheme })],
+});
 ```
 
 ### Minimal Theme
@@ -196,53 +198,51 @@ A clean, minimal theme with subtle colors and increased spacing:
 
 ![Minimal Theme Preview](/images/theme_minimal.png)
 
-```tsx
-if (import.meta.env.DEV) {
-  const { initTWD } = await import('twd-js/bundled');
-  const tests = import.meta.glob("./**/*.twd.test.ts");
-  
-  const minimalTheme = {
-    primary: '#6366f1',
-    background: '#ffffff',
-    backgroundSecondary: '#f8fafc',
-    border: '#e2e8f0',
-    borderLight: '#cbd5e1',
-    text: '#1e293b',
-    textSecondary: '#64748b',
-    textMuted: '#94a3b8',
-    describeBg: '#f8fafc',
-    describeText: '#64748b',
-    describeBorder: '#cbd5e1',
-    success: '#10b981',
-    successBg: '#ecfdf5',
-    error: '#f43f5e',
-    errorBg: '#fff1f2',
-    warning: '#f59e0b',
-    warningBg: '#fffbeb',
-    skip: '#f1f5f9',
-    skipBg: '#f8fafc',
-    buttonPrimary: '#6366f1',
-    buttonPrimaryText: '#ffffff',
-    buttonSecondary: '#f1f5f9',
-    buttonSecondaryText: '#475569',
-    buttonBorder: '#e2e8f0',
-    spacingXs: '6px',
-    spacingSm: '8px',
-    spacingMd: '12px',
-    spacingLg: '16px',
-    spacingXl: '20px',
-    sidebarWidth: '300px',
-    borderRadius: '12px',
-    borderRadiusLg: '16px',
-    shadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
-    shadowSm: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
-  };
-  
-  initTWD(tests, { 
-    open: true,
-    theme: minimalTheme
-  });
-}
+```ts
+// vite.config.ts
+import { defineConfig } from 'vite';
+import { twd } from 'twd-js/vite-plugin';
+
+const minimalTheme = {
+  primary: '#6366f1',
+  background: '#ffffff',
+  backgroundSecondary: '#f8fafc',
+  border: '#e2e8f0',
+  borderLight: '#cbd5e1',
+  text: '#1e293b',
+  textSecondary: '#64748b',
+  textMuted: '#94a3b8',
+  describeBg: '#f8fafc',
+  describeText: '#64748b',
+  describeBorder: '#cbd5e1',
+  success: '#10b981',
+  successBg: '#ecfdf5',
+  error: '#f43f5e',
+  errorBg: '#fff1f2',
+  warning: '#f59e0b',
+  warningBg: '#fffbeb',
+  skip: '#f1f5f9',
+  skipBg: '#f8fafc',
+  buttonPrimary: '#6366f1',
+  buttonPrimaryText: '#ffffff',
+  buttonSecondary: '#f1f5f9',
+  buttonSecondaryText: '#475569',
+  buttonBorder: '#e2e8f0',
+  spacingXs: '6px',
+  spacingSm: '8px',
+  spacingMd: '12px',
+  spacingLg: '16px',
+  spacingXl: '20px',
+  sidebarWidth: '300px',
+  borderRadius: '12px',
+  borderRadiusLg: '16px',
+  shadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+  shadowSm: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
+};
+
+export default defineConfig({
+  plugins: [twd({ open: true, theme: minimalTheme })],
+});
 ```
 
 ## CSS Variable Override
@@ -296,26 +296,30 @@ const myTheme: Partial<TWDTheme> = {
 
 Here's a complete example combining theme customization with other options:
 
-```tsx
-// src/main.tsx
-if (import.meta.env.DEV) {
-  const { initTWD } = await import('twd-js/bundled');
-  const tests = import.meta.glob("./**/*.twd.test.ts");
-  
-  initTWD(tests, {
-    open: true,
-    position: 'right',
-    search: true,
-    serviceWorker: true,
-    serviceWorkerUrl: '/mock-sw.js',
-    theme: {
-      primary: '#8b5cf6',
-      background: '#faf5ff',
-      text: '#4c1d95',
-      sidebarWidth: '320px',
-      borderRadius: '8px',
-    }
-  });
-}
+```ts
+// vite.config.ts
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+import { twd } from 'twd-js/vite-plugin';
+
+export default defineConfig({
+  plugins: [
+    react(),
+    twd({
+      open: true,
+      position: 'right',
+      search: true,
+      serviceWorker: true,
+      serviceWorkerUrl: '/mock-sw.js',
+      theme: {
+        primary: '#8b5cf6',
+        background: '#faf5ff',
+        text: '#4c1d95',
+        sidebarWidth: '320px',
+        borderRadius: '8px',
+      },
+    }),
+  ],
+});
 ```
 

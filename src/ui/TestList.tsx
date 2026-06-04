@@ -1,9 +1,9 @@
-import { useState, useEffect, useRef } from "react";
-import { Node } from "./utils/buildTreeFromHandlers";
-import { TestListItem } from "./TestListItem";
-import ChevronDown from "./Icons/ChevronDown";
-import ChevronRight from "./Icons/ChevronRight";
-import SkipOnlyName from "./SkipOnlyName";
+import { useState, useEffect, useRef } from 'react';
+import { Node } from './utils/buildTreeFromHandlers';
+import { TestListItem } from './TestListItem';
+import ChevronDown from './Icons/ChevronDown';
+import ChevronRight from './Icons/ChevronRight';
+import SkipOnlyName from './SkipOnlyName';
 
 interface TestListProps {
   roots: Node[];
@@ -11,18 +11,17 @@ interface TestListProps {
   searchQuery?: string;
 }
 
-export const TestList = ({ roots, runTest, searchQuery = "" }: TestListProps) => {
+export const TestList = ({ roots, runTest, searchQuery = '' }: TestListProps) => {
   const [collapsed, setCollapsed] = useState<Record<string, boolean>>({});
   const listContainerRef = useRef<HTMLUListElement>(null);
   const hasScrolledRef = useRef(false);
-  
-  const toggle = (id: string) =>
-    setCollapsed((prev) => ({ ...prev, [id]: !prev[id] }));
+
+  const toggle = (id: string) => setCollapsed((prev) => ({ ...prev, [id]: !prev[id] }));
 
   // Scroll to the last run test on first render
   useEffect(() => {
     if (hasScrolledRef.current) return;
-    
+
     const lastRunTestName = sessionStorage.getItem('twd-last-run-test-name');
     if (!lastRunTestName) return;
 
@@ -32,7 +31,9 @@ export const TestList = ({ roots, runTest, searchQuery = "" }: TestListProps) =>
       const testElement = document.querySelector(`[data-test-name="${lastRunTestName}"]`);
       if (testElement) {
         // Find the scrollable container (the sidebar itself)
-        const sidebar = listContainerRef.current?.closest('[data-testid="twd-sidebar"]') as HTMLElement;
+        const sidebar = listContainerRef.current?.closest(
+          '[data-testid="twd-sidebar"]',
+        ) as HTMLElement;
         if (sidebar) {
           const elementRect = testElement.getBoundingClientRect();
           const sidebarRect = sidebar.getBoundingClientRect();
@@ -40,12 +41,16 @@ export const TestList = ({ roots, runTest, searchQuery = "" }: TestListProps) =>
           const elementTop = elementRect.top - sidebarRect.top + scrollTop;
 
           // Measure the sticky header to account for its actual height (varies with search input)
-          const stickyHeader = sidebar.querySelector<HTMLElement>('[data-testid="twd-sidebar-header"]');
-          const headerOffset = stickyHeader ? stickyHeader.getBoundingClientRect().height + 16 : 150;
+          const stickyHeader = sidebar.querySelector<HTMLElement>(
+            '[data-testid="twd-sidebar-header"]',
+          );
+          const headerOffset = stickyHeader
+            ? stickyHeader.getBoundingClientRect().height + 16
+            : 150;
 
           sidebar.scrollTo({
             top: elementTop - headerOffset,
-            behavior: 'smooth'
+            behavior: 'smooth',
           });
         }
         hasScrolledRef.current = true;
@@ -56,49 +61,32 @@ export const TestList = ({ roots, runTest, searchQuery = "" }: TestListProps) =>
   }, []);
 
   const renderNode = (node: Node, depth = 0) => {
-    if (node.type === "test") {
+    if (node.type === 'test') {
       return (
         <TestListItem
           key={node.id}
           node={node}
           depth={depth}
           id={node.id}
-          runTest={() => runTest(node.id)}
+          runTest={() => {
+            void runTest(node.id);
+          }}
         />
       );
     }
 
     const isCollapsed = collapsed[node.id];
-    
+
     return (
       <li key={node.id} style={{ marginLeft: `calc(${depth} * var(--twd-spacing-lg))` }}>
-        <div
-          style={{
-            background: "var(--twd-describe-bg)",
-            borderLeft: "3px solid var(--twd-describe-border)",
-            borderRadius: "var(--twd-border-radius)",
-            padding: "var(--twd-spacing-xs) var(--twd-spacing-sm)",
-            marginBottom: "var(--twd-spacing-sm)",
-          }}
-        >
+        <div className="twd-test-group">
           <span
-            style={{
-              fontWeight: "var(--twd-font-weight-medium)",
-              fontSize: "var(--twd-font-size-sm)",
-              cursor: "pointer",
-              color: "var(--twd-describe-text)",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              gap: "var(--twd-spacing-sm)",
-              textTransform: "uppercase",
-              letterSpacing: "0.05em",
-            }}
+            className="twd-test-group-toggle"
             data-testid={`test-group-${node.name}`}
             tabIndex={0}
             role="button"
             aria-expanded={!isCollapsed}
-            aria-label={`${isCollapsed ? "Expand" : "Collapse"} test suite ${node.name}`}
+            aria-label={`${isCollapsed ? 'Expand' : 'Collapse'} test suite ${node.name}`}
             onClick={() => toggle(node.id)}
           >
             <SkipOnlyName id={node.id} name={node.name} skip={node.skip} only={node.only} />
@@ -107,7 +95,7 @@ export const TestList = ({ roots, runTest, searchQuery = "" }: TestListProps) =>
         </div>
 
         {!isCollapsed && node.childrenNodes && node.childrenNodes.length > 0 && (
-          <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
+          <ul className="twd-test-list">
             {node.childrenNodes.map((child) => renderNode(child, depth + 1))}
           </ul>
         )}
@@ -116,19 +104,16 @@ export const TestList = ({ roots, runTest, searchQuery = "" }: TestListProps) =>
   };
 
   return (
-    <ul
-      ref={listContainerRef}
-      style={{ listStyle: "none", padding: 0, margin: 0 }}
-      role="list"
-      aria-label="Test list"
-    >
+    <ul ref={listContainerRef} className="twd-test-list" role="list" aria-label="Test list">
       {roots.length === 0 && searchQuery ? (
-        <li style={{
-          padding: "var(--twd-spacing-md)",
-          color: "var(--twd-text-secondary)",
-          fontSize: "var(--twd-font-size-sm)",
-          textAlign: "center",
-        }}>
+        <li
+          style={{
+            padding: 'var(--twd-spacing-md)',
+            color: 'var(--twd-text-secondary)',
+            fontSize: 'var(--twd-font-size-sm)',
+            textAlign: 'center',
+          }}
+        >
           No tests match "{searchQuery}"
         </li>
       ) : (

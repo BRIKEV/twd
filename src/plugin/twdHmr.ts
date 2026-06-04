@@ -16,14 +16,14 @@ export interface TwdHmrOptions {
  * Vite plugin to handle HMR for TWD test files.
  * When a TWD test file is updated, it forces a full page reload to prevent
  * duplicate test entries that occur when HMR reloads test modules.
- * 
+ *
  * This plugin only runs in development mode (serve) and does not affect Vitest test runs.
- * 
+ *
  * @param options - Configuration options for the plugin
  * @example
  * ```ts
  * import { twdHmr } from 'twd-js/vite-plugin';
- * 
+ *
  * export default defineConfig({
  *   plugins: [
  *     // ... other plugins
@@ -39,17 +39,18 @@ export interface TwdHmrOptions {
  * @example
  * ```ts
  * // Custom function
- * twdHmr({ 
- *   testFilePattern: (file) => file.includes('.twd.test.') 
+ * twdHmr({
+ *   testFilePattern: (file) => file.includes('.twd.test.')
  * })
  * ```
  */
 export function twdHmr(options: TwdHmrOptions = {}): Plugin {
   const { testFilePattern = '.twd.test.ts' } = options;
-  
-  const isTestFile = typeof testFilePattern === 'function'
-    ? testFilePattern
-    : (file: string) => file.endsWith(testFilePattern);
+
+  const isTestFile =
+    typeof testFilePattern === 'function'
+      ? testFilePattern
+      : (file: string) => file.endsWith(testFilePattern);
 
   return {
     name: 'twd-hmr',
@@ -67,4 +68,3 @@ export function twdHmr(options: TwdHmrOptions = {}): Plugin {
     },
   };
 }
-

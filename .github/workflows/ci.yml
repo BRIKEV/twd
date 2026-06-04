@@ -35,6 +35,30 @@ jobs:
       - name: Run Vitest
         run: npm run test:ci
 
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v5
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: 24.x
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run ESLint
+        run: npm run lint
+
+      - name: Check Prettier formatting
+        run: npm run format:check
+
+      - name: Check for focused tests
+        run: npm run check:only
+
   build:
     runs-on: ubuntu-latest
     steps:

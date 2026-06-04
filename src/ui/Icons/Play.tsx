@@ -1,4 +1,4 @@
-import BaseIcon from "./BaseIcon";
+import BaseIcon from './BaseIcon';
 
 const Play = () => (
   <BaseIcon className="lucide-play-icon lucide-play" dataTestId="play-icon">

@@ -1,37 +1,49 @@
-import { waitForElement, wait, waitForElements } from "./utils/wait";
-import { runAssertion } from "./asserts";
-import { log } from "./utils/log";
-import { mockRequest, Options, Rule, waitForRequest, initRequestMocking, clearRequestMockRules, getRequestMockRules, waitForRequests, getRequestCount, getRequestCounts } from "./commands/mockBridge";
-import type { AnyAssertion, ArgsFor, TWDElemAPI } from "./twd-types";
-import urlCommand, { type URLCommandAPI } from "./commands/url";
-import { visit } from "./commands/visit";
-import { mockComponent, clearComponentMocks } from "./ui/componentMocks";
-import { viewport, resetViewport } from "./commands/viewport";
+import { waitForElement, wait, waitForElements } from './utils/wait';
+import { waitFor } from './utils/waitFor';
+import { runAssertion } from './asserts';
+import { log } from './utils/log';
+import {
+  mockRequest,
+  Options,
+  Rule,
+  waitForRequest,
+  initRequestMocking,
+  clearRequestMockRules,
+  getRequestMockRules,
+  waitForRequests,
+  getRequestCount,
+  getRequestCounts,
+} from './commands/mockBridge';
+import type { AnyAssertion, ArgsFor, TWDElemAPI, WaitForOptions } from './twd-types';
+import urlCommand, { type URLCommandAPI } from './commands/url';
+import { visit } from './commands/visit';
+import { mockComponent, clearComponentMocks } from './ui/componentMocks';
+import { viewport, resetViewport } from './commands/viewport';
 
 interface TWDAPI {
   /**
    * Finds an element by selector and returns the TWD API for it.
    * @param selector CSS selector
    * @returns {Promise<TWDElemAPI>} The TWD API for the element
-   * 
+   *
    * @example
    * ```ts
    * const btn = await twd.get("button");
-   * 
+   *
    * ```
-   * 
+   *
    */
   get: (selector: string) => Promise<TWDElemAPI>;
   /**
    * Sets the value of an input element and dispatches an input event. We recommend using this only for range, color, time inputs.
    * @param el The input element
    * @param value The value to set
-   * 
+   *
    * @example
    * ```ts
    * const input = await twd.get("input[type='time']");
    * twd.setInputValue(input.el, "13:30");
-   * 
+   *
    * ```
    */
   setInputValue: (el: Element, value: string) => void;
@@ -39,7 +51,7 @@ interface TWDAPI {
    * Finds multiple elements by selector and returns an array of TWD APIs for them.
    * @param selector CSS selector
    * @returns {Promise<TWDElemAPI[]>} Array of TWD APIs for the elements
-   * 
+   *
    * @example
    * ```ts
    * const items = await twd.getAll(".item");
@@ -65,7 +77,7 @@ interface TWDAPI {
   /**
    * Mock a network request.
    *
-   * @param alias Identifier for the mock rule. Useful for `waitFor()`.
+   * @param alias Identifier for the mock rule. Useful for `waitForRequest()`.
    * @param options Options to configure the mock:
    *  - `method`: HTTP method ("GET", "POST", …)
    *  - `url`: URL string or RegExp to match
@@ -92,14 +104,14 @@ interface TWDAPI {
    * @param retries The number of retries to make
    * @param retryDelay The delay between retries
    * @return The matched rule (with body if applicable)
-   * 
+   *
    * @example
    * ```ts
-   * const rule = await twd.waitFor("aliasId");
+   * const rule = await twd.waitForRequest("aliasId");
    * console.log(rule.body);
-   * const rule = await twd.waitFor("aliasId", 5, 100);
+   * const rule = await twd.waitForRequest("aliasId", 5, 100);
    * console.log(rule.body);
-   * 
+   *
    * ```
    */
   waitForRequest: (alias: string, retries?: number, retryDelay?: number) => Promise<Rule>;
@@ -120,7 +132,7 @@ interface TWDAPI {
    * ```ts
    * twd.url().should("eq", "http://localhost:3000/contact");
    * twd.url().should("contain.url", "/contact");
-   * 
+   *
    * ```
    */
   url: () => URLCommandAPI;
@@ -142,7 +154,7 @@ interface TWDAPI {
    * @example
    * ```ts
    * twd.clearRequestMockRules();
-   * 
+   *
    * ```
    */
   clearRequestMockRules: () => void;
@@ -189,6 +201,33 @@ interface TWDAPI {
    * ```
    */
   wait: (time: number) => Promise<void>;
+  /**
+   * Retries a callback until it stops throwing or the timeout expires.
+   * Use this instead of `twd.wait(ms)` to wait for conditions rather than fixed delays.
+   *
+   * @param callback Function to retry — can be sync or async. Should throw if the condition is not yet met.
+   * @param options Optional timeout, interval, and message settings
+   * @returns A promise that resolves with the callback's return value when it succeeds
+   *
+   * @example
+   * ```ts
+   * // Wait for an analytics event and return it
+   * const event = await twd.waitFor(() => {
+   *   const ev = findEvent("purchase");
+   *   expect(ev).to.exist;
+   *   return ev;
+   * }, { message: "purchase event to fire" });
+   *
+   * // Wait for an element (single expression)
+   * const heading = await twd.waitFor(() => screenDom.getByRole("heading", { name: /checkout/i }));
+   *
+   * // Fire-and-forget (void) — still works as before
+   * await twd.waitFor(() => {
+   *   expect(submitButton.disabled).to.be.false;
+   * });
+   * ```
+   */
+  waitFor: <T>(callback: () => T | Promise<T>, options?: WaitForOptions) => Promise<T>;
   /**
    * Asserts something about the element.
    * @param el The element to assert on
@@ -286,13 +325,13 @@ export const twd: TWDAPI = {
     return api;
   },
   setInputValue: (el: Element, value: string) => {
-    const { set } = Object.getOwnPropertyDescriptor(
-       // @ts-expect-error we ignore this error because __proto__ exists
+    const descriptor = Object.getOwnPropertyDescriptor(
+      // @ts-expect-error -- accessing __proto__ to get the native value descriptor
       el.__proto__,
-      'value'
+      'value',
     )!;
-    // @ts-expect-error we ignore this error because we know set exists
-    set.call(el, value);
+    // @ts-expect-error -- descriptor.set exists for input elements
+    descriptor.set.call(el, value);
     el.dispatchEvent(new Event('input', { bubbles: true }));
   },
   getAll: async (selector: string): Promise<TWDElemAPI[]> => {
@@ -303,9 +342,9 @@ export const twd: TWDAPI = {
 
     return els.map((el) => {
       const api: TWDElemAPI = {
-        el: el as HTMLElement,
+        el,
         should: (name: AnyAssertion, ...args: ArgsFor<AnyAssertion>) => {
-          const message = runAssertion(el as HTMLElement, name, ...args);
+          const message = runAssertion(el, name, ...args);
           log(message);
           return api;
         },
@@ -328,18 +367,20 @@ export const twd: TWDAPI = {
     log(message);
   },
   wait,
+  waitFor,
   mockComponent,
   clearComponentMocks,
   viewport,
   resetViewport,
-  notExists: async (selector: string): Promise<void> => {
+  notExists: (selector: string): Promise<void> => {
     // Prepend selector to exclude TWD sidebar elements
     const enhancedSelector = `body > div:not(#twd-sidebar-root) ${selector}`;
     log(`Checking notExists("${selector}")`);
     const existingElement = document.querySelector(enhancedSelector);
     if (existingElement) {
-      throw new Error(`Element "${selector}" exists in the DOM.`);
+      return Promise.reject(new Error(`Element "${selector}" exists in the DOM.`));
     }
     log(`Assertion passed: Element "${selector}" does not exist in the DOM.`);
+    return Promise.resolve();
   },
 };

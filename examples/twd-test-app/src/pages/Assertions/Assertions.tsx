@@ -28,7 +28,11 @@ const assertions = [
   },
   {
     name: "be.disabled",
-    element: <button id="be-disabled" disabled>Disabled</button>,
+    element: (
+      <button id="be-disabled" disabled>
+        Disabled
+      </button>
+    ),
     code: `api.should("be.disabled");`,
   },
   {
@@ -55,7 +59,9 @@ const assertions = [
     name: "be.focused",
     element: (
       <div>
-        <label id="label-focused" htmlFor="be-focused">Focused</label>
+        <label id="label-focused" htmlFor="be-focused">
+          Focused
+        </label>
         <input type="text" id="be-focused" />
       </div>
     ),
@@ -67,8 +73,21 @@ const assertions = [
     code: `api.should("be.visible");`,
   },
   {
+    name: "be.hidden",
+    element: (
+      <div id="be-hidden" style={{ display: "none" }}>
+        Hidden
+      </div>
+    ),
+    code: `api.should("be.hidden");`,
+  },
+  {
     name: "have.class",
-    element: <div id="have-class" className="my-class">Classed</div>,
+    element: (
+      <div id="have-class" className="my-class">
+        Classed
+      </div>
+    ),
     code: `api.should("have.class", "my-class");`,
   },
 ];

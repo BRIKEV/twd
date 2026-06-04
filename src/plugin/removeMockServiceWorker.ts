@@ -5,11 +5,11 @@ import type { Plugin } from 'vite';
 /**
  * Vite plugin to remove the mock service worker file from the build output.
  * This is useful for production builds where you don't want the mock service worker to be included.
- * 
+ *
  * @example
  * ```ts
  * import { removeMockServiceWorker } from 'twd-js';
- * 
+ *
  * export default defineConfig({
  *   plugins: [
  *     // ... other plugins

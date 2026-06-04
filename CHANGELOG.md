@@ -1,3 +1,72 @@
+## <small>1.8.0 (2026-05-08)</small>
+
+* feat(plugin): export twd from twd-js/vite-plugin ([9c90803](https://github.com/BRIKEV/twd/commit/9c90803))
+* feat(plugin): inject virtual init script via transformIndexHtml ([4cdc7e5](https://github.com/BRIKEV/twd/commit/4cdc7e5))
+* feat(plugin): add virtual module for twd init ([4674cdb](https://github.com/BRIKEV/twd/commit/4674cdb))
+* feat(plugin): scaffold twd Vite plugin (name + apply: serve) ([7da3ccd](https://github.com/BRIKEV/twd/commit/7da3ccd))
+* feat: add Contacts page with pagination and loader functionality (#239) ([d22b144](https://github.com/BRIKEV/twd/commit/d22b144)), closes [#239](https://github.com/BRIKEV/twd/issues/239)
+* fix(plugin): respect Vite base path in script injection and SW URL ([f3c7a00](https://github.com/BRIKEV/twd/commit/f3c7a00))
+* fix(examples): use findByText for post-pagination queries to avoid CI flake ([7851b0d](https://github.com/BRIKEV/twd/commit/7851b0d))
+* fix(examples): alias twd-js/bundled to dist (not source) in test app ([75f2e0d](https://github.com/BRIKEV/twd/commit/75f2e0d))
+* docs: lead with twd() Vite plugin across docs site and README ([55e1d72](https://github.com/BRIKEV/twd/commit/55e1d72))
+* docs(plugin): add @example for serviceWorker option in twd() JSDoc ([9ad9e40](https://github.com/BRIKEV/twd/commit/9ad9e40))
+* docs: add Rober040992 as a contributor for doc (#240) ([4f9bab7](https://github.com/BRIKEV/twd/commit/4f9bab7)), closes [#240](https://github.com/BRIKEV/twd/issues/240)
+* docs(community): add Roberto Gomez Fabrega to contributors table ([79c16bd](https://github.com/BRIKEV/twd/commit/79c16bd))
+* docs: add better tests for pagination example ([0276d05](https://github.com/BRIKEV/twd/commit/0276d05))
+* docs: add design spec for TWD Vite plugin auto-init POC ([f89ace4](https://github.com/BRIKEV/twd/commit/f89ace4))
+* docs: use absolute GitHub URLs for README images and examples link ([b4278d4](https://github.com/BRIKEV/twd/commit/b4278d4))
+* chore(deps): bump lint-staged to 17 and typescript-eslint patch ([b9a6daa](https://github.com/BRIKEV/twd/commit/b9a6daa))
+* chore: switch tsconfig moduleResolution to Bundler ([69b2861](https://github.com/BRIKEV/twd/commit/69b2861))
+* chore(examples): adopt twd() plugin in tutorial and vue examples ([4cd58f3](https://github.com/BRIKEV/twd/commit/4cd58f3))
+* chore(examples): switch twd-test-app to twd() Vite plugin ([5377325](https://github.com/BRIKEV/twd/commit/5377325))
+* chore(deps-dev): bump @eslint/js from 9.39.4 to 10.0.1 (#236) ([4147382](https://github.com/BRIKEV/twd/commit/4147382)), closes [#236](https://github.com/BRIKEV/twd/issues/236)
+* chore(deps-dev): bump eslint from 9.39.4 to 10.3.0 (#237) ([14348da](https://github.com/BRIKEV/twd/commit/14348da)), closes [#237](https://github.com/BRIKEV/twd/issues/237)
+* test(plugin): cover custom options + testFilePattern round-trip ([6adc100](https://github.com/BRIKEV/twd/commit/6adc100))
+
+
+## <small>1.7.3 (2026-05-01)</small>
+
+* feat: add hidden assertion and improve test coverage (#232) ([425dd66](https://github.com/BRIKEV/twd/commit/425dd66), closes [#232](https://github.com/BRIKEV/twd/issues/232)
+* docs: add @codesthenos as a contributor ([2dde515](https://github.com/BRIKEV/twd/commit/2dde515))
+* docs: add Contributors section to community page ([16f66ec](https://github.com/BRIKEV/twd/commit/16f66ec))
+* docs: have length example (#230) ([130f2eb](https://github.com/BRIKEV/twd/commit/130f2eb)), closes [#230](https://github.com/BRIKEV/twd/issues/230)
+* docs(landing): add Calendly CTA after FAQ section ([5614fe1](https://github.com/BRIKEV/twd/commit/5614fe1))
+* chore(examples): remove unused and lint-only dependencies (#234) ([be1a152](https://github.com/BRIKEV/twd/commit/be1a152)), closes [#234](https://github.com/BRIKEV/twd/issues/234)
+* chore: add eslint, prettier, husky pre-commit, and CI lint job (#233) ([a374b43](https://github.com/BRIKEV/twd/commit/a374b43)), closes [#233](https://github.com/BRIKEV/twd/issues/233)
+* chore: add all-contributors bot setup (#231) ([e9fdf34](https://github.com/BRIKEV/twd/commit/e9fdf34)), closes [#231](https://github.com/BRIKEV/twd/issues/231)
+* chore(deps): bump postcss from 8.5.6 to 8.5.12 in /examples/twd-test-app (#229) ([752939a](https://github.com/BRIKEV/twd/commit/752939a)), closes [#229](https://github.com/BRIKEV/twd/issues/229)
+* chore(deps-dev): bump @vitest/coverage-v8 from 4.1.4 to 4.1.5 (#228) ([69edc9e](https://github.com/BRIKEV/twd/commit/69edc9e)), closes [#228](https://github.com/BRIKEV/twd/issues/228)
+* chore(deps-dev): bump vite from 8.0.8 to 8.0.10 (#227) ([2f51cf2](https://github.com/BRIKEV/twd/commit/2f51cf2)), closes [#227](https://github.com/BRIKEV/twd/issues/227)
+* chore(deps-dev): bump vitest from 4.1.4 to 4.1.5 (#226) ([7ca6a1b](https://github.com/BRIKEV/twd/commit/7ca6a1b)), closes [#226](https://github.com/BRIKEV/twd/issues/226)
+* chore(deps): bump follow-redirects in /examples/tutorial-example (#224) ([419b2fc](https://github.com/BRIKEV/twd/commit/419b2fc)), closes [#224](https://github.com/BRIKEV/twd/issues/224)
+
+
+## <small>1.7.2 (2026-04-21)</small>
+
+* fix(mockBridge): forward `responseHeaders` to `__twdCollectMock` so downstream contract validation can apply Content-Type-aware schema selection.
+* fix(screenDom): prioritize known app roots (`#root`, `#app`, `app-root`) and skip empty containers when scoping queries; add `rootSelector` option to `initTWD` for non-standard roots (e.g. sandbox environments that inject overlay siblings).
+
+
+## <small>1.7.1 (2026-04-15)</small>
+
+* feat(waitFor): make generic to return callback value (#214) ([836695c](https://github.com/BRIKEV/twd/commit/836695c14b7563a1e0c83b61f6ccec13145bf69f)), closes [#214](https://github.com/BRIKEV/twd/issues/214)
+
+
+## <small>1.7.0 (2026-04-15)</small>
+
+* feat: add twd.waitFor() polling utility (#212) ([f596e4d](https://github.com/BRIKEV/twd/commit/f596e4d)), closes [#212](https://github.com/BRIKEV/twd/issues/212)
+
+
+## <small>1.6.6 (2026-04-13)</small>
+
+* feat: migrate sidebar inline styles to CSS classes (#211) ([180eab7](https://github.com/BRIKEV/twd/commit/180eab7)), closes [#211](https://github.com/BRIKEV/twd/issues/211)
+* fix(userEvent): add unfocused tab fallbacks for keyboard(), clear() and blur (#210) ([6260196](https://github.com/BRIKEV/twd/commit/6260196)), closes [#210](https://github.com/BRIKEV/twd/issues/210)
+* chore: add release automation agent ([f1091c2](https://github.com/BRIKEV/twd/commit/f1091c2))
+* chore(deps-dev): bump @vitest/coverage-v8 from 4.1.2 to 4.1.4 (#207) ([a96f5c1](https://github.com/BRIKEV/twd/commit/a96f5c1)), closes [#207](https://github.com/BRIKEV/twd/issues/207)
+* chore(deps-dev): bump jsdom from 29.0.1 to 29.0.2 (#208) ([1766069](https://github.com/BRIKEV/twd/commit/1766069)), closes [#208](https://github.com/BRIKEV/twd/issues/208)
+* chore(deps-dev): bump vite from 8.0.7 to 8.0.8 (#206) ([b968da2](https://github.com/BRIKEV/twd/commit/b968da2)), closes [#206](https://github.com/BRIKEV/twd/issues/206)
+
+
 ## <small>1.6.5 (2026-04-12)</small>
 
 * feat: add unfocused tab fallbacks for clear() and keyboard() in userEvent proxy (#205) ([af6eea2](https://github.com/BRIKEV/twd/commit/af6eea2)), closes [#205](https://github.com/BRIKEV/twd/issues/205)

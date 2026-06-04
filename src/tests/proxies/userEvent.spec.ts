@@ -18,15 +18,19 @@ describe('userEvent', () => {
         expect(document.activeElement).toBe(input);
 
         await user.type(input, 'Hello');
-        expect((input as HTMLInputElement).value).toBe('Hello');
+        expect(input.value).toBe('Hello');
       });
     });
     const tests = twd.handlers;
     const testArray = Array.from(tests.values());
     testArray[1].status = 'running';
     await testArray[1].handler();
-    expect(testArray[1].logs).toContainEqual(expect.stringContaining('Event fired: Clicked element'));
-    expect(testArray[1].logs).toContainEqual(expect.stringContaining('Event fired: Typed "Hello" into element'));
+    expect(testArray[1].logs).toContainEqual(
+      expect.stringContaining('Event fired: Clicked element'),
+    );
+    expect(testArray[1].logs).toContainEqual(
+      expect.stringContaining('Event fired: Typed "Hello" into element'),
+    );
   });
 });
 
@@ -376,7 +380,7 @@ describe('userEvent keyboard fallback', () => {
     });
     hasFocusSpy.mockReturnValue(false);
 
-    const input = document.createElement('input') as HTMLInputElement;
+    const input = document.createElement('input');
     document.body.appendChild(input);
     input.focus();
 

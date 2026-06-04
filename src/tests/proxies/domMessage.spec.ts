@@ -5,7 +5,9 @@ describe('domMessage', () => {
   it('should return query message for getBy methods', () => {
     expect(domMessage('screen', 'getByText', ['Hello'])).toBe('query: getByText("Hello")');
     expect(domMessage('screen', 'getByRole', ['button'])).toBe('query: getByRole("button")');
-    expect(domMessage('screen', 'getByLabelText', ['Email'])).toBe('query: getByLabelText("Email")');
+    expect(domMessage('screen', 'getByLabelText', ['Email'])).toBe(
+      'query: getByLabelText("Email")',
+    );
   });
 
   it('should return query message for queryBy methods', () => {
@@ -24,13 +26,19 @@ describe('domMessage', () => {
   });
 
   it('should return query message for queryAllBy methods', () => {
-    expect(domMessage('screen', 'queryAllByText', ['Hello'])).toBe('query: queryAllByText("Hello")');
-    expect(domMessage('screen', 'queryAllByRole', ['button'])).toBe('query: queryAllByRole("button")');
+    expect(domMessage('screen', 'queryAllByText', ['Hello'])).toBe(
+      'query: queryAllByText("Hello")',
+    );
+    expect(domMessage('screen', 'queryAllByRole', ['button'])).toBe(
+      'query: queryAllByRole("button")',
+    );
   });
 
   it('should return query message for findAllBy methods', () => {
     expect(domMessage('screen', 'findAllByText', ['Hello'])).toBe('query: findAllByText("Hello")');
-    expect(domMessage('screen', 'findAllByRole', ['button'])).toBe('query: findAllByRole("button")');
+    expect(domMessage('screen', 'findAllByRole', ['button'])).toBe(
+      'query: findAllByRole("button")',
+    );
   });
 
   it('should return helper message for within', () => {
@@ -64,18 +72,23 @@ describe('domMessage', () => {
   });
 
   it('should return async utility message for waitForElementToBeRemoved', () => {
-    expect(domMessage('screen', 'waitForElementToBeRemoved', [])).toBe('async utility: waitForElementToBeRemoved executed');
+    expect(domMessage('screen', 'waitForElementToBeRemoved', [])).toBe(
+      'async utility: waitForElementToBeRemoved executed',
+    );
   });
 
   it('should return default message for other methods', () => {
     expect(domMessage('screen', 'someMethod', [])).toBe('method: screen.someMethod executed');
-    expect(domMessage('container', 'anotherMethod', ['arg1', 'arg2'])).toBe('method: container.anotherMethod executed');
+    expect(domMessage('container', 'anotherMethod', ['arg1', 'arg2'])).toBe(
+      'method: container.anotherMethod executed',
+    );
   });
 
   it('should handle different prefixes correctly', () => {
     expect(domMessage('container', 'getByText', ['Hello'])).toBe('query: getByText("Hello")');
-    expect(domMessage('custom', 'within', [document.createElement('div')])).toBe('helper: within(<div>) called');
+    expect(domMessage('custom', 'within', [document.createElement('div')])).toBe(
+      'helper: within(<div>) called',
+    );
     expect(domMessage('test', 'prettyDOM', [])).toBe('debug: prettyDOM called');
   });
 });
-

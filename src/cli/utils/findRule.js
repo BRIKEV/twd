@@ -27,23 +27,67 @@ const validRegex = (pattern) => {
  */
 const FILE_EXTENSIONS = new Set([
   // JavaScript/TypeScript
-  'js', 'mjs', 'cjs', 'ts', 'tsx', 'jsx', 'mts', 'cts',
+  'js',
+  'mjs',
+  'cjs',
+  'ts',
+  'tsx',
+  'jsx',
+  'mts',
+  'cts',
   // Styles
-  'css', 'scss', 'sass', 'less', 'styl',
+  'css',
+  'scss',
+  'sass',
+  'less',
+  'styl',
   // Markup
-  'html', 'htm', 'xml', 'xhtml', 'vue', 'svelte',
+  'html',
+  'htm',
+  'xml',
+  'xhtml',
+  'vue',
+  'svelte',
   // Data
-  'json', 'yaml', 'yml', 'toml', 'csv',
+  'json',
+  'yaml',
+  'yml',
+  'toml',
+  'csv',
   // Documents
-  'txt', 'md', 'mdx', 'pdf', 'doc', 'docx',
+  'txt',
+  'md',
+  'mdx',
+  'pdf',
+  'doc',
+  'docx',
   // Images
-  'png', 'jpg', 'jpeg', 'gif', 'svg', 'webp', 'ico', 'bmp', 'avif',
+  'png',
+  'jpg',
+  'jpeg',
+  'gif',
+  'svg',
+  'webp',
+  'ico',
+  'bmp',
+  'avif',
   // Fonts
-  'woff', 'woff2', 'ttf', 'eot', 'otf',
+  'woff',
+  'woff2',
+  'ttf',
+  'eot',
+  'otf',
   // Media
-  'mp3', 'mp4', 'webm', 'ogg', 'wav',
+  'mp3',
+  'mp4',
+  'webm',
+  'ogg',
+  'wav',
   // Archives
-  'zip', 'tar', 'gz', 'rar',
+  'zip',
+  'tar',
+  'gz',
+  'rar',
   // Maps
   'map',
 ]);
@@ -93,18 +137,17 @@ const isBoundaryMatch = (url, ruleUrl) => {
  * @returns {Rule|undefined}
  */
 export function findRule(method, url, rules) {
-  return rules.find(
-    (r) => {
-      const isMethodMatch = r.method.toLowerCase() === method.toLowerCase();
-      if (r.urlRegex && validRegex(r.url)) {
-        const regex = new RegExp(r.url);
-        return isMethodMatch && regex.test(url);
-      }
-      const ruleIsFile = isFile(r.url);
-      if (ruleIsFile) {
-        return isMethodMatch && url.includes(r.url);
-      }
-      const isUrlMatch = r.url === url || isBoundaryMatch(url, r.url);
-      return isMethodMatch && isUrlMatch && !isFile(url);
+  return rules.find((r) => {
+    const isMethodMatch = r.method.toLowerCase() === method.toLowerCase();
+    if (r.urlRegex && validRegex(r.url)) {
+      const regex = new RegExp(r.url);
+      return isMethodMatch && regex.test(url);
+    }
+    const ruleIsFile = isFile(r.url);
+    if (ruleIsFile) {
+      return isMethodMatch && url.includes(r.url);
+    }
+    const isUrlMatch = r.url === url || isBoundaryMatch(url, r.url);
+    return isMethodMatch && isUrlMatch && !isFile(url);
   });
 }

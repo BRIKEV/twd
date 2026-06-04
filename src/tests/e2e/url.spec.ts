@@ -27,11 +27,11 @@ describe('twd url command', () => {
 
   afterAll(() => {
     // Restore original location after all tests
-    // @ts-expect-error
+    // @ts-expect-error -- restoring window.location that was deleted in beforeEach
     window.location = originalLocation;
   });
 
-  it('should get the current URL', async () => {
+  it('should get the current URL', () => {
     const urlCmd = twd.url();
     expect(urlCmd.location.href).toBe('http://localhost:3000/home');
   });
@@ -64,24 +64,30 @@ describe('twd url command', () => {
 
   it('should fail equality assertion with incorrect URL', async () => {
     const urlCmd = twd.url();
-    await expect(urlCmd.should('eq', 'http://localhost:3000/about')).rejects.toThrow('Assertion failed: Expected URL to be http://localhost:3000/about, but got http://localhost:3000/home');
+    await expect(urlCmd.should('eq', 'http://localhost:3000/about')).rejects.toThrow(
+      'Assertion failed: Expected URL to be http://localhost:3000/about, but got http://localhost:3000/home',
+    );
   });
-  
+
   it('should fail containment assertion with incorrect substring', async () => {
     const urlCmd = twd.url();
-    await expect(urlCmd.should('contain.url', '/about', 1)).rejects.toThrow('Assertion failed: Expected URL to contain /about, but got http://localhost:3000/home');
+    await expect(urlCmd.should('contain.url', '/about', 1)).rejects.toThrow(
+      'Assertion failed: Expected URL to contain /about, but got http://localhost:3000/home',
+    );
   });
 
   it('should fail invalid assertion name', async () => {
     const urlCmd = twd.url();
-    // @ts-expect-error
-    await expect(urlCmd.should('invalid.assertion', 'http://localhost:3000/home', 1)).rejects.toThrow('Unknown assertion: invalid.assertion');
+    // @ts-expect-error -- intentionally passing invalid assertion name to test error handling
+    await expect(
+      urlCmd.should('invalid.assertion', 'http://localhost:3000/home', 1),
+    ).rejects.toThrow('Unknown assertion: invalid.assertion');
   });
 
-  it('should retry assertion when it fails', async () => {
+  it('should retry assertion when it fails', () => {
     const urlCmd = twd.url();
     // this should not fail as it retries
-    urlCmd.should('eq', 'http://localhost:3000/about');
+    void urlCmd.should('eq', 'http://localhost:3000/about');
     window.location.href = 'http://localhost:3000/about';
   });
 });

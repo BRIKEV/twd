@@ -22,19 +22,19 @@ export const handleFetch = async (event) => {
   const rule = findRule(method, url, rules);
 
   if (rule) {
-    console.log("[TWD] Mock hit:", rule.alias, method, url);
+    console.log('[TWD] Mock hit:', rule.alias, method, url);
 
     event.respondWith(
       (async () => {
         // Capture body if needed
         let body = null;
-        const requestContentType = event.request.headers.get("content-type") || "application/json";
-        
-        if (requestContentType.includes("application/json")) {
+        const requestContentType = event.request.headers.get('content-type') || 'application/json';
+
+        if (requestContentType.includes('application/json')) {
           try {
             body = await event.request.clone().json();
           } catch {}
-        } else if (requestContentType.includes("form")) {
+        } else if (requestContentType.includes('form')) {
           try {
             const formData = await event.request.clone().formData();
             body = {};
@@ -42,15 +42,15 @@ export const handleFetch = async (event) => {
               body[key] = value;
             });
           } catch {}
-        } else if (requestContentType.includes("text")) {
+        } else if (requestContentType.includes('text')) {
           try {
             body = await event.request.clone().text();
           } catch {}
-        } else if (requestContentType.includes("octet-stream")) {
+        } else if (requestContentType.includes('octet-stream')) {
           try {
             body = await event.request.clone().arrayBuffer();
           } catch {}
-        } else if (requestContentType.includes("image")) {
+        } else if (requestContentType.includes('image')) {
           try {
             body = await event.request.clone().blob();
           } catch {}
@@ -70,15 +70,11 @@ export const handleFetch = async (event) => {
 
         // Apply delay if configured (after notification, before response)
         if (rule.delay && rule.delay > 0) {
-          await new Promise(resolve => setTimeout(resolve, rule.delay));
+          await new Promise((resolve) => setTimeout(resolve, rule.delay));
         }
 
-        return mockResponse(
-          rule.response,
-          rule.status ?? 200,
-          rule.responseHeaders
-        );
-      })()
+        return mockResponse(rule.response, rule.status ?? 200, rule.responseHeaders);
+      })(),
     );
   }
 };
@@ -96,24 +92,23 @@ Please unregister the Service Worker and reload the page to ensure compatibility
 To reinstall:
   npx twd-js init public --save
 
-Docs: https://brikev.github.io/twd/api-mocking.html#_1-install-mock-service-worker`
+Docs: https://brikev.github.io/twd/api-mocking.html#_1-install-mock-service-worker`,
     );
   }
 };
 
-
 export const handleMessage = (event) => {
   const { type, rule, version } = event.data || {};
   isValidVersion(version);
-  if (type === "ADD_RULE") {
+  if (type === 'ADD_RULE') {
     rules = rules.filter((r) => r.alias !== rule.alias);
     rules.push(rule);
-    console.log("[TWD] Rule added:", rule);
+    console.log('[TWD] Rule added:', rule);
   }
-  if (type === "CLEAR_RULES") {
+  if (type === 'CLEAR_RULES') {
     rules = [];
     ruleHitCount = {};
-    console.log("[TWD] All rules cleared");
+    console.log('[TWD] All rules cleared');
   }
 };
 
@@ -128,7 +123,7 @@ self.addEventListener('activate', (event) => {
 // console.log command to tell current version
 console.log(`[TWD] Mock Service Worker loaded - version ${TWD_VERSION}`);
 // Intercept fetches
-self.addEventListener("fetch", handleFetch);
+self.addEventListener('fetch', handleFetch);
 
 // Listen for messages from the app
-self.addEventListener("message", handleMessage);
+self.addEventListener('message', handleMessage);

@@ -3,11 +3,15 @@ import { eventsMessage } from '../../../src/proxies/eventsMessage';
 
 describe('eventsMessage', () => {
   it('should return type message', () => {
-    expect(eventsMessage('userEvent', 'type', [null, 'hello'])).toBe('Event fired: Typed "hello" into element');
+    expect(eventsMessage('userEvent', 'type', [null, 'hello'])).toBe(
+      'Event fired: Typed "hello" into element',
+    );
   });
 
   it('should return selectOptions message', () => {
-    expect(eventsMessage('userEvent', 'selectOptions', [null, ['option1', 'option2']])).toBe('Event fired: Selected option(s) ["option1","option2"]');
+    expect(eventsMessage('userEvent', 'selectOptions', [null, ['option1', 'option2']])).toBe(
+      'Event fired: Selected option(s) ["option1","option2"]',
+    );
   });
 
   it('should return click message', () => {
@@ -19,7 +23,9 @@ describe('eventsMessage', () => {
   });
 
   it('should return tripleClick message', () => {
-    expect(eventsMessage('userEvent', 'tripleClick', [])).toBe('Event fired: Triple-clicked element');
+    expect(eventsMessage('userEvent', 'tripleClick', [])).toBe(
+      'Event fired: Triple-clicked element',
+    );
   });
 
   it('should return default message for other events', () => {

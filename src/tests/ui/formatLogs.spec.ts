@@ -1,5 +1,11 @@
 import { describe, it, expect } from 'vitest';
-import { formatValue, getDisplayText, parseLogEntry, assertStyles, LogType } from '../../ui/utils/formatLogs';
+import {
+  formatValue,
+  getDisplayText,
+  parseLogEntry,
+  assertStyles,
+  LogType,
+} from '../../ui/utils/formatLogs';
 
 describe('formatLogs', () => {
   describe('formatValue', () => {
@@ -30,7 +36,7 @@ describe('formatLogs', () => {
     it('should return message for ChaiMessageLog and ErrorLog', () => {
       const messageLog: any = { type: LogType.CHAI_MESSAGE, message: 'test message' };
       const errorLog: any = { type: LogType.ERROR, message: 'error message' };
-      
+
       expect(getDisplayText('original', messageLog)).toBe('test message');
       expect(getDisplayText('original', errorLog)).toBe('error message');
     });
@@ -45,7 +51,7 @@ describe('formatLogs', () => {
     it('should parse valid log entries', () => {
       const diffLog = JSON.stringify({ type: LogType.CHAI_DIFF, expected: 2, actual: 1 });
       const messageLog = JSON.stringify({ type: LogType.CHAI_MESSAGE, message: 'test' });
-      
+
       expect(parseLogEntry(diffLog)?.type).toBe(LogType.CHAI_DIFF);
       expect(parseLogEntry(messageLog)?.type).toBe(LogType.CHAI_MESSAGE);
     });
@@ -61,18 +67,18 @@ describe('formatLogs', () => {
     it('should return success styles for "Assertion passed" and "Event fired"', () => {
       expect(assertStyles('Assertion passed: test')).toEqual({
         color: 'var(--twd-success)',
-        fontWeight: 'var(--twd-font-weight-bold)'
+        fontWeight: 'var(--twd-font-weight-bold)',
       });
       expect(assertStyles('Event fired: click')).toEqual({
         color: 'var(--twd-success)',
-        fontWeight: 'var(--twd-font-weight-bold)'
+        fontWeight: 'var(--twd-font-weight-bold)',
       });
     });
 
     it('should return error styles for "Test failed"', () => {
       expect(assertStyles('Test failed: error')).toEqual({
         color: 'var(--twd-error)',
-        fontWeight: 'var(--twd-font-weight-bold)'
+        fontWeight: 'var(--twd-font-weight-bold)',
       });
     });
 

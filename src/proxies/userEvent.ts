@@ -78,9 +78,11 @@ function typingFallback(element: HTMLElement, text: string) {
   const isTextarea = element instanceof HTMLTextAreaElement;
 
   if (isInput || isTextarea) {
+    /* eslint-disable @typescript-eslint/unbound-method -- set is called via .call(), so this-binding is explicit */
     const nativeSetter = isInput
       ? Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value')?.set
       : Object.getOwnPropertyDescriptor(HTMLTextAreaElement.prototype, 'value')?.set;
+    /* eslint-enable @typescript-eslint/unbound-method */
 
     if (nativeSetter) {
       nativeSetter.call(element, text);
@@ -189,8 +191,12 @@ function createLoggedProxy(obj: any, prefix = 'userEvent') {
                 typingFallback(active, currentValue.slice(0, -1));
               } else if (mappedKey) {
                 flushText();
-                active.dispatchEvent(new KeyboardEvent('keydown', { bubbles: true, cancelable: true, key: mappedKey }));
-                active.dispatchEvent(new KeyboardEvent('keyup', { bubbles: true, cancelable: true, key: mappedKey }));
+                active.dispatchEvent(
+                  new KeyboardEvent('keydown', { bubbles: true, cancelable: true, key: mappedKey }),
+                );
+                active.dispatchEvent(
+                  new KeyboardEvent('keyup', { bubbles: true, cancelable: true, key: mappedKey }),
+                );
               } else {
                 // Regular character — accumulate for a single flush
                 textBuffer += token;

@@ -34,11 +34,10 @@ describe('mockResponse', () => {
   });
 
   it('should use custom headers when provided', async () => {
-    const response = mockResponse(
-      { data: 'test' },
-      200,
-      { 'X-Custom': 'value', 'Content-Type': 'text/plain' }
-    );
+    const response = mockResponse({ data: 'test' }, 200, {
+      'X-Custom': 'value',
+      'Content-Type': 'text/plain',
+    });
 
     expect(response.headers.get('X-Custom')).toBe('value');
     expect(response.headers.get('Content-Type')).toBe('text/plain');
@@ -52,11 +51,7 @@ describe('mockResponse', () => {
   });
 
   it('should allow custom headers for status codes without body', () => {
-    const response = mockResponse(
-      { data: 'test' },
-      204,
-      { 'X-Custom-Header': 'custom-value' }
-    );
+    const response = mockResponse({ data: 'test' }, 204, { 'X-Custom-Header': 'custom-value' });
 
     expect(response.headers.get('X-Custom-Header')).toBe('custom-value');
     expect(response.body).toBeNull();
@@ -65,7 +60,7 @@ describe('mockResponse', () => {
   it('should stringify response object as JSON body', async () => {
     const responseData = {
       users: [{ id: 1, name: 'John' }],
-      total: 1
+      total: 1,
     };
     const response = mockResponse(responseData, 200);
 

@@ -7,6 +7,16 @@ description: Real-world examples, tutorials, and community content for TWD
 
 Real-world examples, tutorials, and community content for TWD.
 
+## Contributors
+
+People from the community who have shipped code, docs, or other improvements to TWD. If you're starting out in tech and looking for a beginner-friendly first PR, see the [open issues](https://github.com/BRIKEV/twd/issues) — reach out and I'll help with setup and walk you through it.
+
+| Contributor | Contribution |
+|-------------|--------------|
+| [Francisco Javier Rodriguez](https://github.com/DamonCaos) | Documentation — [PR #230](https://github.com/BRIKEV/twd/pull/230) |
+| [Guillermo Ruiz Arranz](https://github.com/codesthenos) | Code — [PR #232](https://github.com/BRIKEV/twd/pull/232) |
+| [Roberto Gomez Fabrega](https://github.com/Rober040992) | Documentation — [PR #239](https://github.com/BRIKEV/twd/pull/239) |
+
 ## Live Showcase
 
 See TWD testing real shadcn/ui components with live code and tests running in the browser:
@@ -19,6 +29,7 @@ See TWD testing real shadcn/ui components with live code and tests running in th
 |------------|-----------|----------------------|
 | [twd-shadcn](https://github.com/BRIKEV/twd-shadcn) | React + shadcn/ui | Testing shadcn components (forms, dialogs, tables) with [live demo](https://brikev.github.io/twd-shadcn/) |
 | [twd-react-router](https://github.com/BRIKEV/twd-react-router) | React Router (Framework Mode) | SSR-compatible setup with `createRoutesStub`, loader mocking |
+| [twd-tanstack-example](https://github.com/BRIKEV/twd-tanstack-example) | React + TanStack Router | TanStack Router integration with route + loader testing |
 | [twd-vue-example](https://github.com/BRIKEV/twd-vue-example) | Vue | Vue integration with bundled setup |
 | [twd-angular-example](https://github.com/BRIKEV/twd-angular-example) | Angular | Angular integration with manual test imports |
 | [twd-auth0](https://github.com/BRIKEV/twd-auth0) | React + Auth0 | Auth session mocking with Sinon stubs |
@@ -47,6 +58,6 @@ The main TWD repository also includes working examples:
 
 ## Blog Posts
 
-Written by [Kevin Martinez](https://www.linkedin.com/in/kevinjmartinez/), TWD maintainer. More posts on [DEV.to](https://dev.to/kevinccbsg).
+Written by [Kevin Martinez](https://www.linkedin.com/in/kevinjmartinez/), TWD maintainer. More posts on [DEV.to](https://dev.to/kevinccbsg). Follow on [Bluesky](https://bsky.app/profile/kevintwd.bsky.social).
 
 *Coming soon*

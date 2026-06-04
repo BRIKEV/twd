@@ -1,4 +1,3 @@
-
 /**
  * Mocks a Response object based on the given status and headers.
  * If the status code does not allow a body, the body will be null.
@@ -15,13 +14,8 @@ export const mockResponse = (response, status, headers) => {
 
   const body = shouldIncludeBody ? JSON.stringify(response) : null;
 
-  return new Response(
-    body,
-    {
-      status,
-      headers: shouldIncludeBody
-        ? (headers || { "Content-Type": "application/json" })
-        : (headers || {}),
-    }
-  );
+  return new Response(body, {
+    status,
+    headers: shouldIncludeBody ? headers || { 'Content-Type': 'application/json' } : headers || {},
+  });
 };

@@ -1,6 +1,8 @@
 <script setup>
 import { useData } from 'vitepress'
 import { ref, onMounted } from 'vue'
+import ThesisBanner from './ThesisBanner.vue'
+import AdoptionLineDiagram from './AdoptionLineDiagram.vue'
 
 const { isDark } = useData()
 const loaded = ref(false)
@@ -64,8 +66,7 @@ const faqs = [
               <span class="hero-line hero-line--2">It's how you build.</span>
             </h1>
             <p class="hero-sub">
-              Write tests while you develop, in your real browser.
-              Let the AI agent iterate. Validate every mock against the real API before you merge.
+              Write tests in your real browser. Let AI iterate. Validate every mock before you merge.
             </p>
             <div class="hero-actions">
               <a href="/getting-started" class="btn btn-brand">
@@ -104,6 +105,16 @@ const faqs = [
           </div>
           <div class="pain-card">
             <div class="pain-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3" y="6" width="9" height="13" rx="1.5" stroke="currentColor" stroke-width="2"/><rect x="10" y="3" width="11" height="14" rx="1.5" stroke="var(--hp-danger)" stroke-width="2"/><path d="M13 7h5M13 10h5M13 13h5" stroke="var(--hp-danger)" stroke-width="2" stroke-linecap="round"/></svg>
+            </div>
+            <h3 class="pain-title">Tests outweigh features</h3>
+            <p class="pain-desc">
+              Setup. Mocks. Helpers. You end up writing more code for the tests
+              than for the feature itself. Like shipping a second app.
+            </p>
+          </div>
+          <div class="pain-card">
+            <div class="pain-icon">
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="2" stroke="currentColor" stroke-width="2"/><path d="M9 9l6 6M15 9l-6 6" stroke="var(--hp-danger)" stroke-width="2" stroke-linecap="round"/></svg>
             </div>
             <h3 class="pain-title">AI writes tests that don't run</h3>
@@ -125,116 +136,18 @@ const faqs = [
         </div>
       </section>
 
-      <!-- Section 3: Ecosystem Pipeline -->
-      <section class="pipeline">
-        <h2 class="section-title">The TWD Ecosystem</h2>
-        <p class="section-sub">All optional. All composable. Start with the sidebar, add what you need.</p>
+      <!-- Section 3: Ecosystem (adoption-line) -->
+      <section class="ecosystem">
+        <h2 class="section-title">One package today. The rest when you need it.</h2>
+        <p class="section-sub">
+          Start with the sidebar in your browser. Layer on AI, CI, and contract validation
+          only when your team is ready for each one.
+        </p>
 
-        <!-- Desktop: SVG circular diagram -->
-        <div class="pipeline-desktop" aria-hidden="true">
-          <svg viewBox="0 0 800 420" xmlns="http://www.w3.org/2000/svg" class="pipeline-svg" focusable="false">
-            <!-- Subtle radial glow in center -->
-            <defs>
-              <radialGradient id="center-glow" cx="50%" cy="50%" r="50%">
-                <stop offset="0%" stop-color="var(--vp-c-brand-1)" stop-opacity="0.06"/>
-                <stop offset="100%" stop-color="var(--vp-c-brand-1)" stop-opacity="0"/>
-              </radialGradient>
-              <marker id="arr-teal" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
-                <polygon points="0 0, 8 3, 0 6" fill="var(--vp-c-brand-1)"/>
-              </marker>
-              <marker id="arr-green" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
-                <polygon points="0 0, 8 3, 0 6" fill="var(--pipeline-green)"/>
-              </marker>
-            </defs>
-            <circle cx="400" cy="220" r="140" fill="url(#center-glow)"/>
+        <ThesisBanner size="lg" />
 
-            <!-- Center text -->
-            <text x="400" y="214" text-anchor="middle" fill="var(--vp-c-brand-1)" font-size="18" font-weight="700" opacity="0.55" letter-spacing="0.15em">TWD</text>
-            <text x="400" y="232" text-anchor="middle" fill="var(--vp-c-text-2)" font-size="10" opacity="0.7" letter-spacing="0.04em">test what you own</text>
-            <text x="400" y="246" text-anchor="middle" fill="var(--vp-c-text-2)" font-size="10" opacity="0.7" letter-spacing="0.04em">mock what you don't</text>
-
-            <!-- Stage 1: Top — DEVELOP + TEST (CORE) -->
-            <rect x="280" y="50" width="240" height="88" rx="12" fill="var(--pipeline-card-bg)" stroke="var(--vp-c-brand-1)" stroke-width="2"/>
-            <rect x="430" y="42" width="60" height="18" rx="9" fill="var(--vp-c-brand-btn)"/>
-            <text x="460" y="55" text-anchor="middle" fill="#fff" font-size="9" font-weight="700" letter-spacing="0.05em">CORE</text>
-            <text x="305" y="80" fill="var(--vp-c-brand-1)" font-size="10" font-weight="700" letter-spacing="0.08em">DEVELOP + TEST</text>
-            <text x="305" y="100" fill="var(--vp-c-text-1)" font-size="15" font-weight="700">twd-js</text>
-            <text x="305" y="120" fill="var(--vp-c-text-3)" font-size="11">Sidebar in your browser</text>
-
-            <!-- Stage 2: Right — AI AGENT (optional) -->
-            <rect x="560" y="155" width="220" height="88" rx="12" fill="var(--pipeline-card-bg)" stroke="var(--vp-c-brand-1)" stroke-width="1.5" stroke-dasharray="6,4"/>
-            <rect x="690" y="147" width="72" height="20" rx="10" fill="var(--vp-c-bg)" stroke="var(--vp-c-brand-1)" stroke-width="1.2"/>
-            <text x="726" y="161" text-anchor="middle" fill="var(--vp-c-brand-1)" font-size="10" font-weight="700" letter-spacing="0.03em">optional</text>
-            <text x="585" y="185" fill="var(--vp-c-brand-1)" font-size="10" font-weight="700" letter-spacing="0.08em">AI AGENT</text>
-            <text x="585" y="207" fill="var(--vp-c-text-1)" font-size="13" font-weight="600">twd-relay + twd-ai</text>
-            <text x="585" y="227" fill="var(--vp-c-text-3)" font-size="11">Write, run, fix, repeat</text>
-
-            <!-- Stage 3: Bottom-right — CI PIPELINE (optional) -->
-            <rect x="490" y="290" width="220" height="88" rx="12" fill="var(--pipeline-card-bg)" stroke="var(--vp-c-brand-1)" stroke-width="1.5" stroke-dasharray="6,4"/>
-            <rect x="620" y="282" width="72" height="20" rx="10" fill="var(--vp-c-bg)" stroke="var(--vp-c-brand-1)" stroke-width="1.2"/>
-            <text x="656" y="296" text-anchor="middle" fill="var(--vp-c-brand-1)" font-size="10" font-weight="700" letter-spacing="0.03em">optional</text>
-            <text x="515" y="320" fill="var(--vp-c-brand-1)" font-size="10" font-weight="700" letter-spacing="0.08em">CI PIPELINE</text>
-            <text x="515" y="342" fill="var(--vp-c-text-1)" font-size="13" font-weight="600">twd-cli</text>
-            <text x="515" y="362" fill="var(--vp-c-text-3)" font-size="11">Headless tests + coverage</text>
-
-            <!-- Stage 4: Bottom-left — VALIDATE CONTRACTS (optional, gold) -->
-            <rect x="90" y="290" width="240" height="88" rx="12" fill="var(--pipeline-card-bg)" stroke="var(--pipeline-gold)" stroke-width="1.5" stroke-dasharray="6,4"/>
-            <rect x="240" y="282" width="72" height="20" rx="10" fill="var(--vp-c-bg)" stroke="var(--pipeline-gold)" stroke-width="1.2"/>
-            <text x="276" y="296" text-anchor="middle" fill="var(--pipeline-gold)" font-size="10" font-weight="700" letter-spacing="0.03em">optional</text>
-            <text x="115" y="320" fill="var(--pipeline-gold)" font-size="10" font-weight="700" letter-spacing="0.08em">VALIDATE CONTRACTS</text>
-            <text x="115" y="342" fill="var(--vp-c-text-1)" font-size="13" font-weight="600">openapi-mock-validator</text>
-            <text x="115" y="362" fill="var(--vp-c-text-3)" font-size="11">Every mock vs the real spec</text>
-
-            <!-- Stage 5: Left — SHIP (green) -->
-            <rect x="20" y="155" width="220" height="88" rx="12" fill="var(--pipeline-card-bg)" stroke="var(--pipeline-green)" stroke-width="2"/>
-            <text x="45" y="185" fill="var(--pipeline-green)" font-size="10" font-weight="700" letter-spacing="0.08em">SHIP</text>
-            <text x="45" y="207" fill="var(--vp-c-text-1)" font-size="15" font-weight="700">Merge with confidence</text>
-            <text x="45" y="227" fill="var(--vp-c-text-3)" font-size="11">Contracts validated, tests green</text>
-
-            <!-- Arrows — clockwise flow -->
-            <path d="M520 104 C555 120, 568 145, 565 155" stroke="var(--vp-c-brand-1)" stroke-width="1.5" fill="none" marker-end="url(#arr-teal)" opacity="0.45"/>
-            <path d="M675 243 C678 265, 660 280, 640 290" stroke="var(--vp-c-brand-1)" stroke-width="1.5" fill="none" marker-end="url(#arr-teal)" opacity="0.45"/>
-            <path d="M490 340 C440 358, 390 358, 330 340" stroke="var(--vp-c-brand-1)" stroke-width="1.5" fill="none" marker-end="url(#arr-teal)" opacity="0.45"/>
-            <path d="M125 290 C110 270, 110 255, 120 243" stroke="var(--vp-c-brand-1)" stroke-width="1.5" fill="none" marker-end="url(#arr-teal)" opacity="0.45"/>
-            <path d="M140 155 C150 125, 215 90, 280 84" stroke="var(--pipeline-green)" stroke-width="1.5" fill="none" marker-end="url(#arr-green)" opacity="0.45"/>
-          </svg>
-        </div>
-
-        <!-- Mobile: Linearized vertical flow -->
-        <div class="pipeline-mobile" role="list" aria-label="TWD ecosystem stages">
-          <div class="pipeline-stage pipeline-stage--core" role="listitem">
-            <span class="pipeline-badge pipeline-badge--core">CORE</span>
-            <h3 class="pipeline-label">DEVELOP + TEST</h3>
-            <p class="pipeline-pkg">twd-js</p>
-            <p class="pipeline-desc">Sidebar in your browser</p>
-          </div>
-          <div class="pipeline-arrow" aria-hidden="true"></div>
-          <div class="pipeline-stage pipeline-stage--optional" role="listitem">
-            <span class="pipeline-badge pipeline-badge--optional">optional</span>
-            <h3 class="pipeline-label">AI AGENT</h3>
-            <p class="pipeline-pkg">twd-relay + twd-ai</p>
-            <p class="pipeline-desc">Write, run, fix, repeat</p>
-          </div>
-          <div class="pipeline-arrow" aria-hidden="true"></div>
-          <div class="pipeline-stage pipeline-stage--optional" role="listitem">
-            <span class="pipeline-badge pipeline-badge--optional">optional</span>
-            <h3 class="pipeline-label">CI PIPELINE</h3>
-            <p class="pipeline-pkg">twd-cli</p>
-            <p class="pipeline-desc">Headless tests + coverage</p>
-          </div>
-          <div class="pipeline-arrow" aria-hidden="true"></div>
-          <div class="pipeline-stage pipeline-stage--gold" role="listitem">
-            <span class="pipeline-badge pipeline-badge--gold">optional</span>
-            <h3 class="pipeline-label pipeline-label--gold">VALIDATE CONTRACTS</h3>
-            <p class="pipeline-pkg">openapi-mock-validator</p>
-            <p class="pipeline-desc">Every mock vs the real spec</p>
-          </div>
-          <div class="pipeline-arrow pipeline-arrow--green" aria-hidden="true"></div>
-          <div class="pipeline-stage pipeline-stage--green" role="listitem">
-            <h3 class="pipeline-label pipeline-label--green">SHIP</h3>
-            <p class="pipeline-pkg">Merge with confidence</p>
-            <p class="pipeline-desc">Contracts validated, tests green</p>
-          </div>
+        <div class="ecosystem-diagram">
+          <AdoptionLineDiagram />
         </div>
       </section>
 
@@ -249,19 +162,19 @@ const faqs = [
               <span class="step-line"></span>
             </div>
             <div class="step-content">
-              <h3 class="step-title">Install and add to your entry point</h3>
+              <h3 class="step-title">Install and add the Vite plugin</h3>
               <div class="code-block">
                 <div class="code-header"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span><span class="code-filename">terminal</span></div>
                 <pre><code>npm install twd-js</code></pre>
               </div>
               <div class="code-block">
-                <div class="code-header"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span><span class="code-filename">src/main.tsx</span></div>
-                <pre><code><span class="hl-comment">// Only load TWD in development</span>
-<span class="hl-keyword">if</span> (<span class="hl-meta">import.meta.env.DEV</span>) {
-  <span class="hl-keyword">const</span> { initTWD } = <span class="hl-keyword">await</span> <span class="hl-keyword">import</span>(<span class="hl-string">'twd-js/bundled'</span>);
-  <span class="hl-keyword">const</span> tests = <span class="hl-meta">import.meta.glob</span>(<span class="hl-string">"./**/*.twd.test.ts"</span>);
-  <span class="hl-func">initTWD</span>(tests, { <span class="hl-prop">open</span>: <span class="hl-keyword">true</span> });
-}</code></pre>
+                <div class="code-header"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span><span class="code-filename">vite.config.ts</span></div>
+                <pre><code><span class="hl-keyword">import</span> { defineConfig } <span class="hl-keyword">from</span> <span class="hl-string">'vite'</span>;
+<span class="hl-keyword">import</span> { twd } <span class="hl-keyword">from</span> <span class="hl-string">'twd-js/vite-plugin'</span>;
+
+<span class="hl-keyword">export default</span> <span class="hl-func">defineConfig</span>({
+  <span class="hl-prop">plugins</span>: [<span class="hl-func">twd</span>({ <span class="hl-prop">open</span>: <span class="hl-keyword">true</span> })],
+});</code></pre>
               </div>
             </div>
           </div>
@@ -321,6 +234,17 @@ const faqs = [
             <summary class="faq-question">{{ faq.q }}</summary>
             <p class="faq-answer">{{ faq.a }}</p>
           </details>
+        </div>
+
+        <div class="faq-cta">
+          <h3 class="faq-cta-title">Still have questions?</h3>
+          <p class="faq-cta-desc">
+            Have questions or want a deeper dive? Schedule a session with the maintainer.
+            Happy to walk you through TWD or run a tailored workshop for your team.
+          </p>
+          <a href="https://calendly.com/kevinccbsg/30min" target="_blank" rel="noopener" class="btn btn-outline">
+            Book a session <span class="visually-hidden">(opens in new tab)</span>
+          </a>
         </div>
       </section>
 
@@ -558,8 +482,14 @@ const faqs = [
 
 .pain-cards {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: 20px;
+}
+
+@media (max-width: 1024px) {
+  .pain-cards {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
 .pain-card {
@@ -619,144 +549,15 @@ const faqs = [
 }
 
 /* ============================================
-   Pipeline
+   Ecosystem
    ============================================ */
-.pipeline {
+.ecosystem {
   padding-bottom: var(--hp-section-gap);
 }
 
-.pipeline-desktop {
-  margin-top: 48px;
+.ecosystem-diagram {
+  margin-top: 8px;
 }
-
-.pipeline-svg {
-  width: 100%;
-  max-width: 800px;
-  height: auto;
-  display: block;
-  margin: 0 auto;
-}
-
-.pipeline-mobile {
-  margin-top: 32px;
-}
-
-@media (min-width: 769px) {
-  .pipeline-mobile {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    padding: 0;
-    margin: -1px;
-    overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-    white-space: nowrap;
-    border: 0;
-  }
-}
-
-/* Mobile pipeline stages */
-.pipeline-stage {
-  padding: 20px 24px;
-  border-radius: var(--hp-radius);
-  border: 1.5px solid var(--hp-border);
-  background: var(--hp-surface);
-  position: relative;
-}
-
-.pipeline-stage--core {
-  border-color: var(--vp-c-brand-1);
-  border-width: 2px;
-}
-
-.pipeline-stage--optional {
-  border-style: dashed;
-  border-color: var(--vp-c-brand-1);
-}
-
-.pipeline-stage--gold {
-  border-style: dashed;
-  border-color: var(--pipeline-gold);
-}
-
-.pipeline-stage--green {
-  border-color: var(--pipeline-green);
-  border-width: 2px;
-}
-
-.pipeline-badge {
-  position: absolute;
-  top: -10px;
-  right: 16px;
-  padding: 2px 12px;
-  border-radius: 10px;
-  font-size: 0.6875rem;
-  font-weight: 700;
-  letter-spacing: 0.03em;
-  background: var(--vp-c-bg);
-}
-
-.pipeline-badge--core {
-  background: var(--vp-c-brand-btn);
-  color: #fff;
-}
-
-.pipeline-badge--optional {
-  border: 1px solid var(--vp-c-brand-1);
-  color: var(--vp-c-brand-1);
-  opacity: 0.7;
-}
-
-.pipeline-badge--gold {
-  border: 1px solid var(--pipeline-gold);
-  color: var(--pipeline-gold);
-  opacity: 0.7;
-}
-
-.pipeline-label {
-  font-size: 0.6875rem;
-  font-weight: 700;
-  color: var(--vp-c-brand-1);
-  letter-spacing: 0.08em;
-  margin-bottom: 4px;
-}
-
-.pipeline-label--gold { color: var(--pipeline-gold); }
-.pipeline-label--green { color: var(--pipeline-green); }
-
-.pipeline-pkg {
-  font-size: 1rem;
-  font-weight: 700;
-  color: var(--vp-c-text-1);
-}
-
-.pipeline-desc {
-  font-size: 0.8125rem;
-  color: var(--vp-c-text-3);
-  margin-top: 2px;
-}
-
-.pipeline-arrow {
-  width: 2px;
-  height: 24px;
-  background: var(--vp-c-brand-1);
-  margin: 0 auto;
-  opacity: 0.25;
-  position: relative;
-}
-
-.pipeline-arrow::after {
-  content: '';
-  position: absolute;
-  bottom: -5px;
-  left: -3px;
-  border-left: 4px solid transparent;
-  border-right: 4px solid transparent;
-  border-top: 6px solid var(--vp-c-brand-1);
-}
-
-.pipeline-arrow--green { background: var(--pipeline-green); }
-.pipeline-arrow--green::after { border-top-color: var(--pipeline-green); }
 
 /* ============================================
    Quick Start
@@ -969,6 +770,31 @@ details[open] .faq-question::before {
   color: var(--vp-c-text-2);
 }
 
+.faq-cta {
+  margin-top: 36px;
+  padding: 32px 28px;
+  border-radius: var(--hp-radius);
+  border: 1px solid var(--hp-border);
+  background: var(--hp-surface);
+  text-align: center;
+}
+
+.faq-cta-title {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--vp-c-text-1);
+  letter-spacing: -0.01em;
+  margin-bottom: 10px;
+}
+
+.faq-cta-desc {
+  font-size: 0.875rem;
+  line-height: 1.65;
+  color: var(--vp-c-text-2);
+  max-width: 520px;
+  margin: 0 auto 20px;
+}
+
 /* ============================================
    Manifesto Quote
    ============================================ */
@@ -1064,22 +890,6 @@ details[open] .faq-question::before {
 
   .pain-cards {
     grid-template-columns: 1fr;
-  }
-
-  .pipeline-desktop {
-    display: none;
-  }
-
-  .pipeline-mobile {
-    position: static;
-    width: auto;
-    height: auto;
-    padding: 0;
-    margin: 0;
-    margin-top: 32px;
-    overflow: visible;
-    clip: auto;
-    white-space: normal;
   }
 
   .section-title {

@@ -180,6 +180,21 @@ await twd.visit("/users?page=2");
 // Wait for time
 await twd.wait(1000); // 1 second
 
+// Wait for a condition (preferred over twd.wait for retry logic)
+// ONLY use waitFor when you need retry logic (async rendering, delayed events)
+await twd.waitFor(() => {
+  const event = findEvent("purchase");
+  expect(event).to.exist;
+});
+
+// waitFor returns the callback's value
+const event = await twd.waitFor(() => {
+  const ev = findEvent("purchase");
+  expect(ev).to.exist;
+  return ev;
+});
+expect(event.customer_type).to.equal("b2c");
+
 // Wait for element to appear (Testing Library)
 const element = await screenDom.findByText("Success!");
 
@@ -512,6 +527,8 @@ export default { fetchData };
 | Assert visible | `element.should("be.visible")` |
 | Mock request | `await twd.mockRequest("alias", { method, url, response })` |
 | Wait for request | `await twd.waitForRequest("alias")` |
+| Wait for condition | `await twd.waitFor(() => expect(el).to.have.attribute("loaded", "true"))` |
+| Wait & return value | `const el = await twd.waitFor(() => screenDom.getByRole("button"))` |
 | Check mock hit count | `twd.getRequestCount("alias")` |
 | All mock hit counts | `twd.getRequestCounts()` |
 | Clear mocks | `twd.clearRequestMockRules()` |

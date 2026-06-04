@@ -1,17 +1,17 @@
-import type { Handler } from "../../runner";
-import { LogType } from "./formatLogs";
+import type { Handler } from '../../runner';
+import { LogType } from './formatLogs';
 
 /**
  * Generate screen reader message for a specific test result
  */
 export const displaySRMessageSpecificTest = (test: Handler): string => {
-  if (test.status === "pass") {
+  if (test.status === 'pass') {
     return `Test "${test.name}" passed.`;
-  } else if (test.status === "fail") {
+  } else if (test.status === 'fail') {
     if (!test.logs || test.logs.length === 0) {
       return `Test "${test.name}" failed.`;
     }
-    
+
     const lastLog = test.logs[test.logs.length - 1];
     try {
       const parsed = JSON.parse(lastLog);
@@ -25,7 +25,7 @@ export const displaySRMessageSpecificTest = (test: Handler): string => {
       // If log is not valid JSON, treat it as plain text
       return `Test "${test.name}" failed. ${lastLog}`;
     }
-  } else if (test.status === "skip") {
+  } else if (test.status === 'skip') {
     return `Test "${test.name}" skipped.`;
   }
   return '';
@@ -35,13 +35,13 @@ export const displaySRMessageSpecificTest = (test: Handler): string => {
  * Generate screen reader message for all tests result
  */
 export const displaySRMessageAllTests = (tests: Handler[]): string => {
-  const testItems = tests.filter(t => t.type === "test");
-  const passed = testItems.filter(t => t.status === "pass").length;
-  const failed = testItems.filter(t => t.status === "fail").length;
-  const skipped = testItems.filter(t => t.status === "skip").length;
-  
+  const testItems = tests.filter((t) => t.type === 'test');
+  const passed = testItems.filter((t) => t.status === 'pass').length;
+  const failed = testItems.filter((t) => t.status === 'fail').length;
+  const skipped = testItems.filter((t) => t.status === 'skip').length;
+
   const parts: string[] = [];
-  
+
   if (failed > 0) {
     parts.push(`Test run completed.`);
     parts.push(`${passed} test${passed !== 1 ? 's' : ''} passed`);

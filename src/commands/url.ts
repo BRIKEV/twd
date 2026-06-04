@@ -1,5 +1,5 @@
-import { log } from "../utils/log";
-import { assertionMessage } from "../utils/assertionMessage";
+import { log } from '../utils/log';
+import { assertionMessage } from '../utils/assertionMessage';
 /**
  * All supported assertion names for the `should` function in url command
  *
@@ -7,9 +7,7 @@ import { assertionMessage } from "../utils/assertionMessage";
  * twd.url().should("contain.url", "/new-page");
  * twd.url().should("eq", "http://localhost:3000/new-page");
  */
-export type URLAssertionName =
-  | "eq"
-  | "contain.url";
+export type URLAssertionName = 'eq' | 'contain.url';
 
 /**
  * Negatable assertion names (e.g., 'not.have.text').
@@ -24,34 +22,34 @@ export type AnyURLAssertion = Negatable<URLAssertionName>;
 export type URLCommandAPI = {
   location: Location;
   should: (name: AnyURLAssertion, value: string, retries?: number) => Promise<string>;
-}
+};
 
 /**
  * Argument types for each assertion.
  */
 export type URLAssertionArgs = {
-  (name: "contain.url", urlPart: string): URLCommandAPI;
-  (name: "not.contain.url", urlPart: string): URLCommandAPI;
+  (name: 'contain.url', urlPart: string): URLCommandAPI;
+  (name: 'not.contain.url', urlPart: string): URLCommandAPI;
 };
 
 const should = (name: AnyURLAssertion, value: string) => {
-  const isNegated = name.startsWith("not.");
+  const isNegated = name.startsWith('not.');
   const baseName = isNegated ? name.slice(4) : name;
 
   switch (baseName) {
-    case "eq":
+    case 'eq':
       return assertionMessage(
         window.location.href === value,
         isNegated,
         `Assertion passed: URL is ${value}`,
-        `Assertion failed: Expected URL to be ${value}, but got ${window.location.href}`
+        `Assertion failed: Expected URL to be ${value}, but got ${window.location.href}`,
       );
-    case "contain.url":
+    case 'contain.url':
       return assertionMessage(
         window.location.href.includes(value),
         isNegated,
         `Assertion passed: URL contains ${value}`,
-        `Assertion failed: Expected URL to contain ${value}, but got ${window.location.href}`
+        `Assertion failed: Expected URL to contain ${value}, but got ${window.location.href}`,
       );
     default:
       throw new Error(`Unknown assertion: ${name}`);
@@ -74,7 +72,7 @@ const urlCommand = (): URLCommandAPI => {
           log(result);
           break;
         } catch (e) {
-          await new Promise(resolve => setTimeout(resolve, 100));
+          await new Promise((resolve) => setTimeout(resolve, 100));
           error = e as Error;
         }
       }

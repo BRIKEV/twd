@@ -10,14 +10,14 @@ describe('twd should', () => {
     const appContainer = document.createElement('div');
     appContainer.id = 'app';
     document.body.appendChild(appContainer);
-    
+
     div = document.createElement('div');
     appContainer.appendChild(div);
   });
-  
-  it('should assert have.text', async () => {
+
+  it('should assert have.text', () => {
     div.textContent = 'Hello World';
-    const elem = await screenDom.getByText('Hello World');
+    const elem = screenDom.getByText('Hello World');
     twd.should(elem, 'have.text', 'Hello World');
     expect(() => twd.should(elem, 'have.text', 'Wrong Text')).toThrow();
   });

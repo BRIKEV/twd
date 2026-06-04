@@ -10,7 +10,9 @@ describe('installsw.js CLI', () => {
   let exitStub, consoleErrorStub, consoleLogStub, mkdirStub, copyFileStub;
 
   beforeEach(async () => {
-    exitStub = vi.spyOn(process, 'exit').mockImplementation(() => { throw new Error('exit'); });
+    exitStub = vi.spyOn(process, 'exit').mockImplementation(() => {
+      throw new Error('exit');
+    });
     consoleErrorStub = vi.spyOn(console, 'error').mockImplementation(() => {});
     consoleLogStub = vi.spyOn(console, 'log').mockImplementation(() => {});
     mkdirStub = vi.spyOn(fs, 'mkdirSync').mockImplementation(() => {});
@@ -41,12 +43,16 @@ describe('installsw.js CLI', () => {
     await import(CLI_PATH);
     expect(mkdirStub).toHaveBeenCalled();
     expect(copyFileStub).toHaveBeenCalled();
-    expect(consoleLogStub.mock.calls.some(call => call[0].includes('mock-sw.js copied'))).toBeTruthy();
+    expect(
+      consoleLogStub.mock.calls.some((call) => call[0].includes('mock-sw.js copied')),
+    ).toBeTruthy();
   });
 
   it('logs registration tip if --save', async () => {
     process.argv = ['node', 'installsw.js', 'init', 'public', '--save'];
     await import(CLI_PATH);
-    expect(consoleLogStub.mock.calls.some(call => call[0].includes('Remember to register'))).toBeTruthy();
+    expect(
+      consoleLogStub.mock.calls.some((call) => call[0].includes('Remember to register')),
+    ).toBeTruthy();
   });
 });

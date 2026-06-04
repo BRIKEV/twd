@@ -6,7 +6,6 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
-    "lint": "eslint .",
     "preview": "vite preview",
     "dev:ci": "CI=true VITE_COVERAGE=true vite",
     "test:ci": "node scripts/run-tests-ci.js",
@@ -15,27 +14,19 @@
     "collect:coverage:text": "npx nyc report --reporter=text --report-dir=coverage"
   },
   "dependencies": {
-    "axios": "^1.15.0",
-    "react": "^19.1.1",
-    "react-dom": "^19.1.1",
-    "react-router": "^7.12.0"
+    "axios": "^1.16.0",
+    "react": "^19.2.5",
+    "react-dom": "^19.2.5",
+    "react-router": "^7.15.0"
   },
   "devDependencies": {
-    "@eslint/js": "^9.33.0",
-    "@types/chai": "^5.2.2",
-    "@types/react": "^19.1.10",
-    "@types/react-dom": "^19.1.7",
-    "@vitejs/plugin-react": "^5.0.0",
-    "chai": "^6.0.1",
-    "eslint": "^9.33.0",
-    "eslint-plugin-react-hooks": "^5.2.0",
-    "eslint-plugin-react-refresh": "^0.4.20",
-    "globals": "^16.3.0",
-    "puppeteer": "^24.30.0",
-    "twd-relay": "^0.1.0",
-    "typescript": "~5.8.3",
-    "typescript-eslint": "^8.39.1",
-    "vite": "^7.3.2",
-    "vite-plugin-istanbul": "^7.2.1"
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^6.0.1",
+    "puppeteer": "^25.1.0",
+    "twd-relay": "^1.1.1",
+    "typescript": "~6.0.3",
+    "vite": "^8.0.10",
+    "vite-plugin-istanbul": "^8.0.0"
   }
 }

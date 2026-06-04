@@ -1,0 +1,3 @@
+# Format sweep — applied prettier to src/ on 2026-05-01
+# Skip this commit when running `git blame`
+e48a498a2baae0b2a40fa6600fb7afcb7faecd4e

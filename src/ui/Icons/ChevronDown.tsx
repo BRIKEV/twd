@@ -1,4 +1,4 @@
-import BaseIcon from "./BaseIcon";
+import BaseIcon from './BaseIcon';
 
 const ChevronDown = () => (
   <BaseIcon className="lucide-chevron-down-icon lucide-chevron-down" dataTestId="chevron-down-icon">

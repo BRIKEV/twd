@@ -11,7 +11,7 @@ Complete reference documentation for all TWD functions, methods, and types.
 
 | Section | Description |
 |---------|-------------|
-| [Initialization](/api/#initialization) | `initTWD()` - Bundled setup for all frameworks |
+| [Initialization](/api/#initialization) | `twd()` Vite plugin (recommended) and `initTWD()` (manual) |
 | [Test Functions](/api/test-functions) | `describe`, `it`, `beforeEach`, `it.only`, `it.skip`, `afterEach` |
 | [TWD Commands](/api/twd-commands) | `twd.get()`, `twd.visit()`, `twd.viewport()`, `twd.mockRequest()`, etc. |
 | [Assertions](/api/assertions) | All available assertions and their usage |
@@ -32,24 +32,29 @@ import {
   expect
 } from "twd-js";
 
-// Bundled Setup (Recommended - works with all frameworks)
+// Vite Plugin (Recommended - works with all Vite-based frameworks)
+import { twd } from "twd-js/vite-plugin";
+
+// Bundled Setup (manual API; the plugin uses this internally)
 import { initTWD } from "twd-js/bundled";
 
 // UI Component (for React apps using standard setup)
 import { TWDSidebar } from "twd-js";
 
-// Vite Plugin (for production builds)
-import { removeMockServiceWorker } from "twd-js";
+// Production-build Vite plugin (cleanup)
+import { removeMockServiceWorker } from "twd-js/vite-plugin";
 
 // CI Integration (for test execution)
 import { reportResults } from "twd-js";
 
-// initTWD options:
+// twd() plugin options:
+//   testFilePattern?: string          // Glob for discovering test files (default: '/**/*.twd.test.ts')
 //   open?: boolean                    // Whether the sidebar is open by default (default: true)
 //   position?: "left" | "right"       // Sidebar position (default: "left")
 //   search?: boolean                  // Show search input to filter tests (default: false)
 //   serviceWorker?: boolean           // Enable request mocking (default: true)
 //   serviceWorkerUrl?: string         // Custom service worker path (default: '/mock-sw.js')
+//   theme?: Partial<TWDTheme>         // Custom theme
 
 // TWDSidebar props (for standard setup):
 //   open?: boolean        // Whether the sidebar is open by default (default: true)
@@ -59,9 +64,76 @@ import { reportResults } from "twd-js";
 
 ## Initialization
 
-### initTWD(files, options?)
+TWD provides two ways to initialize the in-browser sidebar and discover tests:
 
-Initializes TWD with test files and optional configuration. This is the **recommended setup** for all frameworks (React, Vue, Angular, Solid.js, etc.). It handles React dependencies internally and automatically initializes request mocking.
+1. **`twd()` Vite plugin** (recommended) — declarative, lives in `vite.config.ts`, no entry-file changes.
+2. **`initTWD()` manual API** — for non-Vite projects (Angular, Webpack/CRA) or when you need direct control.
+
+### twd(options?) — Vite plugin
+
+The recommended setup for any Vite-based project (React, Vue, Solid.js, Astro, etc.). Auto-injects test discovery and sidebar mounting in `vite dev`. No-op in production builds.
+
+#### Syntax
+
+```ts
+import { twd } from "twd-js/vite-plugin";
+
+twd(options?: TwdPluginOptions): VitePlugin
+```
+
+#### TwdPluginOptions
+
+```ts
+interface TwdPluginOptions {
+  testFilePattern?: string;     // Glob pattern for discovering test files (default: '/**/*.twd.test.ts')
+  open?: boolean;               // Whether the sidebar is open by default (default: true)
+  position?: "left" | "right";  // Sidebar position (default: "left")
+  search?: boolean;             // Show search input to filter tests (default: false)
+  serviceWorker?: boolean;      // Enable request mocking (default: true)
+  serviceWorkerUrl?: string;    // Custom service worker path (default: '/mock-sw.js')
+  theme?: Partial<TWDTheme>;    // Custom theme — see /theming
+  rootSelector?: string;        // Override the app root for screenDom queries
+}
+```
+
+#### Examples
+
+```ts
+// vite.config.ts
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react'; // or vue, solid
+import { twd } from 'twd-js/vite-plugin';
+
+// Minimal — all defaults
+export default defineConfig({
+  plugins: [react(), twd()],
+});
+
+// Custom sidebar configuration
+export default defineConfig({
+  plugins: [react(), twd({ open: false, position: 'right' })],
+});
+
+// Different test file pattern
+export default defineConfig({
+  plugins: [react(), twd({ testFilePattern: '/**/*.spec.{ts,tsx}' })],
+});
+
+// Disable request mocking
+export default defineConfig({
+  plugins: [react(), twd({ serviceWorker: false })],
+});
+```
+
+#### Notes
+
+- The plugin uses `apply: 'serve'`, so it's a no-op in `vite build`. Production bundles never include TWD code.
+- Full-reload on test-file edits is handled automatically.
+- Internally the plugin imports from `twd-js/bundled` and calls `initTWD` for you. Same runtime, less boilerplate.
+
+### initTWD(files, options?) — manual API
+
+The lower-level API. Use this for non-Vite projects (Angular, Webpack/CRA) or when you need conditional initialization the plugin doesn't expose.
 
 #### Syntax
 
@@ -73,8 +145,8 @@ initTWD(files: TestModule, options?: InitTWDOptions): void
 
 #### Parameters
 
-- **files** (`TestModule`) - Object mapping test file paths to async import functions (typically from `import.meta.glob()`)
-- **options** (`InitTWDOptions`, optional) - Configuration options
+- **files** (`TestModule`) - Object mapping test file paths to async import functions (typically from `import.meta.glob()` in Vite, or built manually in non-Vite environments)
+- **options** (`InitTWDOptions`, optional) - Configuration options (same shape as `TwdPluginOptions` above, minus `testFilePattern` since you supply `files` directly)
 
 #### InitTWDOptions
 
@@ -85,6 +157,8 @@ interface InitTWDOptions {
   search?: boolean;             // Show search input to filter tests (default: false)
   serviceWorker?: boolean;      // Enable request mocking (default: true)
   serviceWorkerUrl?: string;    // Custom service worker path (default: '/mock-sw.js')
+  theme?: Partial<TWDTheme>;    // Custom theme
+  rootSelector?: string;        // Override the app root for screenDom queries
 }
 ```
 
@@ -120,27 +194,9 @@ initTWD(tests, {
 });
 ```
 
-#### Framework Examples
+#### Framework Examples (manual init)
 
-**React:**
-```tsx
-if (import.meta.env.DEV) {
-  const { initTWD } = await import('twd-js/bundled');
-  const tests = import.meta.glob("./**/*.twd.test.ts");
-  initTWD(tests, { open: true, position: 'left' });
-}
-```
-
-**Vue:**
-```ts
-if (import.meta.env.DEV) {
-  const { initTWD } = await import('twd-js/bundled');
-  const tests = import.meta.glob("./**/*.twd.test.ts");
-  initTWD(tests);
-}
-```
-
-**Angular:**
+**Angular** (no Vite — manual init required):
 ```ts
 if (isDevMode()) {
   const { initTWD } = await import('twd-js/bundled');
@@ -151,12 +207,27 @@ if (isDevMode()) {
 }
 ```
 
+**Webpack / CRA** (manual init):
+```ts
+if (process.env.NODE_ENV === "development") {
+  const context = require.context("./", true, /\.twd\.test\.ts$/);
+  const tests = {};
+  context.keys().forEach((key) => {
+    tests[key] = async () => Promise.resolve(context(key));
+  });
+  const { initTWD } = await import('twd-js/bundled');
+  initTWD(tests);
+}
+```
+
+For Vite-based React/Vue/Solid examples, prefer the `twd()` plugin shown above.
+
 #### Notes
 
 - The bundled setup automatically handles React dependencies internally
 - Request mocking is initialized automatically by default (`serviceWorker: true`)
 - Works with all supported frameworks (React, Vue, Angular, Solid.js)
-- Test files are not included in production builds when wrapped in `import.meta.env.DEV` checks
+- Test files are not included in production builds when wrapped in `import.meta.env.DEV` checks (or `isDevMode()` for Angular, `process.env.NODE_ENV` for Webpack)
 
 ---
 

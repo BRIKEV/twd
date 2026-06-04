@@ -1,11 +1,11 @@
 interface Test {
   name: string;
   depth: number;
-  status?: "idle" | "pass" | "fail" | "skip" | "running";
+  status?: 'idle' | 'pass' | 'fail' | 'skip' | 'running';
   logs?: string[];
   id: string;
   parent?: string;
-  type: "test" | "suite";
+  type: 'test' | 'suite';
   only?: boolean;
   skip?: boolean;
 }

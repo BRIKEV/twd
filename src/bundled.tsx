@@ -2,6 +2,7 @@ import { render } from 'preact';
 import { initTests } from './initializers/initTests';
 import { TWDSidebar } from './ui/TWDSidebar';
 import { initRequestMocking } from './commands/mockBridge';
+import { setRootSelector } from './proxies/screenDom';
 import type { TWDTheme } from './ui/utils/theme';
 
 interface TestModule {
@@ -10,11 +11,12 @@ interface TestModule {
 
 interface InitTWDOptions {
   open?: boolean;
-  position?: "left" | "right";
+  position?: 'left' | 'right';
   serviceWorker?: boolean;
   serviceWorkerUrl?: string;
   theme?: Partial<TWDTheme>;
   search?: boolean;
+  rootSelector?: string;
 }
 
 // Create a compatibility wrapper for Preact's render to match React's createRoot API
@@ -42,17 +44,35 @@ const createRoot = (el: HTMLElement) => ({
  * initTWD(testModules, { open: true, position: 'left', serviceWorker: true, serviceWorkerUrl: '/mock-sw.js' });
  * @example
  * initTWD(testModules, { open: true, position: 'left', theme: { primary: '#ff0000', background: '#ffffff' } });
+ * @example
+ * initTWD(testModules, { rootSelector: '#my-app' });
  */
 export const initTWD = (files: TestModule, options?: InitTWDOptions) => {
-  const { open = true, position = "left", serviceWorker = true, serviceWorkerUrl = '/mock-sw.js', theme, search } = options || {};
-  initTests(files, <TWDSidebar open={open} position={position} {...(search !== undefined && { search })} />, createRoot, theme);
+  const {
+    open = true,
+    position = 'left',
+    serviceWorker = true,
+    serviceWorkerUrl = '/mock-sw.js',
+    theme,
+    search,
+    rootSelector,
+  } = options || {};
+  if (rootSelector) {
+    setRootSelector(rootSelector);
+  }
+  void initTests(
+    files,
+    <TWDSidebar open={open} position={position} {...(search !== undefined && { search })} />,
+    createRoot,
+    theme,
+  );
   if (serviceWorker) {
-  initRequestMocking(serviceWorkerUrl)
-    .then(() => {
-      console.log("Request mocking initialized");
-    })
+    initRequestMocking(serviceWorkerUrl)
+      .then(() => {
+        console.log('Request mocking initialized');
+      })
       .catch((err) => {
-        console.error("Error initializing request mocking:", err);
+        console.error('Error initializing request mocking:', err);
       });
   }
 };

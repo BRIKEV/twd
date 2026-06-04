@@ -5,6 +5,7 @@ export default defineConfig({
   title: "TWD",
   description: "Test While Developing (TWD) - in-browser testing for React, Vue, Angular, and Solid.js applications",
   base: '/',
+  cleanUrls: true,
   sitemap: {
     hostname: 'https://twd.dev'
   },
@@ -39,7 +40,10 @@ export default defineConfig({
 
     // Additional Meta Tags (TWD brand: darker teal for light theme)
     ['meta', { name: 'theme-color', content: '#123956' }],
-    ['meta', { name: 'viewport', content: 'width=device-width, initial-scale=1.0' }]
+    ['meta', { name: 'viewport', content: 'width=device-width, initial-scale=1.0' }],
+
+    // Umami analytics (cookieless, EU region)
+    ['script', { defer: '', src: 'https://cloud.umami.is/script.js', 'data-website-id': '3d4e6e8c-3498-4652-8a3b-f49a734004c8' }]
   ],
   themeConfig: {
     // https://vitepress.dev/reference/default-theme-config
@@ -47,10 +51,26 @@ export default defineConfig({
       { text: 'Home', link: '/' },
       { text: 'Core Concepts', link: '/getting-started' },
       { text: 'AI Workflow', link: '/twd-ai/setup' },
+      {
+        text: 'Tools',
+        items: [
+          { text: 'twd-js', link: '/twd-js' },
+          { text: 'twd-relay', link: '/twd-relay' },
+          { text: 'Contract Testing', link: '/contract-testing' },
+        ],
+      },
       { text: 'API Reference', link: '/api/' }
     ],
 
     sidebar: [
+      {
+        text: 'Tools',
+        items: [
+          { text: 'twd-js', link: '/twd-js' },
+          { text: 'twd-relay', link: '/twd-relay' },
+          { text: 'Contract Testing', link: '/contract-testing' },
+        ],
+      },
       {
         text: 'Philosophy',
         items: [
@@ -69,7 +89,8 @@ export default defineConfig({
           { text: 'Theming', link: '/theming' },
           { text: 'CI Execution', link: '/ci-execution' },
           { text: 'Coverage', link: '/coverage' },
-          { text: 'Contract Testing', link: '/contract-testing' },
+          { text: 'AI Integration', link: '/ai-overview' },
+          { text: 'Contract Testing Setup', link: '/contract-testing-setup' },
           { text: 'Framework Integration', link: '/frameworks' },
           { text: 'Testing Library', link: '/testing-library' },
         ]

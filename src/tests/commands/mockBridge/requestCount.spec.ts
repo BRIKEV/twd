@@ -1,6 +1,12 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { clearRequestMockRules, getRequestCount, getRequestCounts, initRequestMocking, mockRequest, resetMockingState } from '../../../commands/mockBridge';
-import { TWD_VERSION } from '../../../constants/version';
+import {
+  clearRequestMockRules,
+  getRequestCount,
+  getRequestCounts,
+  initRequestMocking,
+  mockRequest,
+  resetMockingState,
+} from '../../../commands/mockBridge';
 
 describe('request count tracking', () => {
   let messageHandler: Function;

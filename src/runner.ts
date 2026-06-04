@@ -33,7 +33,7 @@ const getRunnerState = (): RunnerState => {
     }
     return window.__TWD_STATE__ as RunnerState;
   }
-  
+
   return {
     handlers: new Map(),
     beforeEachHooks: new Map(),
@@ -207,7 +207,7 @@ const collectHooks = (suiteId: string) => {
 const hasOnlyInTree = (id: string): boolean => {
   const h = handlers.get(id);
   if (!h) return false;
-  
+
   if (h.only) return true;
   if (!h.children) return false;
 
@@ -264,9 +264,7 @@ export class TestRunner {
   }
 
   async runAll() {
-    const rootSuites = Array.from(handlers.values()).filter(
-      (h) => !h.parent && h.type === "suite"
-    );
+    const rootSuites = Array.from(handlers.values()).filter((h) => !h.parent && h.type === 'suite');
     const hasOnly = Array.from(handlers.values()).some((h) => h.only);
     for (const suite of rootSuites) {
       await this.runSuite(suite, hasOnly);
@@ -276,16 +274,14 @@ export class TestRunner {
 
   async runSingle(id: string) {
     const handler = handlers.get(id);
-    if (!handler || handler.type !== "test") return;
+    if (!handler || handler.type !== 'test') return;
     const hasOnly = false; // Single run ignores .only logic
     await this.runTest(handler, hasOnly);
   }
 
   async runByIds(ids: string[]) {
     const idSet = new Set(ids);
-    const rootSuites = Array.from(handlers.values()).filter(
-      (h) => !h.parent && h.type === "suite"
-    );
+    const rootSuites = Array.from(handlers.values()).filter((h) => !h.parent && h.type === 'suite');
     const hasOnly = Array.from(handlers.values()).some((h) => h.only);
     for (const suite of rootSuites) {
       await this.runSuiteByIds(suite, idSet, hasOnly);
@@ -309,9 +305,9 @@ export class TestRunner {
     const children = (suite.children || []).map((id) => handlers.get(id)!);
 
     for (const child of children) {
-      if (child.type === "suite") {
+      if (child.type === 'suite') {
         await this.runSuiteByIds(child, idSet, hasOnly);
-      } else if (child.type === "test" && idSet.has(child.id)) {
+      } else if (child.type === 'test' && idSet.has(child.id)) {
         await this.runTest(child, hasOnly);
       }
     }
@@ -337,14 +333,14 @@ export class TestRunner {
 
     // Only logic: skip suite if it's not in the .only tree
     if (hasOnly && !hasOnlyInTree(suite.id)) return;
-    
+
     this.events.onSuiteStart?.(suite);
     const children = (suite.children || []).map((id) => handlers.get(id)!);
 
     for (const child of children) {
-      if (child.type === "suite") {
+      if (child.type === 'suite') {
         await this.runSuite(child, hasOnly);
-      } else if (child.type === "test") {
+      } else if (child.type === 'test') {
         await this.runTest(child, hasOnly);
       }
     }

@@ -5,10 +5,7 @@ describe('notifyClients', () => {
   it('should call postMessage on all clients with correct payload', () => {
     const rule = { alias: 'foo' };
     const body = 'bar';
-    const clients = [
-      { postMessage: vi.fn() },
-      { postMessage: vi.fn() },
-    ];
+    const clients = [{ postMessage: vi.fn() }, { postMessage: vi.fn() }];
 
     notifyClients(clients, rule, body);
 

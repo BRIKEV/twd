@@ -52,11 +52,11 @@ describe('twd runner', () => {
       twd.it('test 1', testFn1);
       twd.it('test 2', testFn2);
     });
-    
+
     const tests = twd.handlers;
     const testArray = Array.from(tests.values());
     expect(testArray).toHaveLength(3);
-    
+
     // Create a test runner to properly execute the tests
     const mockEvents = {
       onStart: vi.fn(),
@@ -66,20 +66,20 @@ describe('twd runner', () => {
       onSuiteStart: vi.fn(),
       onSuiteEnd: vi.fn(),
     };
-    
+
     const runner = new twd.TestRunner(mockEvents);
-    
+
     // Run the first test
-    const firstTest = testArray.find(t => t.name === 'test 1')!;
+    const firstTest = testArray.find((t) => t.name === 'test 1')!;
     await runner.runSingle(firstTest.id);
     expect(beforeEachFn).toHaveBeenCalledTimes(1);
     expect(testFn1).toHaveBeenCalledTimes(1);
     expect(testFn2).not.toHaveBeenCalled();
-    
+
     // Reset mocks and run the second test
     beforeEachFn.mockClear();
     testFn1.mockClear();
-    const secondTest = testArray.find(t => t.name === 'test 2')!;
+    const secondTest = testArray.find((t) => t.name === 'test 2')!;
     await runner.runSingle(secondTest.id);
     expect(beforeEachFn).toHaveBeenCalledTimes(1);
     expect(testFn2).toHaveBeenCalledTimes(1);
@@ -101,11 +101,11 @@ describe('twd runner', () => {
       twd.it('test 1', testFn1);
       twd.it('test 2', testFn2);
     });
-    
+
     const tests = twd.handlers;
     const testArray = Array.from(tests.values());
     expect(testArray).toHaveLength(3);
-    
+
     // Create a test runner to properly execute the tests
     const mockEvents = {
       onStart: vi.fn(),
@@ -115,20 +115,20 @@ describe('twd runner', () => {
       onSuiteStart: vi.fn(),
       onSuiteEnd: vi.fn(),
     };
-    
+
     const runner = new twd.TestRunner(mockEvents);
-    
+
     // Run the first test
-    const firstTest = testArray.find(t => t.name === 'test 1')!;
+    const firstTest = testArray.find((t) => t.name === 'test 1')!;
     await runner.runSingle(firstTest.id);
     expect(afterEachFn).toHaveBeenCalledTimes(1);
     expect(testFn1).toHaveBeenCalledTimes(1);
     expect(testFn2).not.toHaveBeenCalled();
-    
+
     // Reset mocks and run the second test
     afterEachFn.mockClear();
     testFn1.mockClear();
-    const secondTest = testArray.find(t => t.name === 'test 2')!;
+    const secondTest = testArray.find((t) => t.name === 'test 2')!;
     await runner.runSingle(secondTest.id);
     expect(afterEachFn).toHaveBeenCalledTimes(1);
     expect(testFn2).toHaveBeenCalledTimes(1);
@@ -149,10 +149,10 @@ describe('twd runner', () => {
         twd.it('test in inner suite', () => {});
       });
     });
-    
+
     const tests = twd.handlers;
     const testArray = Array.from(tests.values());
-    
+
     // Create a test runner to properly execute the tests
     const mockEvents = {
       onStart: vi.fn(),
@@ -162,10 +162,10 @@ describe('twd runner', () => {
       onSuiteStart: vi.fn(),
       onSuiteEnd: vi.fn(),
     };
-    
+
     const runner = new twd.TestRunner(mockEvents);
 
-    const innerTest = testArray.find(t => t.name === 'test in inner suite')!;
+    const innerTest = testArray.find((t) => t.name === 'test in inner suite')!;
     await runner.runSingle(innerTest.id);
 
     expect(beforeEachFn1).toHaveBeenCalledBefore(beforeEachFn2);
@@ -179,11 +179,11 @@ describe('twd runner', () => {
       twd.it('test 1', testFn1);
       twd.it.only('test 2', testFn2);
     });
-    
+
     const tests = twd.handlers;
     const testArray = Array.from(tests.values());
     expect(testArray).toHaveLength(3);
-    
+
     // Create a test runner to properly execute the tests
     const mockEvents = {
       onStart: vi.fn(),
@@ -193,12 +193,12 @@ describe('twd runner', () => {
       onSuiteStart: vi.fn(),
       onSuiteEnd: vi.fn(),
     };
-    
+
     const runner = new twd.TestRunner(mockEvents);
-    
+
     // Run all tests
     await runner.runAll();
-    
+
     expect(testFn1).not.toHaveBeenCalled();
     expect(testFn2).toHaveBeenCalledTimes(1);
   });
@@ -210,11 +210,11 @@ describe('twd runner', () => {
       twd.it('test 1', testFn1);
       twd.it.skip('test 2', testFn2);
     });
-    
+
     const tests = twd.handlers;
     const testArray = Array.from(tests.values());
     expect(testArray).toHaveLength(3);
-    
+
     // Create a test runner to properly execute the tests
     const mockEvents = {
       onStart: vi.fn(),
@@ -224,12 +224,12 @@ describe('twd runner', () => {
       onSuiteStart: vi.fn(),
       onSuiteEnd: vi.fn(),
     };
-    
+
     const runner = new twd.TestRunner(mockEvents);
-    
+
     // Run all tests
     await runner.runAll();
-    
+
     expect(testFn1).toHaveBeenCalledTimes(1);
     expect(testFn2).not.toHaveBeenCalled();
     expect(mockEvents.onSkip).toHaveBeenCalledWith(expect.objectContaining({ name: 'test 2' }));
@@ -248,8 +248,8 @@ describe('twd runner', () => {
     });
 
     const tests = Array.from(twd.handlers.values());
-    const test1 = tests.find(t => t.name === 'test 1')!;
-    const test3 = tests.find(t => t.name === 'test 3')!;
+    const test1 = tests.find((t) => t.name === 'test 1')!;
+    const test3 = tests.find((t) => t.name === 'test 3')!;
 
     const mockEvents = {
       onStart: vi.fn(),
@@ -281,7 +281,7 @@ describe('twd runner', () => {
     });
 
     const tests = Array.from(twd.handlers.values());
-    const test1 = tests.find(t => t.name === 'included test')!;
+    const test1 = tests.find((t) => t.name === 'included test')!;
 
     const mockEvents = {
       onStart: vi.fn(),
@@ -312,7 +312,7 @@ describe('twd runner', () => {
     });
 
     const tests = Array.from(twd.handlers.values());
-    const allTestIds = tests.filter(t => t.type === 'test').map(t => t.id);
+    const allTestIds = tests.filter((t) => t.type === 'test').map((t) => t.id);
 
     const mockEvents = {
       onStart: vi.fn(),
@@ -333,7 +333,9 @@ describe('twd runner', () => {
 
   describe('retry mechanism', () => {
     it('should not retry when retryCount defaults to 1', async () => {
-      const testFn = vi.fn(() => { throw new Error('always fails'); });
+      const testFn = vi.fn(() => {
+        throw new Error('always fails');
+      });
       twd.describe('No retry suite', () => {
         twd.it('failing test', testFn);
       });
@@ -377,13 +379,15 @@ describe('twd runner', () => {
       expect(mockEvents.onPass).toHaveBeenCalledTimes(1);
       expect(mockEvents.onPass).toHaveBeenCalledWith(
         expect.objectContaining({ name: 'flaky test' }),
-        2
+        2,
       );
       expect(mockEvents.onFail).not.toHaveBeenCalled();
     });
 
     it('should fail after all retry attempts are exhausted', async () => {
-      const testFn = vi.fn(() => { throw new Error('persistent fail'); });
+      const testFn = vi.fn(() => {
+        throw new Error('persistent fail');
+      });
       twd.describe('All retries fail suite', () => {
         twd.it('always failing test', testFn);
       });
@@ -402,7 +406,7 @@ describe('twd runner', () => {
       expect(mockEvents.onFail).toHaveBeenCalledTimes(1);
       expect(mockEvents.onFail).toHaveBeenCalledWith(
         expect.objectContaining({ name: 'always failing test' }),
-        expect.objectContaining({ message: 'persistent fail' })
+        expect.objectContaining({ message: 'persistent fail' }),
       );
       expect(mockEvents.onPass).not.toHaveBeenCalled();
     });
@@ -434,7 +438,9 @@ describe('twd runner', () => {
     });
 
     it('should call onStart only once before all attempts', async () => {
-      const testFn = vi.fn(() => { throw new Error('fail'); });
+      const testFn = vi.fn(() => {
+        throw new Error('fail');
+      });
       twd.describe('onStart suite', () => {
         twd.it('failing test', testFn);
       });
@@ -471,7 +477,7 @@ describe('twd runner', () => {
       expect(testFn).toHaveBeenCalledTimes(1);
       expect(mockEvents.onPass).toHaveBeenCalledWith(
         expect.objectContaining({ name: 'passing test' }),
-        undefined
+        undefined,
       );
     });
   });

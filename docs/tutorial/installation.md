@@ -47,33 +47,37 @@ Now let's install TWD:
 npm i --save-dev twd-js
 ```
 
-Once installed, open `src/main.tsx` and add this code snippet:
+Once installed, open `vite.config.ts` and add the `twd()` plugin alongside the existing plugins:
 
 ```ts
-if (import.meta.env.DEV) {
-  // You choose how to load the tests; this example uses Vite's glob import
-  const testModules = import.meta.glob("./**/*.twd.test.ts");
-  const { initTests, TWDSidebar } = await import('twd-js');
-  // You need to pass the test modules, the sidebar component, and createRoot function
-  initTests(testModules, <TWDSidebar open={true} position="left" />, createRoot);
-}
+// vite.config.ts
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+import { twd } from 'twd-js/vite-plugin';
+
+export default defineConfig({
+  plugins: [
+    react(),
+    twd({
+      testFilePattern: '/**/*.twd.test.{ts,tsx}',
+      open: true,
+      position: 'left',
+    }),
+  ],
+});
 ```
 
-> It's important to include this inside the `if (import.meta.env.DEV)` block — this way, TWD won't be bundled into your production build.
+> The `twd()` plugin only runs in `vite dev` (`apply: 'serve'`) — it's a no-op in production builds, so nothing reaches your prod bundle.
 
-Once that's added, you'll see the TWD Sidebar, where all your tests will appear:
+The `testFilePattern` option tells the plugin which files to discover as tests. The default pattern matches `*.twd.test.{ts,tsx}` files anywhere in your project.
+
+Once that's added, restart your dev server. You'll see the TWD Sidebar, where all your tests will appear:
 
 ![Tutorial homepage with twd sidebar](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/7xokpi55hwh5hrg58t0s.png)
 
 ## Creating Our First Test
 
-In the snippet above, we're using this line: 
-
-```ts
-const testModules = import.meta.glob("./**/*.twd.test.ts");
-```
-
-This tells Vite to automatically load every file matching the pattern `./**/*.twd.test.ts`.
+The plugin discovers any file matching the `testFilePattern` you configured.
 So let's create our very first test file.
 
 Create a new file at `src/twd-tests/helloWorld.twd.test.ts` and add this code:

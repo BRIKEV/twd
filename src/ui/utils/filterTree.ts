@@ -1,4 +1,4 @@
-import type { Node } from "./buildTreeFromHandlers";
+import type { Node } from './buildTreeFromHandlers';
 
 export const filterTree = (roots: Node[], query: string): Node[] => {
   if (!query.trim()) return roots;
@@ -8,7 +8,7 @@ export const filterTree = (roots: Node[], query: string): Node[] => {
   const filterNode = (node: Node): Node | null => {
     const nameMatches = node.name.toLowerCase().includes(lowerQuery);
 
-    if (node.type === "test") {
+    if (node.type === 'test') {
       return nameMatches ? node : null;
     }
 

@@ -10,13 +10,13 @@ describe('twd get command', () => {
     const appContainer = document.createElement('div');
     appContainer.id = 'app';
     document.body.appendChild(appContainer);
-    
+
     // append a div inside the app container
     div = document.createElement('div');
     div.className = 'inner';
     appContainer.appendChild(div);
   });
-  
+
   it('should get element', async () => {
     div.textContent = 'Hello World';
     const elem = await twd.get('div');

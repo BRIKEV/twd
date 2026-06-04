@@ -41,6 +41,7 @@ describe('chaiPrint', () => {
 
   it('should format a chai assertion error with no actual and no expected values', () => {
     try {
+      // eslint-disable-next-line @typescript-eslint/no-unused-expressions -- chai's .exist is a property getter that throws; it has no return value
       chaiExpect(undefined).to.exist;
     } catch (error) {
       if (isChaiAssertionError(error)) {
@@ -48,7 +49,7 @@ describe('chaiPrint', () => {
       }
       expect(consoleErrorSpy).toHaveBeenCalledWith('expected undefined to exist');
     }
-  }); 
+  });
 
   it('should format a chai assertion deep equal error', () => {
     try {
@@ -56,7 +57,9 @@ describe('chaiPrint', () => {
     } catch (error) {
       if (isChaiAssertionError(error)) {
         printChaiError(error);
-        expect(consoleErrorSpy).toHaveBeenCalledWith('Assertion failed with operator: deepStrictEqual');
+        expect(consoleErrorSpy).toHaveBeenCalledWith(
+          'Assertion failed with operator: deepStrictEqual',
+        );
         expect(consoleGroupSpy).toHaveBeenCalledWith('Expected:');
         expect(consoleLogSpy).toHaveBeenCalledWith({ a: 2 });
         expect(consoleGroupEndSpy).toHaveBeenCalled();
