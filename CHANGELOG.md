@@ -1,3 +1,32 @@
+## <small>1.8.1 (2026-06-05)</small>
+
+* fix: dependencies ([7a87437](https://github.com/BRIKEV/twd/commit/7a87437))
+* docs: update React Router framework mode setup ([424e861](https://github.com/BRIKEV/twd/commit/424e861))
+* docs: add maintainer's Bluesky profile to community page ([a847878](https://github.com/BRIKEV/twd/commit/a847878))
+* docs: rebrand homepage + sub-product landings + README (#245) ([2dd83a5](https://github.com/BRIKEV/twd/commit/2dd83a5)), closes [#245](https://github.com/BRIKEV/twd/issues/245)
+* docs: add Umami analytics to docs site ([d3e3010](https://github.com/BRIKEV/twd/commit/d3e3010))
+* chore(deps-dev): bump @vitejs/plugin-react from 6.0.1 to 6.0.2 (#260) ([710c8cb](https://github.com/BRIKEV/twd/commit/710c8cb)), closes [#260](https://github.com/BRIKEV/twd/issues/260)
+* chore(deps-dev): bump vite from 8.0.13 to 8.0.16 (#259) ([fa5a4a1](https://github.com/BRIKEV/twd/commit/fa5a4a1)), closes [#259](https://github.com/BRIKEV/twd/issues/259)
+* chore(deps-dev): bump typescript-eslint from 8.59.2 to 8.60.0 (#258) ([9d313d8](https://github.com/BRIKEV/twd/commit/9d313d8)), closes [#258](https://github.com/BRIKEV/twd/issues/258)
+* chore(deps-dev): bump eslint from 10.4.0 to 10.4.1 (#257) ([4401705](https://github.com/BRIKEV/twd/commit/4401705)), closes [#257](https://github.com/BRIKEV/twd/issues/257)
+* chore(deps-dev): bump eslint from 10.3.0 to 10.4.0 (#254) ([5412223](https://github.com/BRIKEV/twd/commit/5412223)), closes [#254](https://github.com/BRIKEV/twd/issues/254)
+* chore(deps-dev): bump lint-staged from 17.0.4 to 17.0.5 (#253) ([ff58ce7](https://github.com/BRIKEV/twd/commit/ff58ce7)), closes [#253](https://github.com/BRIKEV/twd/issues/253)
+* chore(deps-dev): bump @vitest/coverage-v8 from 4.1.6 to 4.1.7 (#252) ([d9cf0ef](https://github.com/BRIKEV/twd/commit/d9cf0ef)), closes [#252](https://github.com/BRIKEV/twd/issues/252)
+* chore(deps-dev): bump vitest from 4.1.6 to 4.1.7 (#251) ([5aa226b](https://github.com/BRIKEV/twd/commit/5aa226b)), closes [#251](https://github.com/BRIKEV/twd/issues/251)
+* chore(deps-dev): bump @vitest/coverage-v8 from 4.1.5 to 4.1.6 (#249) ([93fe053](https://github.com/BRIKEV/twd/commit/93fe053)), closes [#249](https://github.com/BRIKEV/twd/issues/249)
+* chore(deps): bump preact from 10.29.1 to 10.29.2 (#248) ([baef435](https://github.com/BRIKEV/twd/commit/baef435)), closes [#248](https://github.com/BRIKEV/twd/issues/248)
+* chore(deps-dev): bump vitest from 4.1.5 to 4.1.6 (#247) ([6043ef6](https://github.com/BRIKEV/twd/commit/6043ef6)), closes [#247](https://github.com/BRIKEV/twd/issues/247)
+* chore(deps-dev): bump vite from 8.0.11 to 8.0.13 (#246) ([89dce85](https://github.com/BRIKEV/twd/commit/89dce85)), closes [#246](https://github.com/BRIKEV/twd/issues/246)
+* chore(deps-dev): bump @vitest/eslint-plugin from 1.6.16 to 1.6.17 (#244) ([dc4645a](https://github.com/BRIKEV/twd/commit/dc4645a)), closes [#244](https://github.com/BRIKEV/twd/issues/244)
+* chore(deps-dev): bump lint-staged from 17.0.2 to 17.0.4 (#243) ([c14281e](https://github.com/BRIKEV/twd/commit/c14281e)), closes [#243](https://github.com/BRIKEV/twd/issues/243)
+* chore(deps-dev): bump vite from 8.0.10 to 8.0.11 (#242) ([aa57fa6](https://github.com/BRIKEV/twd/commit/aa57fa6)), closes [#242](https://github.com/BRIKEV/twd/issues/242)
+* chore(deps): bump react-router in /examples/tutorial-example (#262) ([a3f4099](https://github.com/BRIKEV/twd/commit/a3f4099)), closes [#262](https://github.com/BRIKEV/twd/issues/262)
+* chore(deps): bump react-router from 7.14.2 to 7.15.0 in /examples/twd-test-app (#261) ([539dbe4](https://github.com/BRIKEV/twd/commit/539dbe4)), closes [#261](https://github.com/BRIKEV/twd/issues/261)
+* chore(deps): bump axios from 1.15.2 to 1.16.0 in /examples/twd-test-app (#256) ([b7b9046](https://github.com/BRIKEV/twd/commit/b7b9046)), closes [#256](https://github.com/BRIKEV/twd/issues/256)
+* chore(deps): bump axios from 1.15.2 to 1.16.0 in /examples/tutorial-example (#255) ([cd8039e](https://github.com/BRIKEV/twd/commit/cd8039e)), closes [#255](https://github.com/BRIKEV/twd/issues/255)
+* chore(deps): bump qs and express in /examples/tutorial-example (#250) ([cdcde37](https://github.com/BRIKEV/twd/commit/cdcde37)), closes [#250](https://github.com/BRIKEV/twd/issues/250)
+
+
 ## <small>1.8.0 (2026-05-08)</small>
 
 * feat(plugin): export twd from twd-js/vite-plugin ([9c90803](https://github.com/BRIKEV/twd/commit/9c90803))
