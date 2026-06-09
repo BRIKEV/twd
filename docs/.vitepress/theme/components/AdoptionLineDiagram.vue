@@ -56,7 +56,7 @@ const stages = [
         >
           <span v-if="stage.badge" class="adopt-badge" :class="`adopt-badge--${stage.state}`">{{ stage.badge }}</span>
           <span class="adopt-eyebrow">{{ stage.eyebrow }}</span>
-          <span class="adopt-pkg">{{ stage.package }}</span>
+          <h3 class="adopt-pkg">{{ stage.package }}</h3>
           <span class="adopt-desc">{{ stage.description }}</span>
           <span v-if="stage.cta" class="adopt-cta">
             {{ stage.cta }}<span class="adopt-cta__sr"> about {{ stage.package }}</span><span aria-hidden="true"> →</span>
@@ -154,8 +154,12 @@ a.adopt-stage:focus-visible {
 }
 
 .adopt-pkg {
+  /* h3 for heading-navigation reach (incl. the non-link "Ship" card); reset
+     default heading margins so the card layout is visually unchanged */
+  margin: 0;
   font-size: 1.0625rem;
   font-weight: 700;
+  line-height: 1.3;
   color: var(--vp-c-text-1);
 }
 
