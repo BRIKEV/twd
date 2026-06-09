@@ -401,8 +401,7 @@ const faqs = [
   display: inline-block;
   font-size: 0.75rem;
   font-weight: 600;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
+  letter-spacing: 0.02em;
   color: var(--vp-c-brand-1);
   margin-bottom: 20px;
   padding: 6px 16px;

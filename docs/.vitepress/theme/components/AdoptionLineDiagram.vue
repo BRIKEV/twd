@@ -2,17 +2,17 @@
 const stages = [
   {
     state: 'start',
-    eyebrow: 'SIDEBAR',
+    eyebrow: 'Sidebar',
     package: 'twd-js',
     description: 'Sidebar in your browser. Tests live where you build.',
-    badge: 'START HERE',
+    badge: 'Start here',
     cta: 'Learn more',
     href: '/twd-js',
     umamiEvent: 'home_ecosystem_sidebar',
   },
   {
     state: 'optional',
-    eyebrow: 'AI AGENT',
+    eyebrow: 'AI agent',
     package: 'twd-relay + twd-ai',
     description: 'Add when you use AI coding agents.',
     badge: '',
@@ -22,7 +22,7 @@ const stages = [
   },
   {
     state: 'optional',
-    eyebrow: 'CONTRACT TESTING',
+    eyebrow: 'Contract testing',
     package: 'twd-cli',
     description: 'Add when you want CI, coverage, and contract validation.',
     badge: '',
@@ -32,7 +32,7 @@ const stages = [
   },
   {
     state: 'ship',
-    eyebrow: 'SHIP',
+    eyebrow: 'Ship',
     package: 'Merge with confidence',
     description: 'Contracts validated, tests green.',
     badge: '',
@@ -144,7 +144,7 @@ a.adopt-stage:focus-visible {
 .adopt-eyebrow {
   font-size: 0.6875rem;
   font-weight: 700;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.02em;
   color: var(--vp-c-brand-1);
   margin-top: 4px;
 }
