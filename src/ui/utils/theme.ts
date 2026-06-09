@@ -98,7 +98,7 @@ export const defaultTheme: TWDTheme = {
 
   // Describe blocks
   describeBg: '#0f172a',
-  describeText: '#94a3b8',
+  describeText: '#f1f5f9',
   describeBorder: '#334155',
 
   // Status colors

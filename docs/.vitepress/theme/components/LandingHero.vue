@@ -42,8 +42,7 @@ defineProps({
   display: inline-block;
   font-size: 0.75rem;
   font-weight: 600;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
+  letter-spacing: 0.02em;
   color: var(--vp-c-brand-1);
   padding: 4px 14px;
   border: 1px solid var(--vp-c-brand-soft);

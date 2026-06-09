@@ -2,17 +2,17 @@
 const stages = [
   {
     state: 'start',
-    eyebrow: 'SIDEBAR',
+    eyebrow: 'Sidebar',
     package: 'twd-js',
     description: 'Sidebar in your browser. Tests live where you build.',
-    badge: 'START HERE',
+    badge: 'Start here',
     cta: 'Learn more',
     href: '/twd-js',
     umamiEvent: 'home_ecosystem_sidebar',
   },
   {
     state: 'optional',
-    eyebrow: 'AI AGENT',
+    eyebrow: 'AI agent',
     package: 'twd-relay + twd-ai',
     description: 'Add when you use AI coding agents.',
     badge: '',
@@ -22,7 +22,7 @@ const stages = [
   },
   {
     state: 'optional',
-    eyebrow: 'CONTRACT TESTING',
+    eyebrow: 'Contract testing',
     package: 'twd-cli',
     description: 'Add when you want CI, coverage, and contract validation.',
     badge: '',
@@ -32,7 +32,7 @@ const stages = [
   },
   {
     state: 'ship',
-    eyebrow: 'SHIP',
+    eyebrow: 'Ship',
     package: 'Merge with confidence',
     description: 'Contracts validated, tests green.',
     badge: '',
@@ -56,7 +56,7 @@ const stages = [
         >
           <span v-if="stage.badge" class="adopt-badge" :class="`adopt-badge--${stage.state}`">{{ stage.badge }}</span>
           <span class="adopt-eyebrow">{{ stage.eyebrow }}</span>
-          <span class="adopt-pkg">{{ stage.package }}</span>
+          <h3 class="adopt-pkg">{{ stage.package }}</h3>
           <span class="adopt-desc">{{ stage.description }}</span>
           <span v-if="stage.cta" class="adopt-cta">
             {{ stage.cta }}<span class="adopt-cta__sr"> about {{ stage.package }}</span><span aria-hidden="true"> →</span>
@@ -117,7 +117,6 @@ a.adopt-stage:hover,
 a.adopt-stage:focus-visible {
   transform: translateY(-2px);
   box-shadow: 0 6px 16px -8px rgba(0, 0, 0, 0.25);
-  outline: none;
 }
 
 .adopt-stage--start:hover,
@@ -145,7 +144,7 @@ a.adopt-stage:focus-visible {
 .adopt-eyebrow {
   font-size: 0.6875rem;
   font-weight: 700;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.02em;
   color: var(--vp-c-brand-1);
   margin-top: 4px;
 }
@@ -155,8 +154,12 @@ a.adopt-stage:focus-visible {
 }
 
 .adopt-pkg {
+  /* h3 for heading-navigation reach (incl. the non-link "Ship" card); reset
+     default heading margins so the card layout is visually unchanged */
+  margin: 0;
   font-size: 1.0625rem;
   font-weight: 700;
+  line-height: 1.3;
   color: var(--vp-c-text-1);
 }
 

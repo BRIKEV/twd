@@ -154,15 +154,14 @@ export const CSS_STYLES = `
   margin-bottom: var(--twd-spacing-sm);
 }
 .twd-test-group-toggle {
-  font-weight: var(--twd-font-weight-medium);
-  font-size: var(--twd-font-size-sm);
+  font-weight: var(--twd-font-weight-bold);
+  font-size: var(--twd-font-size-md);
   cursor: pointer;
   color: var(--twd-describe-text);
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: var(--twd-spacing-sm);
-  text-transform: uppercase;
   letter-spacing: 0.05em;
 }
 .twd-test-item {
@@ -173,7 +172,7 @@ export const CSS_STYLES = `
   border-radius: var(--twd-border-radius);
 }
 .twd-test-item-name {
-  font-weight: var(--twd-font-weight-medium);
+  font-weight: var(--twd-font-weight-normal);
   font-size: var(--twd-font-size-md);
   color: var(--twd-text);
   max-width: 220px;
