@@ -251,10 +251,9 @@ const faqs = [
       <!-- Section 6: Manifesto Quote -->
       <section class="manifesto-quote">
         <blockquote class="manifesto-text">
-          <span class="manifesto-mark" aria-hidden="true">&ldquo;</span>
           TWD isn't about writing <em>more</em> tests — it's about writing the <em>right</em> ones, at the right time.
         </blockquote>
-        <a href="/twd-manifesto" class="manifesto-link">Read the full manifesto &rarr;</a>
+        <a href="/twd-manifesto" class="manifesto-link">Read the full manifesto<span class="visually-hidden"> on testing philosophy</span><span aria-hidden="true"> &rarr;</span></a>
       </section>
 
       <!-- Section 7: Final CTA -->
@@ -661,7 +660,8 @@ const faqs = [
 .code-filename {
   margin-left: 8px;
   font-size: 0.6875rem;
-  color: var(--vp-c-text-3);
+  /* text-2 (not text-3) to clear AA contrast in both themes (WCAG 1.4.3) */
+  color: var(--vp-c-text-2);
   font-family: var(--vp-font-family-mono);
   letter-spacing: 0.02em;
 }
@@ -813,21 +813,6 @@ details[open] .faq-question::before {
   border: none;
   padding: 0;
   letter-spacing: -0.01em;
-  position: relative;
-}
-
-.manifesto-mark {
-  font-family: Georgia, 'Times New Roman', serif;
-  font-size: 8rem;
-  line-height: 0;
-  color: var(--vp-c-brand-1);
-  opacity: 0.15;
-  position: absolute;
-  top: -20px;
-  left: 50%;
-  transform: translateX(-50%);
-  pointer-events: none;
-  user-select: none;
 }
 
 .manifesto-text em {
@@ -840,7 +825,9 @@ details[open] .faq-question::before {
   margin-top: 24px;
   font-size: 0.9375rem;
   color: var(--vp-c-brand-1);
-  text-decoration: none;
+  /* Underline so the link isn't distinguished by color alone (WCAG 1.4.1) */
+  text-decoration: underline;
+  text-underline-offset: 3px;
   font-weight: 600;
   transition: opacity 0.2s;
 }

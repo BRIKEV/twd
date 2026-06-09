@@ -33,6 +33,38 @@
   --vp-home-hero-name-color: var(--vp-c-brand-1);
 }
 
+/* ============================================
+   Accessibility (a11y audit, June 2026)
+   ============================================ */
+
+/* Focus ring: visible 2px indicator with a 2px gap, in both themes.
+   --vp-c-text-1 is theme-scoped (near-black light / near-white dark) so the
+   ring always clears 3:1 against the page background (WCAG 2.4.11 / 1.4.11). */
+:focus-visible {
+  outline: 2px solid var(--vp-c-text-1);
+  outline-offset: 2px;
+}
+
+/* Focusable elements inside an overflow:hidden container (FAQ accordion summary,
+   code blocks) have their offset ring clipped — inset it so it stays visible. */
+.faq-question:focus-visible,
+.code-block pre:focus-visible,
+.vp-doc [class*='language-'] pre:focus-visible,
+.outline-link:focus-visible {
+  outline-offset: -2px;
+}
+
+/* Code-block contrast (WCAG 1.4.3). The github shiki themes hardcode the comment
+   token to #6A737D for BOTH light and dark (4.45 light / 3.75 dark — both fail AA).
+   Split it: darker on light, lighter on dark. Mirrors VitePress's own
+   light/dark token-color pattern. */
+html:not(.dark) .vp-doc span[style*="--shiki-light:#6A737D" i] {
+  color: #57606a !important;
+}
+.dark .vp-doc span[style*="--shiki-dark:#6A737D" i] {
+  color: #8b949e !important;
+}
+
 /* Pipeline diagram colors */
 :root {
   --pipeline-card-bg: rgba(18, 57, 86, 0.08);

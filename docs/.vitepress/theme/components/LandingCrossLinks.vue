@@ -65,18 +65,21 @@ defineProps({
 .landing-xlinks__link:focus-visible {
   border-color: var(--vp-c-brand-1);
   transform: translateY(-1px);
-  outline: none;
 }
 
 .landing-xlinks__title {
   font-size: 0.9375rem;
   font-weight: 700;
   color: var(--vp-c-text-1);
+  /* Underline the link affordance so it isn't distinguished by color alone (WCAG 1.4.1) */
+  text-decoration: underline;
+  text-underline-offset: 2px;
 }
 
 .landing-xlinks__blurb {
   font-size: 0.8125rem;
   line-height: 1.55;
-  color: var(--vp-c-text-3);
+  /* text-2 (not text-3) to clear AA contrast on bg-soft in both themes (WCAG 1.4.3) */
+  color: var(--vp-c-text-2);
 }
 </style>

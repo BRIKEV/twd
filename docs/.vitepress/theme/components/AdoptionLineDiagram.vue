@@ -117,7 +117,6 @@ a.adopt-stage:hover,
 a.adopt-stage:focus-visible {
   transform: translateY(-2px);
   box-shadow: 0 6px 16px -8px rgba(0, 0, 0, 0.25);
-  outline: none;
 }
 
 .adopt-stage--start:hover,
