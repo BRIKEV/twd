@@ -31,6 +31,7 @@ See TWD testing real shadcn/ui components with live code and tests running in th
 | [twd-react-router](https://github.com/BRIKEV/twd-react-router) | React Router (Framework Mode) | SSR-compatible setup with `createRoutesStub`, loader mocking |
 | [twd-tanstack-example](https://github.com/BRIKEV/twd-tanstack-example) | React + TanStack Router | TanStack Router integration with route + loader testing |
 | [twd-vue-example](https://github.com/BRIKEV/twd-vue-example) | Vue | Vue integration with bundled setup |
+| [twd-nuxt-example](https://github.com/BRIKEV/twd-nuxt-example) | Nuxt 4 (SSR) | Pages tested in the browser against a real SQLite backend, with a dev-only reset endpoint |
 | [twd-angular-example](https://github.com/BRIKEV/twd-angular-example) | Angular | Angular integration with manual test imports |
 | [twd-auth0](https://github.com/BRIKEV/twd-auth0) | React + Auth0 | Auth session mocking with Sinon stubs |
 | [twd-auth0-pkce](https://github.com/BRIKEV/twd-auth0-pkce) | React + Auth0 PKCE | PKCE flow mocking for SPAs |

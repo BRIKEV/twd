@@ -1,11 +1,11 @@
 ---
 title: Framework Integration
-description: Set up TWD with React, Vue, Angular, Solid.js, CRA, Astro, and React Router
+description: Set up TWD with React, Vue, Angular, Solid.js, CRA, Astro, React Router, and Nuxt
 ---
 
 # Framework Integration
 
-TWD is designed to work with any Vite-based application. Currently, **react, vue, angular and solid.js are supported**, and the library can be adapted to work with other build tools and frameworks.
+TWD is designed to work with any Vite-based application. Currently, **react, vue, angular, solid.js and nuxt are supported**, and the library can be adapted to work with other build tools and frameworks.
 
 ## React
 
@@ -491,6 +491,86 @@ describe("Home Page Test", () => {
 
 This approach validates React Router routes at the frontend boundary — loaders and actions are mocked, so you're testing how your UI responds to data, not whether the backend returns it correctly.
 
+## Nuxt
+
+TWD works with Nuxt 4 (Vite-based, SSR). Like React Router, Nuxt renders its HTML through its own server (Nitro) instead of a Vite-controlled `index.html`, so the `twd()` plugin's `transformIndexHtml` injection never fires — you point at the virtual module manually from `app.vue`. Nuxt also needs a small HMR plugin: on Vite 7 the test files load through a virtual module and aren't in Vite's watched module graph, so editing one doesn't trigger a reload on its own.
+
+**[Nuxt + TWD Example](https://github.com/BRIKEV/twd-nuxt-example)** — Nuxt 4 with a SQLite-backed todo list, tested in the browser against the real backend.
+
+### Setup
+
+1. **Add the `twd()` plugin and the HMR plugin to `nuxt.config.ts`** (install the watcher with `npm install -D chokidar`):
+
+```ts
+// nuxt.config.ts
+import chokidar from 'chokidar';
+import type { Plugin } from 'vite';
+import { twd } from 'twd-js/vite-plugin';
+
+// Full-reload the browser when a .twd.test file changes. On Nuxt 4 / Vite 7
+// the test files load through a virtual module and aren't in Vite's watched
+// module graph, so neither HMR nor Vite's own watcher sees the edit.
+function twdTestHmr(): Plugin {
+  const isTestFile = (file: string) => /\.twd\.test\.tsx?$/.test(file);
+  return {
+    name: 'twd-test-hmr',
+    apply: 'serve',
+    configureServer(server) {
+      const watcher = chokidar.watch(server.config.root, {
+        ignored: (path) => /node_modules|\.nuxt|\.output|\.git/.test(path),
+        ignoreInitial: true,
+      });
+      const reload = (file: string) => {
+        if (!isTestFile(file)) return;
+        // Drop the cached module so the reload serves fresh code.
+        const graph = server.environments?.client?.moduleGraph ?? server.moduleGraph;
+        for (const mod of graph.getModulesByFile(file) ?? []) {
+          graph.invalidateModule(mod);
+        }
+        server.ws.send({ type: 'full-reload', path: '*' });
+      };
+      watcher.on('change', reload).on('add', reload).on('unlink', reload);
+      server.httpServer?.once('close', () => void watcher.close());
+    },
+  };
+}
+
+export default defineNuxtConfig({
+  vite: {
+    plugins: [
+      twd({ testFilePattern: '/**/*.twd.test.{ts,tsx}' }),
+      twdTestHmr(),
+    ],
+  },
+});
+```
+
+2. **Inject the bootstrap script in `app.vue`**, dev-only:
+
+```vue
+<script setup lang="ts">
+if (import.meta.dev) {
+  useHead({
+    script: [{ src: '/_nuxt/@id/virtual:twd/init', type: 'module' }],
+  });
+}
+</script>
+
+<template>
+  <div>
+    <NuxtPage />
+  </div>
+</template>
+```
+
+The plugin still registers the virtual module and Vite still serves it at `/@id/...` — you're just pointing the SSR'd template at it. Note the `/_nuxt/` prefix: that's Nuxt's Vite `base`. The `import.meta.dev` guard keeps the tag out of production.
+
+Run `npm run dev` and the sidebar mounts next to your app.
+
+::: tip Testing against a real backend
+Nuxt runs `useFetch` and `$fetch` as real browser requests on client navigation, so you can test pages against your real Nitro routes and database instead of mocking them. A dev-only reset endpoint (guarded by `import.meta.dev`) gives each test a clean starting point. The [example repo](https://github.com/BRIKEV/twd-nuxt-example) shows the full pattern.
+:::
+
 ## Framework Support Philosophy
 
 TWD is designed for **deterministic frontend boundary validation**. It focuses on frameworks that provide:
@@ -504,6 +584,7 @@ TWD works with SPAs and frameworks where the UI renders client-side and external
 TWD officially supports:
 - **React (SPA)** - Standard Vite-based React applications
 - **React Router (Framework Mode)** - Including SSR mode, with explicit loaders and `createRoutesStub`
+- **Nuxt (SSR)** - Nuxt 4 with client-side `useFetch`/`$fetch`, testable against the real backend
 - **Vue, Angular, Solid.js** - Other SPA frameworks
 - **Astro** - When used with client-driven components
 
