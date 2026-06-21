@@ -267,7 +267,14 @@ const faqs = [
         </a>
       </section>
 
-      <div style="height: 80px;"></div>
+      <footer class="hp-footer">
+        <nav class="hp-footer-links" aria-label="Footer">
+          <a href="/accessibility-statement" class="hp-footer-link">Accessibility Statement</a>
+          <span class="hp-footer-sep" aria-hidden="true">·</span>
+          <a href="https://github.com/BRIKEV/twd" target="_blank" rel="noopener" class="hp-footer-link">GitHub<span class="visually-hidden"> (opens in new tab)</span></a>
+        </nav>
+        <p class="hp-footer-meta">Released under the MIT License. Copyright © 2025 BRIKEV.</p>
+      </footer>
     </main>
   </div>
 </template>
@@ -927,5 +934,48 @@ details[open] .faq-question::before {
   .manifesto-text {
     font-size: 1.25rem;
   }
+}
+
+/* ============================================
+   Footer
+   ============================================ */
+.hp-footer {
+  margin-top: 4rem;
+  padding: 2rem 1.5rem 3rem;
+  border-top: 1px solid var(--hp-border);
+  text-align: center;
+}
+
+.hp-footer-links {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.hp-footer-link {
+  color: var(--vp-c-brand-1);
+  font-size: 0.9375rem;
+  font-weight: 500;
+  /* Underline so the link is distinguished by more than colour (WCAG 1.4.1) */
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.hp-footer-link:hover,
+.hp-footer-link:focus-visible {
+  text-decoration-thickness: 2px;
+}
+
+.hp-footer-sep {
+  color: var(--vp-c-text-3);
+}
+
+.hp-footer-meta {
+  color: var(--vp-c-text-2);
+  font-size: 0.875rem;
+  margin: 0;
 }
 </style>
