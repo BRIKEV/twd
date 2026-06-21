@@ -119,6 +119,7 @@ export default defineConfig({
         text: 'Community',
         items: [
           { text: 'Community & Examples', link: '/community' },
+          { text: 'Accessibility Statement', link: '/accessibility-statement' },
         ]
       },
       {
