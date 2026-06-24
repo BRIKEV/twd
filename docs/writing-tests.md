@@ -66,11 +66,167 @@ describe("User Management", () => {
 
 ## Element Selection
 
-TWD provides multiple ways to select DOM elements. You can use TWD's native selectors or Testing Library's semantic queries.
+TWD provides multiple ways to select DOM elements. **Prefer Testing Library's async `findBy*` queries.** They are the recommended way to select elements in TWD, ahead of `getBy*`/`queryBy*` and ahead of TWD's native `twd.get()`.
+
+### Recommended: `findBy*` queries
+
+> **Always reach for `findBy*` first.**
+>
+> - **`findBy*` (recommended)**: returns a promise and **waits** for the element to appear. Because UI in a real app renders asynchronously (after navigation, data fetches, state updates, or re-renders), `findBy*` is the most reliable choice and avoids flaky tests.
+> - **`getBy*`**: synchronous; throws immediately if the element isn't already in the DOM. Only use it when you're certain the element is already rendered.
+> - **`queryBy*`**: synchronous; returns `null` if not found. Use it **only** when you intentionally want to assert that an element is *absent*.
+>
+> Default to `findBy*`. Use `findBy*` over `twd.get()` too, since Testing Library's semantic queries are more accessible and resilient than CSS selectors.
+
+```ts
+// ✅ Recommended: waits for the element to appear
+const successMessage = await screenDom.findByText("Login successful!");
+const submitButton = await screenDom.findByRole("button", { name: /sign in/i });
+
+// ⚠️ Synchronous: throws if not already in the DOM
+const heading = screenDom.getByRole("heading", { name: "Welcome" });
+
+// ⚠️ Only to assert absence
+const error = screenDom.queryByText("Error");
+expect(error).to.equal(null);
+```
+
+### Testing Library Queries
+
+TWD supports Testing Library's query methods through two APIs:
+
+1. **`screenDom`** - Scoped queries that exclude the TWD sidebar (recommended for most cases)
+2. **`screenDomGlobal`** - Global queries for portal-rendered elements (modals, dialogs)
+
+#### Import
+
+```ts
+import { screenDom, screenDomGlobal } from "twd-js";
+```
+
+#### When to Use screenDom vs screenDomGlobal
+
+**Use `screenDom` (default):**
+- For regular page content within your app
+- Automatically excludes sidebar elements
+- Recommended for most queries
+
+**Use `screenDomGlobal`:**
+- For portal-rendered elements (modals, dialogs, tooltips)
+- When you need to search outside the root container
+- ⚠️ **Important:** Use specific selectors (e.g., `getByRole` with `name`) to avoid matching sidebar elements
+
+#### Query by Role (Recommended)
+
+```ts
+// Find button by role and accessible name (waits for it to appear)
+const submitButton = await screenDom.findByRole("button", { name: /submit/i });
+const heading = await screenDom.findByRole("heading", { name: "Welcome", level: 1 });
+
+// Find form elements
+const emailInput = await screenDom.findByRole("textbox", { name: /email/i });
+const checkbox = await screenDom.findByRole("checkbox", { name: /terms/i });
+```
+
+#### Query by Label
+
+```ts
+// Find inputs by their labels (most accessible)
+const emailInput = await screenDom.findByLabelText("Email Address:");
+const searchInput = await screenDom.findByLabelText(/search/i);
+```
+
+#### Query by Text
+
+```ts
+// Find elements by text content
+const title = await screenDom.findByText("Welcome to TWD");
+const partialMatch = await screenDom.findByText(/welcome/i);
+```
+
+#### Query by Test ID
+
+```ts
+// Find elements by data-testid
+const userCard = await screenDom.findByTestId("user-card");
+```
+
+#### Query Methods
+
+- **findBy*** *(recommended)* - Returns a promise, **waits** for the element to appear. Use this by default.
+- **getBy*** - Returns element or throws immediately if not found. Use only when the element is already rendered.
+- **queryBy*** - Returns element or `null` if not found. Use only to assert an element is absent.
+- **findAllBy*** *(recommended for lists)* / **getAllBy*** / **queryAllBy*** - Returns an array of elements.
+
+```ts
+// ✅ findBy waits for element to appear (recommended)
+const successMessage = await screenDom.findByText("Success!");
+
+// findAllBy waits and returns an array
+const buttons = await screenDom.findAllByRole("button");
+expect(buttons).to.have.length(3);
+
+// getBy throws if element doesn't exist (must already be rendered)
+const button = screenDom.getByRole("button");
+
+// queryBy returns null if element doesn't exist (use to assert absence)
+const error = screenDom.queryByText("Error");
+expect(error).to.equal(null);
+```
+
+#### Complete Example with screenDom
+
+```ts
+import { screenDom, screenDomGlobal, userEvent, twd } from "twd-js";
+import { describe, it } from "twd-js/runner";
+
+describe("Login Form", () => {
+  it("should submit login form", async () => {
+    await twd.visit("/login");
+
+    // Use screenDom findBy* for semantic queries (regular page content)
+    const emailInput = await screenDom.findByLabelText("Email:");
+    const passwordInput = await screenDom.findByLabelText("Password:");
+    const submitButton = await screenDom.findByRole("button", { name: /sign in/i });
+
+    // Use userEvent for interactions
+    const user = userEvent.setup();
+    await user.type(emailInput, "user@example.com");
+    await user.type(passwordInput, "password123");
+    await user.click(submitButton);
+
+    // Wait for success message
+    const successMessage = await screenDom.findByText("Login successful!");
+    twd.should(successMessage, "be.visible");
+  });
+
+  it("should handle modal confirmation", async () => {
+    await twd.visit("/settings");
+    
+    // Use screenDom findBy* for regular button
+    const deleteButton = await screenDom.findByRole("button", { name: /delete/i });
+    const user = userEvent.setup();
+    await user.click(deleteButton);
+    
+    // Use screenDomGlobal for modal (rendered via portal)
+    // ⚠️ Use specific queries to avoid matching sidebar elements
+    const confirmModal = await screenDomGlobal.findByRole("dialog", { 
+      name: "Confirm Deletion" 
+    });
+    const confirmButton = await screenDomGlobal.findByRole("button", { 
+      name: "Yes, Delete Account" 
+    });
+    
+    await user.click(confirmButton);
+  });
+});
+```
+
+> **Note:** For complete Testing Library documentation, see the [Testing Library API reference](/testing-library).
 
 ### TWD Native Selectors
 
-TWD's native selectors use CSS selectors for simple, direct element access.
+TWD's native selectors use CSS selectors for simple, direct element access. Prefer Testing Library's `findBy*` queries above; reach for these only when a CSS selector is genuinely the simplest option (for example, selecting by a non-semantic class or a complex structural selector).
 
 #### Single Element Selection
 
@@ -111,141 +267,6 @@ const listItems = await twd.getAll("li");
 buttons[0].should("be.visible");
 listItems[2].should("contain.text", "Third item");
 ```
-
-### Testing Library Queries
-
-TWD supports Testing Library's query methods through two APIs:
-
-1. **`screenDom`** - Scoped queries that exclude the TWD sidebar (recommended for most cases)
-2. **`screenDomGlobal`** - Global queries for portal-rendered elements (modals, dialogs)
-
-#### Import
-
-```ts
-import { screenDom, screenDomGlobal } from "twd-js";
-```
-
-#### When to Use screenDom vs screenDomGlobal
-
-**Use `screenDom` (default):**
-- For regular page content within your app
-- Automatically excludes sidebar elements
-- Recommended for most queries
-
-**Use `screenDomGlobal`:**
-- For portal-rendered elements (modals, dialogs, tooltips)
-- When you need to search outside the root container
-- ⚠️ **Important:** Use specific selectors (e.g., `getByRole` with `name`) to avoid matching sidebar elements
-
-#### Query by Role (Recommended)
-
-```ts
-// Get button by role and accessible name
-const submitButton = screenDom.getByRole("button", { name: /submit/i });
-const heading = screenDom.getByRole("heading", { name: "Welcome", level: 1 });
-
-// Get form elements
-const emailInput = screenDom.getByRole("textbox", { name: /email/i });
-const checkbox = screenDom.getByRole("checkbox", { name: /terms/i });
-```
-
-#### Query by Label
-
-```ts
-// Get inputs by their labels (most accessible)
-const emailInput = screenDom.getByLabelText("Email Address:");
-const searchInput = screenDom.getByLabelText(/search/i);
-```
-
-#### Query by Text
-
-```ts
-// Get elements by text content
-const title = screenDom.getByText("Welcome to TWD");
-const partialMatch = screenDom.getByText(/welcome/i);
-```
-
-#### Query by Test ID
-
-```ts
-// Get elements by data-testid
-const userCard = screenDom.getByTestId("user-card");
-```
-
-#### Query Methods
-
-- **getBy*** - Returns element or throws if not found
-- **queryBy*** - Returns element or null if not found
-- **findBy*** - Returns promise, waits for element to appear
-- **getAllBy*** / **queryAllBy*** / **findAllBy*** - Returns array of elements
-
-```ts
-// getBy throws if element doesn't exist
-const button = screenDom.getByRole("button");
-
-// queryBy returns null if element doesn't exist
-const error = screenDom.queryByText("Error");
-if (error) {
-  // Handle error
-}
-
-// findBy waits for element to appear
-const successMessage = await screenDom.findByText("Success!");
-
-// getAllBy returns array
-const buttons = screenDom.getAllByRole("button");
-expect(buttons).to.have.length(3);
-```
-
-#### Complete Example with screenDom
-
-```ts
-import { screenDom, screenDomGlobal, userEvent, twd } from "twd-js";
-import { describe, it } from "twd-js/runner";
-
-describe("Login Form", () => {
-  it("should submit login form", async () => {
-    await twd.visit("/login");
-
-    // Use screenDom for semantic queries (regular page content)
-    const emailInput = screenDom.getByLabelText("Email:");
-    const passwordInput = screenDom.getByLabelText("Password:");
-    const submitButton = screenDom.getByRole("button", { name: /sign in/i });
-
-    // Use userEvent for interactions
-    const user = userEvent.setup();
-    await user.type(emailInput, "user@example.com");
-    await user.type(passwordInput, "password123");
-    await user.click(submitButton);
-
-    // Wait for success message
-    const successMessage = await screenDom.findByText("Login successful!");
-    twd.should(successMessage, "be.visible");
-  });
-
-  it("should handle modal confirmation", async () => {
-    await twd.visit("/settings");
-    
-    // Use screenDom for regular button
-    const deleteButton = screenDom.getByRole("button", { name: /delete/i });
-    const user = userEvent.setup();
-    await user.click(deleteButton);
-    
-    // Use screenDomGlobal for modal (rendered via portal)
-    // ⚠️ Use specific queries to avoid matching sidebar elements
-    const confirmModal = await screenDomGlobal.findByRole("dialog", { 
-      name: "Confirm Deletion" 
-    });
-    const confirmButton = screenDomGlobal.getByRole("button", { 
-      name: "Yes, Delete Account" 
-    });
-    
-    await user.click(confirmButton);
-  });
-});
-```
-
-> **Note:** For complete Testing Library documentation, see the [Testing Library API reference](/testing-library).
 
 ## Assertions
 
