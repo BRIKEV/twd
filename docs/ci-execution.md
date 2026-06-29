@@ -187,6 +187,43 @@ The `onPass` callback receives an optional second parameter `retryAttempt` — i
 
 > **Note:** The retry mechanism re-runs the full test cycle (beforeEach hooks → test → afterEach hooks) on each attempt, ensuring clean state between retries.
 
+## Cross-browser testing (experimental)
+
+::: warning Experimental
+For the vast majority of projects, **`twd-cli` is the recommended runner and covers ~90% of use cases** — it's faster, collects coverage, validates contracts, and is battle-tested. `twd-runner` is an experimental complement; reach for it only when you specifically need to validate other browser engines.
+:::
+
+`twd-cli` runs your tests in headless **Chromium** (via Puppeteer). If you also want to catch **Firefox** and **WebKit (Safari)** engine differences, [`twd-runner`](https://github.com/BRIKEV/twd-runner) runs the same TWD tests across engines using Playwright. It's a complement to `twd-cli`, not a replacement: keep `twd-cli` as your primary runner (coverage + contracts), and add `twd-runner` as an extra cross-browser check.
+
+```bash
+npm install -D twd-runner
+npx playwright install   # downloads the browser binaries (npm install does not)
+npx twd-runner run
+```
+
+It reads the same `twd.config.json`. The keys that matter most here:
+
+| Option | Default | Description |
+|--------|---------|-------------|
+| `browsers` | `["chromium","firefox","webkit"]` | Engines to run, in parallel within a single job |
+| `waitForServiceWorker` | `false` | Set `true` for apps that mock via a service worker. Firefox/WebKit can be slow to take control of the page, and mocks registered before then are silently dropped. Enabling it also auto-warms the dev server first (a cold dev server otherwise races SW registration). |
+
+A single job runs the engines in parallel, so the same two steps work on any CI — no GitHub-specific matrix required:
+
+```yaml
+- name: Start dev server
+  run: |
+    nohup npm run dev > /dev/null 2>&1 &
+    npx wait-on http://localhost:5173
+
+- name: Run cross-browser tests
+  run: npx twd-runner run
+```
+
+::: tip Recommended split
+Run your **full suite on Chromium with `twd-cli`** (coverage, contracts, retries), and use `twd-runner` only for a cross-browser pass on the engines Puppeteer can't reach — typically `"browsers": ["firefox", "webkit"]`. `twd-runner` does not collect coverage or run contract validation, and is slower than `twd-cli`.
+:::
+
 ## Next Steps
 
 - [Contract Testing](/contract-testing): Validate your API mocks against OpenAPI specs
