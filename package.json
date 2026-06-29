@@ -78,7 +78,8 @@
     "copy:dist:vue-twd-example": "cp -r dist examples/vue-twd-example/src",
     "copy:dist:tutorial-example": "cp -r dist examples/tutorial-example/src",
     "copy:dist:examples": "npm run copy:dist:vue-twd-example && npm run copy:dist:tutorial-example",
-    "prepare": "husky"
+    "prepare": "husky",
+    "lock:linux": "docker run --rm -v \"$PWD\":/app -w /app node:24 npm install --package-lock-only"
   },
   "lint-staged": {
     "src/**/*.{ts,tsx}": [
