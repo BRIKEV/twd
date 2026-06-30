@@ -47,6 +47,7 @@ The main TWD repository also includes working examples:
 
 ## Videos
 
+- [TWD: Una nueva forma de testear el frontend](https://www.youtube.com/watch?v=F0b63Cl6_Mo) (Commit Conf, Spanish)
 - [Testing while developing: una nueva forma de testear en frontend](https://www.youtube.com/watch?v=qsHowBWgJn8) (Spanish)
 
 ## Podcasts
