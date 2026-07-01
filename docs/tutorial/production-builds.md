@@ -36,7 +36,7 @@ src/
 
 Test files (`.twd.test.ts` or `.twd.test.js`) are automatically excluded from your production bundle.
 
-## Removing Mock Service Worker
+## Removing the Service Worker
 
 The mock service worker file (`mock-sw.js`) needs to be manually removed from production builds.
 
@@ -93,7 +93,7 @@ If you can't use the Vite plugin, remove the file manually:
 
 ## Troubleshooting
 
-### Mock Service Worker Still in Build
+### Service Worker Still in Build
 
 If `mock-sw.js` appears in your production build:
 

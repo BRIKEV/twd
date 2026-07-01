@@ -32,7 +32,7 @@ twd-js fixes this by putting the tests where the feature lives: in your real bro
 
 You install `twd-js`, add the Vite plugin, and write tests next to your code in `*.twd.test.ts` files. When you run `npm run dev`, the TWD sidebar appears in your browser. Click play to run any test. Tests use the same DOM, routes, and state your users will — there's no separate test environment to keep in sync.
 
-Selectors come from Testing Library (`screenDom.findByRole`, `findByLabelText`, …); assertions are chainable (`twd.should(el, 'be.visible')`). Mocking is built in: `twd.mockRequest(...)` intercepts fetch/XHR via Mock Service Worker so you can develop and test features without a running backend.
+Selectors come from Testing Library (`screenDom.findByRole`, `findByLabelText`, …); assertions are chainable (`twd.should(el, 'be.visible')`). Mocking is built in: `twd.mockRequest(...)` intercepts fetch/XHR via a service worker so you can develop and test features without a running backend.
 
 Nothing TWD ships to production — every `twd-js` import is dev-only (`import.meta.env.DEV`-guarded), so your prod bundle is untouched.
 

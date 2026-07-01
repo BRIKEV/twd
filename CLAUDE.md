@@ -39,7 +39,7 @@ npm run docs:build             # Build documentation
 ### Key Modules
 
 - **`src/asserts/`** - Assertion implementations (`have.text`, `be.visible`, `have.class`, etc.)
-- **`src/commands/`** - Test commands (`mockBridge.ts` for MSW, `visit.ts` for navigation)
+- **`src/commands/`** - Test commands (`mockBridge.ts` for request mocking via service worker, `visit.ts` for navigation)
 - **`src/ui/`** - Preact components for the sidebar UI (`TWDSidebar.tsx`, `TestList.tsx`)
 - **`src/proxies/`** - Wrappers for `@testing-library/user-event` and `@testing-library/dom`
 - **`src/initializers/`** - Test and sidebar initialization logic
@@ -67,7 +67,7 @@ twd-js/ui        → UI components (includes MockedComponent)
 - **TWD Native**: `twd.get(selector)` returns TWDElemAPI with chainable `.should()` method
 
 ### Mocking Patterns
-- **API Mocking**: `twd.mockRequest()` with Mock Service Worker. Must call `npx twd-js init public` to set up service worker.
+- **API Mocking**: `twd.mockRequest()` with TWD's built-in service worker. Must call `npx twd-js init public` to set up the service worker.
 - **Component Mocking**: Wrap with `MockedComponent` from `twd-js/ui`, then mock with `twd.mockComponent()`
 - **Module Mocking**: Use Sinon library. Hooks must be exported as object properties (not named exports) due to ESM limitations.
 

@@ -100,7 +100,7 @@ This approach comes with a lot of side benefits:
 
 For frontend development, I use **TWD** — a testing library designed specifically for this philosophy.
 
-Instead of waiting for the full app to be ready or relying on real backends, TWD runs tests directly in your browser during development. You get a beautiful sidebar that shows test results in real-time as you code. I use Mock Service Worker integration to mock API responses, so I can develop and test features without needing a running backend.
+Instead of waiting for the full app to be ready or relying on real backends, TWD runs tests directly in your browser during development. You get a beautiful sidebar that shows test results in real-time as you code. I use a built-in service worker to mock API responses, so I can develop and test features without needing a running backend.
 
 That's right — I'm not running tests in a separate terminal or waiting for CI. I'm building and testing in the same environment, with instant feedback right in my browser.
 

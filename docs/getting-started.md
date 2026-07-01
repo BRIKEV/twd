@@ -61,7 +61,7 @@ The plugin only runs in `vite dev` (`apply: 'serve'`), so production builds neve
 Skip to [Manual setup for non-Vite projects](#manual-setup-for-non-vite-projects) below.
 :::
 
-### 2. Set Up Mock Service Worker (Optional but recommended)
+### 2. Set Up the Service Worker (Optional but recommended)
 
 If you plan to use API mocking, set up the mock service worker:
 
@@ -190,7 +190,7 @@ Make sure you:
 2. Used the correct file naming pattern that matches your `testFilePattern` (default: `.twd.test.ts` / `.tsx`)
 3. Added `twd()` to the `plugins` array in your `vite.config.ts` (Vite projects), or have the manual `initTWD` logic in your entry file (non-Vite projects)
 
-### Mock Service Worker Issues
+### Service Worker Issues
 
 If API mocking isn't working:
 1. Run `npx twd-js init public` to install the service worker

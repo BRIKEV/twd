@@ -51,7 +51,7 @@ Setup then confirms or asks about:
 |----------|---------------|
 | Framework confirmation | Determines import style and bundled vs. standard setup |
 | Base path | For `twd.visit()` calls if your app doesn't serve from `/` |
-| Public folder | Where to install the Mock Service Worker script |
+| Public folder | Where to install the mock service worker script |
 | Dev server port | So the relay connects to the right Vite server |
 | Entry point file | Where to add TWD initialization code |
 | API folder path | So the agent knows where your API calls live for mocking |

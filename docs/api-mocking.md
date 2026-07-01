@@ -1,6 +1,6 @@
 ---
 title: API Mocking
-description: Mock HTTP requests with Mock Service Worker — setup, dynamic responses, and error handling
+description: Mock HTTP requests with TWD's built-in service worker: setup, dynamic responses, and error handling
 ---
 
 # API Mocking
@@ -13,7 +13,7 @@ The mock service worker intercepts **all** requests made from the page, includin
 
 ## Setup
 
-### 1. Install Mock Service Worker
+### 1. Install the service worker
 
 First, set up the mock service worker in your project:
 
