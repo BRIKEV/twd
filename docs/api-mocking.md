@@ -1,6 +1,6 @@
 ---
 title: API Mocking
-description: Mock HTTP requests with TWD's built-in service worker: setup, dynamic responses, and error handling
+description: "Mock HTTP requests with TWD's built-in service worker: setup, dynamic responses, and error handling"
 ---
 
 # API Mocking
