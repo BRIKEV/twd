@@ -1,4 +1,4 @@
-# TWD — Test While Developing
+# TWD (Test While Developing)
 
 [![CI](https://github.com/BRIKEV/twd/actions/workflows/ci.yml/badge.svg)](https://github.com/BRIKEV/twd/actions/workflows/ci.yml)
 [![npm version](https://img.shields.io/npm/v/twd-js.svg)](https://www.npmjs.com/package/twd-js)
@@ -78,23 +78,23 @@ One package today. The rest when you need it.
 
 ## Examples & showcase
 
-- **[twd-shadcn](https://github.com/BRIKEV/twd-shadcn)** — React + shadcn/ui with a [live demo](https://brikev.github.io/twd-shadcn/) you can interact with
-- **[twd-react-router](https://github.com/BRIKEV/twd-react-router)** — React Router (Framework Mode) with `createRoutesStub` and loader mocking
-- **[twd-tanstack-example](https://github.com/BRIKEV/twd-tanstack-example)** — TanStack Router integration
-- **[twd-vue-example](https://github.com/BRIKEV/twd-vue-example)** — Vue 3
-- **[twd-angular-example](https://github.com/BRIKEV/twd-angular-example)** — Angular
-- **[twd-auth0](https://github.com/BRIKEV/twd-auth0)** — Auth0 session mocking
+- **[twd-shadcn](https://github.com/BRIKEV/twd-shadcn)**: React + shadcn/ui with a [live demo](https://brikev.github.io/twd-shadcn/) you can interact with
+- **[twd-react-router](https://github.com/BRIKEV/twd-react-router)**: React Router (Framework Mode) with `createRoutesStub` and loader mocking
+- **[twd-tanstack-example](https://github.com/BRIKEV/twd-tanstack-example)**: TanStack Router integration
+- **[twd-vue-example](https://github.com/BRIKEV/twd-vue-example)**: Vue 3
+- **[twd-angular-example](https://github.com/BRIKEV/twd-angular-example)**: Angular
+- **[twd-auth0](https://github.com/BRIKEV/twd-auth0)**: Auth0 session mocking
 
 → **[All examples and community content](https://twd.dev/community)**
 
 ## Documentation
 
-- **[Getting Started](https://twd.dev/getting-started)** — Install, set up, write your first test
-- **[Writing Tests](https://twd.dev/writing-tests)** — Selectors, assertions, interactions, navigation
-- **[API Mocking](https://twd.dev/api-mocking)** — Mock Service Worker patterns
-- **[AI Integration](https://twd.dev/ai-overview)** — Connect Claude Code (or any agent) via twd-relay
-- **[Contract Testing Setup](https://twd.dev/contract-testing-setup)** — Validate mocks against OpenAPI specs in CI
-- **[API Reference](https://twd.dev/api/)** — Test functions, commands, assertions
+- **[Getting Started](https://twd.dev/getting-started)**: Install, set up, write your first test
+- **[Writing Tests](https://twd.dev/writing-tests)**: Selectors, assertions, interactions, navigation
+- **[API Mocking](https://twd.dev/api-mocking)**: Built-in request mocking via service worker
+- **[AI Integration](https://twd.dev/ai-overview)**: Connect Claude Code (or any agent) via twd-relay
+- **[Contract Testing Setup](https://twd.dev/contract-testing-setup)**: Validate mocks against OpenAPI specs in CI
+- **[API Reference](https://twd.dev/api/)**: Test functions, commands, assertions
 
 ## Contributing
 

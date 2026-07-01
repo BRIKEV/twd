@@ -1,3 +1,37 @@
+## <small>1.8.2 (2026-07-01)</small>
+
+* fix(a11y): address audit findings on docs site + sidebar (#267) ([173d5a4](https://github.com/BRIKEV/twd/commit/173d5a4)), closes [#267](https://github.com/BRIKEV/twd/issues/267)
+* fix: dependencies ([612135c](https://github.com/BRIKEV/twd/commit/612135c))
+* docs(community): add Commit Conf talk video ([3ec7035](https://github.com/BRIKEV/twd/commit/3ec7035))
+* docs(ci): add experimental cross-browser (twd-runner) section (#288) ([3db4d68](https://github.com/BRIKEV/twd/commit/3db4d68)), closes [#288](https://github.com/BRIKEV/twd/issues/288)
+* docs: prioritize Testing Library findBy queries in writing-tests ([61bc05c](https://github.com/BRIKEV/twd/commit/61bc05c))
+* docs: add accessibility statement page (#279) ([ee776e2](https://github.com/BRIKEV/twd/commit/ee776e2)), closes [#279](https://github.com/BRIKEV/twd/issues/279)
+* docs: add Nuxt as a supported SSR framework ([19eaa9f](https://github.com/BRIKEV/twd/commit/19eaa9f))
+* chore(deps): bump uuid and istanbul-lib-processinfo (#289) ([18ce298](https://github.com/BRIKEV/twd/commit/18ce298)), closes [#289](https://github.com/BRIKEV/twd/issues/289)
+* chore(deps): bump preact from 10.29.2 to 10.29.3 (#285) ([1c1e02f](https://github.com/BRIKEV/twd/commit/1c1e02f)), closes [#285](https://github.com/BRIKEV/twd/issues/285)
+* chore(deps): bump form-data in /examples/twd-test-app (#277) ([694ba91](https://github.com/BRIKEV/twd/commit/694ba91)), closes [#277](https://github.com/BRIKEV/twd/issues/277)
+* chore(deps): bump react-router in /examples/twd-test-app (#276) ([08555f4](https://github.com/BRIKEV/twd/commit/08555f4)), closes [#276](https://github.com/BRIKEV/twd/issues/276)
+* chore(deps-dev): bump conventional-changelog from 7.2.0 to 8.0.0 (#286) ([c13dc85](https://github.com/BRIKEV/twd/commit/c13dc85)), closes [#286](https://github.com/BRIKEV/twd/issues/286)
+* chore(deps-dev): bump globals from 17.6.0 to 17.7.0 (#287) ([80426bd](https://github.com/BRIKEV/twd/commit/80426bd)), closes [#287](https://github.com/BRIKEV/twd/issues/287)
+* chore(deps-dev): bump eslint from 10.5.0 to 10.6.0 (#284) ([a25f169](https://github.com/BRIKEV/twd/commit/a25f169)), closes [#284](https://github.com/BRIKEV/twd/issues/284)
+* chore(deps-dev): bump lint-staged from 17.0.7 to 17.0.8 (#283) ([1a9ff85](https://github.com/BRIKEV/twd/commit/1a9ff85)), closes [#283](https://github.com/BRIKEV/twd/issues/283)
+* chore(deps-dev): bump eslint from 10.4.1 to 10.5.0 (#281) ([f0aae67](https://github.com/BRIKEV/twd/commit/f0aae67)), closes [#281](https://github.com/BRIKEV/twd/issues/281)
+* chore(deps-dev): bump @vitest/coverage-v8 from 4.1.8 to 4.1.9 (#280) ([0e9ce25](https://github.com/BRIKEV/twd/commit/0e9ce25)), closes [#280](https://github.com/BRIKEV/twd/issues/280)
+* chore(deps-dev): bump undici from 7.25.0 to 7.28.0 (#278) ([256d642](https://github.com/BRIKEV/twd/commit/256d642)), closes [#278](https://github.com/BRIKEV/twd/issues/278)
+* chore(deps-dev): bump vite in /examples/tutorial-example (#275) ([8aed469](https://github.com/BRIKEV/twd/commit/8aed469)), closes [#275](https://github.com/BRIKEV/twd/issues/275)
+* chore(deps-dev): bump vite in /examples/twd-test-app (#274) ([2605601](https://github.com/BRIKEV/twd/commit/2605601)), closes [#274](https://github.com/BRIKEV/twd/issues/274)
+* chore(deps-dev): bump vite in /examples/vue-twd-example (#273) ([097bc16](https://github.com/BRIKEV/twd/commit/097bc16)), closes [#273](https://github.com/BRIKEV/twd/issues/273)
+* chore(deps-dev): bump typescript-eslint from 8.60.1 to 8.61.0 (#272) ([6f4992d](https://github.com/BRIKEV/twd/commit/6f4992d)), closes [#272](https://github.com/BRIKEV/twd/issues/272)
+* chore(deps-dev): bump vite-plugin-dts from 5.0.0 to 5.0.2 (#271) ([31bb683](https://github.com/BRIKEV/twd/commit/31bb683)), closes [#271](https://github.com/BRIKEV/twd/issues/271)
+* chore(deps-dev): bump prettier from 3.8.3 to 3.8.4 (#270) ([04565b5](https://github.com/BRIKEV/twd/commit/04565b5)), closes [#270](https://github.com/BRIKEV/twd/issues/270)
+* chore(deps-dev): bump @vitest/eslint-plugin from 1.6.17 to 1.6.20 (#269) ([7a92160](https://github.com/BRIKEV/twd/commit/7a92160)), closes [#269](https://github.com/BRIKEV/twd/issues/269)
+* chore(deps-dev): bump shell-quote in /examples/tutorial-example (#268) ([c27a224](https://github.com/BRIKEV/twd/commit/c27a224)), closes [#268](https://github.com/BRIKEV/twd/issues/268)
+* chore(deps-dev): bump lint-staged from 17.0.5 to 17.0.7 (#263) ([1180412](https://github.com/BRIKEV/twd/commit/1180412)), closes [#263](https://github.com/BRIKEV/twd/issues/263)
+* chore(deps-dev): bump vitest from 4.1.7 to 4.1.8 (#264) ([987a1be](https://github.com/BRIKEV/twd/commit/987a1be)), closes [#264](https://github.com/BRIKEV/twd/issues/264)
+* chore(deps-dev): bump typescript-eslint from 8.60.0 to 8.60.1 (#265) ([73c9a2e](https://github.com/BRIKEV/twd/commit/73c9a2e)), closes [#265](https://github.com/BRIKEV/twd/issues/265)
+* chore(deps-dev): bump @types/react from 19.2.14 to 19.2.17 (#266) ([c6cec1d](https://github.com/BRIKEV/twd/commit/c6cec1d)), closes [#266](https://github.com/BRIKEV/twd/issues/266)
+
+
 ## <small>1.8.1 (2026-06-05)</small>
 
 * fix: dependencies ([7a87437](https://github.com/BRIKEV/twd/commit/7a87437))
