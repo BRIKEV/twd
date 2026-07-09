@@ -261,14 +261,24 @@ bootstrapApplication(App, appConfig)
 
 ## Create React App (CRA)
 
-Create React App uses Webpack instead of Vite, so you'll need to use Webpack's `require.context` to load test files. Here's how to set it up:
+Create React App uses Webpack instead of Vite, so there is no `twd()` plugin — you initialize TWD manually with `initTWD` from `twd-js/bundled` and discover test files with Webpack's `require.context`.
 
-```ts
-// src/index.tsx (or your main entry file)
+**[CRA Example](https://github.com/BRIKEV/twd-create-react-app)** - Complete Create React App integration with react-router loaders/actions, json-server, CI execution, and contract validation.
+
+First, install the mock service worker into your public directory:
+
+```bash
+npx twd-js init public
+```
+
+Then initialize TWD in your entry file:
+
+```js
+// src/index.js (or src/index.tsx)
 if (process.env.NODE_ENV === "development") {
   // Use Webpack's context feature to load all test files
   const context = require.context("./", true, /\.twd\.test\.ts$/);
-  
+
   // Build a Vite-like object of async importers
   const testModules = {};
   context.keys().forEach((key) => {
@@ -277,27 +287,52 @@ if (process.env.NODE_ENV === "development") {
       return Promise.resolve(context(key));
     };
   });
-  
-  const { initTests, twd, TWDSidebar } = await import('twd-js');
-  
-  // You need to pass the test modules, the sidebar component, and createRoot function
-  initTests(testModules, <TWDSidebar open={true} position="left" />, createRoot);
-  
-  // Optionally initialize request mocking
-  twd.initRequestMocking()
-    .then(() => {
-      console.log("Request mocking initialized");
-    })
-    .catch((err) => {
-      console.error("Error initializing request mocking:", err);
-    });
+
+  const { initTWD } = await import('twd-js/bundled');
+
+  initTWD(testModules, {
+    open: true,
+    search: true,
+    serviceWorker: true,
+    serviceWorkerUrl: '/mock-sw.js',
+  });
 }
 ```
 
+`initTWD` accepts the same options as the Vite plugin (minus `testFilePattern`, which is handled by the `require.context` regex here).
+
 ### Notes for CRA
 
-- The test files will be loaded using Webpack's module system
-- This approach also works for other Webpack-based React setups
+- **TypeScript test files work in a JavaScript project.** CRA's Babel pipeline strips types from `.twd.test.ts` files even without the `typescript` package installed — you just don't get type checking on them.
+- **Exclude TWD tests from Jest.** CRA's Jest test matcher also picks up `*.twd.test.ts` files, but they only run in the browser. Exclude them in your `test` script:
+
+  ```json
+  "test": "react-scripts test --testPathIgnorePatterns=src/twd-tests"
+  ```
+
+- **Recommended: relax Jest/Testing Library ESLint rules for TWD tests.** CRA's `react-app/jest` ESLint preset treats TWD test files as Jest tests and flags chai-style assertions like `expect(...).to.deep.equal(...)` with `jest/valid-expect`, which breaks dev-server compilation. Add an override to `eslintConfig` in `package.json`:
+
+  ```json
+  "eslintConfig": {
+    "extends": ["react-app", "react-app/jest"],
+    "overrides": [
+      {
+        "files": ["src/twd-tests/**/*", "**/*.twd.test.*"],
+        "settings": {
+          "testing-library/utils-module": "off",
+          "testing-library/custom-renders": "off",
+          "testing-library/custom-queries": "off"
+        },
+        "rules": {
+          "jest/valid-expect": "off",
+          "jest/valid-expect-in-promise": "off"
+        }
+      }
+    ]
+  }
+  ```
+
+- This approach also works for other Webpack-based React setups.
 
 ## Astro
 
