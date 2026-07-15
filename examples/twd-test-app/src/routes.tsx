@@ -8,6 +8,7 @@ import MockComponent from "./pages/MockComponent";
 import Responsive from "./pages/Responsive";
 import BlurValidation from "./pages/BlurValidation";
 import ComboboxSelect from "./pages/ComboboxSelect";
+import FileUpload from "./pages/FileUpload";
 import Contacts from "./pages/Contacts";
 import { contactsLoader } from "./loaders/contactsLoader";
 
@@ -52,6 +53,10 @@ const router = createBrowserRouter([
   {
     path: '/combobox-select',
     Component: ComboboxSelect,
+  },
+  {
+    path: '/file-upload',
+    Component: FileUpload,
   },
   {
     path: "*",
