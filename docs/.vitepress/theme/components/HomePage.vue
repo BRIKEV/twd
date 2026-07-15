@@ -7,9 +7,29 @@ import AdoptionLineDiagram from './AdoptionLineDiagram.vue'
 const { isDark } = useData()
 const loaded = ref(false)
 
+// Hero video: progressive enhancement. SSR/no-JS render the static screenshot;
+// the autoplay loop only mounts client-side when the user hasn't asked for
+// reduced motion (WCAG 2.3.3), and always carries a pause control (WCAG 2.2.2).
+const showHeroVideo = ref(false)
+const heroVideoPaused = ref(false)
+const heroVideoEl = ref(null)
+
 onMounted(() => {
   requestAnimationFrame(() => { loaded.value = true })
+  showHeroVideo.value = !window.matchMedia('(prefers-reduced-motion: reduce)').matches
 })
+
+function toggleHeroVideo() {
+  const video = heroVideoEl.value
+  if (!video) return
+  if (video.paused) {
+    video.play()
+    heroVideoPaused.value = false
+  } else {
+    video.pause()
+    heroVideoPaused.value = true
+  }
+}
 
 const faqs = [
   {
@@ -79,7 +99,31 @@ const faqs = [
             </div>
           </div>
           <div class="hero-visual">
+            <template v-if="showHeroVideo">
+              <video
+                ref="heroVideoEl"
+                src="/videos/twd-hero.mp4"
+                poster="/images/twd_side_bar_success.png"
+                class="hero-img"
+                autoplay
+                muted
+                loop
+                playsinline
+                aria-label="TWD sidebar running tests live inside a Vue app: tests cascade green, a test types itself and executes in the browser"
+              ></video>
+              <button
+                type="button"
+                class="hero-video-toggle"
+                :aria-pressed="heroVideoPaused"
+                :aria-label="heroVideoPaused ? 'Play hero animation' : 'Pause hero animation'"
+                @click="toggleHeroVideo"
+              >
+                <svg v-if="heroVideoPaused" width="14" height="14" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M4 2.5v11l9-5.5-9-5.5z"/></svg>
+                <svg v-else width="14" height="14" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M4 2h3v12H4zM9 2h3v12H9z"/></svg>
+              </button>
+            </template>
             <img
+              v-else
               src="/images/twd_side_bar_success.png"
               alt="TWD sidebar showing passing tests in the browser"
               class="hero-img"
@@ -402,6 +446,38 @@ const faqs = [
   border-radius: var(--hp-radius);
   border: 1px solid var(--hp-border);
   box-shadow: 0 16px 48px -12px rgba(0,0,0,0.2);
+}
+
+.hero-visual {
+  position: relative;
+}
+
+/* video inherits .hero-img chrome; display:block kills the inline-gap below it */
+video.hero-img {
+  display: block;
+}
+
+.hero-video-toggle {
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  border: 1px solid var(--hp-border);
+  background: var(--vp-c-bg);
+  color: var(--vp-c-text-1);
+  cursor: pointer;
+  opacity: 0.85;
+  transition: opacity 0.2s;
+}
+
+.hero-video-toggle:hover,
+.hero-video-toggle:focus-visible {
+  opacity: 1;
 }
 
 .hero-eyebrow {
