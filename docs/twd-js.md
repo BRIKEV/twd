@@ -17,7 +17,8 @@ head:
   cta-label="Get Started"
   cta-href="/getting-started"
   image-src="/images/twd_side_bar_success.png"
-  image-alt="TWD sidebar showing passing tests in the browser"
+  image-alt="TWD sidebar running tests live inside a Vue app: tests cascade green, a test types itself and executes in the browser"
+  video-src="/videos/twd-hero.mp4"
 />
 
 ## The problem
