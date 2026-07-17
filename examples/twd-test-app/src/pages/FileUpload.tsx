@@ -40,7 +40,6 @@ const FileUpload: React.FC = () => {
       <input
         type="file"
         id="file-upload-input"
-        accept="image/*"
         onChange={handleChange}
         style={{ display: 'block', marginTop: '0.5rem' }}
       />
