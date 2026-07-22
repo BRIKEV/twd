@@ -606,6 +606,107 @@ Run `npm run dev` and the sidebar mounts next to your app.
 Nuxt runs `useFetch` and `$fetch` as real browser requests on client navigation, so you can test pages against your real Nitro routes and database instead of mocking them. A dev-only reset endpoint (guarded by `import.meta.dev`) gives each test a clean starting point. The [example repo](https://github.com/BRIKEV/twd-nuxt-example) shows the full pattern.
 :::
 
+## Vanilla JS (CDN, no bundler)
+
+If your project has no build step at all (a plain HTML page, a static site, or anything served as-is), you can load TWD straight from a CDN. No `npm install`, no bundler. TWD's bundled entry is self-contained, so an [import map](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/script/type/importmap) is all you need.
+
+**[Vanilla JS Example Repository](https://github.com/BRIKEV/twd-vanillajs)** - Complete no-build example with a counter page, a todo list, API mocking, and CI.
+
+Add an import map and boot TWD from your entry HTML:
+
+```html
+<!-- index.html -->
+<script type="importmap">
+  {
+    "imports": {
+      "twd-js": "https://esm.sh/twd-js@1.8.2",
+      "twd-js/runner": "https://esm.sh/twd-js@1.8.2/runner",
+      "twd-js/bundled": "https://esm.sh/twd-js@1.8.2/bundled"
+    }
+  }
+</script>
+
+<main id="app">
+  <!-- your app -->
+</main>
+
+<script type="module">
+  import { initTWD } from 'twd-js/bundled';
+
+  // No bundler means no import.meta.glob, so list your test files by hand:
+  initTWD(
+    {
+      './tests/helloWorld.twd.js': () => import('./tests/helloWorld.twd.js'),
+      './tests/todoList.twd.js': () => import('./tests/todoList.twd.js'),
+    },
+    { open: true, position: 'left', serviceWorker: true, serviceWorkerUrl: '/mock-sw.js' },
+  );
+</script>
+```
+
+Your test files import from the same bare specifiers the import map defines:
+
+```js
+// tests/helloWorld.twd.js
+import { twd, userEvent, screenDom } from 'twd-js';
+import { describe, it } from 'twd-js/runner';
+
+describe('Counter', () => {
+  it('increments on click', async () => {
+    const button = screenDom.getByRole('button', { name: /clicks:/i });
+    await userEvent.setup().click(button);
+    twd.should(button, 'have.text', 'Clicks: 1');
+  });
+});
+```
+
+### Notes for Vanilla JS
+
+- **Use esm.sh.** It resolves TWD's internal React dependency automatically, so the import map stays to three lines. Pin the version (`twd-js@1.8.2`) so loads stay deterministic.
+- **The service worker is served from your own origin.** Browsers only register same-origin service workers, so the library loads from the CDN but `mock-sw.js` must sit on your domain. Run `npx twd-js init public` (or download it from the CDN) and point `serviceWorkerUrl` at it. Request mocking then works exactly like a bundled setup.
+- **Give TWD an app root.** With no framework root element, wrap your app in a known root such as `<div id="app">` (or pass `rootSelector` to `initTWD`) so `screenDom` queries stay scoped.
+- **Tests survive a migration.** These are plain Testing Library queries and TWD commands. If you later move this app to React, Vue, or Solid, the same test files keep working, only the setup changes.
+
+## HTMX (CDN, no bundler)
+
+[HTMX](https://htmx.org/) apps have no build step either, so TWD loads from a CDN the same way as [Vanilla JS](#vanilla-js-cdn-no-bundler) above. Load HTMX, then add the TWD import map alongside it.
+
+**[HTMX Example Repository](https://github.com/BRIKEV/twd-htmx)** - Complete no-build HTMX example with a counter, a todo list, a small HTML backend, and CI.
+
+```html
+<!-- index.html -->
+<script src="https://unpkg.com/htmx.org@2.0.10/dist/htmx.min.js"></script>
+<script type="importmap">
+  {
+    "imports": {
+      "twd-js": "https://esm.sh/twd-js@1.8.2",
+      "twd-js/runner": "https://esm.sh/twd-js@1.8.2/runner",
+      "twd-js/bundled": "https://esm.sh/twd-js@1.8.2/bundled"
+    }
+  }
+</script>
+
+<main id="app">
+  <button hx-get="/api/todos" hx-target="#todos" hx-swap="innerHTML">Load todos</button>
+  <ul id="todos"></ul>
+</main>
+
+<script type="module">
+  import { initTWD } from 'twd-js/bundled';
+  initTWD(
+    { './tests/todoList.twd.js': () => import('./tests/todoList.twd.js') },
+    { open: true, position: 'left', serviceWorker: true, serviceWorkerUrl: '/mock-sw.js' },
+  );
+</script>
+```
+
+The TWD service worker intercepts HTMX's requests (service workers see XHR and `fetch` alike), so the CDN, service-worker, and app-root notes from [Vanilla JS](#notes-for-vanilla-js) apply here too.
+
+### Notes for HTMX
+
+- **HTMX swaps HTML, so test against a real backend.** HTMX expects endpoints to return HTML fragments, not JSON. The cleanest way to test that is to run against your real HTML-returning backend and reset it between tests, the same pattern the [Nuxt example](#nuxt) uses. A dev-only reset endpoint gives each test a clean starting point.
+- **API mocking is JSON-oriented today.** `twd.mockRequest` serializes responses as JSON, which fits JSON APIs. First-class HTML-fragment mocking for hypermedia frameworks is on the roadmap; until then, prefer real-backend testing for HTMX's HTML endpoints.
+
 ## Framework Support Philosophy
 
 TWD is designed for **deterministic frontend boundary validation**. It focuses on frameworks that provide:
@@ -622,6 +723,7 @@ TWD officially supports:
 - **Nuxt (SSR)** - Nuxt 4 with client-side `useFetch`/`$fetch`, testable against the real backend
 - **Vue, Angular, Solid.js** - Other SPA frameworks
 - **Astro** - When used with client-driven components
+- **Vanilla JS and HTMX** - Any no-build project, loaded from a CDN with an import map
 
 ## Other Frameworks
 

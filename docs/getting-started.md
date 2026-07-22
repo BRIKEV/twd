@@ -27,6 +27,10 @@ pnpm add twd-js
 
 :::
 
+::: tip No build step? Use a CDN
+Plain HTML pages, static sites, and [HTMX](https://htmx.org/) projects can load TWD from a CDN with no bundler and no install, using an import map. See [Vanilla JS](/frameworks#vanilla-js-cdn-no-bundler) and [HTMX](/frameworks#htmx-cdn-no-bundler) in the framework guide.
+:::
+
 ## Quick Setup
 
 ### 1. Add the Vite Plugin

@@ -37,6 +37,8 @@ See TWD testing real shadcn/ui components with live code and tests running in th
 | [twd-auth0-pkce](https://github.com/BRIKEV/twd-auth0-pkce) | React + Auth0 PKCE | PKCE flow mocking for SPAs |
 | [twd-docs-tutorial](https://github.com/BRIKEV/twd-docs-tutorial) | React | Step-by-step companion to the [tutorial](/tutorial/) |
 | [twd-create-react-app](https://github.com/BRIKEV/twd-create-react-app) | Create React App (Webpack) | `require.context` test loading, react-router loaders/actions, CI with twd-cli and contract validation |
+| [twd-vanillajs](https://github.com/BRIKEV/twd-vanillajs) | Vanilla JS (no bundler) | TWD loaded from a CDN via an import map, counter + todo list, API mocking, CI with twd-cli and contract validation |
+| [twd-htmx](https://github.com/BRIKEV/twd-htmx) | HTMX (no bundler) | TWD loaded from a CDN, HTMX todo list tested against a real HTML backend with a dev-only reset endpoint |
 
 ### In-Repo Examples
 
