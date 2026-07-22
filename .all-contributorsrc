@@ -46,6 +46,15 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "RLinV1",
+      "name": "Raymond Lin",
+      "avatar_url": "https://avatars.githubusercontent.com/u/86033049?v=4",
+      "profile": "https://raymondportfolio.vercel.app",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,
