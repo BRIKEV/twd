@@ -1,6 +1,8 @@
 # TWD (Test While Developing)
 
-> TWD is an in-browser testing ecosystem for SPAs that runs tests directly in the browser with a sidebar UI for instant visual feedback. It supports React, Vue, Angular, and Solid.js with deterministic, client-side UI testing — and includes an AI workflow that lets agents write, run, and iterate on tests autonomously, plus contract testing that validates every mock against the real OpenAPI spec.
+> TWD is an in-browser testing ecosystem that runs tests directly in the browser with a sidebar UI for instant visual feedback. It works with any frontend that renders in the browser (React, Vue, Angular, Solid, Astro, Nuxt, HTMX, and vanilla JS) on Vite, Webpack, or a CDN, and includes an AI workflow that lets agents write, run, and iterate on tests autonomously, plus contract testing that validates every mock against the real OpenAPI spec.
+
+Full documentation as a single file: https://twd.dev/llms-full.txt
 
 Key features:
 - In-browser test execution with visual sidebar UI
@@ -10,7 +12,7 @@ Key features:
 - CI/CD execution with twd-cli (headless Puppeteer, coverage)
 - Contract testing — validate mocks against OpenAPI specs
 - Token-efficient AI agent testing via WebSocket relay (no Playwright, no screenshots)
-- Multi-framework support (React, Vue, Angular, Solid.js)
+- Multi-framework support: React, Vue, Angular, Solid, Astro, Nuxt, plus HTMX and vanilla JS with no build step (via a CDN)
 - Claude Code plugin and skills for autonomous test writing
 
 ## Philosophy
@@ -31,7 +33,7 @@ Key features:
 - [API Mocking](https://twd.dev/api-mocking): Service worker setup, request mocking patterns, dynamic responses, error handling
 - [Component Mocking](https://twd.dev/component-mocking): MockedComponent wrapper, conditional mocking, error states
 - [Module Mocking](https://twd.dev/module-mocking): Sinon-based module mocking for ESM
-- [Framework Integration](https://twd.dev/frameworks): React, Vue, Angular, Solid.js, CRA, Astro, React Router setup
+- [Framework Integration](https://twd.dev/frameworks): React, Vue, Angular, Solid, Astro, React Router, Nuxt, CRA, HTMX, and vanilla JS setup
 - [Testing Library](https://twd.dev/testing-library): Testing Library integration and selectors
 - [CI Execution](https://twd.dev/ci-execution): twd-cli setup, Puppeteer, GitHub Actions
 - [Coverage](https://twd.dev/coverage): Code coverage reporting

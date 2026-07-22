@@ -101,6 +101,9 @@ dist
 # vitepress build output
 **/.vitepress/dist
 
+# Auto-generated at build time by scripts/generate-llms-full.mjs
+docs/public/llms-full.txt
+
 # vitepress cache directory
 **/.vitepress/cache
 
