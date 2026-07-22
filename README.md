@@ -112,6 +112,7 @@ Open issues or pull requests on [GitHub](https://github.com/BRIKEV/twd). If you'
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/DamonCaos"><img src="https://avatars.githubusercontent.com/u/169996368?v=4?s=100" width="100px;" alt="Javier Rodriguez"/><br /><sub><b>Javier Rodriguez</b></sub></a><br /><a href="https://github.com/BRIKEV/twd/commits?author=DamonCaos" title="Documentation">📖</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/codesthenos"><img src="https://avatars.githubusercontent.com/u/166174180?v=4?s=100" width="100px;" alt="Guillermo Ruiz Arranz"/><br /><sub><b>Guillermo Ruiz Arranz</b></sub></a><br /><a href="https://github.com/BRIKEV/twd/commits?author=codesthenos" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://portfolio-pi-ruby-7alj81l6dp.vercel.app/"><img src="https://avatars.githubusercontent.com/u/157389533?v=4?s=100" width="100px;" alt="Roberto Gomez Fabrega"/><br /><sub><b>Roberto Gomez Fabrega</b></sub></a><br /><a href="https://github.com/BRIKEV/twd/commits?author=Rober040992" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://raymondportfolio.vercel.app"><img src="https://avatars.githubusercontent.com/u/86033049?v=4?s=100" width="100px;" alt="Raymond Lin"/><br /><sub><b>Raymond Lin</b></sub></a><br /><a href="https://github.com/BRIKEV/twd/commits?author=RLinV1" title="Documentation">📖</a></td>
     </tr>
   </tbody>
 </table>
