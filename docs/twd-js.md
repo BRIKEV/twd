@@ -1,13 +1,13 @@
 ---
 title: Frontend tests that run in your real browser — TWD
-description: TWD runs your tests in your dev server with a sidebar that updates as you code. For React, Vue, Angular, and Solid.
+description: TWD runs your tests in your dev server with a sidebar that updates as you code. Works with React, Vue, Angular, Solid, Astro, Nuxt, HTMX, and vanilla JS.
 head:
   - - meta
     - property: og:title
       content: Frontend tests that run in your real browser — TWD
   - - meta
     - property: og:description
-      content: TWD runs your tests in your dev server with a sidebar that updates as you code. For React, Vue, Angular, and Solid.
+      content: TWD runs your tests in your dev server with a sidebar that updates as you code. Works with React, Vue, Angular, Solid, Astro, Nuxt, HTMX, and vanilla JS.
 ---
 
 <LandingHero

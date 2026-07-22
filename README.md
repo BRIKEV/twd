@@ -10,7 +10,7 @@
   <img src="https://raw.githubusercontent.com/BRIKEV/twd/main/images/twd-skill.gif" alt="TWD running with an AI agent: tests written and executed in a real browser sidebar" width="800">
 </p>
 
-> **Frontend tests that run in your real browser.** Same DOM, same routes, same state as your dev server. For React, Vue, Angular, and Solid.
+> **Frontend tests that run in your real browser.** Same DOM, same routes, same state as your dev server. Works with React, Vue, Angular, Solid, Astro, Nuxt, HTMX, and vanilla JS, on Vite, Webpack, or a CDN.
 
 ## The problem
 

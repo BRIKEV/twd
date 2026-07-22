@@ -46,7 +46,7 @@ const faqs = [
   },
   {
     q: 'What frameworks are supported?',
-    a: 'React, Vue, Angular, and Solid.js. Anything Vite-based. Not compatible with SSR-first architectures like Next.js App Router (the testing boundary becomes unclear when the server owns rendering).'
+    a: 'Any frontend that renders in the browser: SPAs like React, Vue, Angular, and Solid; hydrated SSR like React Router and Nuxt; Astro islands; and no-build projects like HTMX and vanilla JS via a CDN. On Vite, Webpack, or no bundler at all. The one setup TWD does not target is where the server owns rendering (React Server Components, as in the Next.js App Router), since there is no explicit browser boundary to test there yet.'
   },
   {
     q: 'Can AI actually write good tests?',
