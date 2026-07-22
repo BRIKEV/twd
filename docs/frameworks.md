@@ -1,11 +1,11 @@
 ---
 title: Framework Integration
-description: Set up TWD with React, Vue, Angular, Solid.js, CRA, Astro, React Router, and Nuxt
+description: Set up TWD with React, Vue, Angular, Solid, Astro, React Router, Nuxt, Create React App, HTMX, and vanilla JS
 ---
 
 # Framework Integration
 
-TWD is designed to work with any Vite-based application. Currently, **react, vue, angular, solid.js and nuxt are supported**, and the library can be adapted to work with other build tools and frameworks.
+TWD runs your tests in the real browser, so it works with any frontend that renders there: SPAs like React, Vue, Angular, and Solid; hydrated SSR like React Router and Nuxt; Astro islands; and no-build projects like HTMX and vanilla JS, via a CDN. On Vite, Webpack, or no bundler at all.
 
 ## React
 
@@ -715,7 +715,7 @@ TWD is designed for **deterministic frontend boundary validation**. It focuses o
 - **Deterministic behavior** - Predictable rendering and state management
 - **Fast feedback loops** - Quick test execution and hot module replacement
 
-TWD works with SPAs and frameworks where the UI renders client-side and external dependencies can be explicitly isolated. This includes SSR frameworks like **React Router** where loaders and actions are explicit and testable at the boundary. Server-component-first architectures like **Next.js App Router**, where rendering, data loading, and infrastructure are implicitly mixed, blur the ownership boundary and are not compatible with TWD's validation model.
+TWD works with any frontend that renders in the browser and exposes an explicit, testable boundary. This includes SPAs, hydrated SSR frameworks like **React Router** and **Nuxt** where loaders and data fetching are explicit, Astro islands, and no-build projects served from a CDN. The one setup TWD does not target is where the server owns rendering and data-loading together (**React Server Components**, as in the **Next.js App Router**), since there is no explicit browser boundary to test there yet.
 
 TWD officially supports:
 - **React (SPA)** - Standard Vite-based React applications

@@ -3,7 +3,7 @@ import { defineConfig } from 'vitepress'
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
   title: "TWD",
-  description: "Test While Developing (TWD) - in-browser testing for React, Vue, Angular, and Solid.js applications",
+  description: "In-browser frontend testing for React, Vue, Angular, Solid, Astro, Nuxt, HTMX and vanilla JS. Runs in your real browser via Vite, Webpack, or a CDN.",
   base: '/',
   cleanUrls: true,
   sitemap: {
@@ -18,7 +18,7 @@ export default defineConfig({
     ['link', { rel: 'manifest', href: '/site.webmanifest' }],
     
     // SEO Meta Tags
-    ['meta', { name: 'keywords', content: 'testing, deterministic, browser-validation, ai-testing, ai-agent, react, vue, angular, solidjs, javascript, typescript, twd, test-while-developing, browser-testing, mock-service-worker, vite, contract-testing, openapi, code-coverage' }],
+    ['meta', { name: 'keywords', content: 'testing, deterministic, browser-validation, ai-testing, ai-agent, react, vue, angular, solidjs, astro, nuxt, react-router, htmx, vanilla-js, javascript, typescript, twd, test-while-developing, browser-testing, mock-service-worker, vite, webpack, cdn, esm, contract-testing, openapi, code-coverage' }],
 
     // Open Graph Tags
     ['meta', { property: 'og:type', content: 'website' }],
@@ -43,7 +43,21 @@ export default defineConfig({
     ['meta', { name: 'viewport', content: 'width=device-width, initial-scale=1.0' }],
 
     // Umami analytics (cookieless, EU region)
-    ['script', { defer: '', src: 'https://cloud.umami.is/script.js', 'data-website-id': '3d4e6e8c-3498-4652-8a3b-f49a734004c8' }]
+    ['script', { defer: '', src: 'https://cloud.umami.is/script.js', 'data-website-id': '3d4e6e8c-3498-4652-8a3b-f49a734004c8' }],
+
+    // Structured data (SoftwareApplication) for rich search results
+    ['script', { type: 'application/ld+json' }, JSON.stringify({
+      '@context': 'https://schema.org',
+      '@type': 'SoftwareApplication',
+      name: 'TWD (Test While Developing)',
+      applicationCategory: 'DeveloperApplication',
+      operatingSystem: 'Web',
+      description: 'In-browser frontend testing for React, Vue, Angular, Solid, Astro, Nuxt, HTMX and vanilla JS. Runs in your real browser via Vite, Webpack, or a CDN.',
+      url: 'https://twd.dev/',
+      author: { '@type': 'Organization', name: 'BRIKEV', url: 'https://github.com/BRIKEV' },
+      license: 'https://opensource.org/licenses/MIT',
+      offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' }
+    })]
   ],
   themeConfig: {
     // https://vitepress.dev/reference/default-theme-config
