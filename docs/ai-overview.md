@@ -7,6 +7,12 @@ description: Use TWD with AI agents for autonomous test writing, generation, and
 
 TWD produces structured, deterministic output that AI agents can parse and act on autonomously. Every test run returns the same pass/fail signals for the same inputs — no flakiness, no ambiguity. Whether you want your AI assistant to write better tests, generate tests from browser interactions, or run tests autonomously, TWD has you covered.
 
+## Watch the loop
+
+An AI agent writes a test, runs it in your real browser through TWD, reads the failure, fixes it, and re-runs until green — no screenshots, no separate browser.
+
+<YouTubeEmbed id="0G6xunet-HI" title="TWD: the AI agent testing loop" />
+
 ## Claude Code Plugin
 
 The fastest way to get AI-powered TWD testing is with the [Claude Code plugin](https://github.com/BRIKEV/twd-ai). It gives Claude a full set of testing skills.

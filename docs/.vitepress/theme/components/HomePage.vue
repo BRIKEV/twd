@@ -1,6 +1,6 @@
 <script setup>
 import { useData } from 'vitepress'
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, onBeforeUnmount, nextTick } from 'vue'
 import ThesisBanner from './ThesisBanner.vue'
 import AdoptionLineDiagram from './AdoptionLineDiagram.vue'
 
@@ -14,9 +14,45 @@ const showHeroVideo = ref(false)
 const heroVideoPaused = ref(false)
 const heroVideoEl = ref(null)
 
+// AI agent-loop demo: same progressive-enhancement contract as the hero, but the
+// section sits well below the fold, so the video is deferred (preload="none", no
+// autoplay) and only plays once it scrolls into view — keeping its ~0.6MB off the
+// initial critical path.
+const showLoopVideo = ref(false)
+const loopVideoPaused = ref(false)
+const loopUserPaused = ref(false)
+const loopVideoEl = ref(null)
+let loopObserver = null
+
+const youtubeWatchUrl = 'https://www.youtube.com/watch?v=0G6xunet-HI'
+
 onMounted(() => {
   requestAnimationFrame(() => { loaded.value = true })
-  showHeroVideo.value = !window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  const allowMotion = !window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  showHeroVideo.value = allowMotion
+  showLoopVideo.value = allowMotion
+  if (!allowMotion) return
+  nextTick(() => {
+    const video = loopVideoEl.value
+    if (!video) return
+    if (!('IntersectionObserver' in window)) {
+      video.play().catch(() => {})
+      return
+    }
+    loopObserver = new IntersectionObserver((entries) => {
+      const entry = entries[0]
+      if (entry.isIntersecting) {
+        if (!loopUserPaused.value) video.play().catch(() => {})
+      } else {
+        video.pause()
+      }
+    }, { threshold: 0.25 })
+    loopObserver.observe(video)
+  })
+})
+
+onBeforeUnmount(() => {
+  if (loopObserver) loopObserver.disconnect()
 })
 
 function toggleHeroVideo() {
@@ -28,6 +64,20 @@ function toggleHeroVideo() {
   } else {
     video.pause()
     heroVideoPaused.value = true
+  }
+}
+
+function toggleLoopVideo() {
+  const video = loopVideoEl.value
+  if (!video) return
+  if (video.paused) {
+    loopUserPaused.value = false
+    video.play().catch(() => {})
+    loopVideoPaused.value = false
+  } else {
+    loopUserPaused.value = true
+    video.pause()
+    loopVideoPaused.value = true
   }
 }
 
@@ -193,6 +243,58 @@ const faqs = [
         <div class="ecosystem-diagram">
           <AdoptionLineDiagram />
         </div>
+      </section>
+
+      <!-- Section 3.5: AI agent loop demo -->
+      <section class="agent-loop" aria-labelledby="agent-loop-heading">
+        <h2 id="agent-loop-heading" class="section-title">Your agent writes tests. TWD makes them run.</h2>
+        <p class="section-sub agent-loop-sub">
+          Watch an AI agent write a test, run it in your real browser through TWD, read the
+          failure, fix it, and re-run until green. The whole loop &mdash; no screenshots, no separate browser.
+        </p>
+
+        <div class="agent-loop-visual">
+          <template v-if="showLoopVideo">
+            <video
+              ref="loopVideoEl"
+              src="/videos/twd-agent-loop.mp4"
+              poster="/images/twd-agent-loop-poster.jpg"
+              class="agent-loop-video"
+              muted
+              loop
+              playsinline
+              preload="none"
+              aria-label="An AI agent writes a TWD test, runs it in a real browser, reads the failure, fixes it, and re-runs until all tests pass"
+            ></video>
+            <button
+              type="button"
+              class="hero-video-toggle agent-loop-toggle"
+              :aria-pressed="loopVideoPaused"
+              :aria-label="loopVideoPaused ? 'Play the AI loop animation' : 'Pause the AI loop animation'"
+              @click="toggleLoopVideo"
+            >
+              <svg v-if="loopVideoPaused" width="14" height="14" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M4 2.5v11l9-5.5-9-5.5z"/></svg>
+              <svg v-else width="14" height="14" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M4 2h3v12H4zM9 2h3v12H9z"/></svg>
+            </button>
+          </template>
+          <img
+            v-else
+            src="/images/twd-agent-loop-poster.jpg"
+            alt="TWD sidebar with an AI agent writing and running tests until they pass"
+            class="agent-loop-video"
+            width="1280"
+            height="720"
+            loading="lazy"
+          />
+        </div>
+
+        <p class="agent-loop-cta">
+          <a :href="youtubeWatchUrl" target="_blank" rel="noopener" class="agent-loop-link">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+            Watch the full narrated walkthrough on YouTube
+            <span class="visually-hidden">(opens in new tab)</span>
+          </a>
+        </p>
       </section>
 
       <!-- Section 4: Quick Start -->
@@ -612,6 +714,58 @@ video.hero-img {
 }
 
 /* ============================================
+   AI agent loop demo
+   ============================================ */
+.agent-loop {
+  padding-bottom: var(--hp-section-gap);
+  text-align: center;
+}
+
+.agent-loop-sub {
+  max-width: 560px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.agent-loop-visual {
+  position: relative;
+  max-width: 760px;
+  margin: 40px auto 0;
+}
+
+.agent-loop-video {
+  display: block;
+  width: 100%;
+  /* Reserve the box before the deferred video/poster paints (avoids CLS) */
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  border-radius: var(--hp-radius);
+  border: 1px solid var(--hp-border);
+  box-shadow: 0 16px 48px -12px rgba(0,0,0,0.2);
+}
+
+.agent-loop-cta {
+  margin-top: 24px;
+}
+
+.agent-loop-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--vp-c-brand-1);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  transition: opacity 0.2s;
+}
+
+.agent-loop-link:hover,
+.agent-loop-link:focus-visible {
+  opacity: 0.75;
+}
+
+/* ============================================
    Section shared
    ============================================ */
 .section-title {
@@ -774,6 +928,8 @@ video.hero-img {
 .step-img {
   margin-top: 16px;
   width: 100%;
+  /* Reserve height for this lazy-loaded screenshot (Lighthouse-flagged CLS) */
+  aspect-ratio: 2080 / 1336;
   border-radius: var(--hp-radius);
   border: 1px solid var(--hp-border);
 }

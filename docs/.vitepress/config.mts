@@ -57,6 +57,20 @@ export default defineConfig({
       author: { '@type': 'Organization', name: 'BRIKEV', url: 'https://github.com/BRIKEV' },
       license: 'https://opensource.org/licenses/MIT',
       offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' }
+    })],
+
+    // Structured data (VideoObject) for the AI agent-loop walkthrough.
+    ['script', { type: 'application/ld+json' }, JSON.stringify({
+      '@context': 'https://schema.org',
+      '@type': 'VideoObject',
+      name: 'TWD: the AI agent testing loop',
+      description: 'An AI agent writes a test, runs it in your real browser through TWD, reads the failure, fixes it, and re-runs until green — no screenshots, no separate browser.',
+      thumbnailUrl: 'https://twd.dev/images/twd-agent-loop-poster.jpg',
+      uploadDate: '2026-07-24',
+      duration: 'PT1M11S',
+      contentUrl: 'https://www.youtube.com/watch?v=0G6xunet-HI',
+      embedUrl: 'https://www.youtube.com/embed/0G6xunet-HI',
+      publisher: { '@type': 'Organization', name: 'BRIKEV', url: 'https://github.com/BRIKEV' }
     })]
   ],
   themeConfig: {

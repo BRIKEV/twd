@@ -4,6 +4,7 @@ import ThesisBanner from './components/ThesisBanner.vue'
 import AdoptionLineDiagram from './components/AdoptionLineDiagram.vue'
 import LandingHero from './components/LandingHero.vue'
 import LandingCrossLinks from './components/LandingCrossLinks.vue'
+import YouTubeEmbed from './components/YouTubeEmbed.vue'
 import './style.css'
 
 export default {
@@ -14,5 +15,6 @@ export default {
     app.component('AdoptionLineDiagram', AdoptionLineDiagram)
     app.component('LandingHero', LandingHero)
     app.component('LandingCrossLinks', LandingCrossLinks)
+    app.component('YouTubeEmbed', YouTubeEmbed)
   },
 }
