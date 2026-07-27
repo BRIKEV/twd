@@ -111,7 +111,7 @@
     "husky": "^9.1.7",
     "jsdom": "^29.1.1",
     "lint-staged": "^17.0.2",
-    "prettier": "^3.8.3",
+    "prettier": "^3.9.6",
     "typescript": "~5.9.3",
     "typescript-eslint": "^8.59.2",
     "vite": "^8.0.10",
