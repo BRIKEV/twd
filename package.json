@@ -1,6 +1,6 @@
 {
   "name": "twd-js",
-  "version": "1.8.2",
+  "version": "1.9.0",
   "description": "Test While Developing (TWD): in-browser test runner with a live sidebar UI. Works with React, Vue, Angular, Solid, Astro, Nuxt, HTMX and vanilla JS, on Vite, Webpack, or a CDN. Built-in API and component mocking.",
   "type": "module",
   "license": "MIT",

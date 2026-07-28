@@ -1,3 +1,24 @@
+## <small>1.9.0 (2026-07-28)</small>
+
+* feat(pace): command pacing for recorded runs (#316) ([3aeceb4](https://github.com/BRIKEV/twd/commit/3aeceb4)), closes [#316](https://github.com/BRIKEV/twd/issues/316)
+* feat(pace): `window.__twdSetPace(ms)` spaces out the in-page command loop, so `twd-cli --record` produces a watchable video at full frame rate rather than a one second blur. Typing is spaced per keystroke too, via a derived delay, so text appears character by character
+* feat(pace): a tooling hook, not public API. It is not exported from the package entry point and is not on the `twd` object, so it cannot be left in a spec file and silently slow CI. With pacing off a run allocates no promise and schedules no timer
+* feat(docs): landing hero video (twd.dev + twd-js page) (#298) ([5ba68be](https://github.com/BRIKEV/twd/commit/5ba68be)), closes [#298](https://github.com/BRIKEV/twd/issues/298)
+* feat: file upload example (#299) ([c9ff208](https://github.com/BRIKEV/twd/commit/c9ff208)), closes [#299](https://github.com/BRIKEV/twd/issues/299)
+* fix(docs): quote api-mocking frontmatter description to fix YAML parse ([e7290aa](https://github.com/BRIKEV/twd/commit/e7290aa))
+* docs: CDN installation for Vanilla JS and HTMX (#307) ([83e713c](https://github.com/BRIKEV/twd/commit/83e713c)), closes [#307](https://github.com/BRIKEV/twd/issues/307)
+* docs: add AI agent-loop video to landing + AI docs, optimize media (#310) ([f667d6b](https://github.com/BRIKEV/twd/commit/f667d6b)), closes [#310](https://github.com/BRIKEV/twd/issues/310)
+* docs(seo): add auto-generated llms-full.txt for AI ingestion (#309) ([3c0792c](https://github.com/BRIKEV/twd/commit/3c0792c)), closes [#309](https://github.com/BRIKEV/twd/issues/309)
+* docs(seo): broaden framework support messaging + add structured data (#308) ([ac4fb5f](https://github.com/BRIKEV/twd/commit/ac4fb5f)), closes [#308](https://github.com/BRIKEV/twd/issues/308)
+* docs(community): add twd-cells (Open Cells) example repository ([7f3bb5d](https://github.com/BRIKEV/twd/commit/7f3bb5d))
+* docs: fix CRA guide with initTWD setup and add CRA example repo ([9bd5c2b](https://github.com/BRIKEV/twd/commit/9bd5c2b))
+* docs: replace inaccurate "Mock Service Worker" brand references ([e218779](https://github.com/BRIKEV/twd/commit/e218779))
+* docs: add RLinV1 as a contributor for doc (#306) ([1bc0a75](https://github.com/BRIKEV/twd/commit/1bc0a75))
+* chore: dependencies (16 dependabot bumps)
+
+Pacing needs `twd-cli` 1.4.0 or newer to drive it from `--record-pace`. Older
+`twd-cli` versions are unaffected.
+
 ## <small>1.8.2 (2026-07-01)</small>
 
 * fix(a11y): address audit findings on docs site + sidebar (#267) ([173d5a4](https://github.com/BRIKEV/twd/commit/173d5a4)), closes [#267](https://github.com/BRIKEV/twd/issues/267)
