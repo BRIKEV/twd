@@ -1,6 +1,7 @@
 import userEventLib from '@testing-library/user-event';
 import { log } from '../utils/log';
 import { eventsMessage } from './eventsMessage';
+import { pace } from '../pace';
 
 type UserEvent = typeof userEventLib;
 
@@ -103,6 +104,15 @@ function clearFallback(element: HTMLElement) {
   typingFallback(element, '');
 }
 
+/**
+ * Logs the command and then holds, so a recorded run shows the result of the
+ * action before moving on. `pace()` is a no-op when pacing is off.
+ */
+async function logAndPace(prefix: string, prop: string | symbol, args: any[]) {
+  log(eventsMessage(prefix, prop, args));
+  await pace();
+}
+
 function createLoggedProxy(obj: any, prefix = 'userEvent') {
   return new Proxy(obj, {
     get(target, prop, receiver) {
@@ -123,11 +133,11 @@ function createLoggedProxy(obj: any, prefix = 'userEvent') {
         return async (...args: any[]) => {
           if (document.visibilityState === 'hidden' || !document.hasFocus()) {
             typingFallback(args[0], args[1]);
-            log(eventsMessage(prefix, prop, args));
+            await logAndPace(prefix, prop, args);
             return;
           }
           const result = await orig(...args);
-          log(eventsMessage(prefix, prop, args));
+          await logAndPace(prefix, prop, args);
           return result;
         };
       }
@@ -137,11 +147,11 @@ function createLoggedProxy(obj: any, prefix = 'userEvent') {
         return async (...args: any[]) => {
           if (document.visibilityState === 'hidden' || !document.hasFocus()) {
             clearFallback(args[0]);
-            log(eventsMessage(prefix, prop, args));
+            await logAndPace(prefix, prop, args);
             return;
           }
           const result = await orig(...args);
-          log(eventsMessage(prefix, prop, args));
+          await logAndPace(prefix, prop, args);
           return result;
         };
       }
@@ -204,18 +214,18 @@ function createLoggedProxy(obj: any, prefix = 'userEvent') {
             }
 
             flushText();
-            log(eventsMessage(prefix, prop, args));
+            await logAndPace(prefix, prop, args);
             return;
           }
           const result = await orig(...args);
-          log(eventsMessage(prefix, prop, args));
+          await logAndPace(prefix, prop, args);
           return result;
         };
       }
 
       return async (...args: any[]) => {
         const result = await orig(...args);
-        log(eventsMessage(prefix, prop, args));
+        await logAndPace(prefix, prop, args);
         return result;
       };
     },
