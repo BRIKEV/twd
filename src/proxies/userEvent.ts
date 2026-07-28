@@ -1,7 +1,7 @@
 import userEventLib from '@testing-library/user-event';
 import { log } from '../utils/log';
 import { eventsMessage } from './eventsMessage';
-import { pace } from '../pace';
+import { pace, getKeyDelay, getPaceGeneration } from '../pace';
 
 type UserEvent = typeof userEventLib;
 
@@ -113,6 +113,39 @@ async function logAndPace(prefix: string, prop: string | symbol, args: any[]) {
   await pace();
 }
 
+// Keyed on the pace generation, not on the delay. A plain `cached ??= ...`
+// would keep a stale delay forever, and keying on the delay alone would miss
+// the case where the same value is set twice.
+let cachedPaced: { generation: number; user: any } | null = null;
+
+/**
+ * The implementation to call for `prop`.
+ *
+ * When paced, this is a user-event setup instance carrying the derived delay.
+ * user-event applies `delay` at config level, in wrapAndBindImpl after every
+ * API method as well as between keystrokes and pointer actions, so one instance
+ * covers every method uniformly. That includes `clear`, which is the one direct
+ * API method taking no options at all.
+ *
+ * Returns null when pacing is off, so a normal run uses the direct API
+ * untouched and builds no instance.
+ */
+function pacedImpl(prop: string | symbol): ((...args: any[]) => any) | null {
+  const delay = getKeyDelay();
+  if (!delay) {
+    cachedPaced = null;
+    return null;
+  }
+
+  const generation = getPaceGeneration();
+  if (!cachedPaced || cachedPaced.generation !== generation) {
+    cachedPaced = { generation, user: userEventLib.setup({ delay }) };
+  }
+
+  const fn = cachedPaced.user[prop];
+  return typeof fn === 'function' ? fn.bind(cachedPaced.user) : null;
+}
+
 function createLoggedProxy(obj: any, prefix = 'userEvent') {
   return new Proxy(obj, {
     get(target, prop, receiver) {
@@ -122,7 +155,9 @@ function createLoggedProxy(obj: any, prefix = 'userEvent') {
       // Special handling for setup
       if (prop === 'setup') {
         return (...args: any[]) => {
-          const instance = orig(...args);
+          // Spread the caller's options last so an explicit delay wins.
+          const delay = getKeyDelay();
+          const instance = delay ? orig({ delay, ...(args[0] || {}) }) : orig(...args);
           // Proxy the returned instance
           return createLoggedProxy(instance, `${prefix}.instance`);
         };
@@ -136,7 +171,8 @@ function createLoggedProxy(obj: any, prefix = 'userEvent') {
             await logAndPace(prefix, prop, args);
             return;
           }
-          const result = await orig(...args);
+          const impl = prefix === 'userEvent' ? (pacedImpl(prop) ?? orig) : orig;
+          const result = await impl(...args);
           await logAndPace(prefix, prop, args);
           return result;
         };
@@ -150,7 +186,8 @@ function createLoggedProxy(obj: any, prefix = 'userEvent') {
             await logAndPace(prefix, prop, args);
             return;
           }
-          const result = await orig(...args);
+          const impl = prefix === 'userEvent' ? (pacedImpl(prop) ?? orig) : orig;
+          const result = await impl(...args);
           await logAndPace(prefix, prop, args);
           return result;
         };
@@ -217,14 +254,16 @@ function createLoggedProxy(obj: any, prefix = 'userEvent') {
             await logAndPace(prefix, prop, args);
             return;
           }
-          const result = await orig(...args);
+          const impl = prefix === 'userEvent' ? (pacedImpl(prop) ?? orig) : orig;
+          const result = await impl(...args);
           await logAndPace(prefix, prop, args);
           return result;
         };
       }
 
       return async (...args: any[]) => {
-        const result = await orig(...args);
+        const impl = prefix === 'userEvent' ? (pacedImpl(prop) ?? orig) : orig;
+        const result = await impl(...args);
         await logAndPace(prefix, prop, args);
         return result;
       };
