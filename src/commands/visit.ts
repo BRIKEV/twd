@@ -1,5 +1,6 @@
 import { wait } from '../utils/wait';
 import { log } from '../utils/log';
+import { pace } from '../pace';
 
 const DELAY = 100;
 
@@ -17,4 +18,5 @@ export const visit = async (url: string, reload?: boolean): Promise<void> => {
   window.history.pushState({}, '', url);
   window.dispatchEvent(new PopStateEvent('popstate'));
   await wait(DELAY);
+  await pace();
 };
