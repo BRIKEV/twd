@@ -1,8 +1,23 @@
 # Paced command loop and in-page overlays for recorded runs - Design
 
 Date: 2026-07-27
-Status: Direction only. Not ready to plan. Blocked on twd-cli video capture shipping first.
+Status: Superseded for the pacing half. Retained for the overlay research.
 Repo: `twd` (twd-js)
+
+> **Superseded by [`2026-07-28-twd-js-command-pacing-design.md`](./2026-07-28-twd-js-command-pacing-design.md).**
+>
+> That spec is the plan of record for pacing, and it deliberately drops overlays:
+> the only reason to pause after a query is to highlight what it found, so
+> overlays and query pacing stand or fall together, and v1 paces actions only.
+>
+> Two things below are also now known to be wrong. `log()` is not a usable hook
+> point, because it is synchronous and making it async would force `await` into
+> `should()` and the `screenDom` proxy. And the enablement surface is a
+> `window.__twdSetPace` tooling global, not a public `twd` API method, so a stray
+> call cannot slow CI.
+>
+> This document is kept for the overlay investigation, which remains accurate and
+> would be the starting point if overlays are ever revisited.
 
 ## Context
 
