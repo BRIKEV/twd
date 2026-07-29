@@ -116,6 +116,7 @@ export default defineConfig({
           { text: 'Module Mocking', link: '/module-mocking' },
           { text: 'Theming', link: '/theming' },
           { text: 'CI Execution', link: '/ci-execution' },
+          { text: 'Recording Runs', link: '/recording' },
           { text: 'Coverage', link: '/coverage' },
           { text: 'AI Integration', link: '/ai-overview' },
           { text: 'Contract Testing Setup', link: '/contract-testing-setup' },

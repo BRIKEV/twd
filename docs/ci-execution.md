@@ -226,6 +226,7 @@ Run your **full suite on Chromium with `twd-cli`** (coverage, contracts, retries
 
 ## Next Steps
 
+- [Recording Runs](/recording): Record a run to video, paced so it is watchable in a pull request
 - [Contract Testing](/contract-testing): Validate your API mocks against OpenAPI specs
 - [Code Coverage](/coverage): Learn how to collect and report code coverage with TWD
 - [Writing Tests](/writing-tests): Create testable components
