@@ -56,6 +56,73 @@ its own command loop and can space the execution itself. Frames are captured at
 full rate, and the pauses land where something just happened. Typing is spaced
 per keystroke too, so text appears character by character instead of all at once.
 
+The same test recorded both ways. It fills a seven field form and submits it:
+
+<div class="pace-demo">
+  <figure class="pace-demo__item">
+    <video
+      src="/videos/twd-record-unpaced.mp4"
+      poster="/images/twd-record-poster.jpg"
+      controls
+      muted
+      loop
+      playsinline
+      preload="none"
+      aria-label="Unpaced recording of a test filling a seven field form. The whole form fills in a few frames and the run is over in under two seconds."
+    ></video>
+    <figcaption>
+      <code>pace: 0</code>
+      <span>1.8s. The form fills in a handful of frames.</span>
+    </figcaption>
+  </figure>
+  <figure class="pace-demo__item">
+    <video
+      src="/videos/twd-record-paced.mp4"
+      poster="/images/twd-record-poster.jpg"
+      controls
+      muted
+      loop
+      playsinline
+      preload="none"
+      aria-label="Paced recording of the same test. Each field is typed character by character with a pause after every command, and the run takes just over eight seconds."
+    ></video>
+    <figcaption>
+      <code>pace: 300</code>
+      <span>8.2s. Same test, same assertions.</span>
+    </figcaption>
+  </figure>
+</div>
+
+<style>
+/* Stacked, full content width. Side by side halves the frame, and at that size
+   the browser's own control bar covers most of the app. */
+.pace-demo {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 28px;
+  margin: 24px 0 8px;
+}
+.pace-demo__item {
+  margin: 0;
+}
+.pace-demo__item video {
+  display: block;
+  width: 100%;
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 8px;
+  background: var(--vp-c-bg-alt);
+}
+.pace-demo figcaption {
+  margin-top: 10px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--vp-c-text-2);
+}
+.pace-demo figcaption code {
+  margin-right: 8px;
+}
+</style>
+
 This is why recorded runs are **paced by default at 300ms**. `--record` on its
 own gives you something watchable.
 
