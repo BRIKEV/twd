@@ -198,7 +198,12 @@ initTWD(tests, {
 
 **Angular** (no Vite — manual init required):
 ```ts
-if (isDevMode()) {
+// TWD_ENABLED comes from the `define` option in angular.json — see the Angular
+// section in Framework Setup. Do not use isDevMode(): it is a function call, so
+// esbuild keeps the branch and ships ~580 K of unused chunks in production.
+declare const TWD_ENABLED: boolean | undefined;
+
+if (typeof TWD_ENABLED !== 'undefined' && TWD_ENABLED) {
   const { initTWD } = await import('twd-js/bundled');
   const tests = {
     './tests/example.twd.test.ts': () => import('./tests/example.twd.test'),
@@ -227,7 +232,7 @@ For Vite-based React/Vue/Solid examples, prefer the `twd()` plugin shown above.
 - The bundled setup automatically handles React dependencies internally
 - Request mocking is initialized automatically by default (`serviceWorker: true`)
 - Works with all supported frameworks (React, Vue, Angular, Solid.js)
-- Test files are not included in production builds when wrapped in `import.meta.env.DEV` checks (or `isDevMode()` for Angular, `process.env.NODE_ENV` for Webpack)
+- Test files are excluded from production builds when the guard folds to a constant at build time: `import.meta.env.DEV` (Vite), `process.env.NODE_ENV` (Webpack), or a `define`d `TWD_ENABLED` (Angular). A guard the bundler can only evaluate at *runtime* — such as Angular's `isDevMode()` — keeps the branch and its lazy chunks in the output
 
 ---
 

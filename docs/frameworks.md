@@ -240,24 +240,77 @@ Angular CLI uses esbuild, not vanilla Vite, so the `twd()` Vite plugin doesn't a
 import { bootstrapApplication } from '@angular/platform-browser';
 import { appConfig } from './app/app.config';
 import { App } from './app/app';
-import { isDevMode } from '@angular/core';
 
-if (isDevMode()) {
+// Replaced at build time by the `define` option in angular.json (see below).
+// Declared as possibly undefined so a missing `define` cannot throw at module scope.
+declare const TWD_ENABLED: boolean | undefined;
+
+if (typeof TWD_ENABLED !== 'undefined' && TWD_ENABLED) {
   const { initTWD } = await import('twd-js/bundled');
-  
+
   // Define your test files manually or use a compatible glob importer
   const tests = {
     './twd-tests/helloWorld.twd.test.ts': () => import('./twd-tests/helloWorld.twd.test'),
     './twd-tests/todoList.twd.test.ts': () => import('./twd-tests/todoList.twd.test'),
   };
-  
+
   // Initialize TWD - request mocking is automatically initialized by default
   initTWD(tests, { open: true, position: 'left' });
+} else if (typeof TWD_ENABLED === 'undefined') {
+  console.warn('[TWD] TWD_ENABLED is not defined — add the `define` option to angular.json.');
 }
 
 bootstrapApplication(App, appConfig)
   .catch((err) => console.error(err));
 ```
+
+Then declare `TWD_ENABLED` in `angular.json` — **off by default**, opted into under `development` only:
+
+```jsonc
+"build": {
+  "options": {
+    "define": { "TWD_ENABLED": "false" }
+  },
+  "configurations": {
+    "development": {
+      "define": { "TWD_ENABLED": "true" }
+    }
+  }
+}
+```
+
+::: warning Don't use `isDevMode()` as the guard
+`isDevMode()` works at runtime, but it is a *function call* — esbuild cannot prove the branch is dead, so it keeps the branch and emits every `await import()` inside it as a lazy chunk. In the Angular example that is **+580 K in `dist/` (332 K → 912 K, 2 chunks → 10)**, including a copy of React the app never executes. The chunks are never fetched at runtime, so it is dead weight in the deployed artifact rather than a performance bug — and it is easy to miss, because the *initial* bundle only grows by ~1 kB, so budgets and Lighthouse stay quiet.
+
+A `define` constant is a literal by the time esbuild sees it, so the whole block is dead-code eliminated.
+:::
+
+::: danger Keep the `typeof` check
+A bare `if (TWD_ENABLED)` throws `TWD_ENABLED is not defined` at module scope if the `define` is missing or a new build configuration forgets it — that happens *before* `bootstrapApplication`, so the page renders nothing at all. `typeof TWD_ENABLED !== 'undefined' && TWD_ENABLED` boots normally and warns instead.
+:::
+
+### Angular + twd-relay
+
+On Vite, `twdRemote()` attaches the relay WebSocket to the dev server and injects the browser client for you. Angular CLI has no Vite plugin, so nothing serves `/__twd/ws` on the app's port (4200) — you run the relay standalone and point the client at it explicitly.
+
+```ts
+// src/main.ts — inside the TWD_ENABLED block, after initTWD(...)
+const { createBrowserClient } = await import('twd-relay/browser');
+createBrowserClient({ url: 'ws://localhost:9876/__twd/ws' }).connect();
+```
+
+```jsonc
+// package.json
+"scripts": {
+  "relay":       "npx twd-relay run --port 9876",
+  "relay:serve": "npx twd-relay serve --port 9876"
+}
+```
+
+- **Pass `--port 9876` to both commands.** `twd-relay serve` listens on `9876` by default, but `twd-relay run` defaults to `5173` (Vite's port). Left mismatched, `run` connects to nothing.
+- **Use the explicit `ws://localhost:9876/__twd/ws` URL**, not `` `${window.location.origin}/__twd/ws` `` — on Angular the app's own origin does not serve the relay.
+- **A browser tab must be open on the app** for a run to do anything. If none is connected, `twd-relay run` waits until it times out with `Timeout: no run:complete received within 180s`.
+- The tab title is prefixed **`[TWD]`** when the client is connected — the fastest way to confirm it attached.
 
 ## Create React App (CRA)
 
