@@ -14,15 +14,15 @@ Install TWD using your preferred package manager:
 ::: code-group
 
 ```bash [npm]
-npm install twd-js
+npm install --save-dev twd-js
 ```
 
 ```bash [yarn]
-yarn add twd-js
+yarn add --dev twd-js
 ```
 
 ```bash [pnpm]
-pnpm add twd-js
+pnpm add -D twd-js
 ```
 
 :::
@@ -163,9 +163,24 @@ The bundled setup ships React internally, so it works with any framework — the
 We recommend naming your test files using the following patterns:
 
 - `*.twd.test.ts`
-- `*.twd.test.tsx`  
+- `*.twd.test.tsx`
 - `*.twd.test.js`
 - `*.twd.test.jsx`
+
+::: warning The default pattern only matches `.ts`
+The `twd()` plugin's default `testFilePattern` is `'/**/*.twd.test.ts'`. Files
+ending in `.tsx` or `.jsx` are **not** discovered by default, and the failure is
+silent: no error, no warning, and the tests simply never appear in the sidebar.
+
+If you write component tests (which are `.tsx`), set the pattern explicitly:
+
+```ts
+// vite.config.ts
+twd({ testFilePattern: '/**/*.twd.test.{ts,tsx}' })
+```
+
+See [Component Testing](/component-testing) for the full setup.
+:::
 
 You can customize this pattern in your test loader using different glob patterns.
 
@@ -191,7 +206,10 @@ You can customize this pattern in your test loader using different glob patterns
 
 Make sure you:
 1. Are running in development mode (`vite dev` / `import.meta.env.DEV` is true)
-2. Used the correct file naming pattern that matches your `testFilePattern` (default: `.twd.test.ts` / `.tsx`)
+2. Used a file name that matches your `testFilePattern`. The default is
+   `'/**/*.twd.test.ts'`, which matches `.ts` only. If your tests are `.tsx` or
+   `.jsx`, set `twd({ testFilePattern: '/**/*.twd.test.{ts,tsx}' })` or they will
+   be skipped silently.
 3. Added `twd()` to the `plugins` array in your `vite.config.ts` (Vite projects), or have the manual `initTWD` logic in your entry file (non-Vite projects)
 
 ### Service Worker Issues
