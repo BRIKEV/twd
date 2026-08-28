@@ -111,6 +111,7 @@ export default defineConfig({
         items: [
           { text: 'Getting Started', link: '/getting-started' },
           { text: 'Writing Tests', link: '/writing-tests' },
+          { text: 'Component Testing', link: '/component-testing' },
           { text: 'API Mocking', link: '/api-mocking' },
           { text: 'Component Mocking', link: '/component-mocking' },
           { text: 'Module Mocking', link: '/module-mocking' },
