@@ -1262,6 +1262,10 @@ details[open] .faq-question::before {
   margin: 0;
 }
 
+.both-styles {
+  padding-bottom: var(--hp-section-gap);
+}
+
 .both-styles-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
