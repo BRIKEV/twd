@@ -88,7 +88,11 @@ const faqs = [
   },
   {
     q: 'How is this different from Vitest Browser Mode?',
-    a: 'Vitest Browser runs unit/component tests in a browser but in isolation from your app. TWD runs inside your actual dev server — same page, same routes, same state. You test what the user sees, not a mounted component in a vacuum.'
+    a: 'Vitest Browser Mode mounts your component in a purpose-built harness page. TWD runs inside your actual dev server, so both styles are available: drive the whole app through its real routes, or call Testing Library render() to mount a single component. Either way the providers, router and network around it are the real ones, and both run in the same session under one coverage report.'
+  },
+  {
+    q: 'Do I have to drop my Vitest tests?',
+    a: 'No. Pure functions, reducers, formatters and hooks tested in isolation are fine in jsdom, and moving them buys you nothing. The ones worth moving are the component tests where you had to mock a hook, a context or a component from your own src/ just to get the component to render, because there the stub sits between your assertion and the behaviour you meant to check.'
   },
   {
     q: 'Does this replace Testing Library?',
@@ -370,6 +374,53 @@ const faqs = [
             </div>
           </div>
         </div>
+      </section>
+
+      <!-- Section 4.5: Component tests -->
+      <section class="both-styles" aria-labelledby="both-styles-heading">
+        <h2 id="both-styles-heading" class="section-title">Component tests and flow tests. One run.</h2>
+        <p class="section-sub">
+          Testing Library's <code>render()</code> works inside TWD, so a component test runs
+          in the same browser session as your flow tests, against real providers and a real
+          router, under one coverage report.
+        </p>
+
+        <div class="both-styles-grid">
+          <div class="both-styles-col">
+            <p class="both-styles-label">jsdom, with the hook mocked</p>
+            <div class="code-block">
+              <div class="code-header"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span><span class="code-filename">Add.spec.tsx</span></div>
+              <pre><code><span class="hl-func">vi.mock</span>(<span class="hl-string">"../useAdd"</span>);
+
+<span class="hl-func">fireEvent.change</span>(input, {
+  <span class="hl-prop">target</span>: { <span class="hl-prop">value</span>: <span class="hl-string">"2023"</span> },
+});
+
+<span class="hl-func">expect</span>(mockHandleChange)
+  .<span class="hl-func">toHaveBeenCalledTimes</span>(<span class="hl-num">1</span>);</code></pre>
+            </div>
+            <p class="both-styles-note">Asserts that a stub was called.</p>
+          </div>
+
+          <div class="both-styles-col">
+            <p class="both-styles-label">Real browser, nothing mocked</p>
+            <div class="code-block">
+              <div class="code-header"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span><span class="code-filename">Add.twd.test.tsx</span></div>
+              <pre><code><span class="hl-func">render</span>(&lt;AppProvider&gt;&lt;Add /&gt;&lt;/AppProvider&gt;);
+
+<span class="hl-func">fireEvent.change</span>(input, {
+  <span class="hl-prop">target</span>: { <span class="hl-prop">value</span>: <span class="hl-string">"2023"</span> },
+});
+
+twd.<span class="hl-func">should</span>(input, <span class="hl-string">"have.value"</span>, <span class="hl-string">"2023"</span>);</code></pre>
+            </div>
+            <p class="both-styles-note">Asserts the year field actually contains 2023.</p>
+          </div>
+        </div>
+
+        <p class="both-styles-cta">
+          <a href="/component-testing" class="btn btn-outline">Read the Component Testing guide</a>
+        </p>
       </section>
 
       <!-- Section 5: FAQ -->
@@ -1209,5 +1260,36 @@ details[open] .faq-question::before {
   color: var(--vp-c-text-2);
   font-size: 0.875rem;
   margin: 0;
+}
+
+.both-styles-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin-top: 32px;
+}
+
+@media (max-width: 860px) {
+  .both-styles-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.both-styles-label {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--vp-c-text-2);
+  margin: 0 0 10px;
+}
+
+.both-styles-note {
+  font-size: 0.875rem;
+  color: var(--vp-c-text-2);
+  margin: 10px 0 0;
+}
+
+.both-styles-cta {
+  margin-top: 32px;
+  text-align: center;
 }
 </style>
