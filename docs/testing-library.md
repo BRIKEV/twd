@@ -16,6 +16,18 @@ TWD provides two ways to select elements:
 
 Both approaches work seamlessly together, and you can choose the one that best fits your needs.
 
+## Rendering components directly
+
+Everything on this page assumes you are querying your running app. You can also
+call Testing Library's `render()` inside a TWD test to mount a single component in
+isolation, in the same real browser.
+
+One important difference: `render()` mounts into a fresh `div` on `document.body`,
+which is outside the app root, so **`screenDom` will not find it**. Use Testing
+Library's own `screen` or TWD's `screenDomGlobal` for rendered components.
+
+See [Component Testing](/component-testing) for the full setup.
+
 ## Screen Queries
 
 TWD provides two screen query APIs that give you access to all query methods from `@testing-library/dom`:
@@ -445,6 +457,7 @@ All Testing Library queries and user events are automatically logged in the TWD 
 
 ## Next Steps
 
+- Read [Component Testing](/component-testing) to render components in isolation with `render()`
 - Learn about [TWD Commands](/api/twd-commands) for native selectors
 - Explore [User Interactions](/writing-tests#user-interactions) in detail
 - Check the [Testing Library docs](https://testing-library.com/docs/testing-library/intro/) for more query options

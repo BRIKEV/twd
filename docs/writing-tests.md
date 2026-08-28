@@ -68,6 +68,11 @@ describe("User Management", () => {
 
 TWD provides multiple ways to select DOM elements. **Prefer Testing Library's async `findBy*` queries.** They are the recommended way to select elements in TWD, ahead of `getBy*`/`queryBy*` and ahead of TWD's native `twd.get()`.
 
+::: tip Testing a single component instead of a page?
+If you render a component in isolation with Testing Library's `render()`, use
+`screen` rather than `screenDom`. See [Component Testing](/component-testing#queries).
+:::
+
 ### Recommended: `findBy*` queries
 
 > **Always reach for `findBy*` first.**
