@@ -64,6 +64,8 @@ TWD is an in-browser test runner. Tests run in the browser (not Node.js). Syntax
    import { describe, it, beforeEach, afterEach } from "twd-js/runner";
 
 2. File naming: *.twd.test.ts or *.twd.test.tsx
+   The plugin default pattern matches .ts ONLY. For .tsx tests the project needs
+   twd({ testFilePattern: '/**/*.twd.test.{ts,tsx}' }) or they are skipped silently.
 
 3. Async/Await:
    - twd.get() and twd.getAll() are async. Always await them.
@@ -128,6 +130,16 @@ TWD is an in-browser test runner. Tests run in the browser (not Node.js). Syntax
    // In component: wrap with <MockedComponent name="Chart"><Chart /></MockedComponent>
    // In test:
    twd.mockComponent("Chart", () => <div>Mocked</div>);
+
+### Component tests (Testing Library render)
+   Mount one component in isolation, in the same real browser.
+   import { render, screen, cleanup } from "@testing-library/react";
+   beforeEach(() => { cleanup(); });          // browser DOM is not torn down between tests
+   await twd.visit("/testing-library");       // a blank route, so the component is not already on the page
+   render(<AppProvider><Add /></AppProvider>);
+   twd.should(screen.getByText("Add Item"), "be.visible");
+   Use screen (or screenDomGlobal), NOT screenDom: render() mounts outside the app root.
+   Use the real providers. Mock only the network, with twd.mockRequest.
 
 ### Module stubbing (Sinon)
    Tests run in the browser, so use Sinon for stubs/spies.

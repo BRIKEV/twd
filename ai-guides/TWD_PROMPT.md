@@ -35,6 +35,11 @@ Test files must follow this pattern:
 - `*.twd.test.js`
 - `*.twd.test.jsx`
 
+IMPORTANT: the twd() plugin's default `testFilePattern` is `'/**/*.twd.test.ts'`,
+which matches `.ts` ONLY. If you write `.tsx` tests (all component tests are
+`.tsx`), the project must set `twd({ testFilePattern: '/**/*.twd.test.{ts,tsx}' })`
+in `vite.config.ts`, or the tests are skipped silently with no error.
+
 ## Core Rules
 
 ### 1. Async/Await is Required
@@ -324,6 +329,53 @@ describe("Component Mocking", () => {
   });
 });
 ```
+
+## Component Testing (Testing Library render)
+
+You can mount a single component in isolation with Testing Library's `render()`,
+in the same real browser. Use this when the component itself is the subject (form
+validation, a dialog opening, a table sorting). Use a normal flow test when the
+behaviour crosses a boundary (routing, data loading, multi-screen state).
+
+Rules specific to component tests:
+
+1. The file must be `.tsx`, and `testFilePattern` must be
+   `'/**/*.twd.test.{ts,tsx}'`.
+2. Query with Testing Library's `screen`, NOT `screenDom`. `render()` mounts into a
+   fresh `div` on `document.body`, which is outside the app root that `screenDom`
+   scopes to, so `screenDom` will not find it. `screenDomGlobal` also works if
+   queries are specific.
+3. Call `cleanup()` in `beforeEach`. The browser DOM is not torn down between
+   tests, so renders stack up and queries find duplicates.
+4. Render on a blank route so the component is not already on the page. Visit it
+   once with `await twd.visit("/testing-library")`.
+5. Use the REAL providers. Do not stub a hook or context from the project's own
+   `src/`. Mock only the network, with `twd.mockRequest`.
+
+```tsx
+import { render, screen, cleanup } from "@testing-library/react";
+import { describe, it, beforeEach } from "twd-js/runner";
+import { twd } from "twd-js";
+import { AppProvider } from "@/context/AppContext";
+import { Add } from "../Add";
+
+describe("Add Component", () => {
+  beforeEach(() => {
+    cleanup();
+    twd.clearRequestMockRules();
+  });
+
+  it("renders the Add component", async () => {
+    await twd.visit("/testing-library");
+    render(<AppProvider><Add /></AppProvider>);
+
+    twd.should(screen.getByText("Add Item"), "be.visible");
+  });
+});
+```
+
+If the project also runs Vitest, it must exclude these files:
+`exclude: [...configDefaults.exclude, '**/*.twd.test.*']`.
 
 ## Module Stubbing with Sinon
 
