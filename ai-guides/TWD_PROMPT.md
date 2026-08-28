@@ -348,7 +348,8 @@ Rules specific to component tests:
 3. Call `cleanup()` in `beforeEach`. The browser DOM is not torn down between
    tests, so renders stack up and queries find duplicates.
 4. Render on a blank route so the component is not already on the page. Visit it
-   once with `await twd.visit("/testing-library")`.
+   once with `await twd.visit("/testing-library")`. The project must declare this
+   route (rendering nothing); add it to the router if it is missing.
 5. Use the REAL providers. Do not stub a hook or context from the project's own
    `src/`. Mock only the network, with `twd.mockRequest`.
 
@@ -366,6 +367,7 @@ describe("Add Component", () => {
   });
 
   it("renders the Add component", async () => {
+    // "/testing-library" must be a declared route that renders nothing.
     await twd.visit("/testing-library");
     render(<AppProvider><Add /></AppProvider>);
 

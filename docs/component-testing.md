@@ -51,6 +51,7 @@ import { twd } from 'twd-js/vite-plugin';
 
 export default defineConfig({
   plugins: [
+    // ... your other plugins
     twd({ testFilePattern: '/**/*.twd.test.{ts,tsx}' }),
   ],
 });
@@ -60,13 +61,18 @@ export default defineConfig({
 
 If the same repo also runs Vitest, it matches `*.test.tsx` by default, collects
 your TWD files, finds no `describe` it recognises, and fails the run with
-`No test suite found in file`.
+`No test suite found in file`. Here is the complete config combining both steps:
 
 ```ts
-// vite.config.ts
-import { configDefaults } from 'vitest/config';
+// vite.config.ts (complete)
+import { defineConfig, configDefaults } from 'vitest/config';
+import { twd } from 'twd-js/vite-plugin';
 
 export default defineConfig({
+  plugins: [
+    // ... your other plugins
+    twd({ testFilePattern: '/**/*.twd.test.{ts,tsx}' }),
+  ],
   test: {
     exclude: [...configDefaults.exclude, '**/*.twd.test.*'],
   },

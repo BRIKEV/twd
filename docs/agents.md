@@ -140,6 +140,7 @@ TWD is an in-browser test runner. Tests run in the browser (not Node.js). Syntax
    twd.should(screen.getByText("Add Item"), "be.visible");
    Use screen (or screenDomGlobal), NOT screenDom: render() mounts outside the app root.
    Use the real providers. Mock only the network, with twd.mockRequest.
+   The route must be declared in the app (rendering nothing) before visiting it; add it if missing.
 
 ### Module stubbing (Sinon)
    Tests run in the browser, so use Sinon for stubs/spies.

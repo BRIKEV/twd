@@ -3,7 +3,7 @@ import { defineConfig } from 'vitepress'
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
   title: "TWD",
-  description: "In-browser frontend testing for React, Vue, Angular, Solid, Astro, Nuxt, HTMX and vanilla JS. Run component tests and flow tests together in your real browser via Vite, Webpack, or a CDN.",
+  description: "In-browser frontend testing for React, Vue, Angular, Solid, Astro, Nuxt, HTMX and vanilla JS. Runs in your real browser via Vite, Webpack, or a CDN, with Testing Library component tests in React.",
   base: '/',
   cleanUrls: true,
   sitemap: {
@@ -52,7 +52,7 @@ export default defineConfig({
       name: 'TWD (Test While Developing)',
       applicationCategory: 'DeveloperApplication',
       operatingSystem: 'Web',
-      description: 'In-browser frontend testing for React, Vue, Angular, Solid, Astro, Nuxt, HTMX and vanilla JS. Run component tests and flow tests together in your real browser via Vite, Webpack, or a CDN.',
+      description: 'In-browser frontend testing for React, Vue, Angular, Solid, Astro, Nuxt, HTMX and vanilla JS. Runs in your real browser via Vite, Webpack, or a CDN, with Testing Library component tests in React.',
       url: 'https://twd.dev/',
       author: { '@type': 'Organization', name: 'BRIKEV', url: 'https://github.com/BRIKEV' },
       license: 'https://opensource.org/licenses/MIT',
