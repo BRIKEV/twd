@@ -18,12 +18,12 @@ export default defineConfig({
     ['link', { rel: 'manifest', href: '/site.webmanifest' }],
     
     // SEO Meta Tags
-    ['meta', { name: 'keywords', content: 'testing, deterministic, browser-validation, ai-testing, ai-agent, react, vue, angular, solidjs, astro, nuxt, react-router, htmx, vanilla-js, javascript, typescript, twd, test-while-developing, browser-testing, mock-service-worker, vite, webpack, cdn, esm, contract-testing, openapi, code-coverage' }],
+    ['meta', { name: 'keywords', content: 'testing, deterministic, browser-validation, ai-testing, ai-agent, react, vue, angular, solidjs, astro, nuxt, react-router, htmx, vanilla-js, javascript, typescript, twd, test-while-developing, browser-testing, mock-service-worker, vite, webpack, cdn, esm, contract-testing, openapi, code-coverage, component-testing, unit-testing, jsdom, testing-library, browser-component-tests' }],
 
     // Open Graph Tags
     ['meta', { property: 'og:type', content: 'website' }],
     ['meta', { property: 'og:title', content: 'TWD - Test While Developing' }],
-    ['meta', { property: 'og:description', content: 'Frontend testing ecosystem. Write tests in your real browser, let the AI agent iterate, validate every mock against the real API. Testing isn\'t a phase — it\'s how you build.' }],
+    ['meta', { property: 'og:description', content: 'Frontend testing ecosystem. Write component and flow tests in your real browser, let the AI agent iterate, validate every mock against the real API. Testing isn\'t a phase, it\'s how you build.' }],
     ['meta', { property: 'og:url', content: 'https://twd.dev/' }],
     ['meta', { property: 'og:site_name', content: 'TWD' }],
     ['meta', { property: 'og:image', content: 'https://twd.dev/twd_ecosystem.png' }],
@@ -112,6 +112,7 @@ export default defineConfig({
           { text: 'Getting Started', link: '/getting-started' },
           { text: 'Writing Tests', link: '/writing-tests' },
           { text: 'API Mocking', link: '/api-mocking' },
+          { text: 'Component Testing', link: '/component-testing' },
           { text: 'Component Mocking', link: '/component-mocking' },
           { text: 'Module Mocking', link: '/module-mocking' },
           { text: 'Theming', link: '/theming' },

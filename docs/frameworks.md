@@ -43,7 +43,7 @@ The plugin only runs in `vite dev` (`apply: 'serve'`) — it's a no-op in produc
 
 The `twd()` plugin accepts the following options:
 
-- **`testFilePattern`** (`string`, optional) - Glob pattern for discovering test files. Default: `'/**/*.twd.test.ts'`
+- **`testFilePattern`** (`string`, optional) - Glob pattern for discovering test files. Default: `'/**/*.twd.test.ts'`. This matches `.ts` only. For `.tsx` test files (including component tests) use `'/**/*.twd.test.{ts,tsx}'`.
 - **`open`** (`boolean`, optional) - Whether the sidebar is open by default. Default: `true`
 - **`position`** (`"left" | "right"`, optional) - Sidebar position. Default: `"left"`
 - **`serviceWorker`** (`boolean`, optional) - Whether to initialize request mocking. Default: `true`

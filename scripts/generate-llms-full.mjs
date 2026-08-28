@@ -15,7 +15,8 @@ const OUT = join(DOCS, 'public', 'llms-full.txt');
 const ORDER = [
   'twd-manifesto.md', 'motivation.md',
   'twd-js.md', 'twd-relay.md', 'contract-testing.md',
-  'getting-started.md', 'writing-tests.md', 'api-mocking.md', 'component-mocking.md',
+  'getting-started.md', 'writing-tests.md', 'api-mocking.md', 'component-testing.md',
+  'component-mocking.md',
   'module-mocking.md', 'frameworks.md', 'testing-library.md', 'ci-execution.md',
   'coverage.md', 'ai-overview.md', 'contract-testing-setup.md', 'theming.md',
   'twd-ai/setup.md', 'twd-ai/writing-tests.md', 'twd-ai/ci-setup.md',

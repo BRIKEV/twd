@@ -88,7 +88,11 @@ const faqs = [
   },
   {
     q: 'How is this different from Vitest Browser Mode?',
-    a: 'Vitest Browser runs unit/component tests in a browser but in isolation from your app. TWD runs inside your actual dev server — same page, same routes, same state. You test what the user sees, not a mounted component in a vacuum.'
+    a: 'Vitest Browser Mode mounts your component in a purpose-built harness page. TWD runs inside your actual dev server, so both styles are available: drive the whole app through its real routes, or call Testing Library render() to mount a single component. Either way the providers, router and network around it are the real ones, and both run in the same session under one coverage report.'
+  },
+  {
+    q: 'Do I have to drop my Vitest tests?',
+    a: 'No. Pure functions, reducers, formatters and hooks tested in isolation are fine in jsdom, and moving them buys you nothing. The ones worth moving are the component tests where you had to mock a hook, a context or a component from your own src/ just to get the component to render, because there the stub sits between your assertion and the behaviour you meant to check.'
   },
   {
     q: 'Does this replace Testing Library?',
@@ -1210,4 +1214,5 @@ details[open] .faq-question::before {
   font-size: 0.875rem;
   margin: 0;
 }
+
 </style>
