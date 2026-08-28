@@ -66,5 +66,3 @@ The main TWD repository also includes working examples:
 ## Blog Posts
 
 Written by [Kevin Martinez](https://www.linkedin.com/in/kevinjmartinez/), TWD maintainer. More posts on [DEV.to](https://dev.to/kevinccbsg). Follow on [Bluesky](https://bsky.app/profile/kevintwd.bsky.social).
-
-- [No More Fake DOM: Testing Library Unit Tests in the Real Browser](https://dev.to/kevinccbsg/no-more-fake-dom-testing-library-unit-tests-in-the-real-browser-3p77) (DEV.to)

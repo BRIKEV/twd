@@ -69,7 +69,7 @@ export default defineConfig({
 
 > The `twd()` plugin only runs in `vite dev` (`apply: 'serve'`) — it's a no-op in production builds, so nothing reaches your prod bundle.
 
-The `testFilePattern` option tells the plugin which files to discover as tests. The pattern above discovers both `*.twd.test.ts` and `*.twd.test.tsx` files anywhere in your project. The plugin's own default is `'/**/*.twd.test.ts'`, which matches `.ts` only, so setting it explicitly is what lets `.tsx` tests be found.
+The `testFilePattern` option tells the plugin which files to discover as tests. The default pattern matches `*.twd.test.{ts,tsx}` files anywhere in your project.
 
 Once that's added, restart your dev server. You'll see the TWD Sidebar, where all your tests will appear:
 

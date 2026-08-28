@@ -167,21 +167,6 @@ We recommend naming your test files using the following patterns:
 - `*.twd.test.js`
 - `*.twd.test.jsx`
 
-::: warning The default pattern only matches `.ts`
-The `twd()` plugin's default `testFilePattern` is `'/**/*.twd.test.ts'`. Files
-ending in `.tsx` or `.jsx` are **not** discovered by default, and the failure is
-silent: no error, no warning, and the tests simply never appear in the sidebar.
-
-If you write component tests (which are `.tsx`), set the pattern explicitly:
-
-```ts
-// vite.config.ts
-twd({ testFilePattern: '/**/*.twd.test.{ts,tsx}' })
-```
-
-See [Component Testing](/component-testing) for the full setup.
-:::
-
 You can customize this pattern in your test loader using different glob patterns.
 
 ## Development Workflow

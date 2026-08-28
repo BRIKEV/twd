@@ -48,7 +48,7 @@ import { removeMockServiceWorker } from "twd-js/vite-plugin";
 import { reportResults } from "twd-js";
 
 // twd() plugin options:
-//   testFilePattern?: string          // Glob for discovering test files (default: '/**/*.twd.test.ts', matches .ts only)
+//   testFilePattern?: string          // Glob for discovering test files (default: '/**/*.twd.test.ts')
 //   open?: boolean                    // Whether the sidebar is open by default (default: true)
 //   position?: "left" | "right"       // Sidebar position (default: "left")
 //   search?: boolean                  // Show search input to filter tests (default: false)
@@ -85,7 +85,7 @@ twd(options?: TwdPluginOptions): VitePlugin
 
 ```ts
 interface TwdPluginOptions {
-  testFilePattern?: string;     // Glob pattern for discovering test files (default: '/**/*.twd.test.ts', matches .ts only)
+  testFilePattern?: string;     // Glob pattern for discovering test files (default: '/**/*.twd.test.ts')
   open?: boolean;               // Whether the sidebar is open by default (default: true)
   position?: "left" | "right";  // Sidebar position (default: "left")
   search?: boolean;             // Show search input to filter tests (default: false)

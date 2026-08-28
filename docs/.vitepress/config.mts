@@ -3,7 +3,7 @@ import { defineConfig } from 'vitepress'
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
   title: "TWD",
-  description: "In-browser frontend testing for React, Vue, Angular, Solid, Astro, Nuxt, HTMX and vanilla JS. Runs in your real browser via Vite, Webpack, or a CDN, with Testing Library component tests in React.",
+  description: "In-browser frontend testing for React, Vue, Angular, Solid, Astro, Nuxt, HTMX and vanilla JS. Runs in your real browser via Vite, Webpack, or a CDN.",
   base: '/',
   cleanUrls: true,
   sitemap: {
@@ -52,7 +52,7 @@ export default defineConfig({
       name: 'TWD (Test While Developing)',
       applicationCategory: 'DeveloperApplication',
       operatingSystem: 'Web',
-      description: 'In-browser frontend testing for React, Vue, Angular, Solid, Astro, Nuxt, HTMX and vanilla JS. Runs in your real browser via Vite, Webpack, or a CDN, with Testing Library component tests in React.',
+      description: 'In-browser frontend testing for React, Vue, Angular, Solid, Astro, Nuxt, HTMX and vanilla JS. Runs in your real browser via Vite, Webpack, or a CDN.',
       url: 'https://twd.dev/',
       author: { '@type': 'Organization', name: 'BRIKEV', url: 'https://github.com/BRIKEV' },
       license: 'https://opensource.org/licenses/MIT',
@@ -111,8 +111,8 @@ export default defineConfig({
         items: [
           { text: 'Getting Started', link: '/getting-started' },
           { text: 'Writing Tests', link: '/writing-tests' },
-          { text: 'Component Testing', link: '/component-testing' },
           { text: 'API Mocking', link: '/api-mocking' },
+          { text: 'Component Testing', link: '/component-testing' },
           { text: 'Component Mocking', link: '/component-mocking' },
           { text: 'Module Mocking', link: '/module-mocking' },
           { text: 'Theming', link: '/theming' },

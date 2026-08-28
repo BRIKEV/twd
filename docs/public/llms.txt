@@ -31,8 +31,8 @@ Key features:
 
 - [Getting Started](https://twd.dev/getting-started): Installation, setup (bundled vs standard), first test, troubleshooting
 - [Writing Tests](https://twd.dev/writing-tests): Test structure, element selection (TWD native + Testing Library), assertions, user interactions, navigation
-- [Component Testing](https://twd.dev/component-testing): Render a single component with Testing Library in a real browser, setup, the screenDom scoping caveat, and choosing between component and flow tests
 - [API Mocking](https://twd.dev/api-mocking): Service worker setup, request mocking patterns, dynamic responses, error handling
+- [Component Testing](https://twd.dev/component-testing): Render a single component with Testing Library in a real browser, setup, the screenDom scoping caveat, and choosing between component and flow tests
 - [Component Mocking](https://twd.dev/component-mocking): MockedComponent wrapper, conditional mocking, error states
 - [Module Mocking](https://twd.dev/module-mocking): Sinon-based module mocking for ESM
 - [Framework Integration](https://twd.dev/frameworks): React, Vue, Angular, Solid, Astro, React Router, Nuxt, CRA, HTMX, and vanilla JS setup

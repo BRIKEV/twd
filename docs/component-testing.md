@@ -15,19 +15,6 @@ want to **replace** a child component with a stub, see
 [Component Mocking](/component-mocking).
 :::
 
-## Why this works
-
-Testing Library was never tied to jsdom. `@testing-library/react` renders a
-component into a DOM node, and `@testing-library/dom` queries it. jsdom is simply
-the DOM most people hand it.
-
-TWD already runs inside your app in the browser, so the real DOM is right there
-and `render()` uses it. `getBoundingClientRect` returns real numbers, portals go
-where portals go, and CSS applies.
-
-It also means the providers and the network around your component are the real
-ones, so there is often nothing left to stand in for.
-
 ## Setup
 
 ### 1. Install Testing Library
@@ -79,15 +66,17 @@ export default defineConfig({
 });
 ```
 
-### 4. Add a blank route to render into
+### 4. Add a blank route to render into (recommended)
 
-Mounting a component on top of a page that already renders it means your queries
-find two of everything and Testing Library throws. Give the tests an empty route
-to mount into.
+Optional, but worth doing. With `cleanup()` from step 5 in place, renders no
+longer stack up between tests, so this is not strictly required. It still helps:
+if you mount a component on top of a page that already renders it, your queries
+find two of everything and Testing Library throws. Rendering into an empty route
+removes that whole class of problem.
 
-This requirement is framework-neutral: your router needs one route that renders
-nothing, and the suite visits it once before rendering. How you declare that
-route is your router's business.
+The idea is framework-neutral: your router needs one route that renders nothing,
+and the suite visits it once before rendering. How you declare that route is your
+router's business.
 
 ```tsx
 // React Router
@@ -259,6 +248,19 @@ component. Both are covered in [Setup](#setup).
 
 **Vitest fails with `No test suite found in file`.** Vitest is collecting your TWD
 tests. Add the `exclude` entry from [step 3](#setup).
+
+## Why this works
+
+Testing Library was never tied to jsdom. `@testing-library/react` renders a
+component into a DOM node, and `@testing-library/dom` queries it. jsdom is simply
+the DOM most people hand it.
+
+TWD already runs inside your app in the browser, so the real DOM is right there
+and `render()` uses it. `getBoundingClientRect` returns real numbers, portals go
+where portals go, and CSS applies.
+
+It also means the providers and the network around your component are the real
+ones, so there is often nothing left to stand in for.
 
 ## Further reading
 
