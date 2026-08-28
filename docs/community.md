@@ -40,6 +40,7 @@ See TWD testing real shadcn/ui components with live code and tests running in th
 | [twd-vanillajs](https://github.com/BRIKEV/twd-vanillajs) | Vanilla JS (no bundler) | TWD loaded from a CDN via an import map, counter + todo list, API mocking, CI with twd-cli and contract validation |
 | [twd-htmx](https://github.com/BRIKEV/twd-htmx) | HTMX (no bundler) | TWD loaded from a CDN, HTMX todo list tested against a real HTML backend with a dev-only reset endpoint |
 | [twd-cells](https://github.com/BRIKEV/twd-cells) | Open Cells (Lit) | BBVA's Web Components framework: hashbang-router pages, request mocking, real localStorage, and CI with coverage via the vite plugin |
+| [frontend-challenge](https://github.com/kevinccbsg/frontend-challenge) | React + Vite | Testing Library `render()` component tests running in the browser next to jsdom tests of the same component. Fork of [SabrinaFZ/frontend-challenge](https://github.com/SabrinaFZ/frontend-challenge), outside the BRIKEV org |
 
 ### In-Repo Examples
 
@@ -66,4 +67,4 @@ The main TWD repository also includes working examples:
 
 Written by [Kevin Martinez](https://www.linkedin.com/in/kevinjmartinez/), TWD maintainer. More posts on [DEV.to](https://dev.to/kevinccbsg). Follow on [Bluesky](https://bsky.app/profile/kevintwd.bsky.social).
 
-*Coming soon*
+- [No More Fake DOM: Testing Library Unit Tests in the Real Browser](https://dev.to/kevinccbsg/no-more-fake-dom-testing-library-unit-tests-in-the-real-browser-3p77) (DEV.to)
