@@ -66,34 +66,85 @@ export default defineConfig({
 });
 ```
 
-### 4. Add a blank route to render into (recommended)
+### 4. Add the component host
 
-Optional, but worth doing. With `cleanup()` from step 5 in place, renders no
-longer stack up between tests, so this is not strictly required. It still helps:
-if you mount a component on top of a page that already renders it, your queries
-find two of everything and Testing Library throws. Rendering into an empty route
-removes that whole class of problem.
-
-The idea is framework-neutral: your router needs one route that renders nothing,
-and the suite visits it once before rendering. How you declare that route is your
-router's business.
-
-```tsx
-// React Router
-<Routes>
-  {/* Blank mount point for Testing Library component tests. */}
-  <Route path="testing-library" element={<div />} />
-  <Route element={<Layout />}>
-    {/* the real app */}
-  </Route>
-</Routes>
-```
-
-Then visit it once at the top of the suite:
+`render()` appends its container to `document.body`, which puts your component
+after the app root, a full viewport below the layout. The app's own DOM is also
+still on the page, so `screen` matches its elements as well as the ones your test
+rendered. One helper solves both, and your app does not change:
 
 ```ts
-await twd.visit("/testing-library");
+// twd-tests/support/componentHost.ts
+const HOST_ID = 'twd-component-host';
+const APP_ROOT_ID = 'root'; // 'app' in a default Vue app
+
+let appRoot: HTMLElement | null = null;
+let placeholder: Comment | null = null;
+
+/** The element component tests render into: a blank div on an empty page. */
+export function componentHost(): HTMLElement {
+  detachApp();
+
+  let host = document.getElementById(HOST_ID);
+  if (!host) {
+    host = document.createElement('div');
+    host.id = HOST_ID;
+  }
+  if (!host.isConnected) {
+    document.body.prepend(host);
+  }
+
+  host.innerHTML = '';
+  return host;
+}
+
+/** Removes the host and puts the app back. Call it in afterEach. */
+export function restorePage(): void {
+  document.getElementById(HOST_ID)?.remove();
+  attachApp();
+}
+
+function detachApp(): void {
+  if (placeholder) return;
+
+  const root = document.getElementById(APP_ROOT_ID);
+  if (!root) return;
+
+  appRoot = root;
+  placeholder = document.createComment(' app detached by twd component test ');
+  root.replaceWith(placeholder);
+}
+
+function attachApp(): void {
+  if (!placeholder || !appRoot) return;
+
+  placeholder.replaceWith(appRoot);
+  placeholder = null;
+  appRoot = null;
+}
 ```
+
+Two details in there matter.
+
+**Detaching the app root is not the same as emptying it.** `root.innerHTML = ''`
+pulls the DOM out from under your framework while it still holds references to
+those nodes, and the app does not come back. Moving the node out and putting it
+back leaves those references intact, so `restorePage()` returns a live app.
+
+**The host is prepended, not appended.** That puts the component at the top of the
+page, where you can watch it run without scrolling, and keeps it in normal flow so
+it sits inside the offset TWD applies for its sidebar.
+
+The payoff is that `screen` behaves exactly as it does in jsdom: the only thing in
+the document is what your test rendered. That also covers content your component
+sends through a portal or a `Teleport`, which lands on `document.body` rather than
+inside the host.
+
+::: tip This replaces the blank-route approach
+An earlier version of this page recommended declaring an empty route and visiting
+it with `twd.visit()`. The host does the same job without a route, without
+`twd.visit()`, and without touching your app.
+:::
 
 ### 5. Clean up between tests
 
@@ -103,14 +154,19 @@ renders stack up and queries start finding duplicates.
 
 ```tsx
 import { cleanup } from "@testing-library/react";
-import { beforeEach } from "twd-js/runner";
-import { twd } from "twd-js";
+import { afterEach } from "twd-js/runner";
+import { restorePage } from "./support/componentHost";
 
-beforeEach(() => {
+afterEach(() => {
   cleanup();
-  twd.clearRequestMockRules();
+  restorePage();
 });
 ```
+
+Use `afterEach`, not `beforeEach`. TWD runs after-hooks in a `finally`, so this
+still runs when a test fails, and it puts the app back before your flow tests need
+it. If you also mock requests, `twd.clearRequestMockRules()` belongs in
+`beforeEach` as usual.
 
 That is the whole setup.
 
@@ -118,19 +174,20 @@ That is the whole setup.
 
 ```tsx
 import { render, screen, cleanup } from "@testing-library/react";
-import { describe, it, beforeEach } from "twd-js/runner";
+import { describe, it, afterEach } from "twd-js/runner";
 import { twd } from "twd-js";
 import { AppProvider } from "@/context/AppContext";
 import { Add } from "../Add";
+import { componentHost, restorePage } from "./support/componentHost";
 
 describe("Add Component", () => {
-  beforeEach(() => {
+  afterEach(() => {
     cleanup();
+    restorePage();
   });
 
-  it("renders the Add component", async () => {
-    await twd.visit("/testing-library");
-    render(<AppProvider><Add /></AppProvider>);
+  it("renders the Add component", () => {
+    render(<AppProvider><Add /></AppProvider>, { container: componentHost() });
 
     twd.should(screen.getByText("Add Item"), "be.visible");
   });
@@ -146,8 +203,8 @@ or in a component you just rendered.
 ## Queries: use `screen`, not `screenDom` {#queries}
 
 ::: warning `screenDom` will not find your rendered component
-`render()` mounts into a fresh `div` appended to `document.body`, which is
-**outside** the app root that `screenDom` scopes to. Queries will fail.
+`render()` mounts outside the app root that `screenDom` scopes to, and while a
+component test runs that root is not even in the document. Queries will fail.
 :::
 
 Every other page in these docs steers you to `screenDom`, because for flow tests
@@ -228,20 +285,26 @@ because there was only ever one run.
 
 The examples above use `@testing-library/react`, which is what has been verified.
 
-Because Testing Library was never tied to jsdom, the same approach is expected to
-work with `@testing-library/vue` and `@testing-library/solid`: render into the
-real DOM, call that library's `cleanup()` in `beforeEach`, and query with `screen`.
-These have not been verified yet. If you try one,
+`@testing-library/vue` and `@testing-library/solid` take the same `container`
+option and default to `document.body` the same way, so the helper transfers with
+one change: `APP_ROOT_ID` is `'app'` in a default Vue app rather than `'root'`.
+Neither is verified end to end yet. If you try one,
 [open an issue](https://github.com/BRIKEV/twd/issues) and tell us how it went.
+
+`@testing-library/angular` is a different shape. It mounts through `TestBed` and
+does not accept a `container`, so the helper does not apply as written. Not tried.
 
 ## Troubleshooting
 
 **My tests do not appear in the sidebar.** Your `testFilePattern` probably ends in
 `.ts`. Component tests are `.tsx`. See [step 2](#setup).
 
-**Queries find two of everything.** Either `cleanup()` is missing from
-`beforeEach`, or you are rendering on top of a page that already shows the
-component. Both are covered in [Setup](#setup).
+**Queries find two of everything.** You are rendering on top of the app. Pass
+`componentHost()` as the `container`, and call `cleanup()` and `restorePage()` in
+`afterEach`. See [step 4](#setup).
+
+**My app is blank after the component tests run.** `restorePage()` is missing from
+`afterEach`, so the app root was never put back. See [step 5](#setup).
 
 **`screenDom` cannot find my component.** Expected. Use `screen` or
 `screenDomGlobal`. See [Queries](#queries).
@@ -256,8 +319,8 @@ component into a DOM node, and `@testing-library/dom` queries it. jsdom is simpl
 the DOM most people hand it.
 
 TWD already runs inside your app in the browser, so the real DOM is right there
-and `render()` uses it. `getBoundingClientRect` returns real numbers, portals go
-where portals go, and CSS applies.
+and `render()` uses it. The component is laid out on a screen, at a real size and
+a real position, with your CSS applied to it.
 
 It also means the providers and the network around your component are the real
 ones, so there is often nothing left to stand in for.

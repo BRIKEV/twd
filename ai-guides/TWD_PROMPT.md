@@ -345,35 +345,94 @@ Rules specific to component tests:
    fresh `div` on `document.body`, which is outside the app root that `screenDom`
    scopes to, so `screenDom` will not find it. `screenDomGlobal` also works if
    queries are specific.
-3. Call `cleanup()` in `beforeEach`. The browser DOM is not torn down between
-   tests, so renders stack up and queries find duplicates.
-4. Render on a blank route so the component is not already on the page. Visit it
-   once with `await twd.visit("/testing-library")`. The project must declare this
-   route (rendering nothing); add it to the router if it is missing.
+3. Call `cleanup()` and `restorePage()` in `afterEach`. The browser DOM is not
+   torn down between tests, so renders stack up and queries find duplicates, and
+   the app has to go back before any flow test runs.
+4. Render into `componentHost()`, which detaches the app root and returns a blank
+   div at the top of an empty page. Without it the app's own DOM is still on the
+   page and `screen` matches its elements too. If the project has no
+   `componentHost` helper, write one: see https://twd.dev/component-testing
 5. Use the REAL providers. Do not stub a hook or context from the project's own
    `src/`. Mock only the network, with `twd.mockRequest`.
 
 ```tsx
 import { render, screen, cleanup } from "@testing-library/react";
-import { describe, it, beforeEach } from "twd-js/runner";
+import { describe, it, beforeEach, afterEach } from "twd-js/runner";
 import { twd } from "twd-js";
 import { AppProvider } from "@/context/AppContext";
 import { Add } from "../Add";
+import { componentHost, restorePage } from "./support/componentHost";
 
 describe("Add Component", () => {
   beforeEach(() => {
-    cleanup();
     twd.clearRequestMockRules();
   });
 
-  it("renders the Add component", async () => {
-    // "/testing-library" must be a declared route that renders nothing.
-    await twd.visit("/testing-library");
-    render(<AppProvider><Add /></AppProvider>);
+  afterEach(() => {
+    cleanup();
+    restorePage();
+  });
+
+  it("renders the Add component", () => {
+    render(<AppProvider><Add /></AppProvider>, { container: componentHost() });
 
     twd.should(screen.getByText("Add Item"), "be.visible");
   });
 });
+```
+
+The `componentHost` helper, if the project does not already have one. Do NOT
+replace it with `root.innerHTML = ''`: that pulls the DOM out from under the
+framework while it still holds references to those nodes, and the app never comes
+back.
+
+```ts
+// twd-tests/support/componentHost.ts
+const HOST_ID = 'twd-component-host';
+const APP_ROOT_ID = 'root'; // 'app' in a default Vue app
+
+let appRoot: HTMLElement | null = null;
+let placeholder: Comment | null = null;
+
+export function componentHost(): HTMLElement {
+  detachApp();
+
+  let host = document.getElementById(HOST_ID);
+  if (!host) {
+    host = document.createElement('div');
+    host.id = HOST_ID;
+  }
+  if (!host.isConnected) {
+    document.body.prepend(host);
+  }
+
+  host.innerHTML = '';
+  return host;
+}
+
+export function restorePage(): void {
+  document.getElementById(HOST_ID)?.remove();
+  attachApp();
+}
+
+function detachApp(): void {
+  if (placeholder) return;
+
+  const root = document.getElementById(APP_ROOT_ID);
+  if (!root) return;
+
+  appRoot = root;
+  placeholder = document.createComment(' app detached by twd component test ');
+  root.replaceWith(placeholder);
+}
+
+function attachApp(): void {
+  if (!placeholder || !appRoot) return;
+
+  placeholder.replaceWith(appRoot);
+  placeholder = null;
+  appRoot = null;
+}
 ```
 
 If the project also runs Vitest, it must exclude these files:
