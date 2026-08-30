@@ -134,13 +134,15 @@ TWD is an in-browser test runner. Tests run in the browser (not Node.js). Syntax
 ### Component tests (Testing Library render)
    Mount one component in isolation, in the same real browser.
    import { render, screen, cleanup } from "@testing-library/react";
-   beforeEach(() => { cleanup(); });          // browser DOM is not torn down between tests
-   await twd.visit("/testing-library");       // a blank route, so the component is not already on the page
-   render(<AppProvider><Add /></AppProvider>);
+   import { componentHost, restorePage } from "./support/componentHost";
+   afterEach(() => { cleanup(); restorePage(); });   // browser DOM is not torn down between tests
+   render(<AppProvider><Add /></AppProvider>, { container: componentHost() });
    twd.should(screen.getByText("Add Item"), "be.visible");
+   componentHost() detaches the app root and returns a blank div at the top of the page,
+   so screen only sees what the test rendered; restorePage() puts the app back.
+   Write that helper into the project if it is missing: see https://twd.dev/component-testing
    Use screen (or screenDomGlobal), NOT screenDom: render() mounts outside the app root.
    Use the real providers. Mock only the network, with twd.mockRequest.
-   The route must be declared in the app (rendering nothing) before visiting it; add it if missing.
 
 ### Module stubbing (Sinon)
    Tests run in the browser, so use Sinon for stubs/spies.
