@@ -117,6 +117,7 @@ export default defineConfig({
           { text: 'Module Mocking', link: '/module-mocking' },
           { text: 'Theming', link: '/theming' },
           { text: 'CI Execution', link: '/ci-execution' },
+          { text: 'Sharding (beta)', link: '/sharding' },
           { text: 'Recording Runs', link: '/recording' },
           { text: 'Coverage', link: '/coverage' },
           { text: 'AI Integration', link: '/ai-overview' },

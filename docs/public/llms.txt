@@ -38,6 +38,7 @@ Key features:
 - [Framework Integration](https://twd.dev/frameworks): React, Vue, Angular, Solid, Astro, React Router, Nuxt, CRA, HTMX, and vanilla JS setup
 - [Testing Library](https://twd.dev/testing-library): Testing Library integration and selectors
 - [CI Execution](https://twd.dev/ci-execution): twd-cli setup, Puppeteer, GitHub Actions
+- [Sharding](https://twd.dev/sharding): Split a long run across parallel CI jobs with --shard and twd-cli merge (beta)
 - [Coverage](https://twd.dev/coverage): Code coverage reporting
 - [AI Integration](https://twd.dev/ai-overview): Connecting AI agents — relay, Claude plugin, skills, context prompts
 - [Contract Testing Setup](https://twd.dev/contract-testing-setup): OpenAPI validation setup, contract options, supported validations, PR reports
