@@ -423,7 +423,7 @@ const faqs = [
           <span class="hp-footer-sep" aria-hidden="true">·</span>
           <a href="https://github.com/BRIKEV/twd" target="_blank" rel="noopener" class="hp-footer-link">GitHub<span class="visually-hidden"> (opens in new tab)</span></a>
         </nav>
-        <p class="hp-footer-meta">Released under the MIT License. Copyright © 2025 BRIKEV.</p>
+        <p class="hp-footer-meta">Released under the MIT License. Copyright © 2026 BRIKEV.</p>
       </footer>
     </main>
   </div>
