@@ -108,8 +108,33 @@ Failed validations are included in a collapsible details section with a link to 
 
 See [CI Execution](/ci-execution#github-action-recommended) for the full workflow setup.
 
+### With a sharded run
+
+A [sharded run](/sharding) deliberately writes no contract markdown per shard,
+because each would overwrite the others with a fraction of the mocks.
+`twd-cli merge` writes it instead, so the PR comment step belongs in the merge
+job rather than in the shard jobs:
+
+```yaml
+  merge:
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      # ...checkout, npm ci, download the shard artifacts, then:
+      - name: Merge the shard reports
+        run: npx twd-cli merge .twd/shards
+
+      - name: Post contract report to PR
+        if: github.event_name == 'pull_request' && hashFiles('.twd/contract-report.md') != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh pr comment "${{ github.event.pull_request.number }}" --body-file .twd/contract-report.md
+```
+
 ## Next Steps
 
 - Run contract tests in CI with the [GitHub Action](/ci-execution#github-action-recommended)
 - Learn how to create mocks with [API Mocking](/api-mocking)
 - Collect [Code Coverage](/coverage) alongside contract validation
+- Split a long run across parallel jobs with [Sharding](/sharding)

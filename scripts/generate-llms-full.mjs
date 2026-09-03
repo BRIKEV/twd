@@ -18,7 +18,7 @@ const ORDER = [
   'getting-started.md', 'writing-tests.md', 'api-mocking.md', 'component-testing.md',
   'component-mocking.md',
   'module-mocking.md', 'frameworks.md', 'testing-library.md', 'ci-execution.md',
-  'coverage.md', 'ai-overview.md', 'contract-testing-setup.md', 'theming.md',
+  'sharding.md', 'coverage.md', 'ai-overview.md', 'contract-testing-setup.md', 'theming.md',
   'twd-ai/setup.md', 'twd-ai/writing-tests.md', 'twd-ai/ci-setup.md',
   'twd-ai/test-gaps.md', 'twd-ai/test-quality.md', 'twd-ai/flow-gallery.md',
   'claude-plugin.md', 'agents.md', 'ai-remote-testing.md',

@@ -48,6 +48,9 @@ Create `twd.config.json` in your repo to customize the runner:
   "headless": true,
   "puppeteerArgs": ["--no-sandbox", "--disable-setuid-sandbox"],
   "retryCount": 2,
+  "protocolTimeout": 300000,
+  "maxFailures": 10,
+  "chunkSize": 10,
   "contracts": [],
   "contractReportPath": ".twd/contract-report.md"
 }
@@ -63,8 +66,45 @@ Create `twd.config.json` in your repo to customize the runner:
 | `headless` | boolean | `true` | Run Chrome in headless mode |
 | `puppeteerArgs` | string[] | `["--no-sandbox", "--disable-setuid-sandbox"]` | Extra arguments for Puppeteer |
 | `retryCount` | number | `2` | Number of times to attempt each test before reporting failure. Default is 2 (one normal attempt + one retry). Set to 1 to disable retries. |
+| `protocolTimeout` | number | `300000` | Puppeteer CDP `protocolTimeout` in ms (5 min). Tests run in chunks, so this bounds a **single chunk's browser call**, not the entire run. Raise it (e.g. `600000`) for slow CI or if individual chunks hang. `0` means no timeout. |
+| `maxFailures` | number | `10` | Stop the run once this many tests have failed in total. The CLI prints the results gathered so far and exits non-zero. Set `0` to disable and always run every test. Note this limit is **per shard** when [sharding](/sharding). |
+| `chunkSize` | number | `10` | How many tests run per browser call. Smaller values make the failure limit and timeouts more granular (less work lost if one chunk hangs), larger values reduce overhead. `0` runs everything in one call. |
 | `contracts` | object[] | `[]` | OpenAPI contract validation specs. See [Contract Testing](/contract-testing) |
 | `contractReportPath` | string | — | Path to write a markdown report for CI/PR integration |
+| `record` | object | see [Recording Runs](/recording) | Video recording settings |
+
+## Filtering tests
+
+Run only a subset of tests with the repeatable `--test` flag. Matching is
+**case-insensitive** and matches a **substring** of each test's full
+`"Suite > test name"` path:
+
+```bash
+# Every test whose name contains "shows error"
+npx twd-cli run --test "shows error"
+
+# Because matching uses the full "suite > test" path, passing a describe name
+# runs every test inside that describe block:
+npx twd-cli run --test "Login"
+
+# Multiple --test flags are combined with OR (a test runs if it matches any):
+npx twd-cli run --test "Login" --test "Signup"
+```
+
+Two things to know:
+
+- If no test matches any filter, the run exits with code `1` and prints
+  `No tests matched filter(s): ...`, so a typo will not silently look like a pass.
+- Code coverage collection is skipped while a `--test` filter is active, since a
+  filtered run is a partial (debug) run.
+
+`--test` and `--shard` compose. Filters resolve first, then the filtered list is
+sharded. See [Sharding](/sharding).
+
+::: tip
+`twd-relay` accepts the same `--test` flag for driving a run from an AI agent.
+See [AI Remote Testing](/ai-remote-testing).
+:::
 
 ## GitHub Action (Recommended)
 
@@ -117,6 +157,9 @@ jobs:
 |-------|---------|-------------|
 | `working-directory` | `.` | Directory where `twd.config.json` lives |
 | `contract-report` | `false` | Post contract validation summary as a PR comment |
+| `shard` | (empty) | Run one shard of the suite, as `<index>/<total>` (e.g. `2/4`). Leave empty to run everything in one job. See [Sharding](/sharding) |
+| `report-dir` | `.twd/run` | Where the shard report is written. Only used when `shard` is set |
+| `upload-report` | `true` | Upload the shard report as an artifact named `twd-run-<index>`, the layout `twd-cli merge` expects. Only used when `shard` is set |
 
 ### With code coverage
 
@@ -226,6 +269,7 @@ Run your **full suite on Chromium with `twd-cli`** (coverage, contracts, retries
 
 ## Next Steps
 
+- [Sharding](/sharding): Split a long run across parallel CI jobs and merge the reports (beta)
 - [Recording Runs](/recording): Record a run to video, paced so it is watchable in a pull request
 - [Contract Testing](/contract-testing): Validate your API mocks against OpenAPI specs
 - [Code Coverage](/coverage): Learn how to collect and report code coverage with TWD
