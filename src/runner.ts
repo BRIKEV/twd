@@ -1,3 +1,5 @@
+import { collectDiagnostics, type TestDiagnostics } from './utils/diagnostics';
+
 export interface Handler {
   id: string;
   name: string;
@@ -7,6 +9,8 @@ export interface Handler {
   type: 'suite' | 'test';
   status?: 'idle' | 'pass' | 'fail' | 'skip' | 'running';
   logs: string[];
+  /** Populated only when the test fails — see utils/diagnostics. */
+  diagnostics?: TestDiagnostics;
   depth: number;
   only?: boolean;
   skip?: boolean;
@@ -369,11 +373,15 @@ export class TestRunner {
       try {
         for (const hook of hooks.before) await hook();
         test.logs = [];
+        test.diagnostics = undefined;
         await test.handler();
         this.events.onPass(test, attempt > 1 ? attempt : undefined);
         return;
       } catch (err) {
         lastError = err as Error;
+        // Inside `catch`, never after `finally`: an `afterEach` calling
+        // clearRequestMockRules() resets the counts this reads.
+        test.diagnostics = collectDiagnostics();
       } finally {
         for (const hook of hooks.after) await hook();
       }
