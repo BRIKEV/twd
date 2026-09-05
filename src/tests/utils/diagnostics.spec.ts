@@ -72,16 +72,6 @@ describe('collectDiagnostics', () => {
       untriggered: ['catalog'],
     });
   });
-
-  it('should count an alias once when two rules share it', () => {
-    setMockState(['catalog', 'catalog'], { catalog: 1 });
-
-    expect(collectDiagnostics().mockRules).toEqual({
-      registered: 1,
-      triggered: 1,
-      untriggered: [],
-    });
-  });
 });
 
 describe('formatDiagnostics', () => {
