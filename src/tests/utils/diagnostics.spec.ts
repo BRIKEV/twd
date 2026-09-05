@@ -9,7 +9,7 @@ vi.mock('../../commands/mockBridge', () => ({
 }));
 
 import { getRequestCounts, getRequestMockRules } from '../../commands/mockBridge';
-import { collectDiagnostics } from '../../utils/diagnostics';
+import { collectDiagnostics, formatDiagnostics } from '../../utils/diagnostics';
 
 const setMockState = (aliases: string[], counts: Record<string, number>) => {
   vi.mocked(getRequestMockRules).mockReturnValue(aliases.map((alias) => ({ alias })) as never);
@@ -70,5 +70,76 @@ describe('collectDiagnostics', () => {
       triggered: 1,
       untriggered: [],
     });
+  });
+});
+
+describe('formatDiagnostics', () => {
+  const body = (lines: string[]) => lines.slice(1, -1);
+
+  it('should open and close with a rule', () => {
+    const lines = formatDiagnostics({ location: '/t-1' });
+
+    expect(lines[0]).toBe(`── TWD diagnostics ${'─'.repeat(37)}`);
+    expect(lines[lines.length - 1]).toBe('─'.repeat(56));
+  });
+
+  it('should render location alone when no rule was registered', () => {
+    expect(body(formatDiagnostics({ location: '/t-1/settings/catalog' }))).toEqual([
+      'location    /t-1/settings/catalog',
+    ]);
+  });
+
+  it('should render a summary only when every rule triggered', () => {
+    const lines = formatDiagnostics({
+      location: '/t-1',
+      mockRules: { registered: 3, triggered: 3, untriggered: [] },
+    });
+
+    expect(body(lines)).toEqual(['location    /t-1', 'mock rules  3/3 triggered']);
+  });
+
+  it('should name a single miss inline', () => {
+    const lines = formatDiagnostics({
+      location: '/t-1',
+      mockRules: { registered: 7, triggered: 6, untriggered: ['catalog'] },
+    });
+
+    expect(body(lines)[1]).toBe('mock rules  6/7 triggered — catalog never requested');
+  });
+
+  it('should list several misses under the summary', () => {
+    const lines = formatDiagnostics({
+      location: '/t-1',
+      mockRules: {
+        registered: 7,
+        triggered: 4,
+        untriggered: ['catalog', 'products', 'connections'],
+      },
+    });
+
+    expect(body(lines).slice(1)).toEqual([
+      'mock rules  4/7 triggered — 3 never requested',
+      '            ✗ catalog',
+      '            ✗ products',
+      '            ✗ connections',
+    ]);
+  });
+
+  it('should cap the list at five and count the rest', () => {
+    const untriggered = ['a', 'b', 'c', 'd', 'e', 'f', 'g'];
+    const lines = formatDiagnostics({
+      location: '/t-1',
+      mockRules: { registered: 7, triggered: 0, untriggered },
+    });
+
+    expect(body(lines).slice(1)).toEqual([
+      'mock rules  0/7 triggered — 7 never requested',
+      '            ✗ a',
+      '            ✗ b',
+      '            ✗ c',
+      '            ✗ d',
+      '            ✗ e',
+      '            +2 more',
+    ]);
   });
 });
