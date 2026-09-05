@@ -15,6 +15,26 @@ describe('LogItem', () => {
       expect(logElement.tagName).toBe('LI');
     });
 
+    it('should preserve newlines in a plain-text log entry', () => {
+      const { container } = render(<LogItem log={'line one\nline two'} index={0} />);
+
+      const item = container.querySelector('li');
+      expect(item).not.toBeNull();
+      expect(item!.style.whiteSpace).toBe('pre-wrap');
+    });
+
+    it('should not force pre-wrap on a JSON-structured message log', () => {
+      const log = JSON.stringify({
+        type: LogType.ERROR,
+        message: 'Test failed: line one\nline two',
+      });
+      const { container } = render(<LogItem log={log} index={0} />);
+
+      const item = container.querySelector('li');
+      expect(item).not.toBeNull();
+      expect(item!.style.whiteSpace).not.toBe('pre-wrap');
+    });
+
     it('should render chai message error log', () => {
       const log = JSON.stringify({
         type: LogType.CHAI_MESSAGE,

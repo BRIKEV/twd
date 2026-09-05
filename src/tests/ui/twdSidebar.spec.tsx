@@ -217,7 +217,7 @@ describe('TWDSidebar', () => {
       expect(errorLog).toBeInTheDocument();
     });
 
-    it('should append the diagnostics block after the structured error log (generic error path)', async () => {
+    it('should push the diagnostics block before the structured error log (generic error path)', async () => {
       const errorTest = vi.fn().mockRejectedValue(new Error('Test error'));
       twd.describe('Group test error', () => {
         twd.it('Generic Diagnostics Test', errorTest);
@@ -233,16 +233,16 @@ describe('TWDSidebar', () => {
         (h) => h.type === 'test' && h.name === 'Generic Diagnostics Test',
       );
       expect(test).toBeDefined();
-      // The diagnostics block must land as the very last log entry — this is the placement
-      // both the sidebar's onFail wiring and the screen-reader walk-back depend on.
-      const lastLog = test!.logs[test!.logs.length - 1];
-      expect(lastLog).toMatch(/── TWD diagnostics /);
-      // ...and it must come after the structured error entry, never replace or precede it.
-      const previousLog = test!.logs[test!.logs.length - 2];
-      expect(() => JSON.parse(previousLog)).not.toThrow();
+      // The diagnostics block must land as the very first log entry — it renders above a
+      // role-query miss's accessible-roles dump, which lives inside the structured error entry.
+      const firstLog = test!.logs[0];
+      expect(firstLog).toMatch(/── TWD diagnostics /);
+      // ...and it must come before the structured error entry, never replace or follow it.
+      const nextLog = test!.logs[1];
+      expect(() => JSON.parse(nextLog)).not.toThrow();
     });
 
-    it('should append the diagnostics block after the structured error log (chai assertion path)', async () => {
+    it('should push the diagnostics block before the structured error log (chai assertion path)', async () => {
       twd.describe('Group test error', () => {
         twd.it('Chai Diagnostics Test', () => {
           chaiExpect(1).to.equal(2);
@@ -258,10 +258,10 @@ describe('TWDSidebar', () => {
         (h) => h.type === 'test' && h.name === 'Chai Diagnostics Test',
       );
       expect(test).toBeDefined();
-      const lastLog = test!.logs[test!.logs.length - 1];
-      expect(lastLog).toMatch(/── TWD diagnostics /);
-      const previousLog = test!.logs[test!.logs.length - 2];
-      expect(() => JSON.parse(previousLog)).not.toThrow();
+      const firstLog = test!.logs[0];
+      expect(firstLog).toMatch(/── TWD diagnostics /);
+      const nextLog = test!.logs[1];
+      expect(() => JSON.parse(nextLog)).not.toThrow();
     });
   });
 

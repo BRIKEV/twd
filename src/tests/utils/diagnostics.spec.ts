@@ -28,6 +28,18 @@ describe('collectDiagnostics', () => {
     expect(collectDiagnostics().location).toBe('/t-1/settings/catalog?tab=erp');
   });
 
+  it('should report an empty search without a stray "?"', () => {
+    window.history.replaceState({}, '', '/t-1/settings/catalog');
+
+    expect(collectDiagnostics().location).toBe('/t-1/settings/catalog');
+  });
+
+  it('should include the hash, for hashbang-router integrations', () => {
+    window.history.replaceState({}, '', '/t-1/settings/catalog?tab=erp#/section/2');
+
+    expect(collectDiagnostics().location).toBe('/t-1/settings/catalog?tab=erp#/section/2');
+  });
+
   it('should omit mockRules when no rule is registered', () => {
     expect(collectDiagnostics().mockRules).toBeUndefined();
   });
