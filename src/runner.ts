@@ -373,6 +373,7 @@ export class TestRunner {
       try {
         for (const hook of hooks.before) await hook();
         test.logs = [];
+        test.diagnostics = undefined;
         await test.handler();
         this.events.onPass(test, attempt > 1 ? attempt : undefined);
         return;

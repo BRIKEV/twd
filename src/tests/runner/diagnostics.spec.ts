@@ -78,4 +78,20 @@ describe('runner diagnostics', () => {
       untriggered: [],
     });
   });
+
+  it('should clear diagnostics from a prior failed attempt once a retry passes', async () => {
+    let callCount = 0;
+    twd.describe('Suite', () => {
+      twd.it('flaky', () => {
+        callCount++;
+        if (callCount === 1) throw new Error('boom');
+      });
+    });
+
+    const events = mockEvents();
+    await new twd.TestRunner(events, { retryCount: 2 }).runAll();
+
+    const [passed] = events.onPass.mock.calls[0];
+    expect(passed.diagnostics).toBeUndefined();
+  });
 });
