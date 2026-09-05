@@ -41,9 +41,10 @@ describe('twd Test Runner ci - executeTests', () => {
     expect(testStatus).toHaveLength(2);
     expect(testStatus[0].status).toBe('pass');
     expect(testStatus[1].status).toBe('fail');
-    // The full error may now carry an appended diagnostics block (see
-    // src/tests/runner/ci/diagnostics.spec.ts) — only the first line is the raw message.
-    expect(testStatus[1].error?.split('\n')[0]).toBe('Test failure');
+    // Pins the composed shape: the raw message exactly, then a blank-line separator, then the
+    // diagnostics block — fails if the block is dropped, duplicated, or joined without the blank
+    // line (see src/tests/runner/ci/diagnostics.spec.ts for the printing half of this behavior).
+    expect(testStatus[1].error).toMatch(/^Test failure\n\n── TWD diagnostics /);
     expect(testFn1).toHaveBeenCalledTimes(1);
     expect(testFn2).toHaveBeenCalledTimes(1);
   });
