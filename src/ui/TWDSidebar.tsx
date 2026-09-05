@@ -8,7 +8,6 @@ import { clearRequestMockRules } from '../commands/mockBridge';
 import { clearComponentMocks } from './componentMocks';
 import { isChaiAssertionError, printChaiError, formatChaiError } from './utils/chaiErrorFormat';
 import { LogType } from './utils/formatLogs';
-import { formatDiagnostics } from '../utils/diagnostics';
 import {
   displaySRMessageSpecificTest,
   displaySRMessageAllTests,
@@ -91,11 +90,6 @@ export const TWDSidebar = ({ open, position = 'left', search }: TWDSidebarProps)
     onFail: (test, err) => {
       test.status = 'fail';
       console.group(`%c❌ Test failed: ${test.name}`, 'color: red; font-weight: bold;');
-      // Pushed before the structured error: a role-query miss bakes an accessible-roles dump into
-      // that entry's message, which would otherwise bury the block.
-      if (test.diagnostics) {
-        test.logs.push(formatDiagnostics(test.diagnostics).join('\n'));
-      }
       if (isChaiAssertionError(err)) {
         printChaiError(err);
         const formattedError = formatChaiError(err);

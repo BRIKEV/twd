@@ -112,9 +112,6 @@ export const LogItem = ({ log, index }: LogItemProps) => {
         padding: 'var(--twd-spacing-xs) var(--twd-spacing-sm)',
         borderBottom: '1px solid var(--twd-border-light)',
         color: 'var(--twd-text)',
-        // Scoped to plain entries: a JSON message can carry a roles dump that would blow up the
-        // sidebar's line count.
-        ...(parsedLog === null ? { whiteSpace: 'pre-wrap' as const } : {}),
         ...assertStyles(displayText),
       }}
     >

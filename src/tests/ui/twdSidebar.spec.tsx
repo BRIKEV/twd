@@ -216,52 +216,6 @@ describe('TWDSidebar', () => {
       expect(actualLog).toBeInTheDocument();
       expect(errorLog).toBeInTheDocument();
     });
-
-    it('should push the diagnostics block before the structured error log (generic error path)', async () => {
-      const errorTest = vi.fn().mockRejectedValue(new Error('Test error'));
-      twd.describe('Group test error', () => {
-        twd.it('Generic Diagnostics Test', errorTest);
-      });
-      const user = userEvent.setup();
-      render(<TWDSidebar open={true} />);
-      const runAllButton = screen.getByText('Run All');
-      // Simulate a click event
-      await user.click(runAllButton);
-      expect(errorTest).toHaveBeenCalled();
-
-      const test = Array.from(twd.handlers.values()).find(
-        (h) => h.type === 'test' && h.name === 'Generic Diagnostics Test',
-      );
-      expect(test).toBeDefined();
-      // Must be the first log entry: it renders above the roles dump carried by the error entry.
-      const firstLog = test!.logs[0];
-      expect(firstLog).toMatch(/── TWD diagnostics /);
-      // ...and it must come before the structured error entry, never replace or follow it.
-      const nextLog = test!.logs[1];
-      expect(() => JSON.parse(nextLog)).not.toThrow();
-    });
-
-    it('should push the diagnostics block before the structured error log (chai assertion path)', async () => {
-      twd.describe('Group test error', () => {
-        twd.it('Chai Diagnostics Test', () => {
-          chaiExpect(1).to.equal(2);
-        });
-      });
-      const user = userEvent.setup();
-      render(<TWDSidebar open={true} />);
-      const runAllButton = screen.getByText('Run All');
-      // Simulate a click event
-      await user.click(runAllButton);
-
-      const test = Array.from(twd.handlers.values()).find(
-        (h) => h.type === 'test' && h.name === 'Chai Diagnostics Test',
-      );
-      expect(test).toBeDefined();
-      const firstLog = test!.logs[0];
-      expect(firstLog).toMatch(/── TWD diagnostics /);
-      const nextLog = test!.logs[1];
-      expect(() => JSON.parse(nextLog)).not.toThrow();
-    });
   });
 
   describe('accessibility - screen reader announcements', () => {

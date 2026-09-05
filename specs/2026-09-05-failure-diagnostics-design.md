@@ -89,10 +89,10 @@ path builds its own `onFail` instead of calling `executeTests()`: `twd-cli`'s ow
 and the Puppeteer scripts in `docs/tutorial/ci-integration.md`, each construct a fresh `TestRunner`
 with an `onFail: (test, err) => { ... error: err.message ... }` that never reads `test.diagnostics`.
 A `page.evaluate(...)` callback runs as a stringified function inside the browser — it cannot
-`import` `formatDiagnostics` from the package. So today, sharing the formatter keeps the sidebar and
-any consumer that calls `executeTests()` directly from in-page code from drifting apart; it does not
-yet reach a real out-of-process CLI path. Closing that gap needs `twd-js` to expose the formatter to
-in-page code first — a decision for the maintainer, out of scope here.
+`import` `formatDiagnostics` from the package. So today the block reaches only a consumer that calls
+`executeTests()` directly from in-page code. Closing that gap needs `twd-js` to expose the formatter
+to in-page code first — a decision for the maintainer, out of scope here, written up as
+`NEXT-DIAGNOSTICS.md` in the `twd-cli` and `twd-relay` repos.
 
 ### `src/runner.ts`
 
@@ -149,9 +149,13 @@ helper was needed, and none was added.
 
 ### Renderers
 
-`src/runner-ci.ts` (`onFail`) and `src/ui/TWDSidebar.tsx` (`onFail`) both call
-`formatDiagnostics(test.diagnostics)` and emit the block **above** the error message — see the
-Non-goals section below for why that ordering matters.
+`src/runner-ci.ts` (`onFail`) calls `formatDiagnostics(test.diagnostics)` and emits the block
+**above** the error message — see the Non-goals section below for why that ordering matters.
+
+The sidebar deliberately does **not** render it. The block assumes the reader holds TWD's mocking
+model in their head; in a terminal that reader is a CI log or an agent, but in the sidebar it pushes
+the one line a human is actually looking for — the assertion message — below a wall of plumbing.
+This is a machine-facing diagnostic, so it goes to the machine-facing surfaces only.
 
 ## Output rules
 
@@ -226,14 +230,11 @@ skeptically.
 
 ## Files touched
 
-| File                                   | Change                                                                                                                                                                                             |
-| -------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `src/utils/diagnostics.ts`             | new — collector + formatter                                                                                                                                                                        |
-| `src/runner.ts`                        | `Handler.diagnostics`; collect in the `catch`                                                                                                                                                      |
-| `src/runner-ci.ts`                     | render the diagnostics block, above the error message                                                                                                                                              |
-| `src/ui/TWDSidebar.tsx`                | render the diagnostics block, above the structured error log entry                                                                                                                                 |
-| `src/ui/LogItem.tsx`                   | scope `whiteSpace: 'pre-wrap'` to the plain-text diagnostics entry, so a JSON-structured error message (which can itself carry a multi-line roles dump) isn't forced to render every embedded line |
-| `src/ui/utils/screenReaderMessages.ts` | touched once, to walk back past the diagnostics entry when it was still the last log; reverted once the block moved to the front of `logs` and the walk-back became unnecessary — net change: none |
+| File                       | Change                                                |
+| -------------------------- | ----------------------------------------------------- |
+| `src/utils/diagnostics.ts` | new — collector + formatter                           |
+| `src/runner.ts`            | `Handler.diagnostics`; collect in the `catch`         |
+| `src/runner-ci.ts`         | render the diagnostics block, above the error message |
 
 `src/commands/mockBridge.ts` is **not** touched — see above.
 
@@ -259,12 +260,6 @@ Vitest, mirroring the source layout under `src/tests/`.
 
 - diagnostics are collected when a test fails, and are **not** clobbered by an `afterEach` that
   calls `clearRequestMockRules()` — the ordering guarantee above
-
-`src/tests/ui/`
-
-- the sidebar pushes the block above the structured error log entry (`src/tests/ui/twdSidebar.spec.tsx`)
-- `LogItem` scopes `pre-wrap` to the plain-text diagnostics entry, not to a JSON-structured message
-  (`src/tests/ui/logItem.spec.tsx`)
 
 `src/tests/runner/ci/executeTests.spec.ts`
 
