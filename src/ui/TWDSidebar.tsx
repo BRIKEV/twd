@@ -91,6 +91,13 @@ export const TWDSidebar = ({ open, position = 'left', search }: TWDSidebarProps)
     onFail: (test, err) => {
       test.status = 'fail';
       console.group(`%c❌ Test failed: ${test.name}`, 'color: red; font-weight: bold;');
+      // The diagnostics block is pushed BEFORE the structured error entry: TWD's own
+      // `configure({ getElementError })` (see proxies/screenDom.ts) bakes a Testing Library
+      // accessible-roles dump into the structured entry's message for a role-query miss, so
+      // rendering the block first keeps the three lines it exists to deliver above that dump.
+      if (test.diagnostics) {
+        test.logs.push(formatDiagnostics(test.diagnostics).join('\n'));
+      }
       if (isChaiAssertionError(err)) {
         printChaiError(err);
         const formattedError = formatChaiError(err);
@@ -119,9 +126,6 @@ export const TWDSidebar = ({ open, position = 'left', search }: TWDSidebarProps)
             message: `Test failed: ${err.message}`,
           }),
         );
-      }
-      if (test.diagnostics) {
-        test.logs.push(formatDiagnostics(test.diagnostics).join('\n'));
       }
       console.groupEnd();
       setRefresh((n) => n + 1);

@@ -112,8 +112,12 @@ export const LogItem = ({ log, index }: LogItemProps) => {
         padding: 'var(--twd-spacing-xs) var(--twd-spacing-sm)',
         borderBottom: '1px solid var(--twd-border-light)',
         color: 'var(--twd-text)',
-        // Diagnostics blocks are multi-line; without this they collapse onto one line.
-        whiteSpace: 'pre-wrap',
+        // The diagnostics block (see utils/diagnostics) is multi-line plain text — parseLogEntry
+        // returns null for it, same as every other plain, non-JSON log line — and without this it
+        // collapses onto one line. A JSON-structured message (e.g. the ERROR entry, whose message
+        // can itself carry a multi-line Testing Library roles dump) keeps default whitespace
+        // handling so it doesn't blow up the sidebar's line count.
+        ...(parsedLog === null ? { whiteSpace: 'pre-wrap' as const } : {}),
         ...assertStyles(displayText),
       }}
     >
