@@ -12,19 +12,25 @@ export const displaySRMessageSpecificTest = (test: Handler): string => {
       return `Test "${test.name}" failed.`;
     }
 
-    const lastLog = test.logs[test.logs.length - 1];
-    try {
-      const parsed = JSON.parse(lastLog);
-      if (parsed.type === LogType.CHAI_MESSAGE || parsed.type === LogType.ERROR) {
-        return `Test "${test.name}" failed. ${parsed.message}`;
-      } else if (parsed.type === LogType.CHAI_DIFF) {
-        return `Test "${test.name}" failed. Expected value does not match actual value.`;
+    // A diagnostics block (see utils/diagnostics) is always pushed *after* the structured error
+    // entry, as plain text, so the last log is not necessarily the failure reason — walk back to
+    // the most recent log that parses as one of our structured entries.
+    for (let i = test.logs.length - 1; i >= 0; i--) {
+      const candidate = test.logs[i];
+      try {
+        const parsed = JSON.parse(candidate);
+        if (parsed.type === LogType.CHAI_MESSAGE || parsed.type === LogType.ERROR) {
+          return `Test "${test.name}" failed. ${parsed.message}`;
+        } else if (parsed.type === LogType.CHAI_DIFF) {
+          return `Test "${test.name}" failed. Expected value does not match actual value.`;
+        }
+      } catch {
+        // Not JSON — keep looking further back for the structured entry.
       }
-      return `Test "${test.name}" failed.`;
-    } catch {
-      // If log is not valid JSON, treat it as plain text
-      return `Test "${test.name}" failed. ${lastLog}`;
     }
+
+    // No structured entry found; fall back to the last log as plain text.
+    return `Test "${test.name}" failed. ${test.logs[test.logs.length - 1]}`;
   } else if (test.status === 'skip') {
     return `Test "${test.name}" skipped.`;
   }
