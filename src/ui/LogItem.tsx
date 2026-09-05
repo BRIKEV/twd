@@ -112,6 +112,8 @@ export const LogItem = ({ log, index }: LogItemProps) => {
         padding: 'var(--twd-spacing-xs) var(--twd-spacing-sm)',
         borderBottom: '1px solid var(--twd-border-light)',
         color: 'var(--twd-text)',
+        // Diagnostics blocks are multi-line; without this they collapse onto one line.
+        whiteSpace: 'pre-wrap',
         ...assertStyles(displayText),
       }}
     >

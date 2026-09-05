@@ -8,6 +8,7 @@ import { clearRequestMockRules } from '../commands/mockBridge';
 import { clearComponentMocks } from './componentMocks';
 import { isChaiAssertionError, printChaiError, formatChaiError } from './utils/chaiErrorFormat';
 import { LogType } from './utils/formatLogs';
+import { formatDiagnostics } from '../utils/diagnostics';
 import {
   displaySRMessageSpecificTest,
   displaySRMessageAllTests,
@@ -118,6 +119,9 @@ export const TWDSidebar = ({ open, position = 'left', search }: TWDSidebarProps)
             message: `Test failed: ${err.message}`,
           }),
         );
+      }
+      if (test.diagnostics) {
+        test.logs.push(formatDiagnostics(test.diagnostics).join('\n'));
       }
       console.groupEnd();
       setRefresh((n) => n + 1);
