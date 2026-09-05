@@ -216,6 +216,53 @@ describe('TWDSidebar', () => {
       expect(actualLog).toBeInTheDocument();
       expect(errorLog).toBeInTheDocument();
     });
+
+    it('should append the diagnostics block after the structured error log (generic error path)', async () => {
+      const errorTest = vi.fn().mockRejectedValue(new Error('Test error'));
+      twd.describe('Group test error', () => {
+        twd.it('Generic Diagnostics Test', errorTest);
+      });
+      const user = userEvent.setup();
+      render(<TWDSidebar open={true} />);
+      const runAllButton = screen.getByText('Run All');
+      // Simulate a click event
+      await user.click(runAllButton);
+      expect(errorTest).toHaveBeenCalled();
+
+      const test = Array.from(twd.handlers.values()).find(
+        (h) => h.type === 'test' && h.name === 'Generic Diagnostics Test',
+      );
+      expect(test).toBeDefined();
+      // The diagnostics block must land as the very last log entry — this is the placement
+      // both the sidebar's onFail wiring and the screen-reader walk-back depend on.
+      const lastLog = test!.logs[test!.logs.length - 1];
+      expect(lastLog).toMatch(/── TWD diagnostics /);
+      // ...and it must come after the structured error entry, never replace or precede it.
+      const previousLog = test!.logs[test!.logs.length - 2];
+      expect(() => JSON.parse(previousLog)).not.toThrow();
+    });
+
+    it('should append the diagnostics block after the structured error log (chai assertion path)', async () => {
+      twd.describe('Group test error', () => {
+        twd.it('Chai Diagnostics Test', () => {
+          chaiExpect(1).to.equal(2);
+        });
+      });
+      const user = userEvent.setup();
+      render(<TWDSidebar open={true} />);
+      const runAllButton = screen.getByText('Run All');
+      // Simulate a click event
+      await user.click(runAllButton);
+
+      const test = Array.from(twd.handlers.values()).find(
+        (h) => h.type === 'test' && h.name === 'Chai Diagnostics Test',
+      );
+      expect(test).toBeDefined();
+      const lastLog = test!.logs[test!.logs.length - 1];
+      expect(lastLog).toMatch(/── TWD diagnostics /);
+      const previousLog = test!.logs[test!.logs.length - 2];
+      expect(() => JSON.parse(previousLog)).not.toThrow();
+    });
   });
 
   describe('accessibility - screen reader announcements', () => {
