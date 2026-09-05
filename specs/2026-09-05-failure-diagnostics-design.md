@@ -128,6 +128,17 @@ zeroed counts on every failure for a project on that convention.
 `onFail(test, error)` keeps its signature — the data rides on the handler, exactly as `logs` does
 today, so no consumer breaks.
 
+**Retries: last write wins, on purpose.** `test.diagnostics = undefined` sits beside
+`test.logs = []`, inside the per-attempt `try`, right before `test.handler()` runs — not once at the
+top of the run method. That placement is what makes a retry-then-pass leave `diagnostics`
+`undefined` (the passing attempt's reset is the last write) while a genuine failure keeps its final
+attempt's snapshot (the failing attempt's `catch` is the last write). The reset and the collect
+therefore live in different branches of the same `try` — success resets it, failure collects it —
+and each attempt overwrites whatever the previous attempt left, exactly like `lastError` a few lines
+above it: the reported diagnostics always belong to the same attempt as the reported error. Pinned by
+`should clear diagnostics from a prior failed attempt once a retry passes`
+(`src/tests/runner/diagnostics.spec.ts`).
+
 ### `src/commands/mockBridge.ts` — untouched
 
 No new export here. `getRequestMockRules()` and `getRequestCounts()` already existed (from the
