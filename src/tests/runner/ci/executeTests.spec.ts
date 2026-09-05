@@ -41,7 +41,9 @@ describe('twd Test Runner ci - executeTests', () => {
     expect(testStatus).toHaveLength(2);
     expect(testStatus[0].status).toBe('pass');
     expect(testStatus[1].status).toBe('fail');
-    expect(testStatus[1].error).toBe('Test failure');
+    // The full error may now carry an appended diagnostics block (see
+    // src/tests/runner/ci/diagnostics.spec.ts) — only the first line is the raw message.
+    expect(testStatus[1].error?.split('\n')[0]).toBe('Test failure');
     expect(testFn1).toHaveBeenCalledTimes(1);
     expect(testFn2).toHaveBeenCalledTimes(1);
   });

@@ -1,4 +1,5 @@
 import { Handler } from './runner';
+import { formatDiagnostics } from './utils/diagnostics';
 
 // ANSI color codes
 const RESET = '\x1b[0m';
@@ -38,7 +39,10 @@ export const reportResults = (handlers: Handler[], testResults: TestResult[]) =>
     console.log(label);
 
     if (errorMsg) {
-      console.log(`${RED}${prefix}${errorMsg}${RESET}`);
+      // Split so a diagnostics block keeps its own lines and its own indentation.
+      for (const line of errorMsg.split('\n')) {
+        console.log(`${RED}${prefix}${line}${RESET}`);
+      }
     }
 
     if (handler.children) {
@@ -64,7 +68,12 @@ export const executeTests = async (): Promise<{
       testStatus.push({ id: test.id, status: 'pass' });
     },
     onFail: (test: Handler, err: Error) => {
-      testStatus.push({ id: test.id, status: 'fail', error: err.message });
+      const diagnostics = test.diagnostics ? ['', ...formatDiagnostics(test.diagnostics)] : [];
+      testStatus.push({
+        id: test.id,
+        status: 'fail',
+        error: [err.message, ...diagnostics].join('\n'),
+      });
     },
     onSkip: (test: Handler) => {
       testStatus.push({ id: test.id, status: 'skip' });
