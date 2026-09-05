@@ -107,6 +107,7 @@ const removeViewportIframe = () => {
 const overrideJSAPIs = (state: ViewportOverrideState, width: number, height?: number) => {
   state.originalInnerWidthDesc = Object.getOwnPropertyDescriptor(window, 'innerWidth');
   state.originalInnerHeightDesc = Object.getOwnPropertyDescriptor(window, 'innerHeight');
+  // eslint-disable-next-line @typescript-eslint/unbound-method -- saved by reference and restored onto window, never called detached
   state.originalMatchMedia = window.matchMedia ?? null;
 
   Object.defineProperty(window, 'innerWidth', {

@@ -118,6 +118,7 @@ describe('twd viewport media query support', () => {
     document.getElementById('twd-viewport-iframe')?.remove();
     originalInnerWidth = window.innerWidth;
     originalInnerHeight = window.innerHeight;
+    // eslint-disable-next-line @typescript-eslint/unbound-method -- saved by reference for restore/identity comparison, never called detached
     originalMatchMedia = window.matchMedia;
     twd.resetViewport();
   });
@@ -161,6 +162,7 @@ describe('twd viewport media query support', () => {
     // Either way, after reset it should be back to the original.
     twd.viewport(375, 667);
     twd.resetViewport();
+    // eslint-disable-next-line @typescript-eslint/unbound-method -- identity comparison only; binding would break the check
     expect(window.matchMedia).toBe(originalMatchMedia);
   });
 
