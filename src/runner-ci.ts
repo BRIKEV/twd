@@ -68,9 +68,8 @@ export const executeTests = async (): Promise<{
       testStatus.push({ id: test.id, status: 'pass' });
     },
     onFail: (test: Handler, err: Error) => {
-      // The diagnostics block renders ABOVE the error message: for a Testing Library role query,
-      // the accessible-roles dump is baked into `err.message` itself, so appending after it would
-      // bury the three lines this feature exists to deliver under a wall of DOM.
+      // Above the message: a role query bakes its accessible-roles dump into `err.message`, which
+      // would otherwise bury the block.
       const diagnostics = test.diagnostics ? [...formatDiagnostics(test.diagnostics), ''] : [];
       testStatus.push({
         id: test.id,

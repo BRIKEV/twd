@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-// Same reason as the collector's spec: mockBridge's getters close over state captured at import.
+// mockBridge's getters close over state captured at import — see the collector's spec.
 vi.mock('../../commands/mockBridge', () => ({
   getRequestMockRules: vi.fn(() => []),
   getRequestCounts: vi.fn(() => ({})),

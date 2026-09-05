@@ -233,8 +233,7 @@ describe('TWDSidebar', () => {
         (h) => h.type === 'test' && h.name === 'Generic Diagnostics Test',
       );
       expect(test).toBeDefined();
-      // The diagnostics block must land as the very first log entry — it renders above a
-      // role-query miss's accessible-roles dump, which lives inside the structured error entry.
+      // Must be the first log entry: it renders above the roles dump carried by the error entry.
       const firstLog = test!.logs[0];
       expect(firstLog).toMatch(/── TWD diagnostics /);
       // ...and it must come before the structured error entry, never replace or follow it.

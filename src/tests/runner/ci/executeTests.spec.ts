@@ -41,10 +41,8 @@ describe('twd Test Runner ci - executeTests', () => {
     expect(testStatus).toHaveLength(2);
     expect(testStatus[0].status).toBe('pass');
     expect(testStatus[1].status).toBe('fail');
-    // Pins the composed shape: the diagnostics block first, then a blank-line separator, then the
-    // raw message exactly — fails if the block is dropped, duplicated, joined without the blank
-    // line, or if the order flips back to message-then-block (see
-    // src/tests/runner/ci/diagnostics.spec.ts for the printing half of this behavior).
+    // Pins the composed shape: block, blank line, then the raw message. Fails if the block is
+    // dropped, the separator vanishes, or the order flips back.
     expect(testStatus[1].error).toMatch(/^── TWD diagnostics [\s\S]*\n\nTest failure$/);
     expect(testFn1).toHaveBeenCalledTimes(1);
     expect(testFn2).toHaveBeenCalledTimes(1);

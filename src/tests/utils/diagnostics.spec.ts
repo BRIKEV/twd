@@ -1,8 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-// `mockBridge` captures `const rules = state.rules` at import time, so reassigning
-// `window.__TWD_MOCK_STATE__` from a test has no effect on its getters. Mock the two getters
-// instead — they are the real unit boundary here.
+// `mockBridge` captures `state.rules` at import time, so reassigning `window.__TWD_MOCK_STATE__`
+// from a test would not affect its getters. Mock the getters instead.
 vi.mock('../../commands/mockBridge', () => ({
   getRequestMockRules: vi.fn(() => []),
   getRequestCounts: vi.fn(() => ({})),
