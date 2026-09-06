@@ -39,6 +39,10 @@ export interface TwdPluginOptions {
    */
   search?: boolean;
   /**
+   * Whether to show the execution speed selector in the sidebar.
+   */
+  pace?: boolean;
+  /**
    * CSS selector for the host element used to mount the sidebar.
    */
   rootSelector?: string;

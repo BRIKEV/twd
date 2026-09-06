@@ -17,7 +17,7 @@ export default defineConfig({
       requireEnv: process.env.CI ? true : false,
     }),
     twdRemote() as PluginOption,
-    twd({ testFilePattern: '/**/*.twd.test.{ts,tsx}', open: false, search: true }),
+    twd({ testFilePattern: '/**/*.twd.test.{ts,tsx}', open: false, search: true, pace: true }),
   ],
   resolve: {
     alias: {

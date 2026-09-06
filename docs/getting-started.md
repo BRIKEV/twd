@@ -51,6 +51,7 @@ export default defineConfig({
       open: true,
       position: 'left',
       search: true,                    // Enable search/filter in the sidebar (default: false)
+      pace: true,                      // Enable the execution speed selector (default: false)
       serviceWorker: true,             // Enable request mocking (default: true)
       serviceWorkerUrl: '/mock-sw.js', // Custom service worker path (default: '/mock-sw.js')
       // rootSelector: '#my-app',      // (Optional) Override the app root for screenDom queries
@@ -143,6 +144,7 @@ if (import.meta.env.DEV) {
     open: true,
     position: 'left',
     search: true,                    // Enable search/filter in the sidebar (default: false)
+    pace: true,                      // Enable the execution speed selector (default: false)
     serviceWorker: true,             // Enable request mocking (default: true)
     serviceWorkerUrl: '/mock-sw.js', // Custom service worker path (default: '/mock-sw.js')
     // rootSelector: '#my-app',      // (Optional) Override the app root for screenDom queries

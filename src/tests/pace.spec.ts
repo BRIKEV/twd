@@ -127,3 +127,40 @@ describe('public API surface', () => {
     expect('setPace' in twd).toBe(false);
   });
 });
+
+describe('state shared across module instances', () => {
+  afterEach(async () => {
+    vi.resetModules();
+    const fresh = await import('../pace');
+    fresh.setPace(0);
+  });
+
+  // twd-js ships pace.ts inside more than one bundle: the sidebar runs the copy
+  // in bundled.es.js while the user's tests import the copy in index.es.js.
+  // They share a window, so the pace one instance sets has to be the pace the
+  // other one applies, or the sidebar control silently does nothing.
+  it('applies a pace set on one instance to another instance', async () => {
+    vi.resetModules();
+    const sidebarCopy = await import('../pace');
+    vi.resetModules();
+    const runnerCopy = await import('../pace');
+    expect(sidebarCopy.setPace).not.toBe(runnerCopy.setPace);
+
+    sidebarCopy.setPace(300);
+
+    expect(runnerCopy.getKeyDelay()).toBe(30);
+    expect(runnerCopy.pace()).toBeInstanceOf(Promise);
+  });
+
+  it('invalidates the other instance derived state when the pace changes', async () => {
+    vi.resetModules();
+    const sidebarCopy = await import('../pace');
+    vi.resetModules();
+    const runnerCopy = await import('../pace');
+
+    const before = runnerCopy.getPaceGeneration();
+    sidebarCopy.setPace(600);
+
+    expect(runnerCopy.getPaceGeneration()).toBeGreaterThan(before);
+  });
+});

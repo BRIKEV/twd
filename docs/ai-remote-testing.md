@@ -284,3 +284,9 @@ All messages are JSON over WebSocket. The `twd-relay run` CLI handles this proto
 ## Sidebar Integration
 
 When the relay triggers a test run, the TWD sidebar updates in real time. The browser client dispatches a `twd:state-change` event after each status update, and the sidebar listens for it to re-render with the latest results. You don't need to configure anything — if the relay is connected, the sidebar reflects relay-triggered runs automatically.
+
+A relay-triggered run executes at full speed, which makes it hard to see what an
+agent's new test actually did. Enable the sidebar speed selector with
+`twd({ pace: true })` and pick `Slow (300ms)`: the pace applies to relay-triggered
+runs too, so you can watch the flow the agent wrote before deciding to keep it.
+See [Recording Runs](/recording#watching-a-run-without-recording-it).
