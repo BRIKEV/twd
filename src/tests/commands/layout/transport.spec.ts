@@ -63,6 +63,27 @@ describe('readSnapshot', () => {
     expect(error).toBeInstanceOf(Error);
     expect((error as Error).message).not.toContain('Vite plugin');
   });
+
+  it('reports an unreadable response instead of a raw parse error', async () => {
+    // A JSON content type that does not actually parse (status 500, a
+    // malformed or empty body) must not surface as a raw SyntaxError, and
+    // must stay distinct from the missing-plugin path.
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue(
+        new Response('not json', {
+          status: 500,
+          headers: { 'content-type': 'application/json' },
+        }),
+      ),
+    );
+
+    await expect(readSnapshot('landing')).rejects.toThrow(/unreadable response \(500\)/);
+
+    const error: unknown = await readSnapshot('landing').catch((e: unknown) => e);
+    expect(error).toBeInstanceOf(Error);
+    expect((error as Error).message).not.toContain('Vite plugin');
+  });
 });
 
 describe('writeSnapshot', () => {

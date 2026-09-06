@@ -30,7 +30,15 @@ async function asJson(response: Response): Promise<unknown> {
     throw new Error(PLUGIN_MISSING);
   }
 
-  const body = (await response.json()) as { error?: string };
+  let body: { error?: string };
+  try {
+    body = (await response.json()) as { error?: string };
+  } catch {
+    // A JSON content type we cannot actually parse means something answered
+    // that is not the plugin, or the plugin failed mid-response. Report the
+    // status rather than letting a raw SyntaxError reach the user.
+    throw new Error(`The twdSnapshot plugin returned an unreadable response (${response.status}).`);
+  }
 
   // JSON with a bad status means the plugin IS there and refused. Surface its
   // reason instead of blaming a missing plugin.
