@@ -113,3 +113,69 @@ export function diffRows(baseline: Grid, current: Grid, tolerance = 1): RowOp[] 
 export function rowDistance(ops: RowOp[]): number {
   return ops.filter((op) => op.op !== 'same').length;
 }
+
+/**
+ * The diff as text, so a CI log can say WHERE the layout moved.
+ *
+ * `<name>.failed.png` shows the same thing better, but it is a file, and CI
+ * shows logs. Without this the only thing a CI failure reports is a count.
+ *
+ *   `X` changed cell   `~` row that is new   `#` filled   `.` empty
+ *
+ * Only rows near a change are printed. A landing page is 36 rows tall and
+ * dumping all of them is the noise this was accused of being; a diff prints
+ * hunks with context, not the whole file.
+ */
+const CONTEXT_ROWS = 2;
+
+export function renderRowDiff(ops: RowOp[], current: Grid): string {
+  const marks = new Map<number, string[]>();
+
+  for (const op of ops) {
+    if (op.op === 'removed' || op.op === 'same') continue;
+    if (op.op === 'added') {
+      marks.set(op.currentRow, new Array<string>(current.cols).fill('~'));
+      continue;
+    }
+    marks.set(
+      op.currentRow,
+      op.cells.map((changed) => (changed ? 'X' : '.')),
+    );
+  }
+
+  // A size-only change moves no row, and then there is nothing to point at.
+  if (marks.size === 0) return '';
+
+  // Rows with no mark still print their own bits: the surrounding structure is
+  // what makes the marked rows locatable on the page.
+  const bits = toBits(current);
+  const keep = new Set<number>();
+  for (const row of marks.keys()) {
+    for (let r = row - CONTEXT_ROWS; r <= row + CONTEXT_ROWS; r++) {
+      if (r >= 0 && r < current.rows) keep.add(r);
+    }
+  }
+
+  const lines: string[] = [];
+  let elided = 0;
+  const flush = () => {
+    if (elided) lines.push(`   ... ${elided} rows unchanged`);
+    elided = 0;
+  };
+
+  for (let row = 0; row < current.rows; row++) {
+    if (!keep.has(row)) {
+      elided++;
+      continue;
+    }
+    flush();
+    const marked = marks.get(row);
+    const cells = Array.from({ length: current.cols }, (_, col) =>
+      marked ? marked[col] : bits[row * current.cols + col] ? '#' : '.',
+    );
+    lines.push(`${String(row).padStart(3)}  ${cells.join(' ')}`);
+  }
+  flush();
+
+  return lines.length ? `${lines.join('\n')}\n` : '';
+}

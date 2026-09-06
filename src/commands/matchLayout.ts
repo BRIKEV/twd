@@ -20,7 +20,7 @@ import {
   updatedMessage,
   viewportMismatchMessage,
 } from './layout/message';
-import { diffRows, rowDistance } from './layout/rowDiff';
+import { diffRows, renderRowDiff, rowDistance } from './layout/rowDiff';
 import { parse, serialize, widthOf } from './layout/snapFile';
 import { readSnapshot, writeSnapshot } from './layout/transport';
 
@@ -106,6 +106,7 @@ export async function matchLayout(el: HTMLElement, name: string): Promise<void> 
       referenceSize: previous.size,
       currentSize: capture.size,
       rowsDiffering,
+      diff: renderRowDiff(ops, capture.grid),
     }),
   );
 }

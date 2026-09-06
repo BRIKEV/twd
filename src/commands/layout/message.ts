@@ -1,11 +1,12 @@
 /**
- * Every string the user reads. The failure message says what moved and what to
- * do about it, and nothing else.
+ * Every string the user reads. The failure message says what moved, where, and
+ * what to do about it, and nothing else.
  *
- * The spike also printed the two hashes and an ASCII render of the grid. Both
- * are dropped: a user can do nothing with "00dd000020000018", and the ASCII
- * grid is a worse version of the picture that <name>.failed.png already shows
- * with the changed cells boxed in red.
+ * The hashes the spike printed stay out: nobody can act on
+ * "00dd000020000018". The diff map does not, because `<name>.failed.png` is a
+ * FILE and CI shows logs. Without the map a CI failure reports a count of rows
+ * and nothing else, which is not enough to tell an intended change from a
+ * regression without downloading an artifact.
  */
 import { COLS } from './grid';
 import { widthOf } from './snapFile';
@@ -16,8 +17,10 @@ export function layoutChangedMessage(input: {
   referenceSize: string;
   currentSize: string;
   rowsDiffering: number;
+  /** The diff rendered as text. Omitted when there is nothing to show. */
+  diff?: string;
 }): string {
-  const { name, dir, referenceSize, currentSize, rowsDiffering } = input;
+  const { name, dir, referenceSize, currentSize, rowsDiffering, diff } = input;
   const widthChanged = widthOf(referenceSize) !== widthOf(currentSize);
   const sizeChanged = referenceSize !== currentSize;
 
@@ -38,6 +41,15 @@ export function layoutChangedMessage(input: {
           `  The width changed, so the grid rescaled (cell = width/${COLS}) and the`,
           `  marked cells in the capture are indicative, not one to one.`,
           ``,
+        ]
+      : []),
+    ...(diff
+      ? [
+          `  X = changed    ~ = new row    # = filled    . = empty`,
+          diff
+            .split('\n')
+            .map((line) => (line ? `  ${line}` : ''))
+            .join('\n'),
         ]
       : []),
     `  Reference:  ${dir}/${name}.snap`,
