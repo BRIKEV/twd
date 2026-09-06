@@ -3,9 +3,24 @@ import { wait } from './utils/wait';
 const MAX_PACE_MS = 5000;
 const MAX_KEY_DELAY_MS = 60;
 
-let paceMs = 0;
-let keyDelayMs = 0;
-let generation = 0;
+interface PaceState {
+  paceMs: number;
+  keyDelayMs: number;
+  generation: number;
+}
+
+const createState = (): PaceState => ({ paceMs: 0, keyDelayMs: 0, generation: 0 });
+
+/**
+ * Kept on the window rather than in module scope on purpose.
+ *
+ * twd-js ships this module inside more than one bundle: the sidebar runs the
+ * copy in bundled.es.js, while the user's tests import the copy in index.es.js.
+ * With module-local state the sidebar would set a pace the runner never reads.
+ * One object on the window keeps every copy in step, whichever one is asked.
+ */
+const state: PaceState =
+  typeof window !== 'undefined' ? (window.__TWD_PACE__ ??= createState()) : createState();
 
 /**
  * Sets the delay inserted after each paced command, in milliseconds.
@@ -21,10 +36,11 @@ let generation = 0;
  * @returns the pace actually applied
  */
 export const setPace = (ms: unknown): number => {
-  paceMs = typeof ms === 'number' && Number.isFinite(ms) && ms > 0 ? Math.min(ms, MAX_PACE_MS) : 0;
-  keyDelayMs = paceMs ? Math.min(MAX_KEY_DELAY_MS, Math.round(paceMs / 10)) : 0;
-  generation += 1;
-  return paceMs;
+  state.paceMs =
+    typeof ms === 'number' && Number.isFinite(ms) && ms > 0 ? Math.min(ms, MAX_PACE_MS) : 0;
+  state.keyDelayMs = state.paceMs ? Math.min(MAX_KEY_DELAY_MS, Math.round(state.paceMs / 10)) : 0;
+  state.generation += 1;
+  return state.paceMs;
 };
 
 /**
@@ -34,22 +50,22 @@ export const setPace = (ms: unknown): number => {
  * uniformly, so reusing the pace itself would put half a second between every
  * character.
  */
-export const getKeyDelay = (): number => keyDelayMs;
+export const getKeyDelay = (): number => state.keyDelayMs;
 
 /**
  * Bumped by every setPace call, so consumers holding derived state can tell it
  * is stale. Keying such a cache on the delay alone is not enough: setting the
  * same value twice must still invalidate.
  */
-export const getPaceGeneration = (): number => generation;
+export const getPaceGeneration = (): number => state.generation;
 
 /**
  * Returns undefined synchronously when pacing is off, so a normal run allocates
  * no promise and schedules no timer. Do not make this an async function.
  */
 export const pace = (): void | Promise<void> => {
-  if (!paceMs) return;
-  return wait(paceMs);
+  if (!state.paceMs) return;
+  return wait(state.paceMs);
 };
 
 if (typeof window !== 'undefined') {
