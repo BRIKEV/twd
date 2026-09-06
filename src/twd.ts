@@ -18,7 +18,6 @@ import type { AnyAssertion, ArgsFor, TWDElemAPI, WaitForOptions } from './twd-ty
 import urlCommand, { type URLCommandAPI } from './commands/url';
 import { visit } from './commands/visit';
 import { mockComponent, clearComponentMocks } from './ui/componentMocks';
-import { viewport, resetViewport } from './commands/viewport';
 import { matchLayout } from './commands/matchLayout';
 
 interface TWDAPI {
@@ -277,32 +276,6 @@ interface TWDAPI {
    */
   notExists: (selector: string) => Promise<void>;
   /**
-   * Simulates a viewport size by constraining body dimensions, overriding
-   * `window.innerWidth`/`window.innerHeight` and `window.matchMedia()`, and
-   * rewriting CSS `@media` rules to match the simulated dimensions.
-   * Call with no arguments to reset to the original viewport.
-   *
-   * @param width Viewport width in pixels
-   * @param height Viewport height in pixels (optional — omit to leave height unconstrained)
-   *
-   * @example
-   * ```ts
-   * twd.viewport(375, 667); // mobile
-   * twd.viewport(768);      // tablet width, height unconstrained
-   * twd.viewport();          // reset
-   * ```
-   */
-  viewport: (width?: number, height?: number) => void;
-  /**
-   * Resets the viewport to its original size (undoes a previous `twd.viewport()` call).
-   *
-   * @example
-   * ```ts
-   * twd.resetViewport();
-   * ```
-   */
-  resetViewport: () => void;
-  /**
    * Compares the geometry of an element against a committed layout snapshot.
    * Throws when the layout moved. Beta.
    *
@@ -392,8 +365,6 @@ export const twd: TWDAPI = {
   waitFor,
   mockComponent,
   clearComponentMocks,
-  viewport,
-  resetViewport,
   matchLayout,
   notExists: (selector: string): Promise<void> => {
     // Prepend selector to exclude TWD sidebar elements

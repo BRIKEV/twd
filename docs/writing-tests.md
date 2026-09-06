@@ -526,7 +526,6 @@ TWD provides built-in reset methods for its own managed state:
 beforeEach(() => {
   twd.clearRequestMockRules();  // Clears API mock rules
   twd.clearComponentMocks();    // Clears component mocks
-  twd.resetViewport();          // Resets simulated viewport
 });
 ```
 
