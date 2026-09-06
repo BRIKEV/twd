@@ -18,7 +18,6 @@ export interface Capture {
   canvas: HTMLCanvasElement;
   hash: string;
   grid: Grid;
-  background: string;
   /** CSS pixel size of the captured node, for example "577x512". */
   size: string;
 }
@@ -104,7 +103,12 @@ function averageHash(canvas: HTMLCanvasElement, background: string): { hash: str
           sum += Math.abs(grayAt((y * small.width + x) * 4) - backgroundGray);
         }
       }
-      cells.push(Math.min(255, sum / (SUB * SUB)));
+      // Round here, not just at serialize time. The .snap stores rounded
+      // integers, so leaving the in-memory grid fractional means a cell whose
+      // density sits just under the ink threshold reads one way live and the
+      // other way from the reference, and an unchanged page fails on its second
+      // run. Rounding at capture makes the round trip exact.
+      cells.push(Math.round(Math.min(255, sum / (SUB * SUB))));
     }
   }
 
@@ -162,5 +166,5 @@ export async function captureNode(el: HTMLElement): Promise<Capture> {
 
   const { hash, grid } = averageHash(canvas, background);
 
-  return { canvas, hash, grid, background, size: `${width}x${height}` };
+  return { canvas, hash, grid, size: `${width}x${height}` };
 }

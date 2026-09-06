@@ -7,7 +7,12 @@
 import { COLS, printGrid, type Grid } from './grid';
 
 export interface LayoutSnap {
-  /** Decides the verdict. */
+  /**
+   * A human-readable fingerprint, so a committed `.snap` is easy to eyeball
+   * and diff. It decides nothing: the verdict comes from the row diff plus
+   * the size (see `matchLayout.ts`), and `parse` only uses `hash` as a
+   * presence guard.
+   */
   hash: string;
   /** The exact signal: the block grew or shrank. */
   size: string;

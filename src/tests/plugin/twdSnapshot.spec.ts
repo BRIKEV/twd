@@ -120,6 +120,26 @@ describe('twdSnapshot plugin', () => {
 
     expect(status).toBe(405);
   });
+
+  it('answers 500 with an error field instead of hanging when the filesystem write fails', async () => {
+    const [, handler] = mount();
+    const spy = vi.spyOn(fs, 'writeFileSync').mockImplementation(() => {
+      throw new Error('EACCES: permission denied, open landing.snap');
+    });
+
+    try {
+      const { status, body } = await request(handler, {
+        method: 'POST',
+        url: '/?name=landing',
+        body: { snap: 'hash abcd' },
+      });
+
+      expect(status).toBe(500);
+      expect(body.error).toContain('EACCES');
+    } finally {
+      spy.mockRestore();
+    }
+  });
 });
 
 describe('debug flag injection', () => {
@@ -133,7 +153,7 @@ describe('debug flag injection', () => {
     // twd-cli sets the flag with evaluateOnNewDocument, which runs before any
     // page script. Plain assignment here would overwrite it, so use ??=.
     const plugin = twdSnapshot({ debug: true });
-    const transform = plugin.transformIndexHtml as () => { children: string }[];
+    const transform = plugin.transformIndexHtml as unknown as () => { children: string }[];
 
     const [tag] = transform();
 

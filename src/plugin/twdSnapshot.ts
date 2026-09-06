@@ -33,7 +33,7 @@ const sanitizeName = (name: string) => name.replace(/[^a-zA-Z0-9_-]/g, '');
 function readJsonBody(req: IncomingMessage): Promise<Record<string, string>> {
   return new Promise((resolve, reject) => {
     let raw = '';
-    req.on('data', (chunk) => (raw += chunk as string));
+    req.on('data', (chunk: unknown) => (raw += String(chunk)));
     req.on('end', () => {
       try {
         resolve(JSON.parse(raw || '{}') as Record<string, string>);
@@ -83,56 +83,67 @@ export function twdSnapshot(options: TwdSnapshotOptions = {}): Plugin {
 
       server.middlewares.use(ROUTE, (req: IncomingMessage, res: ServerResponse) => {
         void (async () => {
-          const query = new URL(req.url ?? '/', 'http://localhost').searchParams;
-          const name = sanitizeName(query.get('name') ?? '');
-          res.setHeader('content-type', 'application/json');
+          try {
+            const query = new URL(req.url ?? '/', 'http://localhost').searchParams;
+            const name = sanitizeName(query.get('name') ?? '');
+            res.setHeader('content-type', 'application/json');
 
-          if (!name) {
-            res.statusCode = 400;
-            res.end(JSON.stringify({ error: 'missing name' }));
-            return;
-          }
-
-          const snapFile = path.join(root, `${name}.snap`);
-
-          if (req.method === 'GET') {
-            const exists = fs.existsSync(snapFile);
-            res.end(
-              JSON.stringify({
-                exists,
-                snap: exists ? fs.readFileSync(snapFile, 'utf8') : null,
-                dir,
-              }),
-            );
-            return;
-          }
-
-          if (req.method === 'POST') {
-            const body = await readJsonBody(req);
-            fs.mkdirSync(root, { recursive: true });
-
-            const suffix = (body.suffix ?? '').replace(/[^a-zA-Z0-9_.-]/g, '');
-            const written: string[] = [];
-
-            if (body.snap) {
-              fs.writeFileSync(snapFile, body.snap, 'utf8');
-              written.push(`${name}.snap`);
+            if (!name) {
+              res.statusCode = 400;
+              res.end(JSON.stringify({ error: 'missing name' }));
+              return;
             }
-            if (body.png) {
-              const file = `${name}${suffix}.png`;
-              fs.writeFileSync(
-                path.join(root, file),
-                Buffer.from(body.png.replace(/^data:image\/png;base64,/, ''), 'base64'),
+
+            const snapFile = path.join(root, `${name}.snap`);
+
+            if (req.method === 'GET') {
+              const exists = fs.existsSync(snapFile);
+              res.end(
+                JSON.stringify({
+                  exists,
+                  snap: exists ? fs.readFileSync(snapFile, 'utf8') : null,
+                  dir,
+                }),
               );
-              written.push(file);
+              return;
             }
 
-            res.end(JSON.stringify({ ok: true, dir, written }));
-            return;
-          }
+            if (req.method === 'POST') {
+              const body = await readJsonBody(req);
+              fs.mkdirSync(root, { recursive: true });
 
-          res.statusCode = 405;
-          res.end(JSON.stringify({ error: 'method not allowed' }));
+              const suffix = (body.suffix ?? '').replace(/[^a-zA-Z0-9_.-]/g, '');
+              const written: string[] = [];
+
+              if (body.snap) {
+                fs.writeFileSync(snapFile, body.snap, 'utf8');
+                written.push(`${name}.snap`);
+              }
+              if (body.png) {
+                const file = `${name}${suffix}.png`;
+                fs.writeFileSync(
+                  path.join(root, file),
+                  Buffer.from(body.png.replace(/^data:image\/png;base64,/, ''), 'base64'),
+                );
+                written.push(file);
+              }
+
+              res.end(JSON.stringify({ ok: true, dir, written }));
+              return;
+            }
+
+            res.statusCode = 405;
+            res.end(JSON.stringify({ error: 'method not allowed' }));
+          } catch (error) {
+            // Without this, a throw here (a write on a read-only filesystem, a
+            // file that vanished between existsSync and readFileSync, an
+            // aborted upload) would leave the response unended: the browser's
+            // fetch never settles, matchLayout never resolves, and the test
+            // just times out with no diagnosis. Respond instead of throwing.
+            if (res.writableEnded) return;
+            res.statusCode = 500;
+            res.end(JSON.stringify({ error: String(error) }));
+          }
         })();
       });
     },

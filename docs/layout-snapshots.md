@@ -135,7 +135,7 @@ A reference records the viewport it was taken at. When the current viewport is
 different, the snapshot is skipped rather than failed:
 
 ```
-Layout snapshot "landing" skipped - viewport mismatch (reference 1280x800, current 1512x945).
+Layout snapshot "landing" skipped - viewport mismatch (reference 1280x800, current 1512x945). Run twd-cli to validate layout snapshots.
 ```
 
 This is what keeps the feature from being flaky, and it is why a resized window
@@ -154,6 +154,12 @@ it('keeps its mobile layout', async () => {
   await twd.matchLayout(landing, 'landing-mobile');
 });
 ```
+
+Always call `twd.viewport()` with BOTH a width and a height before a snapshot.
+A width-only call leaves `window.innerHeight` at whatever your browser window
+happens to be, so the reference bakes in a height nobody else can reproduce:
+under `twd-cli` it fails as a viewport mismatch, and in dev it silently skips
+on every other machine, forever.
 
 ## Debugging in the sidebar
 
