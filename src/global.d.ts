@@ -17,5 +17,11 @@ declare global {
       urlRegex: boolean;
       testId: string;
     }) => void;
+    /** Raised by twdSnapshot({ debug: true }) or by twd-cli. Gates matchLayout entirely. */
+    __TWD_SNAPSHOTS__?: boolean;
+    /** Rewrite an existing reference instead of failing. Set by twd-cli --update-snapshots. */
+    __TWD_UPDATE_SNAPSHOTS__?: boolean;
+    /** A missing reference is a failure and is never created. Set by twd-cli. */
+    __TWD_SNAPSHOT_CI__?: boolean;
   }
 }

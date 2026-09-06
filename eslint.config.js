@@ -64,6 +64,7 @@ export default defineConfig(
       'src/utils/waitFor.ts',
       'src/plugin/removeMockServiceWorker.ts',
       'src/plugin/twdHmr.ts',
+      'src/plugin/twdSnapshot.ts',
       'src/bundled.tsx',
     ],
     rules: {

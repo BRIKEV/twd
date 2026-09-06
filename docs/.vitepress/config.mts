@@ -118,6 +118,7 @@ export default defineConfig({
           { text: 'Theming', link: '/theming' },
           { text: 'CI Execution', link: '/ci-execution' },
           { text: 'Sharding (beta)', link: '/sharding' },
+          { text: 'Layout Snapshots (beta)', link: '/layout-snapshots' },
           { text: 'Recording Runs', link: '/recording' },
           { text: 'Coverage', link: '/coverage' },
           { text: 'AI Integration', link: '/ai-overview' },

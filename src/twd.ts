@@ -19,6 +19,7 @@ import urlCommand, { type URLCommandAPI } from './commands/url';
 import { visit } from './commands/visit';
 import { mockComponent, clearComponentMocks } from './ui/componentMocks';
 import { viewport, resetViewport } from './commands/viewport';
+import { matchLayout } from './commands/matchLayout';
 
 interface TWDAPI {
   /**
@@ -301,6 +302,27 @@ interface TWDAPI {
    * ```
    */
   resetViewport: () => void;
+  /**
+   * Compares the geometry of an element against a committed layout snapshot.
+   * Throws when the layout moved. Beta.
+   *
+   * Watches geometry, not appearance: it sees a block that grows, moves or
+   * collapses, and does not see a changed string or a changed colour. Content
+   * is already covered by `twd.should`.
+   *
+   * Layout snapshots are decided by `twd-cli`. In the sidebar they are skipped
+   * unless the `twdSnapshot` Vite plugin is configured with `debug: true`.
+   *
+   * @param el The element to capture
+   * @param name Snapshot name, used as the file name under `__twd_snapshots__`
+   *
+   * @example
+   * ```ts
+   * const landing = await screenDom.findByTestId('landing');
+   * await twd.matchLayout(landing, 'landing');
+   * ```
+   */
+  matchLayout: (el: HTMLElement, name: string) => Promise<void>;
 }
 
 /**
@@ -372,6 +394,7 @@ export const twd: TWDAPI = {
   clearComponentMocks,
   viewport,
   resetViewport,
+  matchLayout,
   notExists: (selector: string): Promise<void> => {
     // Prepend selector to exclude TWD sidebar elements
     const enhancedSelector = `body > div:not(#twd-sidebar-root) ${selector}`;
