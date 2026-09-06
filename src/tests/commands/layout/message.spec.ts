@@ -52,7 +52,8 @@ describe('layoutChangedMessage', () => {
     expect(message).not.toContain('indicative, not one to one');
   });
 
-  it('never leaks the hash or an ASCII grid into the message', () => {
+  it('never leaks a hash into the message', () => {
+    // A hash is unactionable: nobody can do anything with "00dd000020000018".
     const message = layoutChangedMessage({
       ...base,
       referenceSize: '577x512',
@@ -61,7 +62,33 @@ describe('layoutChangedMessage', () => {
     });
 
     expect(message).not.toContain('expected  ');
-    expect(message).not.toMatch(/X = changed/);
+    expect(message).not.toMatch(/[0-9a-f]{16}/);
+  });
+
+  it('carries the diff map so a CI log says WHERE the layout moved', () => {
+    // The failure capture is a file. CI shows logs, not files, so without the
+    // map the only thing a CI run reports is a count of rows.
+    const message = layoutChangedMessage({
+      ...base,
+      referenceSize: '900x720',
+      currentSize: '900x720',
+      rowsDiffering: 1,
+      diff: '. . . .\n. X X .\n',
+    });
+
+    expect(message).toContain('X = changed');
+    expect(message).toContain('. X X .');
+  });
+
+  it('leaves the map out when there is none to show', () => {
+    const message = layoutChangedMessage({
+      ...base,
+      referenceSize: '900x720',
+      currentSize: '900x720',
+      rowsDiffering: 1,
+    });
+
+    expect(message).not.toContain('X = changed');
   });
 });
 

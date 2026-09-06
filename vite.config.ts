@@ -25,7 +25,7 @@ export default defineConfig({
       name: 'TWD',
     },
     rollupOptions: {
-      external: ['react', 'react/jsx-runtime', 'react/jsx-dev-runtime', 'react-dom', 'react-dom/client', 'fs', 'path', 'vite'],
+      external: ['react', 'react/jsx-runtime', 'react/jsx-dev-runtime', 'react-dom', 'react-dom/client', 'fs', 'path', 'vite', /^node:/],
       output: [
         {
           format: 'es',
