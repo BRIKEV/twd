@@ -142,24 +142,9 @@ This is what keeps the feature from being flaky, and it is why a resized window
 never produces a red test you did not cause. Under `twd-cli` the viewport is
 fixed, so it always matches.
 
-`twd.viewport()` sets the viewport for a test, so you can pin a snapshot to a
-breakpoint:
-
-```ts
-it('keeps its mobile layout', async () => {
-  twd.viewport(375, 667);
-  await twd.visit('/');
-  const landing = await screenDom.findByTestId('landing');
-
-  await twd.matchLayout(landing, 'landing-mobile');
-});
-```
-
-Always call `twd.viewport()` with BOTH a width and a height before a snapshot.
-A width-only call leaves `window.innerHeight` at whatever your browser window
-happens to be, so the reference bakes in a height nobody else can reproduce:
-under `twd-cli` it fails as a viewport mismatch, and in dev it silently skips
-on every other machine, forever.
+Nothing in this feature sets the viewport itself: a snapshot simply records
+whatever the browser reports at the time it was taken. That is why the reference
+has to be created by `twd-cli`, where the size is fixed and reproducible.
 
 ## Debugging in the sidebar
 

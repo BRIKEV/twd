@@ -99,6 +99,19 @@ npm run dev
 
 Test files in that app import directly from source (`../../../../src/`), so changes are immediately reflected.
 
+## Design Specs and Plans
+
+Design documents live in `specs/` at the repo root, never in `docs/`.
+
+**Commit the design doc. Do NOT commit implementation plans.** A plan is
+scaffolding for building the feature: it is written to be executed once, and it
+goes stale the moment the code lands. It stays local. The design doc is the
+durable record of what was built and why, so that one belongs in the repo.
+
+Naming follows `specs/YYYY-MM-DD-<topic>-design.md` for the design and
+`specs/YYYY-MM-DD-<topic>-plan.md` for the plan, which makes the two easy to
+tell apart when staging.
+
 ## Release Process
 
 When releasing a new version, update the following files:

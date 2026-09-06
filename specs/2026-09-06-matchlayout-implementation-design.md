@@ -122,12 +122,10 @@ inspect them in the sidebar, and a snapshot taken there is not a verdict.**
 The `.snap` records the viewport it was created with. `matchLayout` reads the
 current viewport from `window.innerWidth` / `window.innerHeight`.
 
-This composes with `twd.viewport()` for free, and deliberately so:
-`twd.viewport()` already overrides `window.innerWidth` and `innerHeight`, so a
-test that sets a viewport and then takes a snapshot records that viewport, and
-a later run under the same `twd.viewport()` call matches. That is the
-mechanism the spike's §7 asks for when it says a test should be able to
-declare its own viewport.
+Nothing in this feature sets the viewport itself. A snapshot records whatever
+the browser reports at capture time, which is exactly why the reference has to
+be created under `twd-cli`, where the headless driver fixes the size and the
+result is reproducible across machines.
 
 Mismatch skips rather than fails. A developer who resized their window sees an
 explanation, not a red test they did not cause. The one exception is the CI
