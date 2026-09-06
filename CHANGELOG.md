@@ -1,3 +1,32 @@
+## <small>1.10.0 (2026-09-06)</small>
+
+* feat(matchLayout): layout snapshots, in the browser, with no SaaS account and no containers (#337) ([8ab683e](https://github.com/BRIKEV/twd/commit/8ab683e)), closes [#337](https://github.com/BRIKEV/twd/issues/337)
+* feat(matchLayout): `twd.matchLayout(el, name)` captures a DOM node to an anchored grid of bits and compares it against a committed `.snap` reference, throwing when the geometry moved. It watches **geometry, not appearance**: a changed string or a shifted colour is invisible to it on purpose, because `twd.should` already covers content
+* feat(matchLayout): the reference is a text file you commit, with an ASCII preview inside it, so a layout change is reviewable in a pull request without opening an image
+* feat(matchLayout): a new `twdSnapshot()` Vite plugin does the file I/O, since a browser cannot. It holds no snapshot policy: every decision lives in `matchLayout`
+* feat(matchLayout): snapshots are **skipped in the sidebar by default**. The sidebar resizes the page and a developer's window is an arbitrary size, so a reference created there would fail for everyone else. `twdSnapshot({ debug: true })` opts in locally, and `twd-cli` 1.6.0 or newer is what actually decides a snapshot
+* feat(sidebar): an execution speed selector, and pacing state moved somewhere every bundle can see it. `pace.ts` kept the value in module scope, but the module ships in more than one bundle, so a pace set from the sidebar never reached the copy the runner reads (#340) ([1e701be](https://github.com/BRIKEV/twd/commit/1e701be)), closes [#340](https://github.com/BRIKEV/twd/issues/340)
+* feat(diagnostics): a failing test now reports the route it was on and which mock rules never fired, as plain data the reporter renders (#335) ([a43bd9d](https://github.com/BRIKEV/twd/commit/a43bd9d)), closes [#335](https://github.com/BRIKEV/twd/issues/335)
+* fix(matchLayout): externalise `node:` prefixed builtins so `twdSnapshot` loads at all. `rollupOptions.external` listed only the unprefixed `fs` and `path`, so rolldown bundled them and emitted broken interop, and any app using the plugin died on startup with `l.default.resolve is not a function` (#339) ([6470a11](https://github.com/BRIKEV/twd/commit/6470a11)), closes [#339](https://github.com/BRIKEV/twd/issues/339)
+* fix(matchLayout): the failure message says where the layout moved again, with the diff map restored
+* feat: **`twd.viewport()` and `twd.resetViewport()` are removed** (#338) ([e475acf](https://github.com/BRIKEV/twd/commit/e475acf)), closes [#338](https://github.com/BRIKEV/twd/issues/338)
+* docs: a Layout Snapshots (beta) page, and the API reference entry for `matchLayout`
+* chore: dependencies (14 dependabot bumps)
+
+**Removal, and why this is not a major.** `twd.viewport()` shipped in 1.6.0 as a
+beta and did not survive contact with real users. It simulated a viewport by
+constraining the body, overriding `innerWidth`, `innerHeight` and `matchMedia`,
+and rewriting CSS `@media` rules by hand at runtime, and that machinery did not
+hold up in practice. Anyone calling `twd.viewport()` or `twd.resetViewport()`
+has to drop those calls. We are not cutting a major for it because usage of the
+command is effectively nil, and we would rather start the responsive story from
+a clean slate than keep a method that makes people think the problem is solved.
+
+**Layout snapshots ship as a beta feature.** They are strictly additive: without
+`matchLayout` in a test nothing changes, and in the sidebar they are skipped
+unless you ask for them. What may still change is the `.snap` format and the
+API. Deciding a snapshot needs `twd-cli` 1.6.0 or newer.
+
 ## <small>1.9.0 (2026-07-28)</small>
 
 * feat(pace): command pacing for recorded runs (#316) ([3aeceb4](https://github.com/BRIKEV/twd/commit/3aeceb4)), closes [#316](https://github.com/BRIKEV/twd/issues/316)
