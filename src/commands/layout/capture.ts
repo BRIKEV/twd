@@ -12,7 +12,7 @@
  *  - ::before and ::after are not cloned
  *  - cloneNode copies attributes, not live DOM properties
  */
-import { COLS, type Grid, toBits } from './grid';
+import { COLS, computeCells, type Grid, toBits } from './grid';
 
 export interface Capture {
   canvas: HTMLCanvasElement;
@@ -88,29 +88,17 @@ function averageHash(canvas: HTMLCanvasElement, background: string): { hash: str
 
   const backgroundGray = grayOfColor(background);
   const { data } = ctx.getImageData(0, 0, small.width, small.height);
-  const grayAt = (i: number) => 0.299 * data[i] + 0.587 * data[i + 1] + 0.114 * data[i + 2];
 
-  // A cell is its mean distance from the background colour. See grid.ts for why
-  // this beats both absolute brightness and per-cell standard deviation.
-  const cells: number[] = [];
-  for (let row = 0; row < rows; row++) {
-    for (let col = 0; col < COLS; col++) {
-      let sum = 0;
-      for (let sy = 0; sy < SUB; sy++) {
-        for (let sx = 0; sx < SUB; sx++) {
-          const x = col * SUB + sx;
-          const y = row * SUB + sy;
-          sum += Math.abs(grayAt((y * small.width + x) * 4) - backgroundGray);
-        }
-      }
-      // Round here, not just at serialize time. The .snap stores rounded
-      // integers, so leaving the in-memory grid fractional means a cell whose
-      // density sits just under the ink threshold reads one way live and the
-      // other way from the reference, and an unchanged page fails on its second
-      // run. Rounding at capture makes the round trip exact.
-      cells.push(Math.round(Math.min(255, sum / (SUB * SUB))));
-    }
-  }
+  // The per-cell density arithmetic lives in grid.ts's computeCells: it needs
+  // no canvas, so it can be unit tested directly, unlike the rest of this file.
+  const cells = computeCells({
+    data,
+    smallWidth: small.width,
+    rows,
+    cols: COLS,
+    sub: SUB,
+    backgroundGray,
+  });
 
   const grid: Grid = { cells, rows, cols: COLS };
   const bits = toBits(grid)

@@ -25,6 +25,51 @@ export const COLS = 16;
  */
 export const INK_THRESHOLD = 10;
 
+/**
+ * Build the per-cell density array from the small canvas's raw pixel data.
+ * This is the pure heart of capture.ts's averageHash: given pixel data, the
+ * small canvas width, the row/col count, the subsample factor and the
+ * background grey, it needs no canvas, no DOM, and nothing else. Kept here,
+ * separate from the canvas plumbing in capture.ts, so it can be unit tested
+ * directly instead of being permanently untestable.
+ */
+export function computeCells(input: {
+  data: Uint8ClampedArray;
+  smallWidth: number;
+  rows: number;
+  cols: number;
+  sub: number;
+  backgroundGray: number;
+}): number[] {
+  const { data, smallWidth, rows, cols, sub, backgroundGray } = input;
+  const grayAt = (i: number) => 0.299 * data[i] + 0.587 * data[i + 1] + 0.114 * data[i + 2];
+
+  // A cell is its mean distance from the background colour. See the module
+  // comment above for why this beats both absolute brightness and per-cell
+  // standard deviation.
+  const cells: number[] = [];
+  for (let row = 0; row < rows; row++) {
+    for (let col = 0; col < cols; col++) {
+      let sum = 0;
+      for (let sy = 0; sy < sub; sy++) {
+        for (let sx = 0; sx < sub; sx++) {
+          const x = col * sub + sx;
+          const y = row * sub + sy;
+          sum += Math.abs(grayAt((y * smallWidth + x) * 4) - backgroundGray);
+        }
+      }
+      // Round here, not just at serialize time. The .snap stores rounded
+      // integers, so leaving the in-memory grid fractional means a cell whose
+      // density sits just under the ink threshold reads one way live and the
+      // other way from the reference, and an unchanged page fails on its second
+      // run. Rounding at capture makes the round trip exact: the in-memory grid
+      // ends up identical to what gets serialized.
+      cells.push(Math.round(Math.min(255, sum / (sub * sub))));
+    }
+  }
+  return cells;
+}
+
 /** One bit per cell: is there content here? */
 export function toBits(grid: Grid): boolean[] {
   return grid.cells.map((density) => density >= INK_THRESHOLD);

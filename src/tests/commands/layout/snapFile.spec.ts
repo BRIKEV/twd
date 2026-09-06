@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { type Grid, toBits } from '../../../commands/layout/grid';
+import { computeCells, type Grid, toBits } from '../../../commands/layout/grid';
 import { parse, serialize, widthOf } from '../../../commands/layout/snapFile';
 
 const grid: Grid = { cells: [0, 50, 50, 0], rows: 2, cols: 2 };
@@ -49,25 +49,45 @@ describe('parse', () => {
     expect(() => parse('this is not a snapshot')).toThrow(/not readable/);
   });
 
-  it('pins the capture-to-file round trip for a density in the ink-threshold danger band', () => {
-    // 9.7 is a raw per-cell density in the danger band: it sits just under
-    // INK_THRESHOLD (10), so toBits reads it as empty, but Math.round(9.7) is
-    // exactly 10, which toBits reads as filled. capture.ts's averageHash now
-    // rounds every cell with Math.round before handing the grid to
-    // matchLayout, so `original` models what a live capture actually holds
-    // post-fix. serialize() has always rounded densities for the file (the
-    // format is hex bytes, it has no fractional representation), so a
-    // reference written from that same raw 9.7 lands on 10 too. Without the
-    // capture.ts rounding, `original` would still carry the bare 9.7 (empty)
-    // while `parsed` would read 10 (filled): an unchanged page would then
-    // disagree with its own reference on the very next run. This pins that,
-    // with the fix, the two agree.
-    const original: Grid = { cells: [Math.round(9.7), 50], rows: 1, cols: 2 };
+  it('pins that serialize/parse round trip a grid built the way capture.ts builds one', () => {
+    // This test's job is narrower than its name might suggest: it pins
+    // serialize/parse, not capture.ts's rounding. The capture-time rounding
+    // that keeps an unchanged page from disagreeing with its own reference is
+    // pinned directly against computeCells in grid.spec.ts, where it can
+    // actually fail if that rounding is removed.
+    //
+    // Here, `original` is sourced from a real computeCells call (the same
+    // danger-band construction used in grid.spec.ts: a 4x4 sub-cell whose raw
+    // mean density is 9.75, which computeCells rounds to 10) rather than a
+    // hard-coded literal, so the fixture is honest about where the rounded
+    // value comes from. What this test actually guards is that serialize,
+    // which independently rounds densities for the hex file format, and
+    // parse, which reads them back, do not introduce any further drift of
+    // their own on top of that.
+    const sub = 4;
+    const greys = Array.from({ length: sub * sub }, (_, i) => (i === 0 ? 6 : 10));
+    const data = new Uint8ClampedArray(greys.length * 4);
+    greys.forEach((grey, i) => {
+      data[i * 4] = grey;
+      data[i * 4 + 1] = grey;
+      data[i * 4 + 2] = grey;
+      data[i * 4 + 3] = 255;
+    });
+    const [density] = computeCells({
+      data,
+      smallWidth: sub,
+      rows: 1,
+      cols: 1,
+      sub,
+      backgroundGray: 0,
+    });
+
+    const original: Grid = { cells: [density, 50], rows: 1, cols: 2 };
     const text = serialize({
       hash: 'abcd',
       size: '10x10',
       viewport: '1280x800',
-      grid: { cells: [9.7, 50], rows: 1, cols: 2 },
+      grid: original,
     });
     const parsed = parse(text);
 
