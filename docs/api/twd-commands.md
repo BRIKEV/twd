@@ -789,6 +789,38 @@ describe("Viewport Tests", () => {
 
 ---
 
+## Layout Snapshots
+
+### twd.matchLayout(el, name) (beta)
+
+Captures the geometry of an element and compares it against a committed `.snap` reference, throwing when the layout moved. See [Layout Snapshots](/layout-snapshots) for the full guide.
+
+**Note**: The verdict comes from `twd-cli`, not the sidebar. In the browser sidebar, layout snapshots are skipped.
+
+#### Syntax
+
+```ts
+twd.matchLayout(el: HTMLElement, name: string): Promise<void>
+```
+
+#### Parameters
+
+- **el** (`HTMLElement`) - The element to capture.
+- **name** (`string`) - Snapshot name, used as the file name under `__twd_snapshots__`.
+
+#### Returns
+
+`Promise<void>` - Resolves when the layout matches the reference (or when a new reference is written). Throws when the layout moved.
+
+#### Examples
+
+```ts
+const landing = await screenDom.findByTestId('landing');
+await twd.matchLayout(landing, 'landing');
+```
+
+---
+
 ## API Mocking
 
 ### twd.mockRequest(alias, options)
