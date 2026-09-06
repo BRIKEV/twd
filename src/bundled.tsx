@@ -16,6 +16,7 @@ interface InitTWDOptions {
   serviceWorkerUrl?: string;
   theme?: Partial<TWDTheme>;
   search?: boolean;
+  pace?: boolean;
   rootSelector?: string;
 }
 
@@ -35,6 +36,8 @@ const createRoot = (el: HTMLElement) => ({
  * @param options.serviceWorker Whether to use the service worker
  * @param options.serviceWorkerUrl The URL of the service worker
  * @param options.theme Optional theme customization
+ * @param options.search Whether to show the search/filter input
+ * @param options.pace Whether to show the execution speed selector
  * @returns void
  * @example
  * initTWD(testModules, { open: true, position: 'left' });
@@ -46,6 +49,8 @@ const createRoot = (el: HTMLElement) => ({
  * initTWD(testModules, { open: true, position: 'left', theme: { primary: '#ff0000', background: '#ffffff' } });
  * @example
  * initTWD(testModules, { rootSelector: '#my-app' });
+ * @example
+ * initTWD(testModules, { pace: true });
  */
 export const initTWD = (files: TestModule, options?: InitTWDOptions) => {
   const {
@@ -55,6 +60,7 @@ export const initTWD = (files: TestModule, options?: InitTWDOptions) => {
     serviceWorkerUrl = '/mock-sw.js',
     theme,
     search,
+    pace,
     rootSelector,
   } = options || {};
   if (rootSelector) {
@@ -62,7 +68,12 @@ export const initTWD = (files: TestModule, options?: InitTWDOptions) => {
   }
   void initTests(
     files,
-    <TWDSidebar open={open} position={position} {...(search !== undefined && { search })} />,
+    <TWDSidebar
+      open={open}
+      position={position}
+      {...(search !== undefined && { search })}
+      {...(pace !== undefined && { pace })}
+    />,
     createRoot,
     theme,
   );

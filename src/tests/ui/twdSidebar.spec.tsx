@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { expect as chaiExpect } from 'chai';
 import userEvent from '@testing-library/user-event';
 import { render, screen, waitFor, act } from '@testing-library/react';
@@ -6,6 +6,7 @@ import * as twd from '../../runner';
 import { TWDSidebar } from '../../ui/TWDSidebar';
 import * as mockBridge from '../../commands/mockBridge';
 import * as componentMocks from '../../ui/componentMocks';
+import { setPace, getKeyDelay } from '../../pace';
 
 describe('TWDSidebar', () => {
   beforeEach(() => {
@@ -363,6 +364,69 @@ describe('TWDSidebar', () => {
       await waitFor(() => {
         expect(screen.getByText(/Test "Test 1" passed/)).toBeInTheDocument();
       });
+    });
+  });
+
+  describe('pace control', () => {
+    afterEach(() => {
+      setPace(0);
+    });
+
+    it('should not render the speed select when pace prop is false', () => {
+      render(<TWDSidebar open={true} />);
+      expect(screen.queryByLabelText('Speed')).not.toBeInTheDocument();
+    });
+
+    it('should render the speed select when pace prop is true', () => {
+      render(<TWDSidebar open={true} pace={true} />);
+      expect(screen.getByLabelText('Speed')).toBeInTheDocument();
+    });
+
+    // getKeyDelay is the pace actually in force: pace.ts derives it as pace/10,
+    // so 30 proves setPace(300) reached the module the runner reads from.
+    it('should apply the selected speed to the runner', async () => {
+      const user = userEvent.setup();
+      render(<TWDSidebar open={true} pace={true} />);
+      await user.selectOptions(screen.getByLabelText('Speed'), '300');
+      expect(getKeyDelay()).toBe(30);
+    });
+
+    it('should persist the selected speed to sessionStorage', async () => {
+      const user = userEvent.setup();
+      render(<TWDSidebar open={true} pace={true} />);
+      await user.selectOptions(screen.getByLabelText('Speed'), '600');
+      expect(sessionStorage.getItem('twd-pace')).toBe('600');
+    });
+
+    it('should remove the sessionStorage entry when going back to full speed', async () => {
+      const user = userEvent.setup();
+      sessionStorage.setItem('twd-pace', '600');
+      render(<TWDSidebar open={true} pace={true} />);
+      await user.selectOptions(screen.getByLabelText('Speed'), '0');
+      expect(sessionStorage.getItem('twd-pace')).toBeNull();
+      expect(getKeyDelay()).toBe(0);
+    });
+
+    it('should restore the speed from sessionStorage on mount', () => {
+      sessionStorage.setItem('twd-pace', '600');
+      render(<TWDSidebar open={true} pace={true} />);
+      expect(screen.getByLabelText('Speed')).toHaveValue('600');
+      expect(getKeyDelay()).toBe(60);
+    });
+
+    it('should ignore a stored speed that is not one of the options', () => {
+      sessionStorage.setItem('twd-pace', '4500');
+      render(<TWDSidebar open={true} pace={true} />);
+      expect(screen.getByLabelText('Speed')).toHaveValue('0');
+      expect(getKeyDelay()).toBe(0);
+    });
+
+    it('should clear sessionStorage and stop pacing when pace prop is false', () => {
+      sessionStorage.setItem('twd-pace', '600');
+      setPace(600);
+      render(<TWDSidebar open={true} pace={false} />);
+      expect(sessionStorage.getItem('twd-pace')).toBeNull();
+      expect(getKeyDelay()).toBe(0);
     });
   });
 

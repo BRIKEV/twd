@@ -140,6 +140,33 @@ npx twd-cli run --record --record-pace 0 --test "checkout flow"
 Values between 200 and 500 tend to read well. Pacing needs `twd-js` 1.9.0 or
 newer. On an older version the run still records, unpaced, and warns.
 
+## Watching a run without recording it
+
+The same pacing is available in the sidebar, without ffmpeg and without
+producing a file. Turn it on with the `pace` option:
+
+```ts
+// vite.config.ts
+twd({ pace: true });
+```
+
+That adds a speed selector to the sidebar header:
+
+| Option | Pace |
+|---|---|
+| `Off (full speed)` | `0` |
+| `Slow (300ms)` | `300` |
+| `Slower (600ms)` | `600` |
+
+The choice is remembered for the tab, so it survives the reloads you get while
+editing tests. It applies to every run in the page, including runs triggered
+over [twd-relay](/twd-relay), which is the point: when an agent writes a test and
+runs it for you, a paced run is one you can actually follow. Leave it on `Off`
+for normal development, where a run finishing in milliseconds is the feature.
+
+Like `record.pace`, this only spaces out commands. It does not change what the
+tests assert.
+
 ## A recorded run is not a CI run
 
 Recording changes the conditions the tests run under:

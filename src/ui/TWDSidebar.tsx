@@ -16,6 +16,8 @@ import { TWD_VERSION } from '../constants/version';
 import { SearchInput } from './SearchInput';
 import { filterTree } from './utils/filterTree';
 import { buildTreeFromHandlers, type Node } from './utils/buildTreeFromHandlers';
+import { PaceSelect, PACE_OPTIONS } from './PaceSelect';
+import { setPace } from '../pace';
 
 interface TWDSidebarProps {
   /**
@@ -34,6 +36,10 @@ interface TWDSidebarProps {
    * Whether to show the search/filter input
    */
   search?: boolean;
+  /**
+   * Whether to show the execution speed selector
+   */
+  pace?: boolean;
 }
 
 const positionStyles = {
@@ -47,6 +53,20 @@ const getSearchQuery = (search?: boolean) => {
     return '';
   }
   return sessionStorage.getItem('twd-search-filter') || '';
+};
+
+const PACE_STORAGE_KEY = 'twd-pace';
+
+// Read back through the option list rather than trusting the stored number.
+// sessionStorage survives a reload that changed the options, and setPace clamps
+// silently, so an unknown value would leave the select and the runner disagreeing.
+const getStoredPace = (pace?: boolean) => {
+  if (!pace) {
+    sessionStorage.removeItem(PACE_STORAGE_KEY);
+    return 0;
+  }
+  const stored = Number(sessionStorage.getItem(PACE_STORAGE_KEY));
+  return PACE_OPTIONS.some((option) => option.value === stored) ? stored : 0;
 };
 
 const getOpenState = (open: boolean) => {
@@ -65,12 +85,20 @@ const collectTestIds = (nodes: Node[]): string[] => {
   return ids;
 };
 
-export const TWDSidebar = ({ open, position = 'left', search }: TWDSidebarProps) => {
+export const TWDSidebar = ({ open, position = 'left', search, pace }: TWDSidebarProps) => {
   const [refreshKey, setRefresh] = useState(0);
   const [isOpen, setIsOpen] = useState(getOpenState(open));
   useLayout({ isOpen, position });
   const [message, setMessage] = useState<string>('');
   const [searchQuery, setSearchQuery] = useState(getSearchQuery(search));
+  const [paceMs, setPaceMs] = useState(getStoredPace(pace));
+
+  // Pacing lives in module state so that every run picks it up, including the
+  // ones twd-relay triggers from outside the tab. The sidebar only has to keep
+  // that state in step with the selection.
+  useEffect(() => {
+    setPace(paceMs);
+  }, [paceMs]);
 
   useEffect(() => {
     const onStateChange = () => setRefresh((n) => n + 1);
@@ -134,6 +162,15 @@ export const TWDSidebar = ({ open, position = 'left', search }: TWDSidebarProps)
       sessionStorage.setItem('twd-search-filter', value);
     } else {
       sessionStorage.removeItem('twd-search-filter');
+    }
+  };
+
+  const handlePaceChange = (ms: number) => {
+    setPaceMs(ms);
+    if (ms) {
+      sessionStorage.setItem(PACE_STORAGE_KEY, ms.toString());
+    } else {
+      sessionStorage.removeItem(PACE_STORAGE_KEY);
     }
   };
 
@@ -261,6 +298,7 @@ export const TWDSidebar = ({ open, position = 'left', search }: TWDSidebarProps)
             </span>
           </div>
         </div>
+        {pace && <PaceSelect value={paceMs} onChange={handlePaceChange} />}
         <MockRulesButton />
         {search && <SearchInput value={searchQuery} onChange={handleSearchChange} />}
       </div>

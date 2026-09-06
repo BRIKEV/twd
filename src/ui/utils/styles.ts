@@ -219,6 +219,37 @@ export const CSS_STYLES = `
 }
 
 /* ========================
+   Pace
+   ======================== */
+.twd-pace-row {
+  display: flex;
+  align-items: center;
+  gap: var(--twd-spacing-md);
+  margin-bottom: 10px;
+}
+.twd-pace-label {
+  font-size: var(--twd-font-size-sm);
+  color: var(--twd-text-secondary);
+  white-space: nowrap;
+}
+.twd-pace-select {
+  flex: 1;
+  min-width: 0;
+  padding: var(--twd-spacing-sm) var(--twd-spacing-md);
+  background: var(--twd-background);
+  color: var(--twd-text);
+  border: 1px solid var(--twd-border);
+  border-radius: var(--twd-border-radius);
+  font-size: var(--twd-font-size-sm);
+  box-sizing: border-box;
+  cursor: pointer;
+}
+.twd-pace-select:focus-visible {
+  outline: 2px solid var(--twd-primary);
+  outline-offset: 2px;
+}
+
+/* ========================
    Loader
    ======================== */
 .twd-loader {

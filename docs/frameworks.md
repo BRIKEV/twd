@@ -50,6 +50,7 @@ The `twd()` plugin accepts the following options:
 - **`serviceWorkerUrl`** (`string`, optional) - Custom path to the service worker file. Default: `'/mock-sw.js'`
 - **`theme`** (`Partial<TWDTheme>`, optional) - Custom theme configuration. See [Theming](/theming) for details.
 - **`search`** (`boolean`, optional) - Whether to show the search/filter input in the sidebar. Default: `false`
+- **`pace`** (`boolean`, optional) - Whether to show the execution speed selector in the sidebar, which slows a run down so you can watch it. Default: `false`
 
 **Examples:**
 
@@ -68,6 +69,9 @@ twd({ serviceWorker: false });
 
 // Enable test filtering in the sidebar
 twd({ search: true });
+
+// Enable the execution speed selector, to watch a run step by step
+twd({ pace: true });
 
 // All options together
 twd({

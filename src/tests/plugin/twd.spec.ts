@@ -56,6 +56,7 @@ describe('twd vite plugin', () => {
       const plugin = twd({
         position: 'right',
         search: true,
+        pace: true,
         theme: { primary: '#ff0000' },
         rootSelector: '#my-app',
       });
@@ -63,6 +64,7 @@ describe('twd vite plugin', () => {
       const code = load.call({}, '\0virtual:twd/init');
       expect(code).toContain(`"position":"right"`);
       expect(code).toContain(`"search":true`);
+      expect(code).toContain(`"pace":true`);
       expect(code).toContain(`"theme":{"primary":"#ff0000"}`);
       expect(code).toContain(`"rootSelector":"#my-app"`);
     });
