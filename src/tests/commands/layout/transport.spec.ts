@@ -42,6 +42,27 @@ describe('readSnapshot', () => {
 
     await expect(readSnapshot('landing')).rejects.toThrow(/twdSnapshot\(\) Vite plugin/);
   });
+
+  it("surfaces the plugin's own reason when it answers JSON with a bad status", async () => {
+    // The plugin IS there and refused (missing name, method not allowed, etc).
+    // That must never be reported as a missing plugin, or the real reason is
+    // thrown away.
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue(
+        new Response(JSON.stringify({ error: 'missing name' }), {
+          status: 400,
+          headers: { 'content-type': 'application/json' },
+        }),
+      ),
+    );
+
+    await expect(readSnapshot('landing')).rejects.toThrow(/missing name/);
+
+    const error: unknown = await readSnapshot('landing').catch((e: unknown) => e);
+    expect(error).toBeInstanceOf(Error);
+    expect((error as Error).message).not.toContain('Vite plugin');
+  });
 });
 
 describe('writeSnapshot', () => {

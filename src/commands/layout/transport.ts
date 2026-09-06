@@ -21,16 +21,26 @@ export interface SnapshotReference {
   dir: string;
 }
 
-/**
- * Vite serves index.html for unknown paths, so a missing plugin comes back as a
- * 200 full of HTML rather than a 404. Check the content type, not the status.
- */
 async function asJson(response: Response): Promise<unknown> {
   const contentType = response.headers.get('content-type') ?? '';
-  if (!response.ok || !contentType.includes('application/json')) {
+  // Vite serves index.html for unknown paths, so a missing plugin comes back as
+  // a 200 full of HTML rather than a 404. Anything that is not JSON means the
+  // plugin is not there to answer.
+  if (!contentType.includes('application/json')) {
     throw new Error(PLUGIN_MISSING);
   }
-  return response.json();
+
+  const body = (await response.json()) as { error?: string };
+
+  // JSON with a bad status means the plugin IS there and refused. Surface its
+  // reason instead of blaming a missing plugin.
+  if (!response.ok) {
+    throw new Error(
+      `The twdSnapshot plugin refused the request (${response.status}): ${body.error ?? 'unknown error'}`,
+    );
+  }
+
+  return body;
 }
 
 export async function readSnapshot(name: string): Promise<SnapshotReference> {

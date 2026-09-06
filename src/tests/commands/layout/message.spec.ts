@@ -6,6 +6,7 @@ import {
   skippedDisabledMessage,
   skippedViewportMessage,
   updatedMessage,
+  viewportMismatchMessage,
 } from '../../../commands/layout/message';
 
 const base = { name: 'landing', dir: '__twd_snapshots__' };
@@ -86,5 +87,16 @@ describe('single line messages', () => {
 
   it('says CI never creates a reference', () => {
     expect(missingReferenceMessage('landing', '__twd_snapshots__')).toContain('never creates');
+  });
+
+  it('names both viewports without saying skipped, unlike its dev-mode sibling', () => {
+    // skippedViewportMessage is LOGGED in dev, where a mismatch must never fail
+    // the test. viewportMismatchMessage is THROWN under CI, where a mismatch
+    // must fail rather than silently skip every snapshot and leave the suite
+    // green while testing nothing. The wording must keep them distinct.
+    const message = viewportMismatchMessage('landing', '1280x800', '1512x945');
+    expect(message).toContain('1280x800');
+    expect(message).toContain('1512x945');
+    expect(message).not.toContain('skipped');
   });
 });
