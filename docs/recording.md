@@ -343,6 +343,11 @@ jobs:
 
       - run: npm ci
 
+      # Same steps your test workflow uses to get the app serving. Omit the
+      # service worker init if `public/mock-sw.js` is committed.
+      - name: Install mock service worker
+        run: npx twd-js init public --save
+
       - name: Start dev server
         run: |
           nohup npm run dev > /dev/null 2>&1 &
