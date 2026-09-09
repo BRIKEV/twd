@@ -46,6 +46,7 @@ Create `twd.config.json` in your repo to customize the runner:
   "coverageDir": "./coverage",
   "nycOutputDir": "./.nyc_output",
   "headless": true,
+  "viewport": { "width": 1280, "height": 800 },
   "puppeteerArgs": ["--no-sandbox", "--disable-setuid-sandbox"],
   "retryCount": 2,
   "protocolTimeout": 300000,
@@ -64,6 +65,7 @@ Create `twd.config.json` in your repo to customize the runner:
 | `coverageDir` | string | `"./coverage"` | Output folder for coverage reports |
 | `nycOutputDir` | string | `"./.nyc_output"` | NYC temp folder |
 | `headless` | boolean | `true` | Run Chrome in headless mode |
+| `viewport` | object | `{ width: 1280, height: 800 }` | Browser viewport, set explicitly on every run since 1.6.0 — a run used to inherit Puppeteer's implicit size, which made [layout snapshots](/layout-snapshots) unreproducible and could have been changed by a Puppeteer upgrade without a word. `record.viewport` wins while [recording](/recording) |
 | `puppeteerArgs` | string[] | `["--no-sandbox", "--disable-setuid-sandbox"]` | Extra arguments for Puppeteer |
 | `retryCount` | number | `2` | Number of times to attempt each test before reporting failure. Default is 2 (one normal attempt + one retry). Set to 1 to disable retries. |
 | `protocolTimeout` | number | `300000` | Puppeteer CDP `protocolTimeout` in ms (5 min). Tests run in chunks, so this bounds a **single chunk's browser call**, not the entire run. Raise it (e.g. `600000`) for slow CI or if individual chunks hang. `0` means no timeout. |
@@ -104,6 +106,45 @@ sharded. See [Sharding](/sharding).
 ::: tip
 `twd-relay` accepts the same `--test` flag for driving a run from an AI agent.
 See [AI Remote Testing](/ai-remote-testing).
+:::
+
+### Running only the tests a branch changed
+
+`--changed-since <ref>` works the filter out from git rather than having you type
+it: it runs the tests the current branch added or changed.
+
+```bash
+# Every test this branch added or changed since main
+npx twd-cli run --changed-since main
+
+# In CI, against the pull request's base commit
+npx twd-cli run --changed-since "$BASE_SHA"
+```
+
+Requires `twd-cli` 1.7.0 or newer. What it selects, precisely:
+
+- Titles come from **added lines only**, in files matching `*.twd.test.*`. The
+  suffix is what identifies a test file, not the directory — and it also keeps a
+  project's Vitest suite, which uses `it()` too, from contributing titles.
+- If the diff moved no `it()` line in a changed test file at all, every title in
+  that file is used instead.
+- `it()` and `it.only()` are selected; `it.skip()` and `xit()` never are.
+- Uncommitted and untracked test files count, so work in progress is included
+  when you run it locally.
+- Resolved titles are OR'd with any `--test` filters you pass alongside.
+
+**A branch that changed no tests prints one line and exits `0`.**
+`--changed-since` is a query, and an empty result is a normal CI outcome —
+unlike `--test`, which is an assertion you typed and still exits `1` when it
+matches nothing, so a typo cannot look like a pass. That is decided before the
+browser launches, so such a run needs no dev server at all.
+
+Set `fetch-depth: 0` on `actions/checkout`. A depth-1 clone does not contain the
+base commit, so there is nothing to diff against.
+
+::: tip
+This pairs with `--record`: one clip per test the branch added is the artifact a
+reviewer actually wants. See [Recording in CI](/recording#recording-in-ci).
 :::
 
 ## GitHub Action (Recommended)
