@@ -13,25 +13,53 @@ request, drop it in your docs, or send it to someone who asked what changed.
 npx twd-cli run --record --test "checkout flow"
 ```
 
-That writes `twd-artifacts/checkout-flow.mp4`.
+That writes one clip per matched test into `twd-artifacts/`.
 
-Requires `twd-cli` 1.4.0 or newer. See
+Requires `twd-cli` 1.4.0 or newer. One clip per test needs 1.8.0, and so does the
+[`record` action](#recording-in-ci) — 1.7.0 shipped the action, but its artifact
+upload failed on default inputs. See
 [github.com/BRIKEV/twd-cli](https://github.com/BRIKEV/twd-cli) for source and
 release notes.
 
-## Prerequisite: ffmpeg
+## Prerequisite: ffmpeg 8 or newer
 
-Recording spawns ffmpeg, so it has to be available:
+Recording spawns ffmpeg, so it has to be available — and for `mp4`, the default
+format, it has to be **version 8 or newer**.
+
+That floor is not ours. Puppeteer's screencast passes
+`-movflags hybrid_fragmented`, which arrived after ffmpeg 7:
+
+| ffmpeg | Where it comes from | Records mp4 |
+|---|---|---|
+| 6.1.1 | `apt-get install ffmpeg` on ubuntu-24.04 | No |
+| 7.0.2 | the obvious static build | No |
+| 8.1.2 | current release | Yes |
+
+So the usual package-manager one-liner may or may not be enough:
 
 ```bash
-brew install ffmpeg          # macOS
-sudo apt-get install ffmpeg  # Linux
-winget install ffmpeg        # Windows
+brew install ffmpeg     # macOS
+winget install ffmpeg   # Windows
+ffmpeg -version         # check what you actually got
 ```
 
-Set `record.ffmpegPath` in `twd.config.json` if it is not on your `PATH`.
-`twd-cli` checks for ffmpeg before launching the browser, so a missing binary
-fails immediately with install instructions rather than part way through a run.
+On Linux the distro package is the one that will bite you. Install a build from
+[BtbN/FFmpeg-Builds](https://github.com/BtbN/FFmpeg-Builds/releases) instead, and
+pick a `gpl` variant — it carries `libx264`, which `twd-cli` needs for the
+[H.264 conversion](#why-the-clip-plays-outside-chrome), so one download covers
+both requirements. In GitHub Actions the [`record` action](#recording-in-ci) does
+this for you.
+
+`webm` and `gif` pass no movflags and work on any ffmpeg.
+
+Set `record.ffmpegPath` in `twd.config.json` if the binary is not on your `PATH`.
+
+Before launching the browser, `twd-cli` probes what ffmpeg can actually do —
+`ffmpeg -h muxer=mp4` has to list every movflag Puppeteer will pass — so an
+ffmpeg that exists but cannot record fails in one actionable line rather than
+part way through a run. That is a capability check rather than a version check on
+purpose: the required flags are Puppeteer's, and a version floor written from a
+single measurement was already wrong on the second.
 
 ## Why the run is paced
 
@@ -171,8 +199,8 @@ tests assert.
 
 Recording changes the conditions the tests run under:
 
-- It sets its own viewport, 1280x720 by default, where a normal `twd-cli` run
-  uses Puppeteer's implicit 800x600.
+- It sets its own viewport, `1280x1600` by default, where a normal `twd-cli` run
+  uses an explicit `1280x800`.
 - It hides the TWD sidebar and reflows your app to full width.
 - Pacing inserts real delays between actions, which can mask race conditions.
 
@@ -181,16 +209,46 @@ as a demo artifact and keep running [CI](/ci-execution) unrecorded.
 
 ## What ends up in the clip
 
-One video per run, containing every matched test back to back.
+**One clip per test.** A run matching three tests writes three files, each named
+after its own `"suite > test"` path:
+
+```
+twd-artifacts/
+  todos-adds-a-todo.mp4
+  todos-marks-a-todo-done.mp4
+  todos-filters-by-status.mp4
+```
+
+That is the shape a reviewer wants. A branch adds one journey test per acceptance
+criterion, so one clip per criterion means watching the one you doubt and
+skipping the rest — rather than scrubbing a four second splice of three tests to
+find the part you came for.
 
 `--test` matches a substring of the full `"suite > test"` path, so a single
 filter can match several tests. Order follows declaration order in the suite
 tree, not the order you passed the flags.
 
-The filename describes the contents: a single recorded test gets a slug of its
-full path, so `Login > shows error on bad password` becomes
-`login-shows-error-on-bad-password.mp4`. Anything else gets `run.<ext>`.
-Re-running overwrites the file.
+Three cases still produce a single file for the whole run:
+
+- **A single matched test.** It already gets a file named after itself, so
+  `Login > shows error on bad password` becomes
+  `login-shows-error-on-bad-password.mp4`.
+- **An explicit `record.filename`.** One name cannot address several clips, so
+  setting it pins the single-file shape.
+- **More matched tests than `record.maxClips`**, default `20`. Past the bound the
+  run writes one `run.<ext>` and says so in a line.
+
+`maxClips` is a human bound rather than a cost one. Restarting a screencast on an
+already-open page measures about 250ms, so thirty clips is roughly seven seconds
+of overhead — not thirty browser launches. What the bound protects is the
+reviewer who will not open thirty files. Set `0` to disable it.
+
+Re-running overwrites the files.
+
+::: warning Changed in 1.8.0
+A run matching several tests used to write a single `run.<ext>`. Anything that
+globs `run.mp4`, or expects exactly one file, needs updating.
+:::
 
 Pace a scoped run rather than a whole suite. A 50 test suite averaging 10 actions
 per test gains roughly 2.5 minutes at 300ms, and about 4 minutes at 500ms.
@@ -199,6 +257,172 @@ Hitting `protocolTimeout` is unlikely. A chunk is `chunkSize` tests inside a
 single browser call bounded by that timeout, so at 300ms you would need around
 100 actions in one test to reach it. If you somehow do, lower `chunkSize` or
 raise `protocolTimeout`.
+
+## A failed recording fails the run
+
+If you asked for a video and did not get one, the run exits **1** — even when
+every test passed. A green run with no artifact sends the next person looking for
+a clip that is not there.
+
+A **0-byte output stays a warning**, because it is a legitimate outcome rather
+than a crash. Chrome only emits screencast frames on a compositor update, so a
+suite that never repaints records nothing and finishes cleanly.
+
+::: warning Changed in 1.7.0
+Before 1.7.0 a failed recording was silent, and an ffmpeg older than 8 could hang
+the job outright. Both are now up-front failures. The fix is to install ffmpeg 8,
+not to look for a flag that restores the old behaviour — there isn't one.
+:::
+
+## Why the clip plays outside Chrome
+
+Puppeteer feeds ffmpeg PNG frames with no `-pix_fmt`, so RGB rides into VP9 and
+the file lands as vp9 / `gbrp` in an mp4 container. That is valid and decodable,
+and neither QuickTime nor Preview will open it — a successful recording that
+looks like a failure.
+
+So `twd-cli` re-encodes the finished mp4 to H.264 / `yuv420p` in place after the
+run. The clip then opens in any player and in the browser, and measured on a real
+capture it also took the file from 202805 bytes to 49222.
+
+Failure there is a warning, never fatal: the untranscoded file is still a correct
+recording of the run.
+
+Two consequences worth knowing. `record.viewport` must be **even on both axes**,
+because `yuv420p` requires it, and your ffmpeg build needs `libx264` — which is
+why the prerequisite above asks for a `gpl` build.
+
+## Recording in CI
+
+The `record` composite action installs a known-good ffmpeg, records, and uploads
+the clips, so a whole recording workflow is one step. It is a sibling of the
+[`run` action](/ci-execution#github-action-recommended) and shares its contract:
+**your app must already be served** at the url in `twd.config.json`. Starting a
+dev server belongs to your workflow, not to the action.
+
+The shape worth copying is label-triggered — put `record` on a pull request, get
+the clips back as a comment. This is the workflow behind
+[this PR comment](https://github.com/BRIKEV/twd-vue-example/pull/3#issuecomment-5598910647),
+where a reviewer downloads one video per test the branch added:
+
+```yaml
+name: Record a PR's tests
+
+on:
+  pull_request:
+    types: [labeled]
+
+concurrency:
+  group: record-pr-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  record:
+    if: github.event.label.name == 'record'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      pull-requests: write   # to comment the link and drop the label
+    env:
+      GH_TOKEN: ${{ github.token }}
+
+    steps:
+      # The PR head, not the merge commit: the point is to see the tests this
+      # branch built. fetch-depth: 0 because changed-since needs history, and a
+      # depth-1 clone does not contain the base commit at all.
+      - uses: actions/checkout@v5
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: npm
+
+      - run: npm ci
+
+      - name: Start dev server
+        run: |
+          nohup npm run dev > /dev/null 2>&1 &
+          npx wait-on http://localhost:5173
+
+      - name: Record the tests this branch added
+        id: rec
+        uses: BRIKEV/twd-cli/.github/actions/record@v1.8.0
+        with:
+          changed-since: ${{ github.event.pull_request.base.sha }}
+          artifact-name: twd-recording-pr-${{ github.event.pull_request.number }}
+
+      # Best effort: a fork PR gets a read-only token and cannot comment.
+      - name: Comment the link
+        if: always()
+        continue-on-error: true
+        env:
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          CLIPS: ${{ steps.rec.outputs.clip-count }}
+          VIDEO_URL: ${{ steps.rec.outputs.artifact-url }}
+        run: |
+          if [ "${CLIPS:-0}" = "0" ]; then
+            gh pr comment "$PR_NUMBER" --body "Nothing to record: this branch added no TWD tests."
+          else
+            gh pr comment "$PR_NUMBER" --body "Recording: ${CLIPS} clip(s), one per test this branch added — [download the artifact](${VIDEO_URL}) and unzip."
+          fi
+```
+
+Pin the action to a tag or a commit SHA, never `@main`. What a recording looks
+like is decided by the action and the CLI it invokes, so an unchanged repo should
+produce an unchanged video.
+
+### Action inputs
+
+| Input | Default | Description |
+|-------|---------|-------------|
+| `working-directory` | `.` | Directory where `twd.config.json` lives |
+| `cli-version` | `1.8.0` | `twd-cli` version to run, pinned by default. A bare `npx twd-cli` would float on whatever npm published last, so pinning the action alone would not give you a stable recording |
+| `changed-since` | (empty) | Record only the tests this branch added or changed since this ref. Needs history, so set `fetch-depth: 0`. Mutually exclusive with `tests` |
+| `tests` | (empty) | Newline-separated test titles. Each becomes one `--test` filter, and filters are OR'd. Mutually exclusive with `changed-since` |
+| `pace` | (empty) | Milliseconds held after each command, passed to `--record-pace`. Empty uses the CLI default of 300; `0` disables pacing |
+| `install-ffmpeg` | `true` | Install a known-good ffmpeg 8.x. `false` uses whatever is on `PATH` |
+| `upload-artifact` | `true` | Upload the clips as a workflow artifact |
+| `artifact-name` | `twd-recording` | Name of the uploaded artifact |
+| `retention-days` | `14` | How long to keep the artifact |
+
+### Action outputs
+
+| Output | Description |
+|--------|-------------|
+| `clip-count` | Number of clips written |
+| `dir` | Directory the clips were written to, for a caller doing its own upload |
+| `artifact-url` | URL of the uploaded artifact, when this action uploaded it |
+
+### Three things that will bite you
+
+- **`clip-count: 0` is a success, not a failure.** A branch that changed no tests
+  has nothing to record, and that is a normal outcome. The upload step is skipped
+  at zero rather than run with `if-no-files-found: error`, so check the count
+  before you comment — as the example above does.
+- **`install-ffmpeg` only ships a Linux build.** On any other runner it warns and
+  skips, and installing ffmpeg 8 is yours to do. See
+  [the prerequisite](#prerequisite-ffmpeg-8-or-newer).
+- **Workflow policy stays with you.** The trigger, the label, the PR comment,
+  `timeout-minutes` and `continue-on-error` are per-repo decisions. The action
+  never comments on a pull request, which is why `pull-requests: write` is
+  something you grant deliberately rather than inherit.
+
+### Keep it out of your test workflow
+
+Record from a separate, label-triggered job rather than adding `--record` to the
+workflow that gates your pull requests. A recording is optional and the pull
+request it describes is not, so a job that runs once the work is already pushed
+cannot cost you the run that matters. `timeout-minutes` is the same instinct: the
+hang class this had before 1.7.0 is fixed, but a recording should never be able
+to cost a caller more than a recording.
+
+`changed-since` maps to the CLI's `--changed-since`, which works with or without
+`--record` and is documented under
+[filtering tests](/ci-execution#running-only-the-tests-a-branch-changed).
 
 ## Configuration
 
@@ -210,8 +434,9 @@ All keys live under `record` in `twd.config.json`:
     "enabled": false,
     "dir": "./twd-artifacts",
     "filename": null,
+    "maxClips": 20,
     "format": "mp4",
-    "viewport": { "width": 1280, "height": 720, "deviceScaleFactor": 1 },
+    "viewport": { "width": 1280, "height": 1600, "deviceScaleFactor": 1 },
     "fps": 30,
     "speed": 1,
     "pace": 300,
@@ -227,9 +452,10 @@ All keys live under `record` in `twd.config.json`:
 |---|---|---|
 | `enabled` | `false` | Turn recording on. Same as passing `--record` |
 | `dir` | `"./twd-artifacts"` | Where the video is written |
-| `filename` | `null` | Explicit output name. When `null`, derived from the recorded tests |
-| `format` | `"mp4"` | `"mp4"`, `"webm"` or `"gif"`, all encoded natively |
-| `viewport` | `1280x720` | Applied only when recording. `width` and `height` set the video dimensions. See the note below on `deviceScaleFactor` |
+| `filename` | `null` | Explicit output name. When `null`, derived from the recorded tests. Setting it pins one clip for the whole run |
+| `maxClips` | `20` | Most clips a run will split into. Past the bound it writes one file instead. `0` disables the bound |
+| `format` | `"mp4"` | `"mp4"`, `"webm"` or `"gif"`, all encoded natively. Only `"mp4"` needs [ffmpeg 8](#prerequisite-ffmpeg-8-or-newer) |
+| `viewport` | `1280x1600` | Applied only when recording. `width` and `height` set the video dimensions, and both must be even. See the two notes below |
 | `fps` | `30` | Capture frame rate |
 | `speed` | `1` | Post-hoc playback speed. Costs frame rate, prefer `pace` |
 | `pace` | `300` | Milliseconds held after each command. `0` disables |
@@ -240,6 +466,21 @@ All keys live under `record` in `twd.config.json`:
 
 Four flags override the config: `--record`, `--record-dir <path>`,
 `--record-speed <n>` and `--record-pace <ms>`. Everything else is config only.
+
+### Why the recording viewport is 1600 tall
+
+Puppeteer captures exactly the viewport: no scrolling, no letterboxing. Anything
+below the fold is simply absent from the video, and nothing in the run output
+says the frame was cropped — only a human watching it finds that out.
+
+At the old `720` default, a real recording of the Vue example cut the todos page
+just below the filter buttons, which put the list the tests assert on off-frame.
+A clip that looked fine and showed none of the behaviour under test.
+
+`1600` is wrong in the other direction for an app that fits, but it wastes
+encoder time on empty space, which is the cheaper mistake. Set `record.viewport`
+to your app's real shape once you know it, keeping both axes even for the
+[H.264 conversion](#why-the-clip-plays-outside-chrome).
 
 ### deviceScaleFactor does not change the output resolution
 
