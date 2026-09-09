@@ -129,9 +129,8 @@ Requires `twd-cli` 1.7.0 or newer. What it selects, precisely:
 - If the diff moved no `it()` line in a changed test file at all, every title in
   that file is used instead.
 - `it()` and `it.only()` are selected; `it.skip()` and `xit()` never are.
-- Uncommitted and untracked test files count, because the diff is against the
-  **working tree**. In CI the tree is clean, so this is identical to diffing
-  `<base> HEAD`.
+- Uncommitted and untracked test files count, so work in progress is included
+  when you run it locally.
 - Resolved titles are OR'd with any `--test` filters you pass alongside.
 
 **A branch that changed no tests prints one line and exits `0`.**

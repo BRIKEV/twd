@@ -15,51 +15,35 @@ npx twd-cli run --record --test "checkout flow"
 
 That writes one clip per matched test into `twd-artifacts/`.
 
-Requires `twd-cli` 1.4.0 or newer. One clip per test needs 1.8.0, and so does the
-[`record` action](#recording-in-ci) — 1.7.0 shipped the action, but its artifact
-upload failed on default inputs. See
-[github.com/BRIKEV/twd-cli](https://github.com/BRIKEV/twd-cli) for source and
-release notes.
+Needs `twd-cli` 1.8.0 or newer for one clip per test and the
+[`record` action](#recording-in-ci); recording itself has been there since 1.4.0.
 
-## Prerequisite: ffmpeg 8 or newer
+## Prerequisite: ffmpeg
 
-Recording spawns ffmpeg, so it has to be available — and for `mp4`, the default
-format, it has to be **version 8 or newer**.
-
-That floor is not ours. Puppeteer's screencast passes
-`-movflags hybrid_fragmented`, which arrived after ffmpeg 7:
-
-| ffmpeg | Where it comes from | Records mp4 |
-|---|---|---|
-| 6.1.1 | `apt-get install ffmpeg` on ubuntu-24.04 | No |
-| 7.0.2 | the obvious static build | No |
-| 8.1.2 | current release | Yes |
-
-So the usual package-manager one-liner may or may not be enough:
+Recording needs ffmpeg, and `mp4` — the default format — needs **version 8 or
+newer**.
 
 ```bash
 brew install ffmpeg     # macOS
 winget install ffmpeg   # Windows
-ffmpeg -version         # check what you actually got
+ffmpeg -version         # check what you have
 ```
 
-On Linux the distro package is the one that will bite you. Install a build from
-[BtbN/FFmpeg-Builds](https://github.com/BtbN/FFmpeg-Builds/releases) instead, and
-pick a `gpl` variant — it carries `libx264`, which `twd-cli` needs for the
-[H.264 conversion](#why-the-clip-plays-outside-chrome), so one download covers
-both requirements. In GitHub Actions the [`record` action](#recording-in-ci) does
-this for you.
+::: warning Linux: skip the distro package
+`apt-get install ffmpeg` on Ubuntu 24.04 gives you 6.1.1, which cannot record
+mp4 at all. Download a `gpl` build from
+[BtbN/FFmpeg-Builds](https://github.com/BtbN/FFmpeg-Builds/releases) instead. In
+GitHub Actions the [`record` action](#recording-in-ci) installs a working one for
+you.
+:::
 
-`webm` and `gif` pass no movflags and work on any ffmpeg.
+`webm` and `gif` work on any ffmpeg version, so switching `record.format` is a
+valid way out if you cannot upgrade.
 
-Set `record.ffmpegPath` in `twd.config.json` if the binary is not on your `PATH`.
-
-Before launching the browser, `twd-cli` probes what ffmpeg can actually do —
-`ffmpeg -h muxer=mp4` has to list every movflag Puppeteer will pass — so an
-ffmpeg that exists but cannot record fails in one actionable line rather than
-part way through a run. That is a capability check rather than a version check on
-purpose: the required flags are Puppeteer's, and a version floor written from a
-single measurement was already wrong on the second.
+`twd-cli` checks your ffmpeg *before* it launches the browser, so an unusable one
+fails in a couple of seconds with a message naming what to install — you never
+lose a run to it. Point `record.ffmpegPath` at the binary if it is not on your
+`PATH`.
 
 ## Why the run is paced
 
@@ -238,10 +222,9 @@ Three cases still produce a single file for the whole run:
 - **More matched tests than `record.maxClips`**, default `20`. Past the bound the
   run writes one `run.<ext>` and says so in a line.
 
-`maxClips` is a human bound rather than a cost one. Restarting a screencast on an
-already-open page measures about 250ms, so thirty clips is roughly seven seconds
-of overhead — not thirty browser launches. What the bound protects is the
-reviewer who will not open thirty files. Set `0` to disable it.
+`maxClips` is there so a broad filter cannot leave you with fifty files to open.
+Splitting is cheap — a few hundred milliseconds per clip, not a browser restart —
+so raise it freely, or set `0` to remove the bound.
 
 Re-running overwrites the files.
 
@@ -264,33 +247,24 @@ If you asked for a video and did not get one, the run exits **1** — even when
 every test passed. A green run with no artifact sends the next person looking for
 a clip that is not there.
 
-A **0-byte output stays a warning**, because it is a legitimate outcome rather
-than a crash. Chrome only emits screencast frames on a compositor update, so a
-suite that never repaints records nothing and finishes cleanly.
+An **empty** clip is only a warning, though. A run where nothing on the page ever
+redraws has nothing to capture, and that is a legitimate outcome rather than a
+failure.
 
 ::: warning Changed in 1.7.0
-Before 1.7.0 a failed recording was silent, and an ffmpeg older than 8 could hang
-the job outright. Both are now up-front failures. The fix is to install ffmpeg 8,
-not to look for a flag that restores the old behaviour — there isn't one.
+A failed recording used to pass silently, and an ffmpeg older than 8 could hang
+the job. Both now fail up front instead. Install ffmpeg 8 — there is no flag that
+brings the old behaviour back.
 :::
 
-## Why the clip plays outside Chrome
+## Playback
 
-Puppeteer feeds ffmpeg PNG frames with no `-pix_fmt`, so RGB rides into VP9 and
-the file lands as vp9 / `gbrp` in an mp4 container. That is valid and decodable,
-and neither QuickTime nor Preview will open it — a successful recording that
-looks like a failure.
+`mp4` clips are converted to H.264 at the end of the run, so they open in
+QuickTime, Preview, any browser and any video player — and land about four times
+smaller. Nothing to configure.
 
-So `twd-cli` re-encodes the finished mp4 to H.264 / `yuv420p` in place after the
-run. The clip then opens in any player and in the browser, and measured on a real
-capture it also took the file from 202805 bytes to 49222.
-
-Failure there is a warning, never fatal: the untranscoded file is still a correct
-recording of the run.
-
-Two consequences worth knowing. `record.viewport` must be **even on both axes**,
-because `yuv420p` requires it, and your ffmpeg build needs `libx264` — which is
-why the prerequisite above asks for a `gpl` build.
+If that conversion fails you get a warning rather than a failed run, and the clip
+is still a complete recording; it just wants Chrome or VLC to play it.
 
 ## Recording in CI
 
@@ -385,7 +359,7 @@ produce an unchanged video.
 | Input | Default | Description |
 |-------|---------|-------------|
 | `working-directory` | `.` | Directory where `twd.config.json` lives |
-| `cli-version` | `1.8.0` | `twd-cli` version to run, pinned by default. A bare `npx twd-cli` would float on whatever npm published last, so pinning the action alone would not give you a stable recording |
+| `cli-version` | `1.8.0` | `twd-cli` version to run, pinned so the same workflow keeps producing the same recording |
 | `changed-since` | (empty) | Record only the tests this branch added or changed since this ref. Needs history, so set `fetch-depth: 0`. Mutually exclusive with `tests` |
 | `tests` | (empty) | Newline-separated test titles. Each becomes one `--test` filter, and filters are OR'd. Mutually exclusive with `changed-since` |
 | `pace` | (empty) | Milliseconds held after each command, passed to `--record-pace`. Empty uses the CLI default of 300; `0` disables pacing |
@@ -410,7 +384,7 @@ produce an unchanged video.
   before you comment — as the example above does.
 - **`install-ffmpeg` only ships a Linux build.** On any other runner it warns and
   skips, and installing ffmpeg 8 is yours to do. See
-  [the prerequisite](#prerequisite-ffmpeg-8-or-newer).
+  [the prerequisite](#prerequisite-ffmpeg).
 - **Workflow policy stays with you.** The trigger, the label, the PR comment,
   `timeout-minutes` and `continue-on-error` are per-repo decisions. The action
   never comments on a pull request, which is why `pull-requests: write` is
@@ -421,13 +395,24 @@ produce an unchanged video.
 Record from a separate, label-triggered job rather than adding `--record` to the
 workflow that gates your pull requests. A recording is optional and the pull
 request it describes is not, so a job that runs once the work is already pushed
-cannot cost you the run that matters. `timeout-minutes` is the same instinct: the
-hang class this had before 1.7.0 is fixed, but a recording should never be able
-to cost a caller more than a recording.
+cannot cost you the run that matters. Keep `timeout-minutes` on the job for the same
+reason: a recording should never be able to cost you more than a recording.
 
 `changed-since` maps to the CLI's `--changed-since`, which works with or without
 `--record` and is documented under
 [filtering tests](/ci-execution#running-only-the-tests-a-branch-changed).
+
+## Troubleshooting
+
+| What you see | Why | What to do |
+|---|---|---|
+| It fails within seconds, naming ffmpeg | Your ffmpeg cannot record mp4 | Install [ffmpeg 8](#prerequisite-ffmpeg), or set `"format": "webm"` |
+| The run is red but every test passed | The recording failed, and [that fails the run](#a-failed-recording-fails-the-run) | The ffmpeg error is printed above the summary |
+| The clip is there but empty | Nothing on the page redrew — usually a filter that matched nothing | Check which tests the run summary says it matched |
+| The clip misses the part you care about | It was below the fold | Raise `record.viewport.height` |
+| It is over before you can see anything | Pacing is off | Drop `--record-pace 0`, or raise it to `500` |
+| One `run.mp4` instead of a clip per test | A single match, an explicit `filename`, or more matches than `maxClips` | See [what ends up in the clip](#what-ends-up-in-the-clip) |
+| Nothing recorded in CI, `clip-count: 0` | The branch changed no tests, which is a success | Nothing — or pass `tests` instead of `changed-since` |
 
 ## Configuration
 
@@ -459,7 +444,7 @@ All keys live under `record` in `twd.config.json`:
 | `dir` | `"./twd-artifacts"` | Where the video is written |
 | `filename` | `null` | Explicit output name. When `null`, derived from the recorded tests. Setting it pins one clip for the whole run |
 | `maxClips` | `20` | Most clips a run will split into. Past the bound it writes one file instead. `0` disables the bound |
-| `format` | `"mp4"` | `"mp4"`, `"webm"` or `"gif"`, all encoded natively. Only `"mp4"` needs [ffmpeg 8](#prerequisite-ffmpeg-8-or-newer) |
+| `format` | `"mp4"` | `"mp4"`, `"webm"` or `"gif"`, all encoded natively. Only `"mp4"` needs [ffmpeg 8](#prerequisite-ffmpeg) |
 | `viewport` | `1280x1600` | Applied only when recording. `width` and `height` set the video dimensions, and both must be even. See the two notes below |
 | `fps` | `30` | Capture frame rate |
 | `speed` | `1` | Post-hoc playback speed. Costs frame rate, prefer `pace` |
@@ -472,49 +457,34 @@ All keys live under `record` in `twd.config.json`:
 Four flags override the config: `--record`, `--record-dir <path>`,
 `--record-speed <n>` and `--record-pace <ms>`. Everything else is config only.
 
-### Why the recording viewport is 1600 tall
+### The viewport is exactly what the video contains
 
-Puppeteer captures exactly the viewport: no scrolling, no letterboxing. Anything
-below the fold is simply absent from the video, and nothing in the run output
-says the frame was cropped — only a human watching it finds that out.
+There is no scrolling and no letterboxing, so anything below the fold is missing
+from the clip — and nothing in the run output tells you the frame was cropped.
 
-At the old `720` default, a real recording of the Vue example cut the todos page
-just below the filter buttons, which put the list the tests assert on off-frame.
-A clip that looked fine and showed none of the behaviour under test.
+That is why the default is `1280x1600`, taller than a real screen: at a shorter
+height it is easy to record a page whose interesting half is off-frame. Set
+`record.viewport` to your app's real shape once you know it, and keep both
+numbers **even** (the H.264 conversion needs it).
 
-`1600` is wrong in the other direction for an app that fits, but it wastes
-encoder time on empty space, which is the cheaper mistake. Set `record.viewport`
-to your app's real shape once you know it, keeping both axes even for the
-[H.264 conversion](#why-the-clip-plays-outside-chrome).
+### deviceScaleFactor will not give you a sharper clip
 
-### deviceScaleFactor does not change the output resolution
+The recording ignores it, so raising it buys you nothing in the video. It *is*
+still applied to the page during the run, so a value above `1` changes what you
+are testing — `srcset` and `image-set` pick 2x assets, and code that branches on
+device pixel ratio takes another path. Leave it at `1`.
 
-It stays at `1` on purpose. Puppeteer measures the recording with the scale
-factor forced to `0`, so the emulated value never reaches the encoder. Measured:
-recording the same page at `2` and at `1` produced byte identical files.
-
-It is not inert, though. It is live on the page for the whole run, so raising it
-changes the environment under test: `srcset` and `image-set` select 2x assets,
-and code that branches on device pixel ratio takes a different path. That adds to
-the divergence described above for no gain in the video.
-
-Puppeteer's actual output size knob is a `scale` option, which this feature does
-not expose. To get a bigger clip, raise `width` and `height`.
+For a bigger clip, raise `width` and `height`.
 
 ### Why postRoll defaults to on
 
-Chrome only emits a video frame when the page repaints, and each frame is held
-until the next one arrives, because the next frame's timestamp is what says how
-long to display the current one. The newest frame is therefore never written, and
-stopping the recorder repeats the one before it.
+Without it the last thing your test did never appears in the video. A settled
+page stops redrawing, and the final frame is still waiting on a redraw that will
+never come, so the clip ends an action or two early.
 
-A settled page produces no more repaints, so waiting alone does not help.
-Measured: stopping immediately ended two states early, and a 400ms plain wait
-still ended one state early.
-
-`postRoll` briefly repaints the whole viewport with an invisible overlay after the
-last test, which forces the real final frame through and then holds it. Without
-it the last thing your test did never appears in the video.
+`postRoll` nudges the page once after the last test to push that frame through,
+then holds it. The default `500` is enough — there is rarely a reason to change
+it, and `0` will cost you the ending.
 
 ## Next Steps
 
