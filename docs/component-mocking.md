@@ -63,7 +63,7 @@ The `name` prop must be unique and match the name used in your test when calling
 Use `twd.mockComponent()` to replace the component with a mock implementation:
 
 ```ts
-import { twd, userEvent } from "twd-js";
+import { twd, screenDom, userEvent } from "twd-js";
 import { describe, it, beforeEach } from "twd-js/runner";
 
 interface ButtonProps {
@@ -89,15 +89,15 @@ describe("Component Mocking", () => {
     ));
 
     await twd.visit("/counter");
-    let button = await twd.get("button");
-    button.should("have.text", "Click me 0");
+    let button = await screenDom.findByRole("button");
+    twd.should(button, "have.text", "Click me 0");
     
-    await userEvent.click(button.el);
-    button = await twd.get("button");
-    button.should("have.text", "Click me 2");
+    await userEvent.click(button);
+    button = await screenDom.findByRole("button");
+    twd.should(button, "have.text", "Click me 2");
     
-    const countText = await twd.get("p");
-    countText.should("have.text", "Count: 2");
+    const countText = await screenDom.findByText(/^Count:/);
+    twd.should(countText, "have.text", "Count: 2");
   });
 });
 ```
@@ -117,12 +117,12 @@ it("should use mocked component behavior", async () => {
 
   await twd.visit("/counter");
   
-  const button = await twd.get("button");
-  await userEvent.click(button.el);
+  const button = await screenDom.findByRole("button");
+  await userEvent.click(button);
   
   // Verify the mock behavior
-  const countText = await twd.get("p");
-  countText.should("have.text", "Count: 10");
+  const countText = await screenDom.findByText(/^Count:/);
+  twd.should(countText, "have.text", "Count: 10");
 });
 ```
 
@@ -135,15 +135,15 @@ it("should use original component when not mocked", async () => {
   // Don't call twd.mockComponent() - component uses original behavior
   await twd.visit("/counter");
   
-  let button = await twd.get("button");
-  button.should("have.text", "Click me 0");
+  let button = await screenDom.findByRole("button");
+  twd.should(button, "have.text", "Click me 0");
   
-  await userEvent.click(button.el);
-  button = await twd.get("button");
-  button.should("have.text", "Click me 1");
+  await userEvent.click(button);
+  button = await screenDom.findByRole("button");
+  twd.should(button, "have.text", "Click me 1");
   
-  const countText = await twd.get("p");
-  countText.should("have.text", "Count: 1");
+  const countText = await screenDom.findByText(/^Count:/);
+  twd.should(countText, "have.text", "Count: 1");
 });
 ```
 
@@ -158,14 +158,14 @@ it("should handle conditional mocking", async () => {
   twd.mockComponent("UserCard", ({ user, onEdit }: UserCardProps) => {
     if (user.role === "admin") {
       return (
-        <div data-testid="admin-card">
+        <div>
           <h3>{user.name} (Admin)</h3>
           <button onClick={() => onEdit(user.id)}>Edit</button>
         </div>
       );
     }
     return (
-      <div data-testid="user-card">
+      <div>
         <h3>{user.name}</h3>
       </div>
     );
@@ -173,8 +173,8 @@ it("should handle conditional mocking", async () => {
 
   await twd.visit("/users/123");
   
-  const adminCard = await twd.get("[data-testid='admin-card']");
-  adminCard.should("be.visible");
+  const adminCard = await screenDom.findByRole("heading", { name: /\(Admin\)/ });
+  twd.should(adminCard, "be.visible");
 });
 ```
 
@@ -185,7 +185,7 @@ You can completely change what the component renders:
 ```ts
 it("should render completely different content", async () => {
   twd.mockComponent("ComplexChart", () => (
-    <div data-testid="mock-chart">
+    <div>
       <p>Chart data would be displayed here</p>
       <button>Refresh Chart</button>
     </div>
@@ -193,9 +193,12 @@ it("should render completely different content", async () => {
 
   await twd.visit("/dashboard");
   
-  const mockChart = await twd.get("[data-testid='mock-chart']");
-  mockChart.should("be.visible");
-  mockChart.should("contain.text", "Chart data would be displayed here");
+  const mockChart = await screenDom.findByText("Chart data would be displayed here");
+  twd.should(mockChart, "be.visible");
+
+  // The mock replaced the real chart, so its button is present too.
+  const refresh = await screenDom.findByRole("button", { name: "Refresh Chart" });
+  twd.should(refresh, "be.visible");
 });
 ```
 
@@ -208,7 +211,7 @@ it("should handle component errors", async () => {
   twd.mockComponent("DataFetcher", ({ onError }: DataFetcherProps) => {
     // Simulate an error state
     return (
-      <div data-testid="error-state">
+      <div role="alert">
         <p>Failed to load data</p>
         <button onClick={() => onError(new Error("Network error"))}>
           Retry
@@ -219,9 +222,9 @@ it("should handle component errors", async () => {
 
   await twd.visit("/data-page");
   
-  const errorState = await twd.get("[data-testid='error-state']");
-  errorState.should("be.visible");
-  errorState.should("contain.text", "Failed to load data");
+  const errorState = await screenDom.findByRole("alert");
+  twd.should(errorState, "be.visible");
+  twd.should(errorState, "contain.text", "Failed to load data");
 });
 ```
 
@@ -233,21 +236,21 @@ You can mock multiple components in the same test:
 it("should mock multiple components", async () => {
   // Mock first component
   twd.mockComponent("Header", () => (
-    <header data-testid="mock-header">Mock Header</header>
+    <header>Mock Header</header>
   ));
 
   // Mock second component
   twd.mockComponent("Footer", () => (
-    <footer data-testid="mock-footer">Mock Footer</footer>
+    <footer>Mock Footer</footer>
   ));
 
   await twd.visit("/page");
   
-  const header = await twd.get("[data-testid='mock-header']");
-  const footer = await twd.get("[data-testid='mock-footer']");
+  const header = await screenDom.findByRole("banner");
+  const footer = await screenDom.findByRole("contentinfo");
   
-  header.should("be.visible");
-  footer.should("be.visible");
+  twd.should(header, "be.visible");
+  twd.should(footer, "be.visible");
 });
 ```
 
