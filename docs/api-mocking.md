@@ -92,10 +92,18 @@ You only need to register request mocking once (via the plugin or `initTWD`/`ini
 
 ## Basic Mocking
 
+::: tip Selecting elements in these examples
+The examples below query with Testing Library's async `findBy*` methods —
+`findByRole`, `findByLabelText`, `findByText` — rather than CSS or test-id
+selectors. That is the order [Writing Tests](/writing-tests#element-selection)
+recommends: `findBy*` waits for the element to appear, which matters when you
+are asserting on UI that updates after a mocked response resolves.
+:::
+
 ### Simple GET Request
 
 ```ts
-import { twd, userEvent } from "twd-js";
+import { twd, screenDom, userEvent } from "twd-js";
 import { describe, it } from "twd-js/runner";
 
 describe("User Profile", () => {
@@ -114,15 +122,15 @@ describe("User Profile", () => {
     await twd.visit("/profile");
 
     // Trigger the request
-    const loadButton = await twd.get("button[data-testid='load-profile']");
-    await userEvent.click(loadButton.el);
+    const loadButton = await screenDom.findByRole("button", { name: "Load profile" });
+    await userEvent.click(loadButton);
 
     // Wait for the mock to be called
     await twd.waitForRequest("getUser");
 
     // Verify the UI updated
-    const userName = await twd.get("[data-testid='user-name']");
-    userName.should("have.text", "John Doe");
+    const userName = await screenDom.findByRole("heading", { name: "John Doe" });
+    twd.should(userName, "be.visible");
   });
 });
 ```
@@ -148,11 +156,11 @@ it("should create new user", async () => {
   const user = userEvent.setup();
   
   // Fill form
-  await user.type(await twd.get("#name"), "Jane Smith");
-  await user.type(await twd.get("#email"), "jane@example.com");
+  await user.type(await screenDom.findByLabelText("Name"), "Jane Smith");
+  await user.type(await screenDom.findByLabelText("Email"), "jane@example.com");
   
   // Submit form
-  await user.click(await twd.get("button[type='submit']"));
+  await user.click(await screenDom.findByRole("button", { name: "Submit" }));
 
   // Wait for request and verify
   const rule = await twd.waitForRequest("createUser");
@@ -185,8 +193,8 @@ it("should handle dynamic user IDs", async () => {
   await twd.visit("/users/123");
   
   // Trigger request and verify
-  const loadButton = await twd.get("button[data-testid='load-user']");
-  await userEvent.click(loadButton.el);
+  const loadButton = await screenDom.findByRole("button", { name: "Load user" });
+  await userEvent.click(loadButton);
   
   await twd.waitForRequest("getUserById");
 });
@@ -282,14 +290,14 @@ it("should handle API errors", async () => {
 
   await twd.visit("/user/999");
 
-  const loadButton = await twd.get("button[data-testid='load-user']");
-  await userEvent.click(loadButton.el);
+  const loadButton = await screenDom.findByRole("button", { name: "Load user" });
+  await userEvent.click(loadButton);
 
   await twd.waitForRequest("getUserError");
 
   // Verify error handling
-  const errorMessage = await twd.get(".error-message");
-  errorMessage.should("contain.text", "User not found");
+  const errorMessage = await screenDom.findByRole("alert");
+  twd.should(errorMessage, "contain.text", "User not found");
 });
 ```
 
@@ -315,8 +323,8 @@ it("should handle multiple API calls", async () => {
 
   await twd.visit("/user/123");
 
-  const loadButton = await twd.get("button[data-testid='load-all']");
-  await userEvent.click(loadButton.el);
+  const loadButton = await screenDom.findByRole("button", { name: "Load all" });
+  await userEvent.click(loadButton);
 
   // Wait for both requests
   const rules = await twd.waitForRequests(["getUser", "getUserPosts"]);
@@ -324,10 +332,10 @@ it("should handle multiple API calls", async () => {
   expect(rules).to.have.length(2);
 
   // Verify UI shows both user and posts
-  const userName = await twd.get("[data-testid='user-name']");
-  userName.should("have.text", "John Doe");
+  const userName = await screenDom.findByRole("heading", { name: "John Doe" });
+  twd.should(userName, "be.visible");
 
-  const posts = await twd.getAll(".post-item");
+  const posts = await screenDom.findAllByRole("listitem");
   expect(posts).to.have.length(2);
 });
 ```
@@ -351,16 +359,16 @@ it("should show loading state while waiting for API", async () => {
   await twd.visit("/profile");
 
   // Loading indicator should be visible while waiting
-  const spinner = await twd.get("[data-testid='loading-spinner']");
-  spinner.should("be.visible");
+  const spinner = await screenDom.findByRole("status");
+  twd.should(spinner, "be.visible");
 
   // Wait for the request to complete
   await twd.waitForRequest("getUser");
 
   // After the response arrives, loading should be gone
-  await twd.notExists("[data-testid='loading-spinner']");
-  const userName = await twd.get("[data-testid='user-name']");
-  userName.should("have.text", "John Doe");
+  await twd.notExists("[role='status']");
+  const userName = await screenDom.findByRole("heading", { name: "John Doe" });
+  twd.should(userName, "be.visible");
 });
 ```
 
@@ -386,8 +394,8 @@ it("should handle timeout-like errors", async () => {
   await twd.waitForRequest("slowError");
   await twd.wait(3100); // Wait for the delayed response to arrive
 
-  const errorMessage = await twd.get(".error-message");
-  errorMessage.should("contain.text", "Gateway Timeout");
+  const errorMessage = await screenDom.findByRole("alert");
+  twd.should(errorMessage, "contain.text", "Gateway Timeout");
 });
 ```
 
@@ -410,8 +418,8 @@ it("should call the API exactly twice", async () => {
   await twd.visit("/profile");
 
   // Trigger two requests
-  const refreshButton = await twd.get("button[data-testid='refresh']");
-  await userEvent.click(refreshButton.el);
+  const refreshButton = await screenDom.findByRole("button", { name: "Refresh" });
+  await userEvent.click(refreshButton);
   await twd.waitForRequest("getUser");
 
   // Re-register to reset executed flag for second wait
@@ -421,7 +429,7 @@ it("should call the API exactly twice", async () => {
     response: { id: 1, name: "John" },
   });
 
-  await userEvent.click(refreshButton.el);
+  await userEvent.click(refreshButton);
   await twd.waitForRequest("getUser");
 
   // Assert the count
@@ -490,13 +498,13 @@ it("should handle changing API responses", async () => {
 
   await twd.visit("/dashboard");
 
-  const refreshButton = await twd.get("button[data-testid='refresh']");
-  await userEvent.click(refreshButton.el);
+  const refreshButton = await screenDom.findByRole("button", { name: "Refresh" });
+  await userEvent.click(refreshButton);
 
   await twd.waitForRequest("getStatus");
 
-  let statusText = await twd.get("[data-testid='status']");
-  statusText.should("have.text", "loading");
+  let statusText = await screenDom.findByRole("status");
+  twd.should(statusText, "have.text", "loading");
 
   // Update the mock
   await twd.mockRequest("getStatus", {
@@ -506,11 +514,11 @@ it("should handle changing API responses", async () => {
   });
 
   // Trigger another request
-  await userEvent.click(refreshButton.el);
+  await userEvent.click(refreshButton);
   await twd.waitForRequest("getStatus");
 
-  statusText = await twd.get("[data-testid='status']");
-  statusText.should("have.text", "completed");
+  statusText = await screenDom.findByRole("status");
+  twd.should(statusText, "have.text", "completed");
 });
 ```
 
@@ -555,9 +563,9 @@ it("should handle authentication states", async () => {
 
   // Login and verify
   const user = userEvent.setup();
-  await user.type(await twd.get("#username"), "john");
-  await user.type(await twd.get("#password"), "password");
-  await user.click(await twd.get("button[type='submit']"));
+  await user.type(await screenDom.findByLabelText("Username"), "john");
+  await user.type(await screenDom.findByLabelText("Password"), "password");
+  await user.click(await screenDom.findByRole("button", { name: "Submit" }));
 
   await twd.waitForRequest("login");
   
@@ -565,8 +573,8 @@ it("should handle authentication states", async () => {
   await twd.visit("/profile");
   await twd.waitForRequest("getProfile");
   
-  const profileName = await twd.get("[data-testid='profile-name']");
-  profileName.should("have.text", "John Doe");
+  const profileName = await screenDom.findByRole("heading", { name: "John Doe" });
+  twd.should(profileName, "be.visible");
 });
 ```
 
@@ -587,12 +595,12 @@ it("should send correct form data", async () => {
   const user = userEvent.setup();
   
   // Fill form
-  await user.type(await twd.get("#email"), "test@example.com");
-  await user.type(await twd.get("#message"), "Hello world");
-  await user.click(await twd.get("#newsletter"));
+  await user.type(await screenDom.findByLabelText("Email"), "test@example.com");
+  await user.type(await screenDom.findByLabelText("Message"), "Hello world");
+  await user.click(await screenDom.findByRole("checkbox", { name: "Subscribe to newsletter" }));
 
   // Submit
-  await user.click(await twd.get("button[type='submit']"));
+  await user.click(await screenDom.findByRole("button", { name: "Submit" }));
 
   // Verify request data
   const rule = await twd.waitForRequest("submitForm");
@@ -617,8 +625,8 @@ it("should send the correct request body", async () => {
 
   await twd.visit("/protected");
 
-  const loadButton = await twd.get("button[data-testid='load-protected']");
-  await userEvent.click(loadButton.el);
+  const loadButton = await screenDom.findByRole("button", { name: "Load protected" });
+  await userEvent.click(loadButton);
 
   const rule = await twd.waitForRequest("authenticatedRequest");
 
@@ -706,19 +714,19 @@ it("should display error message on API failure", async () => {
 
   await twd.visit("/data-page");
 
-  const loadButton = await twd.get("button[data-testid='load-data']");
-  await userEvent.click(loadButton.el);
+  const loadButton = await screenDom.findByRole("button", { name: "Load data" });
+  await userEvent.click(loadButton);
 
   await twd.waitForRequest("failedRequest");
 
   // Verify error display
-  const errorMessage = await twd.get(".error-message");
-  errorMessage.should("be.visible");
-  errorMessage.should("contain.text", "Something went wrong");
+  const errorMessage = await screenDom.findByRole("alert");
+  twd.should(errorMessage, "be.visible");
+  twd.should(errorMessage, "contain.text", "Something went wrong");
 
   // Verify retry button appears
-  const retryButton = await twd.get("button[data-testid='retry']");
-  retryButton.should("be.visible");
+  const retryButton = await screenDom.findByRole("button", { name: "Retry" });
+  twd.should(retryButton, "be.visible");
 });
 ```
 
@@ -764,17 +772,17 @@ it("should handle paginated results", async () => {
   // Load first page
   await twd.waitForRequest("getPage1");
   
-  let users = await twd.getAll(".user-item");
+  let users = await screenDom.findAllByRole("listitem");
   expect(users).to.have.length(2);
 
   // Load next page
-  const nextButton = await twd.get("button[data-testid='next-page']");
-  await userEvent.click(nextButton.el);
+  const nextButton = await screenDom.findByRole("button", { name: "Next page" });
+  await userEvent.click(nextButton);
 
   await twd.waitForRequest("getPage2");
 
   // Should now have 4 users total
-  users = await twd.getAll(".user-item");
+  users = await screenDom.findAllByRole("listitem");
   expect(users).to.have.length(1);
 });
 ```
@@ -831,14 +839,14 @@ await twd.mockRequest("saveUser", {
 await twd.visit("/users/new");
 
 const user = userEvent.setup();
-await user.type(await twd.get("#name"), "John Doe");
-await user.type(await twd.get("#email"), "john.doe@example.com");
-await user.click(await twd.get("button[type='submit']"));
+await user.type(await screenDom.findByLabelText("Name"), "John Doe");
+await user.type(await screenDom.findByLabelText("Email"), "john.doe@example.com");
+await user.click(await screenDom.findByRole("button", { name: "Submit" }));
 
 await twd.waitForRequest("saveUser");
 
-const userName = await twd.get("[data-testid='user-name']");
-userName.should("have.text", "John Doe");
+const userName = await screenDom.findByRole("heading", { name: "John Doe" });
+twd.should(userName, "be.visible");
 ```
 
 ```ts
@@ -846,9 +854,9 @@ userName.should("have.text", "John Doe");
 await twd.visit("/users/new");
 
 const user = userEvent.setup();
-await user.type(await twd.get("#name"), "John Doe");
-await user.type(await twd.get("#email"), "john.doe@example.com");
-await user.click(await twd.get("button[type='submit']"));
+await user.type(await screenDom.findByLabelText("Name"), "John Doe");
+await user.type(await screenDom.findByLabelText("Email"), "john.doe@example.com");
+await user.click(await screenDom.findByRole("button", { name: "Submit" }));
 // Bad ❌ - mock after request event is fired
 twd.mockRequest("saveUser", {
   method: "POST",
