@@ -4,9 +4,16 @@ on:
   release:
     types: [published]
 
-# npm provenance is signed with a GitHub OIDC token, so the job has to be
-# allowed to mint one. Without id-token: write the publish fails rather than
-# quietly falling back to an unsigned package.
+# id-token: write is what makes this job publishable at all. npm Trusted
+# Publishing authenticates it with a short-lived GitHub OIDC token instead of a
+# long-lived NPM_TOKEN, and the same token signs provenance. Without this
+# permission there is no credential to present, so the publish fails rather than
+# quietly shipping an unsigned package.
+#
+# The trust is configured on npm against this repository AND this workflow
+# filename, so renaming this file revokes it. Because `release` events run the
+# default branch's copy of a workflow, a change here only takes effect once it
+# is on main — never on the branch that needs it.
 permissions:
   contents: read
   id-token: write
@@ -25,6 +32,11 @@ jobs:
           node-version: 24
           registry-url: https://registry.npmjs.org/
           cache: npm
+
+      # node:24 ships npm 11.13.0 and `npm stage publish` needs 11.15.0 or
+      # newer. Do not remove this step.
+      - name: Upgrade npm
+        run: npm install -g npm@latest
 
       - name: Install dependencies
         run: npm ci
@@ -46,12 +58,23 @@ jobs:
             echo "OK: $f"
           done
 
-      - name: Publish to npm
+      # No NODE_AUTH_TOKEN: the trusted publisher on npm authenticates this job
+      # over OIDC, so the NPM_TOKEN secret can be deleted from the repository
+      # once this has shipped one release.
+      #
+      # `stage publish` does NOT make the version live. It uploads the tarball
+      # and defers proof-of-presence, so a green run here means "staged" —
+      # finish it in npm's UI, or with `npm stage approve <stage-id>`
+      # (`npm stage list` to find it, `npm stage reject <stage-id>` to discard).
+      # That deferral is the point: the credential CI holds can stage a release
+      # but cannot complete one on its own.
+      #
+      # Prereleases keep going to the "beta" dist-tag so `npm install twd-js`
+      # still resolves to the stable version.
+      - name: Stage the publish
         run: |
           if [ "${{ github.event.release.prerelease }}" = "true" ]; then
-            npm publish --access public --tag beta --provenance
+            npm stage publish --access public --tag beta --provenance
           else
-            npm publish --access public --provenance
+            npm stage publish --access public --provenance
           fi
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
