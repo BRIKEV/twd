@@ -24,11 +24,7 @@ describe('twd vite plugin', () => {
       // twd-js/runner by the test files behind its import.meta.glob, so Vite
       // discovers them mid-page-load and full-reloads for each one. That reload
       // is what breaks a headless run.
-      expect(getOptimizeDeps().include).toEqual([
-        'twd-js',
-        'twd-js/bundled',
-        'twd-js/runner',
-      ]);
+      expect(getOptimizeDeps().include).toEqual(['twd-js', 'twd-js/bundled', 'twd-js/runner']);
     });
 
     it('returns a fresh array each call, so one config cannot mutate another', () => {
