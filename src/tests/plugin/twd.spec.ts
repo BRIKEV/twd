@@ -12,6 +12,28 @@ describe('twd vite plugin', () => {
     expect(plugin.apply).toBe('serve');
   });
 
+  describe('dependency pre-bundling', () => {
+    const getOptimizeDeps = () => {
+      const plugin = twd();
+      const config = plugin.config as () => { optimizeDeps: { include: string[] } };
+      return config.call({}).optimizeDeps;
+    };
+
+    it('pre-bundles the entries the scanner cannot reach', () => {
+      // twd-js/bundled is imported by the virtual module and twd-js /
+      // twd-js/runner by the test files behind its import.meta.glob, so Vite
+      // discovers them mid-page-load and full-reloads for each one. That reload
+      // is what breaks a headless run.
+      expect(getOptimizeDeps().include).toEqual(['twd-js', 'twd-js/bundled', 'twd-js/runner']);
+    });
+
+    it('returns a fresh array each call, so one config cannot mutate another', () => {
+      const first = getOptimizeDeps().include;
+      first.push('mutated');
+      expect(getOptimizeDeps().include).not.toContain('mutated');
+    });
+  });
+
   describe('virtual module', () => {
     it('resolves "virtual:twd/init" to the prefixed virtual id', () => {
       const plugin = twd();
