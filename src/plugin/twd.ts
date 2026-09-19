@@ -60,6 +60,23 @@ const DEFAULT_INIT_OPTIONS = {
 } as const;
 
 /**
+ * Entries Vite's dependency scanner cannot reach on its own.
+ *
+ * The scanner follows imports from real files. `twd-js/bundled` is imported by
+ * the virtual module, which it does not enter, and `twd-js` / `twd-js/runner`
+ * are imported by the test files, which are only reachable through that same
+ * virtual module's `import.meta.glob`. So nothing here is discovered until the
+ * browser asks for it — mid-page-load — and each discovery forces a full
+ * reload. In a normal dev session that is an invisible flicker; under a
+ * headless runner the page reloads out from under the run, which surfaces as a
+ * missing `#twd-sidebar-root` and points at the wrong thing entirely.
+ *
+ * Empty `node_modules/.vite` is the trigger, so it is every CI run and no warm
+ * dev machine.
+ */
+const SCANNER_BLIND_SPOTS = ['twd-js', 'twd-js/bundled', 'twd-js/runner'];
+
+/**
  * Vite plugin that auto-wires TWD into a dev server.
  * It exposes a virtual module that calls `initTWD` with a glob of test files
  * and injects a `<script type="module">` tag into `index.html` via
@@ -116,6 +133,10 @@ export function twd(options: TwdPluginOptions = {}): Plugin {
   return {
     name: 'twd',
     apply: 'serve',
+    config() {
+      // Merged into the user's own config by Vite, so their `include` survives.
+      return { optimizeDeps: { include: [...SCANNER_BLIND_SPOTS] } };
+    },
     configResolved(config: ResolvedConfig) {
       resolvedBase = config.base;
       // If the user didn't override serviceWorkerUrl, prefix the default
