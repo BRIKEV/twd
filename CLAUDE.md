@@ -123,3 +123,23 @@ When releasing a new version, update the following files:
 5. **`CHANGELOG.md`** - Add new version entry at the top with changes since the previous version
 
 Use `git log v<previous-version>..HEAD --oneline` to see commits since the last release.
+
+### Publishing takes two steps, and a green workflow is only the first
+
+`publish.yml` triggers on `release: published` and authenticates with npm
+**Trusted Publishing** — a GitHub OIDC token, no `NPM_TOKEN`. It runs
+`npm stage publish`, which uploads the tarball and defers proof-of-presence, so
+**the version is not live when the job goes green**. Finish it by approving the
+stage in npm's UI, or with `npm stage approve <stage-id>` (`npm stage list` to
+find it, `npm stage reject <stage-id>` to discard). The deferral is deliberate:
+the credential CI holds can stage a release but cannot complete one.
+
+Two consequences:
+
+- `npm stage publish` needs **npm 11.15.0 or newer** and `node:24` ships
+  11.13.0, so the workflow upgrades npm first. Do not remove that step.
+- The trust is registered against this repository **and the workflow filename**
+  (`publish.yml`). Renaming or moving that file revokes it and it has to be
+  re-registered on npm. Because `release` events run the **default branch's**
+  copy of a workflow, an edit to `publish.yml` only takes effect once it is on
+  `main` — never on the release branch that needs it.
