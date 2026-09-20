@@ -1,3 +1,32 @@
+## <small>1.10.1 (2026-09-20)</small>
+
+* fix(vite-plugin): pre-bundle the deps Vite's scanner cannot reach (#354) ([25f13dd](https://github.com/BRIKEV/twd/commit/25f13dd)), closes [#354](https://github.com/BRIKEV/twd/issues/354)
+* ci: publish with npm Trusted Publishing instead of an NPM_TOKEN (#355) ([5e11d0c](https://github.com/BRIKEV/twd/commit/5e11d0c)), closes [#355](https://github.com/BRIKEV/twd/issues/355)
+* docs: make mocking examples follow our own selector guidance (#348) ([5b2a8fb](https://github.com/BRIKEV/twd/commit/5b2a8fb)), closes [#348](https://github.com/BRIKEV/twd/issues/348)
+* docs: recording page for twd-cli 1.7.0/1.8.0, and the record action (#347) ([205a09d](https://github.com/BRIKEV/twd/commit/205a09d)), closes [#347](https://github.com/BRIKEV/twd/issues/347)
+* chore: dependencies (8 dependabot bumps)
+
+**Why the plugin fix matters in CI and nowhere else.** The `twd()` Vite plugin
+builds an import edge Vite cannot follow: the scanner walks real files, so it
+never enters the virtual module that imports `twd-js/bundled`, nor the test
+files behind that module's `import.meta.glob`, which import `twd-js` and
+`twd-js/runner`. Vite discovered all three while the browser was already
+loading the page and full-reloaded once per discovery. On a warm dev machine
+that is a flicker nobody notices. Under a headless runner the page reloads out
+from under the run, which fails on `Waiting for selector #twd-sidebar-root` and
+blames the sidebar for something the sidebar did not do. An empty
+`node_modules/.vite` is the trigger, so it landed on every CI run and on no
+local one. The plugin now declares those three entries in `config()`, which
+pre-bundles them at server start; Vite merges the hook's return into the user's
+config, so an existing `optimizeDeps.include` survives.
+
+**Publishing now takes two steps.** The release workflow authenticates with npm
+Trusted Publishing (a short-lived GitHub OIDC token, no `NPM_TOKEN`) and runs
+`npm stage publish`, which uploads the tarball and defers proof-of-presence. A
+green workflow means the version is staged, not live: it goes live on approval
+in npm's UI or with `npm stage approve`. Nothing changes for anyone installing
+the package.
+
 ## <small>1.10.0 (2026-09-06)</small>
 
 * feat(matchLayout): layout snapshots, in the browser, with no SaaS account and no containers (#337) ([8ab683e](https://github.com/BRIKEV/twd/commit/8ab683e)), closes [#337](https://github.com/BRIKEV/twd/issues/337)
