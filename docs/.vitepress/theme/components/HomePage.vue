@@ -99,7 +99,7 @@ const faqs = [
               <InstallCommand umami-event="home_hero_copy_install" />
             </div>
             <p class="hero-note">
-              Open source under the MIT license. Free for individuals and companies.
+              Open source under the MIT license.
             </p>
           </div>
           <div class="hero-visual">
