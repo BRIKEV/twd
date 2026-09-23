@@ -22,9 +22,9 @@ const stages = [
   },
   {
     state: 'optional',
-    eyebrow: 'Contract testing',
+    eyebrow: 'CI and contracts',
     package: 'twd-cli',
-    description: 'Add when you want CI, coverage, and contract validation.',
+    description: 'Add when you want headless runs, recordings, coverage and contract validation.',
     badge: '',
     cta: 'Learn more',
     href: '/contract-testing',

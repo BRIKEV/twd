@@ -1,90 +1,28 @@
 <script setup>
-import { useData } from 'vitepress'
-import { ref, onMounted, onBeforeUnmount, nextTick } from 'vue'
+import { ref, onMounted } from 'vue'
 import ThesisBanner from './ThesisBanner.vue'
 import AdoptionLineDiagram from './AdoptionLineDiagram.vue'
+import DeferredVideo from './DeferredVideo.vue'
+import InstallCommand from './InstallCommand.vue'
+import RecordReview from './RecordReview.vue'
 
-const { isDark } = useData()
 const loaded = ref(false)
-
-// Hero video: progressive enhancement. SSR/no-JS render the static screenshot;
-// the autoplay loop only mounts client-side when the user hasn't asked for
-// reduced motion (WCAG 2.3.3), and always carries a pause control (WCAG 2.2.2).
-const showHeroVideo = ref(false)
-const heroVideoPaused = ref(false)
-const heroVideoEl = ref(null)
-
-// AI agent-loop demo: same progressive-enhancement contract as the hero, but the
-// section sits well below the fold, so the video is deferred (preload="none", no
-// autoplay) and only plays once it scrolls into view — keeping its ~0.6MB off the
-// initial critical path.
-const showLoopVideo = ref(false)
-const loopVideoPaused = ref(false)
-const loopUserPaused = ref(false)
-const loopVideoEl = ref(null)
-let loopObserver = null
-
-const youtubeWatchUrl = 'https://www.youtube.com/watch?v=0G6xunet-HI'
 
 onMounted(() => {
   requestAnimationFrame(() => { loaded.value = true })
-  const allowMotion = !window.matchMedia('(prefers-reduced-motion: reduce)').matches
-  showHeroVideo.value = allowMotion
-  showLoopVideo.value = allowMotion
-  if (!allowMotion) return
-  nextTick(() => {
-    const video = loopVideoEl.value
-    if (!video) return
-    if (!('IntersectionObserver' in window)) {
-      video.play().catch(() => {})
-      return
-    }
-    loopObserver = new IntersectionObserver((entries) => {
-      const entry = entries[0]
-      if (entry.isIntersecting) {
-        if (!loopUserPaused.value) video.play().catch(() => {})
-      } else {
-        video.pause()
-      }
-    }, { threshold: 0.25 })
-    loopObserver.observe(video)
-  })
 })
 
-onBeforeUnmount(() => {
-  if (loopObserver) loopObserver.disconnect()
-})
-
-function toggleHeroVideo() {
-  const video = heroVideoEl.value
-  if (!video) return
-  if (video.paused) {
-    video.play()
-    heroVideoPaused.value = false
-  } else {
-    video.pause()
-    heroVideoPaused.value = true
-  }
-}
-
-function toggleLoopVideo() {
-  const video = loopVideoEl.value
-  if (!video) return
-  if (video.paused) {
-    loopUserPaused.value = false
-    video.play().catch(() => {})
-    loopVideoPaused.value = false
-  } else {
-    loopUserPaused.value = true
-    video.pause()
-    loopVideoPaused.value = true
-  }
-}
+const youtubeWatchUrl = 'https://www.youtube.com/watch?v=0G6xunet-HI'
+const calendlyUrl = 'https://calendly.com/kevinccbsg/30min'
 
 const faqs = [
   {
-    q: 'How is this different from Playwright/Cypress?',
-    a: 'TWD validates your frontend UI logic with mocked boundaries. Playwright/Cypress validate that your systems work together end-to-end. They complement each other — TWD for fast deterministic feedback during dev, E2E for full integration in CI.'
+    q: 'What does TWD cost?',
+    a: 'Nothing. twd-js, twd-relay, twd-cli and the twd-ai plugin are MIT licensed and free to use, for individuals and for companies, with no paid tier and no usage limits. If your team wants a hand adopting it, book a session above.'
+  },
+  {
+    q: 'How is this different from Playwright or Cypress?',
+    a: 'TWD validates your frontend UI logic with mocked boundaries. Playwright and Cypress validate that your systems work together end to end. They complement each other: TWD for fast deterministic feedback while you develop, end-to-end tests for full integration in CI.'
   },
   {
     q: 'How is this different from Vitest Browser Mode?',
@@ -96,15 +34,19 @@ const faqs = [
   },
   {
     q: 'Does this replace Testing Library?',
-    a: 'No. TWD uses Testing Library under the hood. screenDom is a scoped wrapper around Testing Library queries. You get the same semantic selectors — TWD just adds the runner, sidebar, and mocking layer on top.'
+    a: 'No. TWD uses Testing Library under the hood. screenDom is a scoped wrapper around Testing Library queries, so you get the same semantic selectors. TWD adds the runner, the sidebar and the mocking layer on top.'
   },
   {
     q: 'What frameworks are supported?',
-    a: 'Any frontend that renders in the browser: SPAs like React, Vue, Angular, and Solid; hydrated SSR like React Router and Nuxt; Astro islands; and no-build projects like HTMX and vanilla JS via a CDN. On Vite, Webpack, or no bundler at all. The one setup TWD does not target is where the server owns rendering (React Server Components, as in the Next.js App Router), since there is no explicit browser boundary to test there yet.'
+    a: 'Any frontend that renders in the browser: SPAs like React, Vue, Angular and Solid; hydrated SSR like React Router and Nuxt; Astro islands; and no-build projects like HTMX and vanilla JS via a CDN. On Vite, Webpack, or no bundler at all. The one setup TWD does not target is where the server owns rendering, as with React Server Components in the Next.js App Router, since there is no explicit browser boundary to test there yet.'
   },
   {
     q: 'Can AI actually write good tests?',
-    a: "The twd-ai plugin doesn't just generate test files. It runs them, reads real failures, fixes them, checks quality, and finds gaps. The tests execute in a real browser — if they pass, they mean something. And because results come back as structured text over WebSocket (not screenshots or DOM snapshots), token usage is significantly lower than tools like Playwright MCP."
+    a: 'The twd-ai plugin does more than generate test files. It runs them, reads real failures, fixes them, checks quality and finds gaps. The tests execute in a real browser, so a pass means something. Results come back as structured text over WebSocket rather than screenshots or DOM snapshots, which keeps token usage well below tools like Playwright MCP.'
+  },
+  {
+    q: 'How does the record label work?',
+    a: 'It is a GitHub Action that ships with twd-cli. Put a record label on a pull request and a job records the tests that branch added or changed, one clip per test, then uploads them as an artifact your workflow links from a comment. It runs as a separate job from the one that gates the pull request, so a recording can never cost you the run that matters.'
   },
   {
     q: 'Does TWD code ship to production?',
@@ -116,7 +58,7 @@ const faqs = [
 <template>
   <div class="home-page" :class="{ 'is-loaded': loaded }">
     <!-- Navigation -->
-    <header class="home-nav">
+    <header class="home-nav hp-container">
       <nav aria-label="Main navigation">
         <a href="/" class="nav-brand" aria-label="TWD home">
           <span class="nav-brand-mark">TWD</span>
@@ -124,221 +66,109 @@ const faqs = [
         <div class="nav-links">
           <a href="/getting-started">Docs</a>
           <a href="/community#example-repositories">Examples</a>
-          <a href="/api/">API Reference</a>
+          <a href="#for-teams">For teams</a>
+          <a href="https://github.com/BRIKEV/twd" target="_blank" rel="noopener" class="nav-github">
+            <svg width="18" height="18" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
+            <span class="nav-github-text">GitHub</span>
+            <span class="visually-hidden">(opens in new tab)</span>
+          </a>
         </div>
       </nav>
     </header>
 
     <main>
-      <!-- Section 1: Hero -->
-      <section class="hero">
+      <!-- Hero -->
+      <section class="hero hp-container">
         <div class="hero-grid">
           <div class="hero-content">
-            <p class="hero-eyebrow">Frontend testing ecosystem</p>
             <h1 class="hero-headline">
-              <span class="hero-line hero-line--1">Testing isn't a phase.</span>
-              <span class="hero-line hero-line--2">It's how you build.</span>
+              <span class="hero-line hero-line--1">Frontend tests that</span>
+              <span class="hero-line hero-line--2">run in the browser</span>
+              <span class="hero-line hero-line--3">you develop in.</span>
             </h1>
             <p class="hero-sub">
-              Write tests in your real browser. Let AI iterate. Validate every mock before you merge.
+              A sidebar in your dev server runs component and flow tests against your real app.
+              Your AI agent can drive the same loop, and every mock gets checked against the real
+              API before you merge.
             </p>
             <div class="hero-actions">
-              <a href="/getting-started" class="btn btn-brand">
-                <span>Get Started</span>
+              <a href="/getting-started" class="btn btn-brand" data-umami-event="home_hero_get_started">
+                <span>Get started</span>
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M6 3l5 5-5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
               </a>
-              <a href="https://github.com/BRIKEV/twd" target="_blank" rel="noopener" class="btn btn-outline">
-                View on GitHub <span class="visually-hidden">(opens in new tab)</span>
-              </a>
+              <InstallCommand umami-event="home_hero_copy_install" />
             </div>
+            <p class="hero-note">
+              Open source under the MIT license.
+            </p>
           </div>
           <div class="hero-visual">
-            <template v-if="showHeroVideo">
-              <video
-                ref="heroVideoEl"
-                src="/videos/twd-hero.mp4"
-                poster="/images/twd_side_bar_success.png"
-                class="hero-img"
-                autoplay
-                muted
-                loop
-                playsinline
-                aria-label="TWD sidebar running tests live inside a Vue app: tests cascade green, a test types itself and executes in the browser"
-              ></video>
-              <button
-                type="button"
-                class="hero-video-toggle"
-                :aria-pressed="heroVideoPaused"
-                :aria-label="heroVideoPaused ? 'Play hero animation' : 'Pause hero animation'"
-                @click="toggleHeroVideo"
-              >
-                <svg v-if="heroVideoPaused" width="14" height="14" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M4 2.5v11l9-5.5-9-5.5z"/></svg>
-                <svg v-else width="14" height="14" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M4 2h3v12H4zM9 2h3v12H9z"/></svg>
-              </button>
-            </template>
-            <img
-              v-else
-              src="/images/twd_side_bar_success.png"
-              alt="TWD sidebar showing passing tests in the browser"
-              class="hero-img"
-              loading="lazy"
+            <DeferredVideo
+              mode="eager"
+              src="/videos/twd-hero.mp4"
+              poster="/images/twd_side_bar_success.png"
+              label="TWD sidebar running tests live inside a Vue app: tests cascade green, a test types itself and executes in the browser"
+              name="hero animation"
+              :width="2080"
+              :height="1336"
             />
           </div>
         </div>
       </section>
 
-      <!-- Section 2: Pain Points -->
-      <section class="pain-points" aria-labelledby="pain-heading">
-        <h2 id="pain-heading" class="visually-hidden">Problems TWD solves</h2>
-        <div class="pain-cards">
-          <div class="pain-card">
-            <div class="pain-icon">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 8v4l3 3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2"/><path d="M17 17l2 2" stroke="var(--hp-danger)" stroke-width="2" stroke-linecap="round"/></svg>
-            </div>
-            <h3 class="pain-title">Testing is always last</h3>
-            <p class="pain-desc">
-              Every sprint, testing gets pushed to "next week." Next week never comes.
-              The codebase grows. The debt compounds.
+      <!-- Quick Start -->
+      <section class="quick-start hp-container" aria-labelledby="quick-start-heading">
+        <div class="quick-start-grid">
+          <div class="quick-start-intro">
+            <h2 id="quick-start-heading" class="section-title">Up and running in three steps</h2>
+            <p class="section-sub">
+              One package, one plugin, and the sidebar is in your browser. Nothing else to launch
+              and no second browser to keep open.
             </p>
-          </div>
-          <div class="pain-card">
-            <div class="pain-icon">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3" y="6" width="9" height="13" rx="1.5" stroke="currentColor" stroke-width="2"/><rect x="10" y="3" width="11" height="14" rx="1.5" stroke="var(--hp-danger)" stroke-width="2"/><path d="M13 7h5M13 10h5M13 13h5" stroke="var(--hp-danger)" stroke-width="2" stroke-linecap="round"/></svg>
-            </div>
-            <h3 class="pain-title">Tests outweigh features</h3>
-            <p class="pain-desc">
-              Setup. Mocks. Helpers. You end up writing more code for the tests
-              than for the feature itself. Like shipping a second app.
+            <p class="quick-start-frameworks">
+              Works with React, Vue, Angular, Solid, Astro, Nuxt, HTMX and vanilla JS, on Vite,
+              Webpack or a CDN.
             </p>
+            <ul class="link-list">
+              <li><a href="/getting-started">Full getting started guide</a></li>
+              <li><a href="/frameworks">Setup for your framework</a></li>
+            </ul>
           </div>
-          <div class="pain-card">
-            <div class="pain-icon">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="2" stroke="currentColor" stroke-width="2"/><path d="M9 9l6 6M15 9l-6 6" stroke="var(--hp-danger)" stroke-width="2" stroke-linecap="round"/></svg>
-            </div>
-            <h3 class="pain-title">AI writes tests that don't run</h3>
-            <p class="pain-desc">
-              Your agent generates test files. They look correct. They never execute
-              in a real browser. No one notices until someone does.
-            </p>
-          </div>
-          <div class="pain-card">
-            <div class="pain-icon">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3v18M3 12h18" stroke="currentColor" stroke-width="2" stroke-linecap="round" opacity="0.3"/><path d="M8 8l8 8" stroke="var(--hp-danger)" stroke-width="2.5" stroke-linecap="round"/></svg>
-            </div>
-            <h3 class="pain-title">Your mocks lie</h3>
-            <p class="pain-desc">
-              The backend renames a field. Your mock doesn't know. Tests pass.
-              Production breaks. You find out from a user.
-            </p>
-          </div>
-        </div>
-      </section>
 
-      <!-- Section 3: Ecosystem (adoption-line) -->
-      <section class="ecosystem">
-        <h2 class="section-title">One package today. The rest when you need it.</h2>
-        <p class="section-sub">
-          Start with the sidebar in your browser. Layer on AI, CI, and contract validation
-          only when your team is ready for each one.
-        </p>
-
-        <ThesisBanner size="lg" />
-
-        <div class="ecosystem-diagram">
-          <AdoptionLineDiagram />
-        </div>
-      </section>
-
-      <!-- Section 3.5: AI agent loop demo -->
-      <section class="agent-loop" aria-labelledby="agent-loop-heading">
-        <h2 id="agent-loop-heading" class="section-title">Your agent writes tests. TWD makes them run.</h2>
-        <p class="section-sub agent-loop-sub">
-          Watch an AI agent write a test, run it in your real browser through TWD, read the
-          failure, fix it, and re-run until green. The whole loop &mdash; no screenshots, no separate browser.
-        </p>
-
-        <div class="agent-loop-visual">
-          <template v-if="showLoopVideo">
-            <video
-              ref="loopVideoEl"
-              src="/videos/twd-agent-loop.mp4"
-              poster="/images/twd-agent-loop-poster.jpg"
-              class="agent-loop-video"
-              muted
-              loop
-              playsinline
-              preload="none"
-              aria-label="An AI agent writes a TWD test, runs it in a real browser, reads the failure, fixes it, and re-runs until all tests pass"
-            ></video>
-            <button
-              type="button"
-              class="hero-video-toggle agent-loop-toggle"
-              :aria-pressed="loopVideoPaused"
-              :aria-label="loopVideoPaused ? 'Play the AI loop animation' : 'Pause the AI loop animation'"
-              @click="toggleLoopVideo"
-            >
-              <svg v-if="loopVideoPaused" width="14" height="14" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M4 2.5v11l9-5.5-9-5.5z"/></svg>
-              <svg v-else width="14" height="14" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M4 2h3v12H4zM9 2h3v12H9z"/></svg>
-            </button>
-          </template>
-          <img
-            v-else
-            src="/images/twd-agent-loop-poster.jpg"
-            alt="TWD sidebar with an AI agent writing and running tests until they pass"
-            class="agent-loop-video"
-            width="1280"
-            height="720"
-            loading="lazy"
-          />
-        </div>
-
-        <p class="agent-loop-cta">
-          <a :href="youtubeWatchUrl" target="_blank" rel="noopener" class="agent-loop-link">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
-            Watch the full narrated walkthrough on YouTube
-            <span class="visually-hidden">(opens in new tab)</span>
-          </a>
-        </p>
-      </section>
-
-      <!-- Section 4: Quick Start -->
-      <section class="quick-start">
-        <h2 class="section-title">Quick Start</h2>
-
-        <div class="steps">
-          <div class="step">
-            <div class="step-marker" aria-hidden="true">
-              <span class="step-number">1</span>
-              <span class="step-line"></span>
-            </div>
-            <div class="step-content">
-              <h3 class="step-title">Install and add the Vite plugin</h3>
-              <div class="code-block">
-                <div class="code-header"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span><span class="code-filename">terminal</span></div>
-                <pre><code>npm install twd-js</code></pre>
+          <ol class="steps">
+            <li class="step">
+              <div class="step-marker" aria-hidden="true">
+                <span class="step-number">1</span>
+                <span class="step-line"></span>
               </div>
-              <div class="code-block">
-                <div class="code-header"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span><span class="code-filename">vite.config.ts</span></div>
-                <pre><code><span class="hl-keyword">import</span> { defineConfig } <span class="hl-keyword">from</span> <span class="hl-string">'vite'</span>;
+              <div class="step-content">
+                <h3 class="step-title">Install and add the Vite plugin</h3>
+                <div class="code-block">
+                  <div class="code-header"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span><span class="code-filename">terminal</span></div>
+                  <pre><code>npm install twd-js</code></pre>
+                </div>
+                <div class="code-block">
+                  <div class="code-header"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span><span class="code-filename">vite.config.ts</span></div>
+                  <pre><code><span class="hl-keyword">import</span> { defineConfig } <span class="hl-keyword">from</span> <span class="hl-string">'vite'</span>;
 <span class="hl-keyword">import</span> { twd } <span class="hl-keyword">from</span> <span class="hl-string">'twd-js/vite-plugin'</span>;
 
 <span class="hl-keyword">export default</span> <span class="hl-func">defineConfig</span>({
   <span class="hl-prop">plugins</span>: [<span class="hl-func">twd</span>({ <span class="hl-prop">open</span>: <span class="hl-keyword">true</span> })],
 });</code></pre>
+                </div>
               </div>
-            </div>
-          </div>
+            </li>
 
-          <div class="step">
-            <div class="step-marker" aria-hidden="true">
-              <span class="step-number">2</span>
-              <span class="step-line"></span>
-            </div>
-            <div class="step-content">
-              <h3 class="step-title">Write a test</h3>
-              <div class="code-block">
-                <div class="code-header"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span><span class="code-filename">src/App.twd.test.ts</span></div>
-                <pre><code><span class="hl-keyword">import</span> { twd, userEvent, screenDom } <span class="hl-keyword">from</span> <span class="hl-string">"twd-js"</span>;
+            <li class="step">
+              <div class="step-marker" aria-hidden="true">
+                <span class="step-number">2</span>
+                <span class="step-line"></span>
+              </div>
+              <div class="step-content">
+                <h3 class="step-title">Write a test</h3>
+                <div class="code-block">
+                  <div class="code-header"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span><span class="code-filename">src/App.twd.test.ts</span></div>
+                  <pre><code><span class="hl-keyword">import</span> { twd, userEvent, screenDom } <span class="hl-keyword">from</span> <span class="hl-string">"twd-js"</span>;
 <span class="hl-keyword">import</span> { describe, it } <span class="hl-keyword">from</span> <span class="hl-string">"twd-js/runner"</span>;
 
 <span class="hl-func">describe</span>(<span class="hl-string">"App"</span>, () => {
@@ -348,80 +178,162 @@ const faqs = [
     twd.<span class="hl-func">should</span>(heading, <span class="hl-string">"be.visible"</span>);
   });
 });</code></pre>
+                </div>
               </div>
-            </div>
-          </div>
+            </li>
 
-          <div class="step step--last">
-            <div class="step-marker" aria-hidden="true">
-              <span class="step-number">3</span>
-            </div>
-            <div class="step-content">
-              <h3 class="step-title">Run your dev server and see results</h3>
-              <div class="code-block code-block--compact">
-                <div class="code-header"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span><span class="code-filename">terminal</span></div>
-                <pre><code>npm run dev</code></pre>
+            <li class="step step--last">
+              <div class="step-marker" aria-hidden="true">
+                <span class="step-number">3</span>
               </div>
-              <p class="step-desc">
-                The sidebar appears in your browser. Click play to run any test.
-              </p>
-              <img
-                src="/images/twd_side_bar_success.png"
-                alt="TWD sidebar showing passing tests in the browser"
-                class="step-img"
-                loading="lazy"
-              />
-            </div>
+              <div class="step-content">
+                <h3 class="step-title">Run your dev server</h3>
+                <div class="code-block code-block--compact">
+                  <div class="code-header"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span><span class="code-filename">terminal</span></div>
+                  <pre><code>npm run dev</code></pre>
+                </div>
+                <p class="step-desc">
+                  The sidebar appears next to your app. Press play on any test and watch it run
+                  against the page you are building.
+                </p>
+              </div>
+            </li>
+          </ol>
+        </div>
+      </section>
+
+      <!-- AI agent loop -->
+      <section class="agent-loop hp-container" aria-labelledby="agent-loop-heading">
+        <div class="agent-grid">
+          <div class="agent-intro">
+            <h2 id="agent-loop-heading" class="section-title">Your agent writes the tests. TWD makes them run.</h2>
+            <p class="section-sub">
+              The agent writes a test, runs it in your real browser through TWD, reads the failure,
+              fixes it and re-runs until green. Results come back as structured text, not
+              screenshots, so the loop stays cheap in tokens.
+            </p>
+            <ul class="link-list">
+              <li>
+                <a :href="youtubeWatchUrl" target="_blank" rel="noopener" data-umami-event="home_agent_youtube">
+                  Watch the narrated walkthrough on YouTube<span class="visually-hidden"> (opens in new tab)</span>
+                </a>
+              </li>
+              <li><a href="/twd-ai/setup">Set up the agent workflow</a></li>
+            </ul>
+          </div>
+          <div class="agent-visual">
+            <DeferredVideo
+              src="/videos/twd-agent-loop.mp4"
+              poster="/images/twd-agent-loop-poster.jpg"
+              label="An AI agent writes a TWD test, runs it in a real browser, reads the failure, fixes it, and re-runs until all tests pass"
+              name="AI loop animation"
+            />
           </div>
         </div>
       </section>
 
-      <!-- Section 5: FAQ -->
-      <section class="faq" aria-labelledby="faq-heading">
-        <h2 id="faq-heading" class="section-title faq-title">Frequently Asked Questions</h2>
-        <div class="faq-grid">
-          <details v-for="(faq, i) in faqs" :key="i" class="faq-item">
-            <summary class="faq-question">{{ faq.q }}</summary>
-            <p class="faq-answer">{{ faq.a }}</p>
-          </details>
+      <!-- Review with your eyes -->
+      <section class="review hp-container" aria-labelledby="review-heading">
+        <h2 id="review-heading" class="section-title">Five green PRs today. What do they look like?</h2>
+        <p class="section-sub">
+          The diff and the test both tell you what the agent thinks it built. Neither shows what
+          the person using the app will see. Put a record label on the pull request, and a minute
+          later there is one video per test the branch added.
+        </p>
+
+        <RecordReview />
+
+        <div class="review-points">
+          <p>
+            <strong>Review with your eyes.</strong> Four clips take a minute to watch and tell you
+            more than the whole diff. That is cheaper than asking a second agent to summarise what
+            the first one did.
+          </p>
+          <p>
+            <strong>No extra tokens.</strong> The recording comes out of your CI, not out of a
+            model. Nothing gets summarised and nothing gets re-read.
+          </p>
+          <p>
+            <strong>Deterministic.</strong> The same run that turned the check green produced the
+            video. Change the behaviour and the video changes, or the test fails and there is no
+            video. It cannot drift from the code.
+          </p>
         </div>
 
-        <div class="faq-cta">
-          <h3 class="faq-cta-title">Still have questions?</h3>
-          <p class="faq-cta-desc">
-            Have questions or want a deeper dive? Schedule a session with the maintainer.
-            Happy to walk you through TWD or run a tailored workshop for your team.
-          </p>
-          <a href="https://calendly.com/kevinccbsg/30min" target="_blank" rel="noopener" class="btn btn-outline">
-            Book a session <span class="visually-hidden">(opens in new tab)</span>
+        <ul class="link-list">
+          <li><a href="/recording#recording-in-ci" data-umami-event="home_review_record_docs">Set up the record job in CI</a></li>
+        </ul>
+      </section>
+
+      <!-- Ecosystem (adoption line) -->
+      <section class="ecosystem hp-container" aria-labelledby="ecosystem-heading">
+        <h2 id="ecosystem-heading" class="section-title">One package today. The rest when you need it.</h2>
+        <p class="section-sub">
+          Start with the sidebar. Add the agent loop, CI recordings and contract validation when
+          your team is ready for each one.
+        </p>
+        <div class="ecosystem-diagram">
+          <AdoptionLineDiagram />
+        </div>
+      </section>
+
+      <!-- For teams -->
+      <section id="for-teams" class="teams" aria-labelledby="teams-heading">
+        <div class="hp-container teams-grid">
+          <div class="teams-intro">
+            <h2 id="teams-heading" class="section-title teams-title">Bringing TWD to your team?</h2>
+            <p class="teams-text">
+              TWD is open source and stays that way. If you would rather not do the adoption work
+              alone, book a working session with the maintainer. We set TWD up in your repo, wire
+              the agent loop and the record job into your CI, and leave you with tests your team
+              wrote together.
+            </p>
+          </div>
+          <div class="teams-cta">
+            <a :href="calendlyUrl" target="_blank" rel="noopener" class="btn btn-light" data-umami-event="home_teams_book_call">
+              <span>Book a 30 minute call</span>
+              <span class="visually-hidden">(opens in new tab)</span>
+            </a>
+            <p class="teams-note">MIT licensed. Free for companies, with no paid tier.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- FAQ -->
+      <section class="faq hp-container" aria-labelledby="faq-heading">
+        <div class="faq-grid">
+          <h2 id="faq-heading" class="section-title">Questions</h2>
+          <div class="faq-list">
+            <details v-for="faq in faqs" :key="faq.q" class="faq-item">
+              <summary class="faq-question">
+                <span>{{ faq.q }}</span>
+                <span class="faq-marker" aria-hidden="true"></span>
+              </summary>
+              <p class="faq-answer">{{ faq.a }}</p>
+            </details>
+          </div>
+        </div>
+      </section>
+
+      <!-- Closing -->
+      <section class="closing hp-container">
+        <ThesisBanner size="lg" />
+        <p class="closing-line">Testing isn't a phase. It's how you build.</p>
+        <a href="/twd-manifesto" class="closing-link">Read the manifesto<span class="visually-hidden"> on testing philosophy</span></a>
+        <div class="closing-actions">
+          <InstallCommand umami-event="home_closing_copy_install" />
+          <a href="/getting-started" class="btn btn-brand" data-umami-event="home_closing_get_started">
+            <span>Get started</span>
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M6 3l5 5-5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </a>
         </div>
       </section>
 
-      <!-- Section 6: Manifesto Quote -->
-      <section class="manifesto-quote">
-        <blockquote class="manifesto-text">
-          TWD isn't about writing <em>more</em> tests — it's about writing the <em>right</em> ones, at the right time.
-        </blockquote>
-        <a href="/twd-manifesto" class="manifesto-link">Read the full manifesto<span class="visually-hidden"> on testing philosophy</span><span aria-hidden="true"> &rarr;</span></a>
-      </section>
-
-      <!-- Section 7: Final CTA -->
-      <section class="final-cta">
-        <div class="cta-install">
-          <code class="cta-code"><span class="cta-prompt">$</span> npm install twd-js</code>
-        </div>
-        <a href="/getting-started" class="btn btn-brand">
-          <span>Get started</span>
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M6 3l5 5-5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </a>
-      </section>
-
-      <footer class="hp-footer">
+      <footer class="hp-footer hp-container">
         <nav class="hp-footer-links" aria-label="Footer">
           <a href="/accessibility-statement" class="hp-footer-link">Accessibility Statement</a>
-          <span class="hp-footer-sep" aria-hidden="true">·</span>
           <a href="https://github.com/BRIKEV/twd" target="_blank" rel="noopener" class="hp-footer-link">GitHub<span class="visually-hidden"> (opens in new tab)</span></a>
+          <a href="https://www.npmjs.com/package/twd-js" target="_blank" rel="noopener" class="hp-footer-link">npm<span class="visually-hidden"> (opens in new tab)</span></a>
         </nav>
         <p class="hp-footer-meta">Released under the MIT License. Copyright © 2026 BRIKEV.</p>
       </footer>
@@ -437,46 +349,67 @@ const faqs = [
   --hp-max-w: 1100px;
   --hp-gutter: 24px;
   --hp-radius: 10px;
-  --hp-danger: #e5534b;
-  --hp-code-bg: rgba(0,0,0,0.03);
+  --hp-measure: 640px;
+  --hp-code-bg: rgba(0, 0, 0, 0.03);
   --hp-surface: var(--vp-c-bg-soft);
   --hp-border: var(--vp-c-border);
-  --hp-section-gap: 96px;
-  max-width: var(--hp-max-w);
-  margin: 0 auto;
-  padding: 0 var(--hp-gutter);
+  --hp-section-gap: 104px;
+  /* The one coloured surface on the page: the teams band. Deep brand teal in
+     both themes, with white text (11:1). */
+  --hp-band-bg: #123956;
+  --hp-band-text: #ffffff;
+  --hp-band-muted: rgba(255, 255, 255, 0.78);
 }
 
 :global(.dark) .home-page {
-  --hp-danger: #f85149;
-  --hp-code-bg: rgba(255,255,255,0.04);
+  --hp-code-bg: rgba(255, 255, 255, 0.04);
+  --hp-band-bg: #0f2f47;
+}
+
+.hp-container {
+  max-width: var(--hp-max-w);
+  margin: 0 auto;
+  padding-left: var(--hp-gutter);
+  padding-right: var(--hp-gutter);
 }
 
 /* ============================================
-   Entrance animation
+   Entrance animation (hero only, one moment)
    ============================================ */
-.home-page.is-loaded .hero-eyebrow,
-.home-page.is-loaded .hero-line,
-.home-page.is-loaded .hero-sub,
-.home-page.is-loaded .hero-actions {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-.hero-eyebrow,
 .hero-line,
 .hero-sub,
-.hero-actions {
+.hero-actions,
+.hero-note {
   opacity: 0;
   transform: translateY(16px);
   transition: opacity 0.6s ease, transform 0.6s ease;
 }
 
-.hero-eyebrow { transition-delay: 0s; }
-.hero-line--1 { transition-delay: 0.08s; }
-.hero-line--2 { transition-delay: 0.16s; }
-.hero-sub { transition-delay: 0.28s; }
-.hero-actions { transition-delay: 0.38s; }
+.home-page.is-loaded .hero-line,
+.home-page.is-loaded .hero-sub,
+.home-page.is-loaded .hero-actions,
+.home-page.is-loaded .hero-note {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.hero-line--1 { transition-delay: 0.04s; }
+.hero-line--2 { transition-delay: 0.1s; }
+.hero-line--3 { transition-delay: 0.16s; }
+.hero-sub { transition-delay: 0.26s; }
+.hero-actions { transition-delay: 0.36s; }
+.hero-note { transition-delay: 0.44s; }
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-line,
+  .hero-sub,
+  .hero-actions,
+  .hero-note {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
 
 /* ============================================
    Navigation
@@ -504,15 +437,18 @@ const faqs = [
 
 .nav-links {
   display: flex;
+  align-items: center;
   gap: 28px;
 }
 
 .nav-links a {
-  font-size: 0.8125rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.875rem;
   font-weight: 500;
   color: var(--vp-c-text-2);
   text-decoration: none;
-  letter-spacing: 0.01em;
   transition: color 0.2s;
 }
 
@@ -534,228 +470,37 @@ const faqs = [
 }
 
 /* ============================================
-   Hero
+   Shared section pieces
    ============================================ */
-.hero {
-  padding: 80px 0 var(--hp-section-gap);
-}
-
-.hero-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 48px;
-  align-items: center;
-}
-
-.hero-img {
-  width: 100%;
-  border-radius: var(--hp-radius);
-  border: 1px solid var(--hp-border);
-  box-shadow: 0 16px 48px -12px rgba(0,0,0,0.2);
-}
-
-.hero-visual {
-  position: relative;
-}
-
-/* video inherits .hero-img chrome; display:block kills the inline-gap below it */
-video.hero-img {
-  display: block;
-}
-
-.hero-video-toggle {
-  position: absolute;
-  right: 10px;
-  bottom: 10px;
-  width: 32px;
-  height: 32px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 8px;
-  border: 1px solid var(--hp-border);
-  background: var(--vp-c-bg);
-  color: var(--vp-c-text-1);
-  cursor: pointer;
-  opacity: 0.85;
-  transition: opacity 0.2s;
-}
-
-.hero-video-toggle:hover,
-.hero-video-toggle:focus-visible {
-  opacity: 1;
-}
-
-.hero-eyebrow {
-  display: inline-block;
-  font-size: 0.75rem;
-  font-weight: 600;
-  letter-spacing: 0.02em;
-  color: var(--vp-c-brand-1);
-  margin-bottom: 20px;
-  padding: 6px 16px;
-  border: 1px solid var(--vp-c-brand-soft);
-  border-radius: 100px;
-}
-
-.hero-headline {
-  font-size: 3.25rem;
-  line-height: 1.1;
-  font-weight: 800;
-  color: var(--vp-c-text-1);
-  letter-spacing: -0.03em;
-}
-
-.hero-line {
-  display: block;
-}
-
-.hero-sub {
-  margin-top: 24px;
-  font-size: 1.0625rem;
-  line-height: 1.75;
-  color: var(--vp-c-text-2);
-  max-width: 480px;
-}
-
-.hero-actions {
-  display: flex;
-  gap: 14px;
-  margin-top: 32px;
-  flex-wrap: wrap;
-}
-
-.btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 12px 24px;
-  border-radius: 8px;
-  font-size: 0.9375rem;
-  font-weight: 600;
-  text-decoration: none;
-  transition: all 0.2s ease;
-  cursor: pointer;
-}
-
-.btn-brand {
-  background: var(--vp-c-brand-btn);
-  color: #fff;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 0 0 1px var(--vp-c-brand-btn);
-}
-
-.btn-brand:hover {
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15), 0 0 0 1px var(--vp-c-brand-btn);
-  transform: translateY(-1px);
-}
-
-.btn-outline {
-  border: 1px solid var(--hp-border);
-  color: var(--vp-c-text-1);
-  background: transparent;
-}
-
-.btn-outline:hover {
-  border-color: var(--vp-c-text-3);
-  background: var(--hp-code-bg);
-}
-
-/* ============================================
-   Pain Points
-   ============================================ */
-.pain-points {
-  padding-bottom: var(--hp-section-gap);
-}
-
-.pain-cards {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 20px;
-}
-
-@media (max-width: 1024px) {
-  .pain-cards {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-.pain-card {
-  padding: 32px 28px;
-  border-radius: var(--hp-radius);
-  border: 1px solid var(--hp-border);
-  background: var(--hp-surface);
-  transition: border-color 0.2s;
-}
-
-.pain-card:hover {
-  border-color: var(--vp-c-text-3);
-}
-
-.pain-icon {
-  width: 44px;
-  height: 44px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 10px;
-  background: var(--hp-code-bg);
-  color: var(--vp-c-text-2);
-  margin-bottom: 20px;
-}
-
-.pain-title {
-  font-size: 1.0625rem;
+.section-title {
+  font-size: 2rem;
+  line-height: 1.15;
   font-weight: 700;
+  letter-spacing: -0.02em;
   color: var(--vp-c-text-1);
-  margin-bottom: 10px;
-  letter-spacing: -0.01em;
+  max-width: var(--hp-measure);
+  margin: 0;
+  text-wrap: balance;
 }
 
-.pain-desc {
-  font-size: 0.875rem;
+.section-sub {
+  margin: 14px 0 0;
+  font-size: 1.0625rem;
   line-height: 1.65;
   color: var(--vp-c-text-2);
+  max-width: var(--hp-measure);
 }
 
-/* ============================================
-   AI agent loop demo
-   ============================================ */
-.agent-loop {
-  padding-bottom: var(--hp-section-gap);
-  text-align: center;
+.link-list {
+  list-style: none;
+  margin: 24px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
-.agent-loop-sub {
-  max-width: 560px;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.agent-loop-visual {
-  position: relative;
-  max-width: 760px;
-  margin: 40px auto 0;
-}
-
-.agent-loop-video {
-  display: block;
-  width: 100%;
-  /* Reserve the box before the deferred video/poster paints (avoids CLS) */
-  aspect-ratio: 16 / 9;
-  object-fit: cover;
-  border-radius: var(--hp-radius);
-  border: 1px solid var(--hp-border);
-  box-shadow: 0 16px 48px -12px rgba(0,0,0,0.2);
-}
-
-.agent-loop-cta {
-  margin-top: 24px;
-}
-
-.agent-loop-link {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
+.link-list a {
   font-size: 0.9375rem;
   font-weight: 600;
   color: var(--vp-c-brand-1);
@@ -764,38 +509,101 @@ video.hero-img {
   transition: opacity 0.2s;
 }
 
-.agent-loop-link:hover,
-.agent-loop-link:focus-visible {
+.link-list a:hover,
+.link-list a:focus-visible {
   opacity: 0.75;
 }
 
-/* ============================================
-   Section shared
-   ============================================ */
-.section-title {
-  text-align: center;
-  font-size: 2rem;
-  font-weight: 800;
-  color: var(--vp-c-text-1);
-  letter-spacing: -0.02em;
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 46px;
+  padding: 0 24px;
+  border-radius: 8px;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+  cursor: pointer;
 }
 
-.section-sub {
-  text-align: center;
-  color: var(--vp-c-text-2);
-  margin-top: 10px;
-  font-size: 1rem;
+.btn-brand {
+  background: var(--vp-c-brand-btn);
+  color: #fff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 0 0 1px var(--vp-c-brand-btn);
+}
+
+.btn-brand:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15), 0 0 0 1px var(--vp-c-brand-btn);
+  transform: translateY(-1px);
+}
+
+.btn-light {
+  background: #fff;
+  color: var(--hp-band-bg);
+}
+
+.btn-light:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px -6px rgba(0, 0, 0, 0.4);
 }
 
 /* ============================================
-   Ecosystem
+   Hero
    ============================================ */
-.ecosystem {
+.hero {
+  padding-top: 64px;
   padding-bottom: var(--hp-section-gap);
 }
 
-.ecosystem-diagram {
-  margin-top: 8px;
+.hero-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 48px;
+  align-items: center;
+}
+
+.hero-headline {
+  font-size: 3rem;
+  line-height: 1.05;
+  font-weight: 800;
+  color: var(--vp-c-text-1);
+  letter-spacing: -0.03em;
+  margin: 0;
+}
+
+.hero-line {
+  display: block;
+}
+
+.hero-sub {
+  margin: 24px 0 0;
+  font-size: 1.0625rem;
+  line-height: 1.7;
+  color: var(--vp-c-text-2);
+  max-width: 500px;
+}
+
+.hero-actions {
+  display: flex;
+  gap: 14px;
+  margin-top: 32px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.hero-note {
+  margin: 18px 0 0;
+  font-size: 0.875rem;
+  color: var(--vp-c-text-2);
+}
+
+.hero-visual :deep(.dvideo-media) {
+  aspect-ratio: 2080 / 1336;
+  border-radius: var(--hp-radius);
+  border: 1px solid var(--hp-border);
+  box-shadow: 0 16px 48px -12px rgba(0, 0, 0, 0.2);
 }
 
 /* ============================================
@@ -805,11 +613,25 @@ video.hero-img {
   padding-bottom: var(--hp-section-gap);
 }
 
+.quick-start-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr);
+  gap: 56px;
+  align-items: start;
+}
+
+.quick-start-frameworks {
+  margin: 20px 0 0;
+  font-size: 0.9375rem;
+  line-height: 1.65;
+  color: var(--vp-c-text-2);
+  max-width: 420px;
+}
+
 .steps {
-  margin-top: 48px;
-  max-width: 680px;
-  margin-left: auto;
-  margin-right: auto;
+  list-style: none;
+  margin: 0;
+  padding: 0;
 }
 
 .step {
@@ -860,15 +682,15 @@ video.hero-img {
   font-size: 1.125rem;
   font-weight: 700;
   color: var(--vp-c-text-1);
-  margin-bottom: 12px;
+  margin: 6px 0 12px;
   letter-spacing: -0.01em;
 }
 
 .step-desc {
-  font-size: 0.875rem;
+  font-size: 0.9375rem;
   line-height: 1.65;
   color: var(--vp-c-text-2);
-  margin-top: 12px;
+  margin: 14px 0 0;
 }
 
 /* Code blocks with window chrome */
@@ -929,13 +751,127 @@ video.hero-img {
 .hl-prop { color: var(--vp-c-text-2); }
 .hl-num { color: var(--pipeline-gold); }
 
-.step-img {
-  margin-top: 16px;
-  width: 100%;
-  /* Reserve height for this lazy-loaded screenshot (Lighthouse-flagged CLS) */
-  aspect-ratio: 2080 / 1336;
+/* ============================================
+   AI agent loop
+   ============================================ */
+.agent-loop {
+  padding-bottom: var(--hp-section-gap);
+}
+
+.agent-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.35fr);
+  gap: 56px;
+  align-items: center;
+}
+
+.agent-visual :deep(.dvideo-media) {
   border-radius: var(--hp-radius);
   border: 1px solid var(--hp-border);
+  box-shadow: 0 16px 48px -12px rgba(0, 0, 0, 0.2);
+}
+
+/* ============================================
+   Review (record label)
+   ============================================ */
+.review {
+  padding-bottom: var(--hp-section-gap);
+}
+
+.review :deep(.pr) {
+  margin-top: 40px;
+}
+
+.review-points {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 32px;
+  margin-top: 44px;
+  max-width: 1000px;
+}
+
+.review-points p {
+  margin: 0;
+  font-size: 0.9375rem;
+  line-height: 1.65;
+  color: var(--vp-c-text-2);
+}
+
+.review-points strong {
+  display: block;
+  margin-bottom: 4px;
+  font-weight: 700;
+  color: var(--vp-c-text-1);
+}
+
+.review .link-list {
+  margin-top: 32px;
+}
+
+/* ============================================
+   Ecosystem
+   ============================================ */
+.ecosystem {
+  padding-bottom: var(--hp-section-gap);
+}
+
+.ecosystem-diagram {
+  margin-top: 40px;
+}
+
+/* ============================================
+   For teams (full-bleed band)
+   ============================================ */
+.teams {
+  background: var(--hp-band-bg);
+  color: var(--hp-band-text);
+  padding: 80px 0;
+  margin-bottom: var(--hp-section-gap);
+}
+
+.teams-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+  gap: 48px;
+  align-items: center;
+}
+
+.teams-title {
+  color: var(--hp-band-text);
+}
+
+.teams-text {
+  margin: 16px 0 0;
+  font-size: 1.0625rem;
+  line-height: 1.7;
+  color: var(--hp-band-muted);
+  max-width: var(--hp-measure);
+}
+
+.teams-cta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 14px;
+}
+
+.teams-note {
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--hp-band-muted);
+}
+
+/* The site-wide focus ring is text-1, which is dark on light and would vanish
+   on the teal band. */
+.teams :focus-visible {
+  outline-color: #fff;
+}
+
+@media (min-width: 901px) {
+  .teams-cta {
+    align-items: flex-end;
+    text-align: right;
+  }
 }
 
 /* ============================================
@@ -946,230 +882,115 @@ video.hero-img {
 }
 
 .faq-grid {
-  margin-top: 36px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+  gap: 48px;
+  align-items: start;
+}
+
+.faq-list {
+  border-top: 1px solid var(--hp-border);
 }
 
 .faq-item {
-  border: 1px solid var(--hp-border);
-  border-radius: var(--hp-radius);
-  background: var(--hp-surface);
-  overflow: hidden;
-  transition: border-color 0.2s;
-}
-
-.faq-item:hover {
-  border-color: var(--vp-c-text-3);
+  border-bottom: 1px solid var(--hp-border);
 }
 
 .faq-question {
-  padding: 18px 22px;
-  font-size: 0.875rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px 0;
+  font-size: 1rem;
   font-weight: 600;
   color: var(--vp-c-text-1);
   cursor: pointer;
   list-style: none;
-  display: flex;
-  align-items: center;
-  gap: 10px;
 }
 
 .faq-question::-webkit-details-marker {
   display: none;
 }
 
-.faq-question::before {
-  content: '+';
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.faq-marker {
+  position: relative;
+  flex-shrink: 0;
   width: 20px;
   height: 20px;
-  border-radius: 5px;
-  background: var(--hp-code-bg);
   color: var(--vp-c-brand-1);
-  font-weight: 700;
-  font-size: 0.875rem;
-  flex-shrink: 0;
-  transition: transform 0.2s;
 }
 
-details[open] .faq-question::before {
-  content: '\2212';
-  transform: rotate(0deg);
+.faq-marker::before,
+.faq-marker::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 12px;
+  height: 2px;
+  background: currentColor;
+  transform: translate(-50%, -50%);
+  transition: transform 0.2s ease;
 }
 
-.faq-title {
-  text-align: left;
+.faq-marker::after {
+  transform: translate(-50%, -50%) rotate(90deg);
+}
+
+details[open] .faq-marker::after {
+  transform: translate(-50%, -50%) rotate(0deg);
 }
 
 .faq-answer {
-  padding: 0 22px 18px 52px;
-  font-size: 0.8125rem;
+  margin: 0;
+  padding: 0 36px 20px 0;
+  font-size: 0.9375rem;
   line-height: 1.7;
   color: var(--vp-c-text-2);
-}
-
-.faq-cta {
-  margin-top: 36px;
-  padding: 32px 28px;
-  border-radius: var(--hp-radius);
-  border: 1px solid var(--hp-border);
-  background: var(--hp-surface);
-  text-align: center;
-}
-
-.faq-cta-title {
-  font-size: 1.125rem;
-  font-weight: 700;
-  color: var(--vp-c-text-1);
-  letter-spacing: -0.01em;
-  margin-bottom: 10px;
-}
-
-.faq-cta-desc {
-  font-size: 0.875rem;
-  line-height: 1.65;
-  color: var(--vp-c-text-2);
-  max-width: 520px;
-  margin: 0 auto 20px;
+  max-width: 680px;
 }
 
 /* ============================================
-   Manifesto Quote
+   Closing
    ============================================ */
-.manifesto-quote {
-  padding-bottom: var(--hp-section-gap);
+.closing {
   text-align: center;
+  padding-top: 8px;
 }
 
-.manifesto-text {
-  font-size: 1.625rem;
-  line-height: 1.5;
-  color: var(--vp-c-text-1);
-  font-style: italic;
-  max-width: 600px;
-  margin: 0 auto;
-  border: none;
-  padding: 0;
-  letter-spacing: -0.01em;
+.closing :deep(.thesis-banner) {
+  padding-bottom: 24px;
 }
 
-.manifesto-text em {
-  color: var(--vp-c-brand-1);
-  font-style: italic;
+.closing-line {
+  margin: 0;
+  font-size: 1.125rem;
+  color: var(--vp-c-text-2);
 }
 
-.manifesto-link {
+.closing-link {
   display: inline-block;
-  margin-top: 24px;
+  margin-top: 12px;
   font-size: 0.9375rem;
+  font-weight: 600;
   color: var(--vp-c-brand-1);
-  /* Underline so the link isn't distinguished by color alone (WCAG 1.4.1) */
   text-decoration: underline;
   text-underline-offset: 3px;
-  font-weight: 600;
   transition: opacity 0.2s;
 }
 
-.manifesto-link:hover {
+.closing-link:hover {
   opacity: 0.75;
 }
 
-/* ============================================
-   Final CTA
-   ============================================ */
-.final-cta {
-  text-align: center;
-  padding: 48px 0 16px;
-  border-top: 1px solid var(--hp-border);
-}
-
-.cta-install {
-  margin-bottom: 24px;
-}
-
-.cta-code {
-  display: inline-block;
-  padding: 14px 28px;
-  border-radius: var(--hp-radius);
-  background: var(--hp-surface);
-  border: 1px solid var(--hp-border);
-  font-size: 1rem;
-  font-family: var(--vp-font-family-mono);
-  color: var(--vp-c-text-1);
-  letter-spacing: 0.02em;
-}
-
-.cta-prompt {
-  color: var(--vp-c-brand-1);
-  margin-right: 6px;
-  user-select: none;
-}
-
-/* ============================================
-   Responsive
-   ============================================ */
-@media (max-width: 768px) {
-  .home-page {
-    --hp-section-gap: 64px;
-  }
-
-  .pain-cards {
-    grid-template-columns: 1fr;
-  }
-
-  .section-title {
-    font-size: 1.625rem;
-  }
-}
-
-@media (max-width: 900px) {
-  .hero-grid {
-    grid-template-columns: 1fr;
-    gap: 40px;
-  }
-  .hero { text-align: center; }
-  .hero-sub { margin-left: auto; margin-right: auto; }
-  .hero-actions { justify-content: center; }
-}
-
-@media (max-width: 640px) {
-  .hero {
-    padding: 48px 0 var(--hp-section-gap);
-  }
-
-  .hero-headline {
-    font-size: 2.25rem;
-  }
-
-  .hero-sub {
-    font-size: 1rem;
-  }
-
-  .nav-links {
-    gap: 16px;
-  }
-
-  .nav-links a {
-    font-size: 0.75rem;
-  }
-
-  .step-marker {
-    width: 28px;
-  }
-
-  .step-number {
-    width: 28px;
-    height: 28px;
-    font-size: 0.75rem;
-  }
-
-  .manifesto-text {
-    font-size: 1.25rem;
-  }
+.closing-actions {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-top: 40px;
 }
 
 /* ============================================
@@ -1177,7 +998,8 @@ details[open] .faq-question::before {
    ============================================ */
 .hp-footer {
   margin-top: 4rem;
-  padding: 2rem 1.5rem 3rem;
+  padding-top: 2rem;
+  padding-bottom: 3rem;
   border-top: 1px solid var(--hp-border);
   text-align: center;
 }
@@ -1187,7 +1009,7 @@ details[open] .faq-question::before {
   flex-wrap: wrap;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
+  gap: 24px;
   margin-bottom: 0.75rem;
 }
 
@@ -1205,14 +1027,86 @@ details[open] .faq-question::before {
   text-decoration-thickness: 2px;
 }
 
-.hp-footer-sep {
-  color: var(--vp-c-text-3);
-}
-
 .hp-footer-meta {
   color: var(--vp-c-text-2);
   font-size: 0.875rem;
   margin: 0;
 }
 
+/* ============================================
+   Responsive
+   ============================================ */
+@media (max-width: 900px) {
+  .hero-grid,
+  .quick-start-grid,
+  .agent-grid,
+  .teams-grid,
+  .faq-grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 36px;
+  }
+
+  .hero-sub {
+    max-width: var(--hp-measure);
+  }
+
+  .review-points {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  .home-page {
+    --hp-section-gap: 64px;
+  }
+
+  .section-title {
+    font-size: 1.625rem;
+  }
+
+  .teams {
+    padding: 56px 0;
+  }
+}
+
+@media (max-width: 640px) {
+  .hero {
+    padding-top: 40px;
+  }
+
+  .hero-headline {
+    font-size: 2.25rem;
+  }
+
+  .hero-sub {
+    font-size: 1rem;
+  }
+
+  .nav-links {
+    gap: 18px;
+  }
+
+  .nav-links a {
+    font-size: 0.8125rem;
+  }
+
+  .nav-github-text {
+    display: none;
+  }
+
+  .step {
+    gap: 16px;
+  }
+
+  .step-marker {
+    width: 28px;
+  }
+
+  .step-number {
+    width: 28px;
+    height: 28px;
+    font-size: 0.75rem;
+  }
+}
 </style>
