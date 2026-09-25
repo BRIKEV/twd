@@ -26,8 +26,6 @@ npx twd-cli run --shard 2/4     # "I am job 2 of 4"
 npx twd-cli merge .twd/shards   # join the reports, decide the exit code
 ```
 
-Requires `twd-cli` 1.5.0 or newer.
-
 The `4` is how many jobs you are running, **not** how many tests exist. You never
 need to know the test count. Each shard boots its own browser, discovers the
 whole suite exactly as a normal run does, and keeps every 4th test. Add tests and

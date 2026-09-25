@@ -94,13 +94,13 @@ export default defineConfig({
           { text: 'Module Mocking', link: '/module-mocking' },
           { text: 'Theming', link: '/theming' },
           { text: 'CI Execution', link: '/ci-execution' },
-          { text: 'Sharding (beta)', link: '/sharding' },
-          { text: 'Layout Snapshots (beta)', link: '/layout-snapshots' },
           { text: 'Recording Runs', link: '/recording' },
           { text: 'Coverage', link: '/coverage' },
           { text: 'Contract Testing Setup', link: '/contract-testing-setup' },
           { text: 'Framework Integration', link: '/frameworks' },
           { text: 'Testing Library', link: '/testing-library' },
+          { text: 'Sharding (beta)', link: '/sharding' },
+          { text: 'Layout Snapshots (beta)', link: '/layout-snapshots' },
         ]
       },
       {
@@ -114,8 +114,21 @@ export default defineConfig({
           { text: 'Test quality', link: '/twd-ai/test-quality' },
           { text: 'Test flow gallery', link: '/twd-ai/flow-gallery' },
           { text: 'Watch your agent live', link: '/ai-remote-testing' },
-          { text: 'Plugin reference', link: '/claude-plugin' },
           { text: 'Context & prompts', link: '/agents' },
+        ]
+      },
+      {
+        text: 'Philosophy',
+        items: [
+          { text: 'TWD Manifesto', link: '/twd-manifesto' },
+          { text: 'Why Test While Developing', link: '/motivation' },
+        ]
+      },
+      {
+        text: 'Community',
+        items: [
+          { text: 'Community & Examples', link: '/community' },
+          { text: 'Accessibility Statement', link: '/accessibility-statement' },
         ]
       },
       {
@@ -139,20 +152,6 @@ export default defineConfig({
           { text: 'Test Functions', link: '/api/test-functions' },
           { text: 'TWD Commands', link: '/api/twd-commands' },
           { text: 'Assertions', link: '/api/assertions' },
-        ]
-      },
-      {
-        text: 'Philosophy',
-        items: [
-          { text: 'TWD Manifesto', link: '/twd-manifesto' },
-          { text: 'Why Test While Developing', link: '/motivation' },
-        ]
-      },
-      {
-        text: 'Community',
-        items: [
-          { text: 'Community & Examples', link: '/community' },
-          { text: 'Accessibility Statement', link: '/accessibility-statement' },
         ]
       }
     ],

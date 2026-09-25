@@ -81,13 +81,11 @@ get one video per test the branch added. [CI setup](/twd-ai/ci-setup)
 | `/twd:test-quality` | Grades test files and suggests how to improve them |
 | `/twd:test-flow-gallery` | Turns tests into Mermaid flowcharts and plain-language summaries |
 
-Full reference: [Claude Code plugin](/claude-plugin).
-
 ## Want to watch the agent work?
 
-Headless is the default because nobody needs to be watching. If you do want to see the
-tests run inside your own browser tab while the agent drives them, add
-[twd-relay](/ai-remote-testing).
+Headless is the default so the agent can run tests while you keep working — on other
+code, or alongside more agents. If you do want to see the tests run inside your own
+browser tab while the agent drives them, add [twd-relay](/ai-remote-testing).
 
 ## No skills support?
 

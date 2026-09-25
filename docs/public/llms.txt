@@ -55,7 +55,6 @@ Key features:
 - [Test Flow Gallery](https://twd.dev/twd-ai/flow-gallery): Generate visual flowcharts of test coverage with /twd:test-flow-gallery
 
 - [Watch Your Agent Live](https://twd.dev/ai-remote-testing): Optional twd-relay setup to see the agent's runs in your own browser tab
-- [Plugin Reference](https://twd.dev/claude-plugin): Every command and skill in the Claude Code plugin
 - [Context & Prompts](https://twd.dev/agents): A TWD context prompt for tools without skills support
 
 ## API Reference

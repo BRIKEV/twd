@@ -45,13 +45,6 @@ The relay is a WebSocket server that routes messages between the **browser** (wh
 4. Relay forwards to browser → tests execute → events stream back
 5. Client receives `run:complete` with all test results
 
-## Requirements
-
-::: warning Version requirements
-- **twd-js** `>=1.5.2` — earlier versions do not support the relay protocol
-- **twd-relay** `>=1.1.0` — earlier versions lack throttle-abort detection, heartbeat-based run recovery, and the tab indicator. `>=1.0.0` still works but without those safety features.
-:::
-
 ## Installation
 
 ```bash

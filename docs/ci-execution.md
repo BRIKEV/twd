@@ -65,7 +65,7 @@ Create `twd.config.json` in your repo to customize the runner:
 | `coverageDir` | string | `"./coverage"` | Output folder for coverage reports |
 | `nycOutputDir` | string | `"./.nyc_output"` | NYC temp folder |
 | `headless` | boolean | `true` | Run Chrome in headless mode |
-| `viewport` | object | `{ width: 1280, height: 800 }` | Browser viewport, set explicitly on every run since 1.6.0 — a run used to inherit Puppeteer's implicit size, which made [layout snapshots](/layout-snapshots) unreproducible and could have been changed by a Puppeteer upgrade without a word. `record.viewport` wins while [recording](/recording) |
+| `viewport` | object | `{ width: 1280, height: 800 }` | Browser viewport, set explicitly on every run so [layout snapshots](/layout-snapshots) stay reproducible. `record.viewport` wins while [recording](/recording) |
 | `puppeteerArgs` | string[] | `["--no-sandbox", "--disable-setuid-sandbox"]` | Extra arguments for Puppeteer |
 | `retryCount` | number | `2` | Number of times to attempt each test before reporting failure. Default is 2 (one normal attempt + one retry). Set to 1 to disable retries. |
 | `protocolTimeout` | number | `300000` | Puppeteer CDP `protocolTimeout` in ms (5 min). Tests run in chunks, so this bounds a **single chunk's browser call**, not the entire run. Raise it (e.g. `600000`) for slow CI or if individual chunks hang. `0` means no timeout. |
@@ -121,7 +121,7 @@ npx twd-cli run --changed-since main
 npx twd-cli run --changed-since "$BASE_SHA"
 ```
 
-Requires `twd-cli` 1.7.0 or newer. What it selects, precisely:
+What it selects, precisely:
 
 - Titles come from **added lines only**, in files matching `*.twd.test.*`. The
   suffix is what identifies a test file, not the directory — and it also keeps a
@@ -241,35 +241,6 @@ If you prefer full control over each CI step, or your CI isn't GitHub Actions, s
 ```
 
 > **Tip:** Puppeteer 24+ no longer downloads Chrome automatically. Either run `npx puppeteer browsers install chrome` in CI or cache `~/.cache/puppeteer` between runs to avoid repeated downloads.
-
-## Custom Runner Options
-
-If you're building your own CI script instead of using `twd-cli`, you can pass options to the `TestRunner` constructor to handle flaky CI environments:
-
-```ts
-const runner = new TestRunner({
-  onStart: () => {},
-  onPass: (test, retryAttempt) => {
-    const suffix = retryAttempt ? ` (retry ${retryAttempt}/2)` : '';
-    testStatus.push({ id: test.id, status: "pass" });
-    console.log(`✓ ${test.name}${suffix}`);
-  },
-  onFail: (test, err) => {
-    testStatus.push({ id: test.id, status: "fail", error: err.message });
-  },
-  onSkip: (test) => {
-    testStatus.push({ id: test.id, status: "skip" });
-  },
-}, { retryCount: 2 });
-```
-
-| Option | Type | Default | Description |
-|--------|------|---------|-------------|
-| `retryCount` | number | `1` | Total number of attempts per test. `1` means no retry. `2` means one original attempt + one retry on failure. |
-
-The `onPass` callback receives an optional second parameter `retryAttempt` — it is `undefined` when the test passes on the first attempt, or the attempt number (2+) when it passes on a retry. This lets you log which tests are flaky so you can fix them later.
-
-> **Note:** The retry mechanism re-runs the full test cycle (beforeEach hooks → test → afterEach hooks) on each attempt, ensuring clean state between retries.
 
 ## Cross-browser testing (experimental)
 

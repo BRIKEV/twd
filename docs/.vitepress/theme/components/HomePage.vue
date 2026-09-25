@@ -1,7 +1,6 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import ThesisBanner from './ThesisBanner.vue'
-import AdoptionLineDiagram from './AdoptionLineDiagram.vue'
 import DeferredVideo from './DeferredVideo.vue'
 import InstallCommand from './InstallCommand.vue'
 import RecordReview from './RecordReview.vue'
@@ -432,22 +431,6 @@ claude plugin install twd@twd-ai</code></pre>
         <ul class="link-list">
           <li><a href="/recording#recording-in-ci" data-umami-event="home_review_record_docs">Set up the record job in CI</a></li>
         </ul>
-      </section>
-
-      <!-- Ecosystem (adoption line) -->
-      <section class="ecosystem hp-container" aria-labelledby="ecosystem-heading">
-        <h2 id="ecosystem-heading" class="section-title">One package today. The rest when you need it.</h2>
-        <p class="section-sub">
-          Start with the sidebar. Add the agent loop when you use AI, then CI recordings and
-          contract validation on the same runner.
-        </p>
-        <div class="ecosystem-diagram">
-          <AdoptionLineDiagram />
-        </div>
-        <p class="ecosystem-note">
-          Want to watch your agent drive the tests in your own browser tab?
-          <a href="/twd-relay" data-umami-event="home_ecosystem_relay">twd-relay</a> is optional.
-        </p>
       </section>
 
       <!-- For teams -->
@@ -1024,30 +1007,6 @@ claude plugin install twd@twd-ai</code></pre>
 
 .review .link-list {
   margin-top: 32px;
-}
-
-/* ============================================
-   Ecosystem
-   ============================================ */
-.ecosystem {
-  padding-bottom: var(--hp-section-gap);
-}
-
-.ecosystem-note {
-  margin: 20px auto 0;
-  max-width: var(--hp-measure);
-  text-align: center;
-  font-size: 14px;
-  color: var(--vp-c-text-2);
-}
-
-.ecosystem-note a {
-  color: var(--vp-c-brand-1);
-  font-weight: 600;
-}
-
-.ecosystem-diagram {
-  margin-top: 40px;
 }
 
 /* ============================================

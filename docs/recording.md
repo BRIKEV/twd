@@ -15,9 +15,6 @@ npx twd-cli run --record --test "checkout flow"
 
 That writes one clip per matched test into `twd-artifacts/`.
 
-Needs `twd-cli` 1.8.0 or newer for one clip per test and the
-[`record` action](#recording-in-ci); recording itself has been there since 1.4.0.
-
 ## Prerequisite: ffmpeg
 
 Recording needs ffmpeg, and `mp4` — the default format — needs **version 8 or
@@ -149,8 +146,7 @@ npx twd-cli run --record --record-pace 500 --test "checkout flow"
 npx twd-cli run --record --record-pace 0 --test "checkout flow"
 ```
 
-Values between 200 and 500 tend to read well. Pacing needs `twd-js` 1.9.0 or
-newer. On an older version the run still records, unpaced, and warns.
+Values between 200 and 500 tend to read well.
 
 ## Watching a run without recording it
 
@@ -257,15 +253,6 @@ the job. Both now fail up front instead. Install ffmpeg 8 — there is no flag t
 brings the old behaviour back.
 :::
 
-## Playback
-
-`mp4` clips are converted to H.264 at the end of the run, so they open in
-QuickTime, Preview, any browser and any video player — and land about four times
-smaller. Nothing to configure.
-
-If that conversion fails you get a warning rather than a failed run, and the clip
-is still a complete recording; it just wants Chrome or VLC to play it.
-
 ## Recording in CI
 
 The `record` composite action installs a known-good ffmpeg, records, and uploads
@@ -359,7 +346,7 @@ produce an unchanged video.
 | Input | Default | Description |
 |-------|---------|-------------|
 | `working-directory` | `.` | Directory where `twd.config.json` lives |
-| `cli-version` | `1.8.0` | `twd-cli` version to run, pinned so the same workflow keeps producing the same recording |
+| `cli-version` | pinned per action release | `twd-cli` version to run, pinned so the same workflow keeps producing the same recording |
 | `changed-since` | (empty) | Record only the tests this branch added or changed since this ref. Needs history, so set `fetch-depth: 0`. Mutually exclusive with `tests` |
 | `tests` | (empty) | Newline-separated test titles. Each becomes one `--test` filter, and filters are OR'd. Mutually exclusive with `changed-since` |
 | `pace` | (empty) | Milliseconds held after each command, passed to `--record-pace`. Empty uses the CLI default of 300; `0` disables pacing |
