@@ -3,7 +3,7 @@ import { defineConfig } from 'vitepress'
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
   title: "TWD",
-  description: "In-browser frontend testing for React, Vue, Angular, Solid, Astro, Nuxt, HTMX and vanilla JS. Runs in your real browser via Vite, Webpack, or a CDN.",
+  description: "Frontend tests that run in the browser you develop in. Your AI agent writes, runs and fixes them headlessly. React, Vue, Angular, Solid, Astro, Nuxt, HTMX.",
   base: '/',
   cleanUrls: true,
   sitemap: {
@@ -18,25 +18,26 @@ export default defineConfig({
     ['link', { rel: 'manifest', href: '/site.webmanifest' }],
     
     // SEO Meta Tags
-    ['meta', { name: 'keywords', content: 'testing, deterministic, browser-validation, ai-testing, ai-agent, react, vue, angular, solidjs, astro, nuxt, react-router, htmx, vanilla-js, javascript, typescript, twd, test-while-developing, browser-testing, mock-service-worker, vite, webpack, cdn, esm, contract-testing, openapi, code-coverage, component-testing, unit-testing, jsdom, testing-library, browser-component-tests' }],
+    ['meta', { name: 'keywords', content: 'testing, deterministic, twd-cli, headless-testing, claude-code, ai-coding-agent, agent-skills, pr-recording, test-recording, browser-validation, ai-testing, ai-agent, react, vue, angular, solidjs, astro, nuxt, react-router, htmx, vanilla-js, javascript, typescript, twd, test-while-developing, browser-testing, mock-service-worker, vite, webpack, cdn, esm, contract-testing, openapi, code-coverage, component-testing, unit-testing, jsdom, testing-library, browser-component-tests' }],
 
     // Open Graph Tags
     ['meta', { property: 'og:type', content: 'website' }],
-    ['meta', { property: 'og:title', content: 'TWD - Test While Developing' }],
-    ['meta', { property: 'og:description', content: 'Frontend testing ecosystem. Write component and flow tests in your real browser, let the AI agent iterate, validate every mock against the real API. Testing isn\'t a phase, it\'s how you build.' }],
+    ['meta', { property: 'og:title', content: 'TWD — Frontend tests that run in the browser you develop in' }],
+    ['meta', { property: 'og:description', content: 'A sidebar in your dev server runs component and flow tests against your real app. Your AI agent writes them, runs them headlessly with twd-cli and fixes them until green, and every pull request can get a video per test.' }],
     ['meta', { property: 'og:url', content: 'https://twd.dev/' }],
     ['meta', { property: 'og:site_name', content: 'TWD' }],
-    ['meta', { property: 'og:image', content: 'https://twd.dev/twd_ecosystem.png' }],
-    ['meta', { property: 'og:image:width', content: '2104' }],
-    ['meta', { property: 'og:image:height', content: '1436' }],
-    ['meta', { property: 'og:image:alt', content: 'TWD Ecosystem — develop, test, validate, ship' }],
+    ['meta', { property: 'og:image', content: 'https://twd.dev/twd-og.png' }],
+    ['meta', { property: 'og:image:type', content: 'image/png' }],
+    ['meta', { property: 'og:image:width', content: '1200' }],
+    ['meta', { property: 'og:image:height', content: '630' }],
+    ['meta', { property: 'og:image:alt', content: 'TWD: frontend tests that run in the browser you develop in, with the TWD sidebar running tests next to the app' }],
 
     // Twitter Card Tags
     ['meta', { name: 'twitter:card', content: 'summary_large_image' }],
-    ['meta', { name: 'twitter:title', content: 'TWD - Test While Developing' }],
-    ['meta', { name: 'twitter:description', content: 'Frontend testing ecosystem. Write tests in your real browser, let the AI agent iterate, validate every mock against the real API.' }],
-    ['meta', { name: 'twitter:image', content: 'https://twd.dev/twd_ecosystem.png' }],
-    ['meta', { name: 'twitter:image:alt', content: 'TWD Ecosystem — develop, test, validate, ship' }],
+    ['meta', { name: 'twitter:title', content: 'TWD — Frontend tests that run in the browser you develop in' }],
+    ['meta', { name: 'twitter:description', content: 'Frontend tests against your real app. Your AI agent writes, runs and fixes them headlessly, and every pull request can get a video per test.' }],
+    ['meta', { name: 'twitter:image', content: 'https://twd.dev/twd-og.png' }],
+    ['meta', { name: 'twitter:image:alt', content: 'TWD: frontend tests that run in the browser you develop in, with the TWD sidebar running tests next to the app' }],
 
     // Additional Meta Tags (TWD brand: darker teal for light theme)
     ['meta', { name: 'theme-color', content: '#123956' }],
@@ -52,7 +53,7 @@ export default defineConfig({
       name: 'TWD (Test While Developing)',
       applicationCategory: 'DeveloperApplication',
       operatingSystem: 'Web',
-      description: 'In-browser frontend testing for React, Vue, Angular, Solid, Astro, Nuxt, HTMX and vanilla JS. Runs in your real browser via Vite, Webpack, or a CDN.',
+      description: 'Frontend tests that run in the browser you develop in. Your AI agent writes, runs and fixes them headlessly. React, Vue, Angular, Solid, Astro, Nuxt, HTMX.',
       url: 'https://twd.dev/',
       author: { '@type': 'Organization', name: 'BRIKEV', url: 'https://github.com/BRIKEV' },
       license: 'https://opensource.org/licenses/MIT',
@@ -64,7 +65,7 @@ export default defineConfig({
       '@context': 'https://schema.org',
       '@type': 'VideoObject',
       name: 'TWD: the AI agent testing loop',
-      description: 'An AI agent writes a test, runs it in your real browser through TWD, reads the failure, fixes it, and re-runs until green — no screenshots, no separate browser.',
+      description: 'An AI agent writes a TWD test, runs it against the real app, reads the failure, fixes it, and re-runs until green. Results come back as structured text, not screenshots.',
       thumbnailUrl: 'https://twd.dev/images/twd-agent-loop-poster.jpg',
       uploadDate: '2026-07-24',
       duration: 'PT1M11S',
