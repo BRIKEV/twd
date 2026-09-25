@@ -325,7 +325,7 @@ Create React App uses Webpack instead of Vite, so there is no `twd()` plugin —
 First, install the mock service worker into your public directory:
 
 ```bash
-npx twd-js init public
+npx twd-js init public --save
 ```
 
 Then initialize TWD in your entry file:
@@ -720,7 +720,7 @@ describe('Counter', () => {
 ### Notes for Vanilla JS
 
 - **Use esm.sh.** It resolves TWD's internal React dependency automatically, so the import map stays to three lines. Pin the version (`twd-js@1.8.2`) so loads stay deterministic.
-- **The service worker is served from your own origin.** Browsers only register same-origin service workers, so the library loads from the CDN but `mock-sw.js` must sit on your domain. Run `npx twd-js init public` (or download it from the CDN) and point `serviceWorkerUrl` at it. Request mocking then works exactly like a bundled setup.
+- **The service worker is served from your own origin.** Browsers only register same-origin service workers, so the library loads from the CDN but `mock-sw.js` must sit on your domain. Run `npx twd-js init public --save` (or download it from the CDN) and point `serviceWorkerUrl` at it. Request mocking then works exactly like a bundled setup.
 - **Give TWD an app root.** With no framework root element, wrap your app in a known root such as `<div id="app">` (or pass `rootSelector` to `initTWD`) so `screenDom` queries stay scoped.
 - **Tests survive a migration.** These are plain Testing Library queries and TWD commands. If you later move this app to React, Vue, or Solid, the same test files keep working, only the setup changes.
 

@@ -71,7 +71,7 @@ Skip to [Manual setup for non-Vite projects](#manual-setup-for-non-vite-projects
 If you plan to use API mocking, set up the mock service worker:
 
 ```bash
-npx twd-js init public
+npx twd-js init public --save
 ```
 
 This copies the required `mock-sw.js` file to your public directory.
@@ -202,7 +202,7 @@ Make sure you:
 ### Service Worker Issues
 
 If API mocking isn't working:
-1. Run `npx twd-js init public` to install the service worker
+1. Run `npx twd-js init public --save` to install the service worker
 2. Make sure request mocking is enabled (`serviceWorker: true` is the default in both the plugin and `initTWD`)
 3. Check the browser console for service worker registration errors
 
