@@ -7,6 +7,15 @@ description: "Mock HTTP requests with TWD's built-in service worker: setup, dyna
 
 TWD provides API mocking through its own mock service worker integration, allowing you to isolate your frontend from external systems and validate UI behavior against deterministic network boundaries.
 
+<div class="concept-video">
+  <DeferredVideo
+    src="/videos/twd-concept-mock.mp4"
+    poster="/images/twd-concept-mock-poster.jpg"
+    label="A test declares twd.mockRequest for POST /api/pay. Clicking Pay sends the request to the TWD service worker, which answers with the mocked response while the real API is never called. The same test then passes on every one of 100 runs."
+    name="mocking video"
+  />
+</div>
+
 ::: tip Cross-origin requests
 The mock service worker intercepts **all** requests made from the page, including cross-origin URLs (e.g., third-party APIs like payment providers or analytics services). You can mock any URL your frontend calls, regardless of domain.
 :::

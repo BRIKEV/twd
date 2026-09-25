@@ -9,6 +9,15 @@ description: Record a TWD test run to video with twd-cli, paced at human speed s
 trace, it is an artifact a person will actually watch: attach the flow to a pull
 request, drop it in your docs, or send it to someone who asked what changed.
 
+<div class="concept-video">
+  <DeferredVideo
+    src="/videos/twd-concept-record.mp4"
+    poster="/images/twd-concept-record-poster.jpg"
+    label="npx twd-cli run --record records a paced headless run of the checkout flow. The resulting checkout-flow.mp4 is attached to a pull request, where a reviewer watches it and approves."
+    name="recording video"
+  />
+</div>
+
 ```bash
 npx twd-cli run --record --test "checkout flow"
 ```
@@ -165,6 +174,15 @@ That adds a speed selector to the sidebar header:
 | `Off (full speed)` | `0` |
 | `Slow (300ms)` | `300` |
 | `Slower (600ms)` | `600` |
+
+<div class="concept-video">
+  <DeferredVideo
+    src="/videos/twd-concept-pace.mp4"
+    poster="/images/twd-concept-pace-poster.jpg"
+    label="A run at full speed finishes instantly. The Speed selector in the TWD sidebar is switched to Slow (300ms), and the rerun types the card number and name one key at a time while the sidebar highlights each command."
+    name="speed selector video"
+  />
+</div>
 
 The choice is remembered for the tab, so it survives the reloads you get while
 editing tests. It applies to every run in the page, including runs triggered

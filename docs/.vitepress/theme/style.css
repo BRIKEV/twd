@@ -79,3 +79,11 @@ html:not(.dark) .vp-doc span[style*="--shiki-light:#6A737D" i] {
   --pipeline-green: #3fb950;
   --pipeline-gold: #d29922;
 }
+
+/* Short silent concept clips embedded in guide pages (DeferredVideo). */
+.concept-video {
+  margin: 24px 0;
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 8px;
+  overflow: hidden;
+}
