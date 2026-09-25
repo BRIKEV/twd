@@ -71,7 +71,7 @@ Run `npm run dev` and open the app. The sidebar appears in your browser; click p
 
 <LandingCrossLinks
   :links='[
-    { href: "/twd-relay", title: "Add an AI agent to the loop", blurb: "Let AI agents run tests in your real browser and stream structured results back." },
+    { href: "/ai-overview", title: "Add an AI agent to the loop", blurb: "Your agent writes the tests, runs them headlessly with twd-cli, and fixes them until green." },
     { href: "/contract-testing", title: "Validate every mock", blurb: "Catch mock-vs-API drift in CI before it reaches production." },
     { href: "/getting-started", title: "Read the full setup guide", blurb: "Complete twd-js installation, configuration, and patterns reference." }
   ]'

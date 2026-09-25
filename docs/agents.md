@@ -7,7 +7,7 @@ title: AI Context & Prompts
 This page covers the TWD prompts and context files that help any AI coding assistant (Claude, Cursor, Copilot, Windsurf, etc.) generate correct TWD test code. These prompts work with all AI tools.
 
 ::: tip Claude Code users
-For the full autonomous experience — where Claude writes tests, runs them, and fixes failures automatically — see the [Claude Code Plugin](/claude-plugin) page.
+For the full autonomous experience — where Claude writes tests, runs them, and fixes failures automatically — see [Get started with AI agents](/ai-overview) page.
 :::
 
 ## Quick Start: Agent Skills (Recommended)
@@ -26,7 +26,7 @@ For **Claude Code**, use the plugin instead for the full autonomous agent experi
 claude plugin install BRIKEV/twd-ai
 ```
 
-See the [AI Integration overview](/ai-overview) for details.
+See [Get started with AI agents](/ai-overview) for details.
 
 ## Alternative: Manual Setup
 

@@ -1,106 +1,93 @@
 ---
-title: AI Integration
-description: Use TWD with AI agents for autonomous test writing, generation, and execution
+title: Get started with AI agents
+description: Install the TWD skills in Claude Code or any agent, set up your project, and let the agent write, run and fix your frontend tests headlessly.
 ---
 
-# AI Integration
+# Get started with AI agents
 
-TWD produces structured, deterministic output that AI agents can parse and act on autonomously. Every test run returns the same pass/fail signals for the same inputs — no flakiness, no ambiguity. Whether you want your AI assistant to write better tests, generate tests from browser interactions, or run tests autonomously, TWD has you covered.
+Your agent writes the test, runs it headlessly against your dev server with `twd-cli`,
+reads the failure, fixes it and re-runs until green. Results come back as structured
+text, not screenshots, so the loop stays cheap in tokens. Nothing for you to open,
+focus or watch.
 
-## Watch the loop
+## 1. Install the skills
 
-An AI agent writes a test, runs it in your real browser through TWD, reads the failure, fixes it, and re-runs until green — no screenshots, no separate browser.
+::: code-group
 
-<YouTubeEmbed id="0G6xunet-HI" title="TWD: the AI agent testing loop" />
-
-## Claude Code Plugin
-
-The fastest way to get AI-powered TWD testing is with the [Claude Code plugin](https://github.com/BRIKEV/twd-ai). It gives Claude a full set of testing skills.
-
-```bash
+```bash [Claude Code]
 claude plugin marketplace add BRIKEV/twd-ai
 claude plugin install twd@twd-ai
 ```
 
-| Command / Skill | What it does |
-|---------|-------------|
-| `/twd:setup` | Analyzes your project, asks configuration questions, and generates `.claude/twd-patterns.md` |
-| `twd` skill | Autonomous agent — writes tests, runs them via twd-relay, fixes failures, and re-runs until green |
-| `/twd:ci-setup` | Installs `twd-cli`, configures coverage, and generates a GitHub Actions workflow |
-| `/twd:test-gaps` | Scans routes, finds untested pages, and classifies risk (HIGH/MEDIUM/LOW) |
-| `/twd:test-quality` | Grades test files on journey coverage, interaction depth, assertion quality, and edge cases |
-| `/twd:test-flow-gallery` | Generates Mermaid flowcharts and plain-language summaries from test files |
-
-The agent works in a forked context — your main conversation stays clean while tests are written, run, and fixed. If a test still fails after 3 fix attempts, it's marked as `it.skip` so it doesn't block the rest.
-
-**[Read the full Claude Code Plugin guide](/claude-plugin)**
-
-### Other AI Tools
-
-For Cursor, Copilot, Windsurf, and other AI tools, use the [Agent Skills CLI](https://github.com/vercel-labs/skills):
-
-```bash
+```bash [Other agents]
+# Cursor, Copilot, Windsurf, Codex and anything that reads Agent Skills
 npx skills add BRIKEV/twd-ai
 ```
 
-This copies TWD context into your AI tool's configuration file (`.cursorrules`, `.github/copilot-instructions.md`, etc.).
-
----
-
-## Features at a Glance
-
-### 1. AI Context
-
-Teach your AI assistant (Claude, Cursor, Copilot, Windsurf) how to write correct TWD tests by providing a comprehensive prompt with API reference, patterns, and common pitfalls.
-
-**Best for:** Getting AI to write correct TWD tests on the first try.
-
-[Read the AI Context & Prompts guide](/agents)
-
----
-
-### 2. AI Remote Testing (twd-relay)
-
-A WebSocket bridge that lets AI agents trigger test runs and stream results back, without launching a browser automation tool. Your Vite dev server is already running with TWD loaded -- the relay just connects to it.
-
-**Best for:** AI agents that need to run tests, read failures, and iterate.
-
-[Read the AI Remote Testing guide](/ai-remote-testing)
-
----
-
-### 3. Claude Code Plugin — Autonomous Testing
-
-When you install the TWD plugin, Claude Code can automatically invoke the testing agent when it detects the task is relevant. For example:
-
-- You ask: _"Add a search filter to the orders page"_
-- Claude implements the feature
-- Claude sees the `twd` skill and spawns it as a sub-agent
-- The agent writes tests, runs them via `npx twd-relay run`, reads failures, fixes, and re-runs until green
-- Claude continues with your task
-
-You can also set up your project interactively with `/twd:setup`.
-
-**[Read the full Claude Code Plugin guide](/claude-plugin)**
-
----
-
-## How They Work Together
-
-You can use these features independently or combine them:
-
-```
-AI Context & Prompts   →  AI writes better tests (any AI tool)
-AI Remote Testing      →  AI runs tests and reads results (any AI tool)
-Claude Code Plugin     →  AI writes, runs, and fixes tests autonomously
-```
-
-A typical workflow:
-
-1. **Plugin / Skills** install TWD context into your AI agent
-2. The **TWD agent** writes tests, runs them via twd-relay, and fixes failures
-3. The autonomous validation loop continues until all tests pass
-
-::: info MCP Integration
-TWD also provides an experimental MCP server that works with Playwright MCP to generate test code from browser automation data. This is an early feature — if you're interested, check the [TWD MCP package](https://github.com/BRIKEV/twd-mcp) for details.
 :::
+
+Claude Code gets the full plugin: slash commands plus the `twd` skill it invokes on its
+own. Other agents get the same skills through the
+[Agent Skills CLI](https://github.com/vercel-labs/skills).
+
+## 2. Set up your project
+
+```plaintext
+/twd:setup
+```
+
+It detects your framework, dev server and state libraries, asks what it can't detect
+(auth, third-party modules to mock), then installs `twd-js` and `twd-cli`, wires the
+Vite plugin, writes `twd.config.json` and a `test:ci` script, and generates
+`.claude/twd-patterns.md` — the file every future test is written against.
+[What setup does in detail](/twd-ai/setup)
+
+## 3. Start your dev server and ask for tests
+
+```bash
+npm run dev
+```
+
+Then, in your agent:
+
+```plaintext
+Write tests for the checkout page
+```
+
+The agent checks your dev server is up, writes flow tests, runs the new file with
+`npx twd-cli run --test "…"`, fixes what fails, checks everything your branch changed,
+and closes with a full-suite run. [How the loop works](/twd-ai/writing-tests)
+
+<YouTubeEmbed id="0G6xunet-HI" title="TWD: the AI agent testing loop" />
+
+## 4. Put it in CI
+
+```plaintext
+/twd:ci-setup
+```
+
+Generates a GitHub Actions workflow that runs the same `twd-cli` your agent used, with
+optional coverage, contract validation and a **record label**: tag a pull request and
+get one video per test the branch added. [CI setup](/twd-ai/ci-setup)
+
+## Everything the plugin gives you
+
+| Command / skill | What it does |
+|---|---|
+| `/twd:setup` | Configures TWD for your project and generates `.claude/twd-patterns.md` |
+| `twd` skill | Writes tests, runs them headlessly with twd-cli, fixes failures, re-runs until green |
+| `/twd:ci-setup` | GitHub Actions workflow, coverage, contract validation, PR recordings |
+| `/twd:test-gaps` | Finds untested pages and ranks them by risk |
+| `/twd:test-quality` | Grades test files and suggests how to improve them |
+| `/twd:test-flow-gallery` | Turns tests into Mermaid flowcharts and plain-language summaries |
+
+## Want to watch the agent work?
+
+Headless is the default so the agent can run tests while you keep working — on other
+code, or alongside more agents. If you do want to see the tests run inside your own
+browser tab while the agent drives them, add [twd-relay](/ai-remote-testing).
+
+## No skills support?
+
+Paste the [TWD context prompt](/agents) into your tool's rules file instead. It teaches
+any assistant the TWD API, patterns and pitfalls.

@@ -78,34 +78,11 @@ export default defineConfig({
     nav: [
       { text: 'Home', link: '/' },
       { text: 'Core Concepts', link: '/getting-started' },
-      { text: 'AI Workflow', link: '/twd-ai/setup' },
-      {
-        text: 'Tools',
-        items: [
-          { text: 'twd-js', link: '/twd-js' },
-          { text: 'twd-relay', link: '/twd-relay' },
-          { text: 'Contract Testing', link: '/contract-testing' },
-        ],
-      },
+      { text: 'AI agents', link: '/ai-overview' },
       { text: 'API Reference', link: '/api/' }
     ],
 
     sidebar: [
-      {
-        text: 'Tools',
-        items: [
-          { text: 'twd-js', link: '/twd-js' },
-          { text: 'twd-relay', link: '/twd-relay' },
-          { text: 'Contract Testing', link: '/contract-testing' },
-        ],
-      },
-      {
-        text: 'Philosophy',
-        items: [
-          { text: 'TWD Manifesto', link: '/twd-manifesto' },
-          { text: 'Why Test While Developing', link: '/motivation' },
-        ]
-      },
       {
         text: 'Core Concepts',
         items: [
@@ -117,34 +94,34 @@ export default defineConfig({
           { text: 'Module Mocking', link: '/module-mocking' },
           { text: 'Theming', link: '/theming' },
           { text: 'CI Execution', link: '/ci-execution' },
-          { text: 'Sharding (beta)', link: '/sharding' },
-          { text: 'Layout Snapshots (beta)', link: '/layout-snapshots' },
           { text: 'Recording Runs', link: '/recording' },
           { text: 'Coverage', link: '/coverage' },
-          { text: 'AI Integration', link: '/ai-overview' },
           { text: 'Contract Testing Setup', link: '/contract-testing-setup' },
           { text: 'Framework Integration', link: '/frameworks' },
           { text: 'Testing Library', link: '/testing-library' },
+          { text: 'Sharding (beta)', link: '/sharding' },
+          { text: 'Layout Snapshots (beta)', link: '/layout-snapshots' },
         ]
       },
       {
-        text: 'AI Workflow',
+        text: 'AI agents',
         items: [
-          { text: 'Project Setup', link: '/twd-ai/setup' },
-          { text: 'Writing Tests', link: '/twd-ai/writing-tests' },
-          { text: 'CI Setup', link: '/twd-ai/ci-setup' },
-          { text: 'Test Gap Analysis', link: '/twd-ai/test-gaps' },
-          { text: 'Test Quality', link: '/twd-ai/test-quality' },
-          { text: 'Test Flow Gallery', link: '/twd-ai/flow-gallery' },
+          { text: 'Get started', link: '/ai-overview' },
+          { text: 'Project setup', link: '/twd-ai/setup' },
+          { text: 'Writing & running tests', link: '/twd-ai/writing-tests' },
+          { text: 'CI setup', link: '/twd-ai/ci-setup' },
+          { text: 'Test gap analysis', link: '/twd-ai/test-gaps' },
+          { text: 'Test quality', link: '/twd-ai/test-quality' },
+          { text: 'Test flow gallery', link: '/twd-ai/flow-gallery' },
+          { text: 'Watch your agent live', link: '/ai-remote-testing' },
+          { text: 'Context & prompts', link: '/agents' },
         ]
       },
       {
-        text: 'AI Reference',
+        text: 'Philosophy',
         items: [
-          { text: 'Overview', link: '/ai-overview' },
-          { text: 'Claude Code Plugin', link: '/claude-plugin' },
-          { text: 'AI Context & Prompts', link: '/agents' },
-          { text: 'AI Remote Testing', link: '/ai-remote-testing' },
+          { text: 'TWD Manifesto', link: '/twd-manifesto' },
+          { text: 'Why Test While Developing', link: '/motivation' },
         ]
       },
       {

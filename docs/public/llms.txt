@@ -1,6 +1,6 @@
 # TWD (Test While Developing)
 
-> TWD is an in-browser testing ecosystem that runs tests directly in the browser with a sidebar UI for instant visual feedback. It works with any frontend that renders in the browser (React, Vue, Angular, Solid, Astro, Nuxt, HTMX, and vanilla JS) on Vite, Webpack, or a CDN, and includes an AI workflow that lets agents write, run, and iterate on tests autonomously, plus contract testing that validates every mock against the real OpenAPI spec.
+> TWD is an in-browser testing ecosystem that runs tests directly in the browser with a sidebar UI for instant visual feedback. It works with any frontend that renders in the browser (React, Vue, Angular, Solid, Astro, Nuxt, HTMX, and vanilla JS) on Vite, Webpack, or a CDN, and ships skills for AI agents (Claude Code plugin, or any agent via `npx skills add BRIKEV/twd-ai`) that write tests, run them headlessly with twd-cli, and iterate until green, plus contract testing that validates every mock against the real OpenAPI spec.
 
 Full documentation as a single file: https://twd.dev/llms-full.txt
 
@@ -12,7 +12,7 @@ Key features:
 - Component tests in a real browser via Testing Library render(), running alongside flow tests in one session under one coverage report
 - CI/CD execution with twd-cli (headless Puppeteer, coverage)
 - Contract testing — validate mocks against OpenAPI specs
-- Token-efficient AI agent testing via WebSocket relay (no Playwright, no screenshots)
+- Token-efficient AI agent testing: agents run tests headlessly with twd-cli and read one structured summary (no Playwright, no screenshots); twd-relay optionally lets you watch the run in your own tab
 - Multi-framework support: React, Vue, Angular, Solid, Astro, Nuxt, plus HTMX and vanilla JS with no build step (via a CDN)
 - Claude Code plugin and skills for autonomous test writing
 
@@ -21,11 +21,11 @@ Key features:
 - [TWD Manifesto](https://twd.dev/twd-manifesto): Core principles — test while building, test what you own mock what you don't
 - [Why Test While Developing](https://twd.dev/motivation): Motivation, philosophy, and what changes in the AI era
 
-## Tools
+## Packages
 
 - [twd-js](https://twd.dev/twd-js): Core sidebar — frontend tests that run in your real browser (React, Vue, Angular, Solid)
-- [twd-relay](https://twd.dev/twd-relay): Token-efficient browser testing for AI agents — Claude Code (or any agent) triggers test runs in your live app and streams structured pass/fail results back over WebSocket
 - [Contract Testing](https://twd.dev/contract-testing): Validate every mock against your OpenAPI spec — drift surfaces in CI, not in production
+- [twd-relay](https://twd.dev/twd-relay): Optional — watch your AI agent's test runs live in your own browser tab
 
 ## Core Concepts
 
@@ -41,25 +41,21 @@ Key features:
 - [Sharding](https://twd.dev/sharding): Split a long run across parallel CI jobs with --shard and twd-cli merge (beta)
 - [Layout Snapshots](https://twd.dev/layout-snapshots): Catch layout regressions with twd.matchLayout, an in-browser geometry snapshot with no SaaS or containers (beta)
 - [Coverage](https://twd.dev/coverage): Code coverage reporting
-- [AI Integration](https://twd.dev/ai-overview): Connecting AI agents — relay, Claude plugin, skills, context prompts
 - [Contract Testing Setup](https://twd.dev/contract-testing-setup): OpenAPI validation setup, contract options, supported validations, PR reports
 - [Theming](https://twd.dev/theming): Customizing TWD sidebar appearance
 
-## AI Workflow
+## AI agents
 
-- [Project Setup](https://twd.dev/twd-ai/setup): Configure your project for AI-driven testing with /twd:setup
-- [Writing Tests](https://twd.dev/twd-ai/writing-tests): Write and execute tests with the /twd skill via twd-relay
-- [CI Setup](https://twd.dev/twd-ai/ci-setup): Generate GitHub Actions workflows with /twd:ci-setup
+- [Get started with AI agents](https://twd.dev/ai-overview): Install the skills (Claude Code plugin or npx skills add), run /twd:setup, ask for tests
+- [Project Setup](https://twd.dev/twd-ai/setup): Configure your project for AI-driven testing with /twd:setup — installs twd-js and twd-cli, writes twd.config.json
+- [Writing & Running Tests](https://twd.dev/twd-ai/writing-tests): The headless loop — probe, scoped run, fix, branch check, full suite, all with twd-cli
+- [CI Setup](https://twd.dev/twd-ai/ci-setup): Generate GitHub Actions workflows with /twd:ci-setup, including coverage, contract validation and PR recordings
 - [Test Gap Analysis](https://twd.dev/twd-ai/test-gaps): Find untested routes and classify risk with /twd:test-gaps
 - [Test Quality](https://twd.dev/twd-ai/test-quality): Grade test quality across four dimensions with /twd:test-quality
 - [Test Flow Gallery](https://twd.dev/twd-ai/flow-gallery): Generate visual flowcharts of test coverage with /twd:test-flow-gallery
 
-## AI Reference
-
-- [AI Overview](https://twd.dev/ai-overview): Using TWD with AI tools
-- [Claude Plugin](https://twd.dev/claude-plugin): Claude Code plugin for TWD
-- [AI Agents & Context](https://twd.dev/agents): Context and prompts for AI agents
-- [AI Remote Testing](https://twd.dev/ai-remote-testing): Remote testing patterns
+- [Watch Your Agent Live](https://twd.dev/ai-remote-testing): Optional twd-relay setup to see the agent's runs in your own browser tab
+- [Context & Prompts](https://twd.dev/agents): A TWD context prompt for tools without skills support
 
 ## API Reference
 

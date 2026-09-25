@@ -18,7 +18,7 @@ The mock service worker intercepts **all** requests made from the page, includin
 First, set up the mock service worker in your project:
 
 ```bash
-npx twd-js init public
+npx twd-js init public --save
 ```
 
 This command copies the required `mock-sw.js` file to your public directory.
@@ -933,7 +933,7 @@ await twd.mockRequest("flexibleMatch", {
 
 ### Service Worker Issues
 
-1. **Reinstall service worker**: Run `npx twd-js init public` again
+1. **Reinstall service worker**: Run `npx twd-js init public --save` again
 2. **Check public directory**: Ensure `mock-sw.js` exists
 3. **Browser cache**: Try hard refresh (Ctrl+Shift+R)
 

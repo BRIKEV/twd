@@ -1,46 +1,37 @@
 ---
-title: Token-efficient browser testing for AI agents — TWD
-description: Claude Code triggers tests in your live app and streams structured results back. No Playwright, no screenshots, no token bleed.
+title: Watch your AI agent test in your own browser — twd-relay
+description: Optional companion to the headless agent loop. twd-relay runs your agent's TWD tests inside the browser tab you already have open, so you can watch them live.
 head:
   - - meta
     - property: og:title
-      content: Token-efficient browser testing for AI agents — TWD
+      content: Watch your AI agent test in your own browser — twd-relay
   - - meta
     - property: og:description
-      content: Claude Code triggers tests in your live app and streams structured results back. No Playwright, no screenshots, no token bleed.
+      content: Optional companion to the headless agent loop. twd-relay runs your agent's TWD tests inside the browser tab you already have open, so you can watch them live.
 ---
 
 <LandingHero
-  eyebrow="twd-relay · for AI agents"
-  title="Token-efficient browser testing for AI agents."
-  subtitle="Claude Code (or any agent) triggers test runs in your live app and streams structured pass/fail results back. No Playwright, no screenshots, no token bleed. Just write → run → read → fix."
-  cta-label="Read the setup guide"
+  eyebrow="twd-relay · optional"
+  title="Watch your agent test in your own browser."
+  subtitle="Your agent runs TWD tests headlessly by default. Add twd-relay when you want to see them run live in the tab you already have open — for pairing, demos, or understanding a tricky test."
+  cta-label="Set up live watching"
   cta-href="/ai-remote-testing"
   image-src="/images/twd-skill.gif"
-  image-alt="AI agent driving TWD: writing tests and watching them pass in the browser sidebar"
+  image-alt="AI agent driving TWD: tests running and passing in the browser sidebar"
 />
 
-## The problem
+## When you want it
 
-AI agents write test files that look correct, then never execute them in a real browser. No one notices until production does.
+The [agent loop](/ai-overview) runs with `twd-cli`: a headless browser against your dev
+server, so nobody has to keep a tab open and several agents can work in parallel. That is
+the default, and it stays the default.
 
-The other half of the problem: when agents *do* try to run browser tests, they usually reach for Playwright or Puppeteer MCP. Those tools talk back in screenshots and DOM dumps, and the payloads are huge. A single test run can burn thousands of tokens on visual diffs the agent can't really reason about.
+`twd-relay` is for the moments a human wants to **watch**. It connects the agent to the
+tab you are looking at, so the sidebar lights up as each test runs. The trade-off: the tab
+has to stay open and in the foreground while the run lasts.
 
-twd-relay fixes both halves. It runs in the dev server you already have open, and it streams structured pass/fail events back over a WebSocket. Text, not pixels.
-
-## How it works
-
-`twd-relay` is a WebSocket server that routes messages between your **browser** (where TWD is loaded) and an **external client** (an AI agent, a script, or the bundled `twd-relay run` CLI).
-
-```
-┌───────────────┐     WebSocket      ┌──────────────────┐                ┌───────────────────┐
-│  AI Agent     │◄──────────────────►│  Relay Server    │◄──────────────►│  Browser (TWD)    │
-│  (Claude Code,│   /__twd/ws        │  (Vite plugin or │                │  Test runner +    │
-│   script)     │                    │   standalone)    │                │  sidebar UI       │
-└───────────────┘                    └──────────────────┘                └───────────────────┘
-```
-
-The agent sends `{ type: "run", scope: "all" }`; the relay forwards it to the browser; TWD runs the tests; per-test events stream back; the relay closes with `run:complete`. The agent reads pass/fail/skip counts, opens failing test names, fixes the code, and runs again. A tight write/run/read/fix loop with no browser automation runtime, no screenshots, and a tiny token footprint per iteration.
+To review what an agent built after the fact, [record the tests](/recording) instead — a
+clip per test lands on the pull request, with nobody watching live.
 
 ## Quick start
 
@@ -62,19 +53,17 @@ export default defineConfig({
 })
 ```
 
-Add a line to your agent's instructions file (e.g. `CLAUDE.md`):
+Start `npm run dev`, open the app, and ask your agent to _"run the tests with twd-relay so
+I can watch"_. Or trigger a run yourself:
 
-```text
-To run TWD tests: npx twd-relay run
-Exit code 0 means all tests passed; 1 means failures or errors.
+```bash
+npx twd-relay run
 ```
-
-That's it. Start `npm run dev`, leave the tab open, and your agent can drive tests on demand.
 
 <LandingCrossLinks
   :links='[
-    { href: "/twd-js", title: "Start with the sidebar", blurb: "Get the core in-browser testing experience before plugging in AI." },
-    { href: "/contract-testing", title: "Validate mocks in CI", blurb: "Once your tests are stable, gate every mock against the real OpenAPI spec." },
-    { href: "/ai-remote-testing", title: "Full protocol and recovery docs", blurb: "Heartbeats, throttle-abort, RUN_IN_PROGRESS recovery, and the message protocol." }
+    { href: "/ai-overview", title: "Get started with AI agents", blurb: "Install the skills and let your agent write, run and fix tests headlessly." },
+    { href: "/recording", title: "Record instead of watching", blurb: "One clip per test on the pull request, reviewed whenever you have a minute." },
+    { href: "/ai-remote-testing", title: "Full relay setup and recovery docs", blurb: "Non-Vite setup, throttled tabs, stuck runs and the message protocol." }
   ]'
 />

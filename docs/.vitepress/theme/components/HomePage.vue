@@ -1,12 +1,28 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import ThesisBanner from './ThesisBanner.vue'
-import AdoptionLineDiagram from './AdoptionLineDiagram.vue'
 import DeferredVideo from './DeferredVideo.vue'
 import InstallCommand from './InstallCommand.vue'
 import RecordReview from './RecordReview.vue'
 
 const loaded = ref(false)
+
+// Quick start tabs: agent paths first, the hand-written install last.
+const quickStartTabs = [
+  { id: 'claude', label: 'Claude Code' },
+  { id: 'agents', label: 'Other agents' },
+  { id: 'manual', label: 'Manual install' },
+]
+const quickStartTab = ref('claude')
+
+function onTabKey(event, index) {
+  const step = event.key === 'ArrowRight' ? 1 : event.key === 'ArrowLeft' ? -1 : 0
+  if (!step) return
+  event.preventDefault()
+  const next = quickStartTabs[(index + step + quickStartTabs.length) % quickStartTabs.length]
+  quickStartTab.value = next.id
+  document.getElementById(`qs-tab-${next.id}`)?.focus()
+}
 
 onMounted(() => {
   requestAnimationFrame(() => { loaded.value = true })
@@ -42,7 +58,7 @@ const faqs = [
   },
   {
     q: 'Can AI actually write good tests?',
-    a: 'The twd-ai plugin does more than generate test files. It runs them, reads real failures, fixes them, checks quality and finds gaps. The tests execute in a real browser, so a pass means something. Results come back as structured text over WebSocket rather than screenshots or DOM snapshots, which keeps token usage well below tools like Playwright MCP.'
+    a: 'The twd-ai plugin does more than generate test files. It runs them, reads real failures, fixes them, checks quality and finds gaps. The tests execute in a real browser against your real app, so a pass means something. twd-cli runs them headlessly and prints one structured summary rather than screenshots or DOM snapshots, which keeps token usage well below tools like Playwright MCP.'
   },
   {
     q: 'How does the record label work?',
@@ -122,83 +138,232 @@ const faqs = [
           <div class="quick-start-intro">
             <h2 id="quick-start-heading" class="section-title">Up and running in three steps</h2>
             <p class="section-sub">
-              One package, one plugin, and the sidebar is in your browser. Nothing else to launch
-              and no second browser to keep open.
+              Let your AI agent set TWD up and write the first tests, or do it by hand. Either
+              way it is one package and one plugin, with no second browser to keep open.
             </p>
             <p class="quick-start-frameworks">
               Works with React, Vue, Angular, Solid, Astro, Nuxt, HTMX and vanilla JS, on Vite,
               Webpack or a CDN.
             </p>
             <ul class="link-list">
-              <li><a href="/getting-started">Full getting started guide</a></li>
+              <li><a href="/ai-overview">Get started with AI agents</a></li>
+              <li><a href="/getting-started">Manual getting started guide</a></li>
               <li><a href="/frameworks">Setup for your framework</a></li>
             </ul>
           </div>
 
-          <ol class="steps">
-            <li class="step">
-              <div class="step-marker" aria-hidden="true">
-                <span class="step-number">1</span>
-                <span class="step-line"></span>
-              </div>
-              <div class="step-content">
-                <h3 class="step-title">Install and add the Vite plugin</h3>
-                <div class="code-block">
-                  <div class="code-header"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span><span class="code-filename">terminal</span></div>
-                  <pre><code>npm install twd-js</code></pre>
-                </div>
-                <div class="code-block">
-                  <div class="code-header"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span><span class="code-filename">vite.config.ts</span></div>
-                  <pre><code><span class="hl-keyword">import</span> { defineConfig } <span class="hl-keyword">from</span> <span class="hl-string">'vite'</span>;
-<span class="hl-keyword">import</span> { twd } <span class="hl-keyword">from</span> <span class="hl-string">'twd-js/vite-plugin'</span>;
+          <div class="qs-tabs-wrap">
+            <div class="qs-tabs" role="tablist" aria-label="How to get started">
+              <button
+                v-for="(tab, index) in quickStartTabs"
+                :id="`qs-tab-${tab.id}`"
+                :key="tab.id"
+                type="button"
+                role="tab"
+                class="qs-tab"
+                :class="{ 'is-active': quickStartTab === tab.id }"
+                :aria-selected="quickStartTab === tab.id"
+                :aria-controls="`qs-panel-${tab.id}`"
+                :tabindex="quickStartTab === tab.id ? 0 : -1"
+                :data-umami-event="`home_quick_start_tab_${tab.id}`"
+                @click="quickStartTab = tab.id"
+                @keydown="onTabKey($event, index)"
+              >
+                {{ tab.label }}
+              </button>
+            </div>
 
-<span class="hl-keyword">export default</span> <span class="hl-func">defineConfig</span>({
-  <span class="hl-prop">plugins</span>: [<span class="hl-func">twd</span>({ <span class="hl-prop">open</span>: <span class="hl-keyword">true</span> })],
-});</code></pre>
-                </div>
-              </div>
-            </li>
+            <ol
+              v-show="quickStartTab === 'claude'"
+              id="qs-panel-claude"
+              class="steps"
+              role="tabpanel"
+              aria-labelledby="qs-tab-claude"
+            >
+                <li class="step">
+                  <div class="step-marker" aria-hidden="true">
+                    <span class="step-number">1</span>
+                    <span class="step-line"></span>
+                  </div>
+                  <div class="step-content">
+                    <h3 class="step-title">Install the plugin</h3>
+                    <div class="code-block">
+                      <div class="code-header"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span><span class="code-filename">terminal</span></div>
+                      <pre><code>claude plugin marketplace add BRIKEV/twd-ai
+claude plugin install twd@twd-ai</code></pre>
+                    </div>
+                  </div>
+                </li>
+                <li class="step">
+                  <div class="step-marker" aria-hidden="true">
+                    <span class="step-number">2</span>
+                    <span class="step-line"></span>
+                  </div>
+                  <div class="step-content">
+                    <h3 class="step-title">Set up your project</h3>
+                    <div class="code-block code-block--compact">
+                      <div class="code-header"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span><span class="code-filename">claude code</span></div>
+                      <pre><code>/twd:setup</code></pre>
+                    </div>
+                    <p class="step-desc">
+                      Detects your stack, installs twd-js and twd-cli, and wires the Vite plugin.
+                    </p>
+                  </div>
+                </li>
+                <li class="step step--last">
+                  <div class="step-marker" aria-hidden="true">
+                    <span class="step-number">3</span>
+                  </div>
+                  <div class="step-content">
+                    <h3 class="step-title">Ask for tests</h3>
+                    <div class="code-block code-block--compact">
+                      <div class="code-header"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span><span class="code-filename">terminal</span></div>
+                      <pre><code>npm run dev</code></pre>
+                    </div>
+                    <div class="code-block code-block--compact">
+                      <div class="code-header"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span><span class="code-filename">your agent</span></div>
+                      <pre><code>Write tests for the checkout page</code></pre>
+                    </div>
+                    <p class="step-desc">
+                      The agent writes the tests, runs them headlessly with twd-cli against your
+                      dev server, fixes what fails and re-runs until green.
+                    </p>
+                  </div>
+                </li>
+            </ol>
 
-            <li class="step">
-              <div class="step-marker" aria-hidden="true">
-                <span class="step-number">2</span>
-                <span class="step-line"></span>
-              </div>
-              <div class="step-content">
-                <h3 class="step-title">Write a test</h3>
-                <div class="code-block">
-                  <div class="code-header"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span><span class="code-filename">src/App.twd.test.ts</span></div>
-                  <pre><code><span class="hl-keyword">import</span> { twd, userEvent, screenDom } <span class="hl-keyword">from</span> <span class="hl-string">"twd-js"</span>;
-<span class="hl-keyword">import</span> { describe, it } <span class="hl-keyword">from</span> <span class="hl-string">"twd-js/runner"</span>;
+            <ol
+              v-show="quickStartTab === 'agents'"
+              id="qs-panel-agents"
+              class="steps"
+              role="tabpanel"
+              aria-labelledby="qs-tab-agents"
+            >
+                <li class="step">
+                  <div class="step-marker" aria-hidden="true">
+                    <span class="step-number">1</span>
+                    <span class="step-line"></span>
+                  </div>
+                  <div class="step-content">
+                    <h3 class="step-title">Add the skills</h3>
+                    <div class="code-block code-block--compact">
+                      <div class="code-header"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span><span class="code-filename">terminal</span></div>
+                      <pre><code>npx skills add BRIKEV/twd-ai</code></pre>
+                    </div>
+                    <p class="step-desc">
+                      Cursor, Copilot, Windsurf, Codex and any agent that reads Agent Skills.
+                    </p>
+                  </div>
+                </li>
+                <li class="step">
+                  <div class="step-marker" aria-hidden="true">
+                    <span class="step-number">2</span>
+                    <span class="step-line"></span>
+                  </div>
+                  <div class="step-content">
+                    <h3 class="step-title">Run the setup skill</h3>
+                    <div class="code-block code-block--compact">
+                      <div class="code-header"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span><span class="code-filename">your agent</span></div>
+                      <pre><code>Set up TWD for this project</code></pre>
+                    </div>
+                    <p class="step-desc">
+                      Detects your stack, installs twd-js and twd-cli, and wires the Vite plugin.
+                    </p>
+                  </div>
+                </li>
+                <li class="step step--last">
+                  <div class="step-marker" aria-hidden="true">
+                    <span class="step-number">3</span>
+                  </div>
+                  <div class="step-content">
+                    <h3 class="step-title">Ask for tests</h3>
+                    <div class="code-block code-block--compact">
+                      <div class="code-header"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span><span class="code-filename">terminal</span></div>
+                      <pre><code>npm run dev</code></pre>
+                    </div>
+                    <div class="code-block code-block--compact">
+                      <div class="code-header"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span><span class="code-filename">your agent</span></div>
+                      <pre><code>Write tests for the checkout page</code></pre>
+                    </div>
+                    <p class="step-desc">
+                      The agent writes the tests, runs them headlessly with twd-cli against your
+                      dev server, fixes what fails and re-runs until green.
+                    </p>
+                  </div>
+                </li>
+            </ol>
 
-<span class="hl-func">describe</span>(<span class="hl-string">"App"</span>, () => {
-  <span class="hl-func">it</span>(<span class="hl-string">"should render the heading"</span>, <span class="hl-keyword">async</span> () => {
-    <span class="hl-keyword">await</span> twd.<span class="hl-func">visit</span>(<span class="hl-string">"/"</span>);
-    <span class="hl-keyword">const</span> heading = screenDom.<span class="hl-func">getByRole</span>(<span class="hl-string">"heading"</span>, { <span class="hl-prop">level</span>: <span class="hl-num">1</span> });
-    twd.<span class="hl-func">should</span>(heading, <span class="hl-string">"be.visible"</span>);
-  });
-});</code></pre>
+              <ol
+                v-show="quickStartTab === 'manual'"
+                id="qs-panel-manual"
+                class="steps"
+                role="tabpanel"
+                aria-labelledby="qs-tab-manual"
+              >
+              <li class="step">
+                <div class="step-marker" aria-hidden="true">
+                  <span class="step-number">1</span>
+                  <span class="step-line"></span>
                 </div>
-              </div>
-            </li>
+                <div class="step-content">
+                  <h3 class="step-title">Install and add the Vite plugin</h3>
+                  <div class="code-block">
+                    <div class="code-header"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span><span class="code-filename">terminal</span></div>
+                    <pre><code>npm install twd-js</code></pre>
+                  </div>
+                  <div class="code-block">
+                    <div class="code-header"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span><span class="code-filename">vite.config.ts</span></div>
+                    <pre><code><span class="hl-keyword">import</span> { defineConfig } <span class="hl-keyword">from</span> <span class="hl-string">'vite'</span>;
+  <span class="hl-keyword">import</span> { twd } <span class="hl-keyword">from</span> <span class="hl-string">'twd-js/vite-plugin'</span>;
 
-            <li class="step step--last">
-              <div class="step-marker" aria-hidden="true">
-                <span class="step-number">3</span>
-              </div>
-              <div class="step-content">
-                <h3 class="step-title">Run your dev server</h3>
-                <div class="code-block code-block--compact">
-                  <div class="code-header"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span><span class="code-filename">terminal</span></div>
-                  <pre><code>npm run dev</code></pre>
+  <span class="hl-keyword">export default</span> <span class="hl-func">defineConfig</span>({
+    <span class="hl-prop">plugins</span>: [<span class="hl-func">twd</span>({ <span class="hl-prop">open</span>: <span class="hl-keyword">true</span> })],
+  });</code></pre>
+                  </div>
                 </div>
-                <p class="step-desc">
-                  The sidebar appears next to your app. Press play on any test and watch it run
-                  against the page you are building.
-                </p>
-              </div>
-            </li>
-          </ol>
+              </li>
+
+              <li class="step">
+                <div class="step-marker" aria-hidden="true">
+                  <span class="step-number">2</span>
+                  <span class="step-line"></span>
+                </div>
+                <div class="step-content">
+                  <h3 class="step-title">Write a test</h3>
+                  <div class="code-block">
+                    <div class="code-header"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span><span class="code-filename">src/App.twd.test.ts</span></div>
+                    <pre><code><span class="hl-keyword">import</span> { twd, userEvent, screenDom } <span class="hl-keyword">from</span> <span class="hl-string">"twd-js"</span>;
+  <span class="hl-keyword">import</span> { describe, it } <span class="hl-keyword">from</span> <span class="hl-string">"twd-js/runner"</span>;
+
+  <span class="hl-func">describe</span>(<span class="hl-string">"App"</span>, () => {
+    <span class="hl-func">it</span>(<span class="hl-string">"should render the heading"</span>, <span class="hl-keyword">async</span> () => {
+      <span class="hl-keyword">await</span> twd.<span class="hl-func">visit</span>(<span class="hl-string">"/"</span>);
+      <span class="hl-keyword">const</span> heading = screenDom.<span class="hl-func">getByRole</span>(<span class="hl-string">"heading"</span>, { <span class="hl-prop">level</span>: <span class="hl-num">1</span> });
+      twd.<span class="hl-func">should</span>(heading, <span class="hl-string">"be.visible"</span>);
+    });
+  });</code></pre>
+                  </div>
+                </div>
+              </li>
+
+              <li class="step step--last">
+                <div class="step-marker" aria-hidden="true">
+                  <span class="step-number">3</span>
+                </div>
+                <div class="step-content">
+                  <h3 class="step-title">Run your dev server</h3>
+                  <div class="code-block code-block--compact">
+                    <div class="code-header"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span><span class="code-filename">terminal</span></div>
+                    <pre><code>npm run dev</code></pre>
+                  </div>
+                  <p class="step-desc">
+                    The sidebar appears next to your app. Press play on any test and watch it run
+                    against the page you are building.
+                  </p>
+                </div>
+              </li>
+            </ol>
+          </div>
         </div>
       </section>
 
@@ -208,9 +373,11 @@ const faqs = [
           <div class="agent-intro">
             <h2 id="agent-loop-heading" class="section-title">Your agent writes the tests. TWD makes them run.</h2>
             <p class="section-sub">
-              The agent writes a test, runs it in your real browser through TWD, reads the failure,
-              fixes it and re-runs until green. Results come back as structured text, not
-              screenshots, so the loop stays cheap in tokens.
+              The agent writes a test, runs it headlessly against your real app with twd-cli,
+              reads the failure, fixes it and re-runs until green. Results come back as
+              structured text, not screenshots, so the loop stays cheap in tokens, and nobody
+              has to keep a browser tab open. Want to watch it anyway? Add twd-relay and it runs
+              in your own tab.
             </p>
             <ul class="link-list">
               <li>
@@ -218,7 +385,8 @@ const faqs = [
                   Watch the narrated walkthrough on YouTube<span class="visually-hidden"> (opens in new tab)</span>
                 </a>
               </li>
-              <li><a href="/twd-ai/setup">Set up the agent workflow</a></li>
+              <li><a href="/ai-overview">Get started with AI agents</a></li>
+              <li><a href="/twd-relay">Watch your agent live with twd-relay</a></li>
             </ul>
           </div>
           <div class="agent-visual">
@@ -263,18 +431,6 @@ const faqs = [
         <ul class="link-list">
           <li><a href="/recording#recording-in-ci" data-umami-event="home_review_record_docs">Set up the record job in CI</a></li>
         </ul>
-      </section>
-
-      <!-- Ecosystem (adoption line) -->
-      <section class="ecosystem hp-container" aria-labelledby="ecosystem-heading">
-        <h2 id="ecosystem-heading" class="section-title">One package today. The rest when you need it.</h2>
-        <p class="section-sub">
-          Start with the sidebar. Add the agent loop, CI recordings and contract validation when
-          your team is ready for each one.
-        </p>
-        <div class="ecosystem-diagram">
-          <AdoptionLineDiagram />
-        </div>
       </section>
 
       <!-- For teams -->
@@ -628,6 +784,51 @@ const faqs = [
   max-width: 420px;
 }
 
+.qs-tabs-wrap {
+  min-width: 0;
+}
+
+.qs-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-bottom: 20px;
+  padding: 4px;
+  border: 1px solid var(--hp-border);
+  border-radius: var(--hp-radius);
+  background: var(--hp-surface);
+  width: fit-content;
+  max-width: 100%;
+}
+
+.qs-tab {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  color: var(--vp-c-text-2);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 8px 14px;
+  border-radius: calc(var(--hp-radius) - 4px);
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.qs-tab:hover {
+  color: var(--vp-c-text-1);
+}
+
+.qs-tab.is-active {
+  background: var(--vp-c-brand-soft);
+  color: var(--vp-c-brand-1);
+}
+
+.qs-tab:focus-visible {
+  outline: 2px solid var(--vp-c-brand-1);
+  outline-offset: 2px;
+}
+
 .steps {
   list-style: none;
   margin: 0;
@@ -806,17 +1007,6 @@ const faqs = [
 
 .review .link-list {
   margin-top: 32px;
-}
-
-/* ============================================
-   Ecosystem
-   ============================================ */
-.ecosystem {
-  padding-bottom: var(--hp-section-gap);
-}
-
-.ecosystem-diagram {
-  margin-top: 40px;
 }
 
 /* ============================================
