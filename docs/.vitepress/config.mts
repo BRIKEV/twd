@@ -3,7 +3,7 @@ import { defineConfig } from 'vitepress'
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
   title: "TWD",
-  description: "Frontend tests that run in the browser you develop in. Your AI agent writes, runs and fixes them headlessly. React, Vue, Angular, Solid, Astro, Nuxt, HTMX.",
+  description: "In-browser frontend testing for React, Vue, Angular, Solid, Astro, Nuxt, HTMX and vanilla JS. Runs in your real browser via Vite, Webpack, or a CDN.",
   base: '/',
   cleanUrls: true,
   sitemap: {
@@ -23,7 +23,7 @@ export default defineConfig({
     // Open Graph Tags
     ['meta', { property: 'og:type', content: 'website' }],
     ['meta', { property: 'og:title', content: 'TWD — Frontend tests that run in the browser you develop in' }],
-    ['meta', { property: 'og:description', content: 'A sidebar in your dev server runs component and flow tests against your real app. Your AI agent writes them, runs them headlessly with twd-cli and fixes them until green, and every pull request can get a video per test.' }],
+    ['meta', { property: 'og:description', content: 'Component and flow tests that run in the browser you develop in, against your real app. Write them yourself or let your AI agent write, run and fix them, and every pull request can get a video per test.' }],
     ['meta', { property: 'og:url', content: 'https://twd.dev/' }],
     ['meta', { property: 'og:site_name', content: 'TWD' }],
     ['meta', { property: 'og:image', content: 'https://twd.dev/twd-og.png' }],
@@ -35,7 +35,7 @@ export default defineConfig({
     // Twitter Card Tags
     ['meta', { name: 'twitter:card', content: 'summary_large_image' }],
     ['meta', { name: 'twitter:title', content: 'TWD — Frontend tests that run in the browser you develop in' }],
-    ['meta', { name: 'twitter:description', content: 'Frontend tests against your real app. Your AI agent writes, runs and fixes them headlessly, and every pull request can get a video per test.' }],
+    ['meta', { name: 'twitter:description', content: 'Frontend tests that run in the browser you develop in. Write them yourself or let your AI agent do it, and every pull request can get a video per test.' }],
     ['meta', { name: 'twitter:image', content: 'https://twd.dev/twd-og.png' }],
     ['meta', { name: 'twitter:image:alt', content: 'TWD: frontend tests that run in the browser you develop in, with the TWD sidebar running tests next to the app' }],
 
@@ -53,7 +53,7 @@ export default defineConfig({
       name: 'TWD (Test While Developing)',
       applicationCategory: 'DeveloperApplication',
       operatingSystem: 'Web',
-      description: 'Frontend tests that run in the browser you develop in. Your AI agent writes, runs and fixes them headlessly. React, Vue, Angular, Solid, Astro, Nuxt, HTMX.',
+      description: 'In-browser frontend testing for React, Vue, Angular, Solid, Astro, Nuxt, HTMX and vanilla JS. Runs in your real browser via Vite, Webpack, or a CDN.',
       url: 'https://twd.dev/',
       author: { '@type': 'Organization', name: 'BRIKEV', url: 'https://github.com/BRIKEV' },
       license: 'https://opensource.org/licenses/MIT',
