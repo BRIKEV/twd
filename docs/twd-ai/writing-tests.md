@@ -4,18 +4,35 @@ outline: deep
 
 # Writing Tests
 
-Once your project is configured with `/twd:setup`, you can start writing tests using the `/twd` skill. This is the core of the TWD + AI workflow — the agent writes tests, executes them in your real browser, and iterates until they pass.
+Once your project is configured with `/twd:setup`, you can start writing tests using the `/twd` skill. This is the core of the TWD + AI workflow — the agent writes tests, runs them against your real app, and iterates until they pass.
 
 ## How It Works
 
-The `/twd` skill doesn't just generate test code — it also **runs** the tests using the [twd-relay](https://github.com/BRIKEV/twd-relay) package. The relay connects the AI agent to your browser via WebSocket, so the agent can:
+The `twd` skill doesn't just generate test code — it also **runs** the tests with
+[twd-cli](/ci-execution), which drives a headless Chrome against your running dev
+server. Only the dev server has to be up; there is no tab for you to keep open.
 
-1. Write a test based on your project patterns (from `.claude/twd-patterns.md`)
-2. Execute it in the browser through the relay
-3. Read the results (pass/fail with error details)
-4. Fix any failures and re-run
+1. **Probes your dev server** with one `curl`. If nothing answers, it tells you the dev
+   command from `.claude/twd-patterns.md` and stops — it never asks you to open a tab.
+2. **Writes flow tests** that follow your project patterns.
+3. **Runs the new file first**, scoped with `npx twd-cli run --test "<describe>"`.
+4. **Fixes failures** one at a time, re-running only the failing test.
+5. **Checks your branch** with `npx twd-cli run --changed-since origin/main`.
+6. **Closes with the full suite**, `npx twd-cli run`, and reports.
 
-The token usage is remarkably low — the relay executes commands in the terminal that interact with the browser and send text-based results back to the agent. No screenshots or heavy payloads.
+The token usage stays low: twd-cli prints one structured summary block — passed, failed,
+retried — and that is all the agent reads. No screenshots or DOM dumps. A test that only
+passed on a retry is reported as a finding, not hidden in a green run.
+
+When it's done, the agent offers to **record** the tests it wrote, so you can watch them
+instead of reading them:
+
+```bash
+npx twd-cli run --record --test "<test title>"
+```
+
+Want to watch the tests run live in your own browser while the agent works? That is
+opt-in with [twd-relay](/ai-remote-testing).
 
 ## Test-First Approach
 
@@ -27,7 +44,7 @@ We recommend running `/twd` **before** implementing a feature. Write the tests f
 
 ## See It in Action
 
-Here's a video showing the full workflow — from writing tests to executing them in the browser:
+Here's a video showing the workflow — from writing tests to executing them:
 
 <video controls width="100%">
   <source src="/images/tutorial/videos/twd-skill.mp4" type="video/mp4">

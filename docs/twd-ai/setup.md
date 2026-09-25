@@ -70,7 +70,12 @@ This file becomes the **source of truth** for how tests should be written in you
   - Third-party dependencies
   - State management
 - Generates a project-specific testing config
-- Optionally installs and configures TWD for you
+- Installs `twd-js` and `twd-cli` as dev dependencies and wires the `twd()` Vite plugin
+- Writes a two-key `twd.config.json` (your app URL, coverage off) and a `test:ci` script
+- On a project that already has TWD, installs only what is missing and leaves your existing wiring alone
+
+Nothing else to install: the agent runs tests headlessly with `twd-cli`, so there is no
+browser tab to keep open.
 
 ## How It Looks in Practice
 

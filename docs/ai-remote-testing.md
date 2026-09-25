@@ -1,25 +1,31 @@
 ---
-title: AI Remote Testing
-description: Connect AI coding agents to your running app via TWD Relay WebSocket bridge
+title: Watch your agent live
+description: Optional — use twd-relay to see the tests your AI agent runs inside your own browser tab, while it works.
 ---
 
-# AI Remote Testing
+# Watch your agent live
 
-TWD Relay (`twd-relay`) enables AI coding agents (Claude Code, Cursor, Copilot) to **run in-browser validations and read structured results** — without launching a browser automation tool. Your app is already running with TWD loaded; the relay just opens a WebSocket bridge so external tools can trigger test runs and stream results back.
+By default your agent runs tests headlessly with [twd-cli](/twd-ai/writing-tests):
+nothing to open, nothing to watch, nothing a human has to keep in the foreground. That is
+the right default for an agent.
 
-::: tip How this fits with other AI features
-- **[AI Context](/agents)** — Prompts so your AI writes correct TWD tests
-- **AI Remote Testing (this page)** — Run tests and get results via WebSocket
-- **[Auto-Invocation](/ai-overview#_3-auto-invocation-claude-code)** — Claude Code automatically writes, runs, and fixes tests
+Sometimes you want to **see** it — pair with the agent, demo the loop, or understand why
+a test behaves the way it does. `twd-relay` runs the same tests inside the browser tab you
+already have open, so the sidebar lights up as the agent drives it.
+
+::: tip When to reach for it
+- **Use it** when a human wants to watch the run in their own tab.
+- **Skip it** for unattended work, parallel agents, and CI — twd-cli is faster to trust
+  there, and needs no tab. To review what an agent built after the fact,
+  [record the tests](/recording) instead.
 :::
 
-## The Problem
+With the [twd-ai skills](/ai-overview) installed, ask for it explicitly — for example
+_"run the tests with twd-relay so I can watch"_. The skill only uses relay when you ask.
 
-During development, TWD tests run in the browser and results appear in the sidebar UI. That's great when you're looking at it — but AI agents run as CLI processes. They can edit files and run shell commands, but they can't click "Run All" in your browser.
-
-The irony: the Vite dev server is already running, TWD is already loaded, and the test runner exists in memory. We just need a bridge.
-
-AI agents need structured, parseable pass/fail signals — not screenshots or DOM dumps. The relay provides exactly that: consistent results the agent can read and act on.
+The relay needs your tab to stay open **and in the foreground**: Chrome throttles
+background tabs, which slows tests down 5–30× and can abort the run. See
+[Handling throttled or stuck runs](#handling-throttled-or-stuck-runs).
 
 ## How It Works
 
@@ -165,15 +171,15 @@ Duration: 0.1s
 
 ### From an AI agent
 
-Add this to your agent's instructions (e.g. `CLAUDE.md`):
+With the [twd-ai skills](/ai-overview), just ask: _"run the tests with twd-relay so I can
+watch"_. Without the skills, tell the agent when to use it in its instructions (e.g.
+`CLAUDE.md`):
 
 ```text
-To run TWD tests: npx twd-relay run
-To run specific tests: npx twd-relay run --test "test name"
+When I ask to watch a run: npx twd-relay run  (or --test "test name")
+Otherwise run tests headlessly: npx twd-cli run
 Exit code 0 means all tests passed; 1 means failures or errors.
 ```
-
-The agent can then run tests, read failures, fix code, and re-run — all in a tight loop without needing Playwright or Puppeteer. This is the core AI iteration loop: write, run, read, fix, repeat.
 
 ## Visibility Fallback
 

@@ -26,7 +26,7 @@ For **Claude Code**, use the plugin instead for the full autonomous agent experi
 claude plugin install BRIKEV/twd-ai
 ```
 
-See the [AI Integration overview](/ai-overview) for details.
+See [Get started with AI agents](/ai-overview) for details.
 
 ## Alternative: Manual Setup
 

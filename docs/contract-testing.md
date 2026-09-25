@@ -88,7 +88,7 @@ With the GitHub Action, the same summary is posted as a PR comment so failed val
 <LandingCrossLinks
   :links='[
     { href: "/twd-js", title: "Write the tests that collect mocks", blurb: "Get the core in-browser testing experience that powers contract testing." },
-    { href: "/twd-relay", title: "Let AI iterate on tests", blurb: "Have an AI agent author and stabilize tests before you gate on contracts." },
+    { href: "/ai-overview", title: "Let AI iterate on tests", blurb: "Have an AI agent author and stabilize tests before you gate on contracts." },
     { href: "/contract-testing-setup", title: "Full setup reference", blurb: "Contract options, supported validations, PR report configuration." }
   ]'
 />

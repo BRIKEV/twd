@@ -172,8 +172,8 @@ That adds a speed selector to the sidebar header:
 
 The choice is remembered for the tab, so it survives the reloads you get while
 editing tests. It applies to every run in the page, including runs triggered
-over [twd-relay](/twd-relay), which is the point: when an agent writes a test and
-runs it for you, a paced run is one you can actually follow. Leave it on `Off`
+over [twd-relay](/ai-remote-testing), which is the point: when you watch an agent
+drive tests in your tab, a paced run is one you can actually follow. Leave it on `Off`
 for normal development, where a run finishing in milliseconds is the feature.
 
 Like `record.pace`, this only spaces out commands. It does not change what the

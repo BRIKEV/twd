@@ -104,8 +104,8 @@ Two things to know:
 sharded. See [Sharding](/sharding).
 
 ::: tip
-`twd-relay` accepts the same `--test` flag for driving a run from an AI agent.
-See [AI Remote Testing](/ai-remote-testing).
+This is the same runner and the same `--test` flag your AI agent uses while it works —
+see [Get started with AI agents](/ai-overview).
 :::
 
 ### Running only the tests a branch changed

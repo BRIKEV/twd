@@ -7,6 +7,8 @@ description: Install and use the TWD plugin for Claude Code to write and run tes
 
 The [TWD plugin for Claude Code](https://github.com/BRIKEV/twd-ai) gives Claude a set of skills: project setup, autonomous test writing, CI configuration, test quality analysis, gap detection, and visual test documentation.
 
+New here? [Get started with AI agents](/ai-overview) is the short version. This page is the full reference. Not on Claude Code? `npx skills add BRIKEV/twd-ai` installs the same skills in other agents.
+
 ## Installation
 
 First, add it from the Claude Code marketplace:
@@ -52,7 +54,7 @@ Setup then confirms or asks about:
 | Framework confirmation | Determines import style and bundled vs. standard setup |
 | Base path | For `twd.visit()` calls if your app doesn't serve from `/` |
 | Public folder | Where to install the mock service worker script |
-| Dev server port | So the relay connects to the right Vite server |
+| Dev server port | So `twd.config.json` and the agent's probe point at the right dev server |
 | Entry point file | Where to add TWD initialization code |
 | API folder path | So the agent knows where your API calls live for mocking |
 | CSS / component library | So tests use the right selectors for your UI kit |
@@ -63,17 +65,19 @@ Setup then confirms or asks about:
 
 The primary output is **`.claude/twd-patterns.md`** — a project-specific context file that tells Claude (and the `twd` skill) exactly how to write tests for your app. See [below](#claude-twd-patterns-md) for details.
 
-### Optional Automated Setup
+### Install and Wire TWD
 
-After generating the patterns file, setup can also:
+After generating the patterns file, setup lists what is missing and offers each step:
 
-- Install `twd-js` and `twd-relay` packages
+- Install `twd-js` and `twd-cli` as dev dependencies
 - Run `npx twd-js init public` to install the service worker
 - Add the `twd()` plugin to your `vite.config.ts` (or fall back to manual `initTWD` in your entry point for non-Vite projects)
-- Add `twdRemote()` to your Vite config
+- Write `twd.config.json` with your app URL and `coverage: false`
+- Add a `test:ci` script: `npx twd-cli run`
 - Create a first test file to validate the setup
 
-You can accept or skip each step.
+You can accept or skip each step. On a project that already has TWD, it only offers what
+is missing, and leaves existing `twd-relay` wiring untouched.
 
 ---
 
@@ -105,7 +109,7 @@ Reads your project structure, `.claude/twd-patterns.md`, and existing test files
 
 #### 2. Setup
 
-Checks that `twd-js` and `twd-relay` are installed and that the relay is configured. If anything is missing, it tells you what to set up.
+Checks that `twd-js` and `twd-cli` are installed, the `twd()` plugin is wired and `twd.config.json` exists. If anything is missing, it sets it up.
 
 #### 3. Write
 
@@ -113,17 +117,29 @@ Writes test files following your project's patterns — correct imports, selecto
 
 #### 4. Run & Fix
 
-Runs tests via `npx twd-relay run` and reads the structured output. If tests fail:
+First it probes your dev server with one `curl`. If nothing answers, it tells you the dev
+command and stops — it never asks you to open or focus a browser tab.
 
-- **Isolates** the failing test with `--test "name"` to reduce noise (e.g. `npx twd-relay run --test "should show error"`)
+Then it runs the new file headlessly with `npx twd-cli run --test "<describe>"` and reads
+the structured summary. If tests fail:
+
+- **Isolates** the failing test with `--test "name"` (e.g. `npx twd-cli run --test "should show error"`)
 - **Reads the error** and fixes the test code
 - **Re-runs** the isolated test
 - **Repeats** up to 3 attempts per failing test
 - If still failing after 3 attempts, marks the test as `it.skip` with a comment explaining why
 
+Once the new tests pass, it checks everything the branch changed with
+`npx twd-cli run --changed-since origin/main`, then closes with an unfiltered
+`npx twd-cli run`.
+
 #### 5. Report
 
-Outputs a summary of what was tested, what passed, and what was skipped (if any).
+Outputs a summary of what was tested, what passed and what was skipped. Tests that only
+passed on a retry are listed as findings, and it offers to record the tests it wrote.
+
+Want to watch the runs live in your own tab? Ask for it — see
+[Watch your agent live](/ai-remote-testing).
 
 ### Auto-Invocation
 
@@ -141,7 +157,7 @@ Your main conversation stays clean — the testing work happens in a forked cont
 
 ## `/twd:ci-setup` — CI/CD Configuration
 
-Sets up CI/CD for TWD tests — installs `twd-cli`, optionally configures code coverage, and generates a GitHub Actions workflow.
+Sets up CI/CD for TWD tests — generates a GitHub Actions workflow running the same `twd-cli` your agent uses, with optional coverage, contract validation and PR recordings.
 
 ```
 /twd:ci-setup
@@ -150,9 +166,12 @@ Sets up CI/CD for TWD tests — installs `twd-cli`, optionally configures code c
 ### What It Does
 
 - Detects your project setup (framework, Vite config, existing workflows)
-- Installs `twd-cli` for headless test running
+- Installs `twd-cli` only if setup hasn't, and merges CI fields into your `twd.config.json`
 - Optionally sets up code coverage with `vite-plugin-istanbul` + `nyc` (requires Vite)
+- Optionally validates your mocks against OpenAPI specs and comments the report on the PR
 - Generates `.github/workflows/twd-tests.yml`
+- Optionally generates `.github/workflows/twd-record.yml`: label a PR `record` and get one
+  video per test the branch added ([recording in CI](/recording#recording-in-ci))
 
 ---
 
