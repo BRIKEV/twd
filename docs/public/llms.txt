@@ -1,61 +1,73 @@
 # TWD (Test While Developing)
 
-> TWD is an in-browser testing ecosystem that runs tests directly in the browser with a sidebar UI for instant visual feedback. It works with any frontend that renders in the browser (React, Vue, Angular, Solid, Astro, Nuxt, HTMX, and vanilla JS) on Vite, Webpack, or a CDN, and ships skills for AI agents (Claude Code plugin, or any agent via `npx skills add BRIKEV/twd-ai`) that write tests, run them headlessly with twd-cli, and iterate until green, plus contract testing that validates every mock against the real OpenAPI spec.
+> TWD runs frontend tests in the browser you develop in: a sidebar in your dev server runs component and flow tests against your real app, with API boundaries mocked by a service worker. AI agents write, run and fix those tests headlessly with twd-cli, and the same runner handles CI, pull-request video recordings and OpenAPI contract validation. Works with React, Vue, Angular, Solid, Astro, Nuxt, HTMX and vanilla JS, on Vite, Webpack or a CDN.
 
 Full documentation as a single file: https://twd.dev/llms-full.txt
 
+How it fits together:
+- twd-js: the sidebar and test API. Tests live in your app and run against its real routes, providers and component tree.
+- twd-ai: skills for AI agents. Claude Code plugin (`claude plugin install twd@twd-ai`) or any agent via `npx skills add BRIKEV/twd-ai`. The agent probes the dev server, writes tests, runs them with twd-cli, fixes failures and closes with a full-suite run.
+- twd-cli: the headless runner. The agent loop, CI, sharding, coverage, `--record` video clips and contract validation all use it. Only the dev server has to be running.
+- twd-relay (optional): watch an agent's test runs live in your own browser tab.
+
 Key features:
-- In-browser test execution with visual sidebar UI
-- API mocking via a built-in service worker
-- Component and module mocking
-- Testing Library integration
-- Component tests in a real browser via Testing Library render(), running alongside flow tests in one session under one coverage report
-- CI/CD execution with twd-cli (headless Puppeteer, coverage)
-- Contract testing — validate mocks against OpenAPI specs
-- Token-efficient AI agent testing: agents run tests headlessly with twd-cli and read one structured summary (no Playwright, no screenshots); twd-relay optionally lets you watch the run in your own tab
-- Multi-framework support: React, Vue, Angular, Solid, Astro, Nuxt, plus HTMX and vanilla JS with no build step (via a CDN)
-- Claude Code plugin and skills for autonomous test writing
-
-## Philosophy
-
-- [TWD Manifesto](https://twd.dev/twd-manifesto): Core principles — test while building, test what you own mock what you don't
-- [Why Test While Developing](https://twd.dev/motivation): Motivation, philosophy, and what changes in the AI era
-
-## Packages
-
-- [twd-js](https://twd.dev/twd-js): Core sidebar — frontend tests that run in your real browser (React, Vue, Angular, Solid)
-- [Contract Testing](https://twd.dev/contract-testing): Validate every mock against your OpenAPI spec — drift surfaces in CI, not in production
-- [twd-relay](https://twd.dev/twd-relay): Optional — watch your AI agent's test runs live in your own browser tab
+- In-browser test execution with a sidebar UI, against the real app
+- API mocking via a built-in service worker; component and module mocking
+- Testing Library queries, and component tests via Testing Library render() in the same session
+- Token-efficient agent loop: one structured summary per run, no screenshots, no Playwright
+- CI with twd-cli: coverage, sharding, layout snapshots (beta)
+- Pull-request recordings: label a PR `record`, get one video per test the branch added
+- Contract testing: every mock validated against your OpenAPI spec
 
 ## Core Concepts
 
 - [Getting Started](https://twd.dev/getting-started): Installation, setup (bundled vs standard), first test, troubleshooting
 - [Writing Tests](https://twd.dev/writing-tests): Test structure, element selection (TWD native + Testing Library), assertions, user interactions, navigation
 - [API Mocking](https://twd.dev/api-mocking): Service worker setup, request mocking patterns, dynamic responses, error handling
-- [Component Testing](https://twd.dev/component-testing): Render a single component with Testing Library in a real browser, setup, the screenDom scoping caveat, and choosing between component and flow tests
+- [Component Testing](https://twd.dev/component-testing): Render a single component with Testing Library in a real browser, and choosing between component and flow tests
 - [Component Mocking](https://twd.dev/component-mocking): MockedComponent wrapper, conditional mocking, error states
 - [Module Mocking](https://twd.dev/module-mocking): Sinon-based module mocking for ESM
-- [Framework Integration](https://twd.dev/frameworks): React, Vue, Angular, Solid, Astro, React Router, Nuxt, CRA, HTMX, and vanilla JS setup
-- [Testing Library](https://twd.dev/testing-library): Testing Library integration and selectors
-- [CI Execution](https://twd.dev/ci-execution): twd-cli setup, Puppeteer, GitHub Actions
-- [Sharding](https://twd.dev/sharding): Split a long run across parallel CI jobs with --shard and twd-cli merge (beta)
-- [Layout Snapshots](https://twd.dev/layout-snapshots): Catch layout regressions with twd.matchLayout, an in-browser geometry snapshot with no SaaS or containers (beta)
+- [Theming](https://twd.dev/theming): Customizing the TWD sidebar
+- [CI Execution](https://twd.dev/ci-execution): twd-cli setup, filtering with --test and --changed-since, GitHub Actions
+- [Recording Runs](https://twd.dev/recording): Record tests to video with twd-cli, and the record action for pull requests
 - [Coverage](https://twd.dev/coverage): Code coverage reporting
 - [Contract Testing Setup](https://twd.dev/contract-testing-setup): OpenAPI validation setup, contract options, supported validations, PR reports
-- [Theming](https://twd.dev/theming): Customizing TWD sidebar appearance
+- [Framework Integration](https://twd.dev/frameworks): React, Vue, Angular, Solid, Astro, React Router, Nuxt, CRA, HTMX and vanilla JS setup
+- [Testing Library](https://twd.dev/testing-library): Testing Library integration and selectors
+- [Sharding](https://twd.dev/sharding): Split a long run across parallel CI jobs with --shard and twd-cli merge (beta)
+- [Layout Snapshots](https://twd.dev/layout-snapshots): Catch layout regressions with twd.matchLayout, an in-browser geometry snapshot (beta)
 
 ## AI agents
 
-- [Get started with AI agents](https://twd.dev/ai-overview): Install the skills (Claude Code plugin or npx skills add), run /twd:setup, ask for tests
-- [Project Setup](https://twd.dev/twd-ai/setup): Configure your project for AI-driven testing with /twd:setup — installs twd-js and twd-cli, writes twd.config.json
-- [Writing & Running Tests](https://twd.dev/twd-ai/writing-tests): The headless loop — probe, scoped run, fix, branch check, full suite, all with twd-cli
-- [CI Setup](https://twd.dev/twd-ai/ci-setup): Generate GitHub Actions workflows with /twd:ci-setup, including coverage, contract validation and PR recordings
+- [Get started with AI agents](https://twd.dev/ai-overview): Install the skills (Claude Code plugin or npx skills add), run /twd:setup, ask for tests, add CI
+- [Project Setup](https://twd.dev/twd-ai/setup): /twd:setup installs twd-js and twd-cli, wires the Vite plugin, writes twd.config.json and .claude/twd-patterns.md
+- [Writing & Running Tests](https://twd.dev/twd-ai/writing-tests): The headless loop — probe, scoped run, fix, branch check, full suite, recording offer
+- [CI Setup](https://twd.dev/twd-ai/ci-setup): /twd:ci-setup generates GitHub Actions workflows with coverage, contract validation and PR recordings
 - [Test Gap Analysis](https://twd.dev/twd-ai/test-gaps): Find untested routes and classify risk with /twd:test-gaps
 - [Test Quality](https://twd.dev/twd-ai/test-quality): Grade test quality across four dimensions with /twd:test-quality
 - [Test Flow Gallery](https://twd.dev/twd-ai/flow-gallery): Generate visual flowcharts of test coverage with /twd:test-flow-gallery
-
 - [Watch Your Agent Live](https://twd.dev/ai-remote-testing): Optional twd-relay setup to see the agent's runs in your own browser tab
 - [Context & Prompts](https://twd.dev/agents): A TWD context prompt for tools without skills support
+
+## Philosophy
+
+- [TWD Manifesto](https://twd.dev/twd-manifesto): Core principles — test while building, test what you own, mock what you don't
+- [Why Test While Developing](https://twd.dev/motivation): Motivation, philosophy, and what changes in the AI era
+
+## Community
+
+- [Community & Examples](https://twd.dev/community): Example apps and community links
+- [Accessibility Statement](https://twd.dev/accessibility-statement): WCAG 2.2 AA conformance
+
+## Tutorial
+
+- [Tutorial Overview](https://twd.dev/tutorial/): Step-by-step, hand-written learning path
+- [Installation](https://twd.dev/tutorial/installation): Project setup
+- [First Test](https://twd.dev/tutorial/first-test): Writing your first test
+- [API Mocking Tutorial](https://twd.dev/tutorial/api-mocking): Learning to mock HTTP requests
+- [CI Integration](https://twd.dev/tutorial/ci-integration): Setting up CI/CD
+- [Code Coverage](https://twd.dev/tutorial/coverage): Collecting coverage
+- [Production Builds](https://twd.dev/tutorial/production-builds): Removing test code from production
 
 ## API Reference
 
@@ -64,15 +76,8 @@ Key features:
 - [TWD Commands](https://twd.dev/api/twd-commands): Element selection, navigation, mocking commands
 - [Assertions](https://twd.dev/api/assertions): Text, attribute, state, and URL assertions
 
-## Tutorial
+## Package landing pages
 
-- [Tutorial Overview](https://twd.dev/tutorial/): Step-by-step learning path
-- [Installation](https://twd.dev/tutorial/installation): Project setup
-- [First Test](https://twd.dev/tutorial/first-test): Writing your first test
-- [API Mocking Tutorial](https://twd.dev/tutorial/api-mocking): Learning to mock HTTP requests
-- [CI Integration](https://twd.dev/tutorial/ci-integration): Setting up CI/CD
-- [Production Builds](https://twd.dev/tutorial/production-builds): Removing test code from production
-
-## Community
-
-- [Community & Examples](https://twd.dev/community): Example apps and community links
+- [twd-js](https://twd.dev/twd-js): The sidebar — frontend tests that run in your real browser
+- [Contract Testing](https://twd.dev/contract-testing): Validate every mock against your OpenAPI spec
+- [twd-relay](https://twd.dev/twd-relay): Optional — watch your AI agent's test runs live in your own browser tab

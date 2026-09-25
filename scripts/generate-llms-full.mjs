@@ -10,28 +10,32 @@ const DOCS = join(__dirname, '..', 'docs');
 const SITE = 'https://twd.dev';
 const OUT = join(DOCS, 'public', 'llms-full.txt');
 
-// Preferred order (mirrors docs/public/llms.txt for a coherent read). Any docs
+// Preferred order (mirrors the sidebar and docs/public/llms.txt for a coherent read). Any docs
 // not listed here are appended afterwards in alphabetical order.
 const ORDER = [
-  'twd-manifesto.md', 'motivation.md',
-  'twd-js.md', 'twd-relay.md', 'contract-testing.md',
+  // Core Concepts
   'getting-started.md', 'writing-tests.md', 'api-mocking.md', 'component-testing.md',
-  'component-mocking.md',
-  'module-mocking.md', 'frameworks.md', 'testing-library.md', 'ci-execution.md',
-  'sharding.md', 'layout-snapshots.md', 'coverage.md', 'ai-overview.md',
-  'contract-testing-setup.md', 'theming.md',
-  'twd-ai/setup.md', 'twd-ai/writing-tests.md', 'twd-ai/ci-setup.md',
+  'component-mocking.md', 'module-mocking.md', 'theming.md', 'ci-execution.md',
+  'recording.md', 'coverage.md', 'contract-testing-setup.md', 'frameworks.md',
+  'testing-library.md', 'sharding.md', 'layout-snapshots.md',
+  // AI agents
+  'ai-overview.md', 'twd-ai/setup.md', 'twd-ai/writing-tests.md', 'twd-ai/ci-setup.md',
   'twd-ai/test-gaps.md', 'twd-ai/test-quality.md', 'twd-ai/flow-gallery.md',
-  'claude-plugin.md', 'agents.md', 'ai-remote-testing.md',
-  'api/index.md', 'api/test-functions.md', 'api/twd-commands.md', 'api/assertions.md',
+  'ai-remote-testing.md', 'agents.md',
+  // Philosophy, Community
+  'twd-manifesto.md', 'motivation.md', 'community.md', 'accessibility-statement.md',
+  // Tutorial
   'tutorial/index.md', 'tutorial/intro.md', 'tutorial/installation.md', 'tutorial/first-test.md',
   'tutorial/api-mocking.md', 'tutorial/ci-integration.md', 'tutorial/coverage.md',
   'tutorial/production-builds.md', 'tutorial/testing-library-selectors.md',
-  'community.md', 'accessibility-statement.md',
+  // API Reference
+  'api/index.md', 'api/test-functions.md', 'api/twd-commands.md', 'api/assertions.md',
+  // Package landing pages
+  'twd-js.md', 'contract-testing.md', 'twd-relay.md',
 ];
 
-// Pages that are Vue-component landing shells with no prose body.
-const SKIP = new Set(['index.md']);
+// Pages that are Vue-component landing shells with no prose body, or redirect stubs.
+const SKIP = new Set(['index.md', 'claude-plugin.md']);
 
 function walk(dir) {
   const out = [];
@@ -72,7 +76,7 @@ const ordered = [
 
 const header = `# TWD (Test While Developing) - Full Documentation
 
-> In-browser frontend testing for React, Vue, Angular, Solid, Astro, Nuxt, HTMX and vanilla JS. Runs in your real browser via Vite, Webpack, or a CDN. This file concatenates the full TWD documentation for LLM ingestion. For a concise index, see ${SITE}/llms.txt.
+> Frontend tests that run in the browser you develop in. A sidebar in your dev server runs component and flow tests against your real app; AI agents write, run and fix them headlessly with twd-cli; the same runner handles CI, pull-request recordings and contract validation. React, Vue, Angular, Solid, Astro, Nuxt, HTMX and vanilla JS on Vite, Webpack or a CDN. This file concatenates the full TWD documentation for LLM ingestion. For a concise index, see ${SITE}/llms.txt.
 `;
 
 let body = '';
