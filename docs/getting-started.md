@@ -179,6 +179,15 @@ You can customize this pattern in your test loader using different glob patterns
 4. **Mock external systems** (APIs, auth, feature flags) for deterministic results
 5. **Iterate quickly** with live reloading
 
+<div class="concept-video">
+  <DeferredVideo
+    src="/videos/twd-concept-write.mp4"
+    poster="/images/twd-concept-write-poster.jpg"
+    label="A test is written in the editor and saved. It appears in the TWD sidebar of the app that is already open, and clicking its play button runs it: the checkout form fills in, Pay is pressed and the test passes."
+    name="write and run video"
+  />
+</div>
+
 ## Next Steps
 
 - Learn about [Writing Tests](/writing-tests) in detail

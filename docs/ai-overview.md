@@ -10,6 +10,15 @@ reads the failure, fixes it and re-runs until green. Results come back as struct
 text, not screenshots, so the loop stays cheap in tokens. Nothing for you to open,
 focus or watch.
 
+<div class="concept-video">
+  <DeferredVideo
+    src="/videos/twd-concept-agent.mp4"
+    poster="/images/twd-concept-agent-poster.jpg"
+    label="An AI agent writes a test for an empty card number and runs it headless with twd-cli. The test fails with expected and received values, the agent adds userEvent.tab() to the test, reruns, and both tests pass. twd-relay is shown as the opt-in way to watch runs in your own tab."
+    name="agent loop video"
+  />
+</div>
+
 ## 1. Install the skills
 
 ::: code-group
