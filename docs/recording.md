@@ -22,7 +22,9 @@ request, drop it in your docs, or send it to someone who asked what changed.
 npx twd-cli run --record --test "checkout flow"
 ```
 
-That writes one clip per matched test into `twd-artifacts/`.
+That writes one clip per matched test into `.twd/report/recordings/`, inside the
+[run report](/ci-execution#run-report) folder, and the report's `index.html` plays
+them next to their tests.
 
 ## Prerequisite: ffmpeg
 
@@ -211,7 +213,7 @@ as a demo artifact and keep running [CI](/ci-execution) unrecorded.
 after its own `"suite > test"` path:
 
 ```
-twd-artifacts/
+.twd/report/recordings/
   todos-adds-a-todo.mp4
   todos-marks-a-todo-done.mp4
   todos-filters-by-status.mp4
@@ -427,7 +429,7 @@ All keys live under `record` in `twd.config.json`:
 {
   "record": {
     "enabled": false,
-    "dir": "./twd-artifacts",
+    "dir": ".twd/report/recordings",
     "filename": null,
     "maxClips": 20,
     "format": "mp4",
@@ -446,7 +448,7 @@ All keys live under `record` in `twd.config.json`:
 | Option | Default | Description |
 |---|---|---|
 | `enabled` | `false` | Turn recording on. Same as passing `--record` |
-| `dir` | `"./twd-artifacts"` | Where the video is written |
+| `dir` | `<report dir>/recordings` | Where the video is written. Follows `report.dir`, so it is `.twd/report/recordings` by default |
 | `filename` | `null` | Explicit output name. When `null`, derived from the recorded tests. Setting it pins one clip for the whole run |
 | `maxClips` | `20` | Most clips a run will split into. Past the bound it writes one file instead. `0` disables the bound |
 | `format` | `"mp4"` | `"mp4"`, `"webm"` or `"gif"`, all encoded natively. Only `"mp4"` needs [ffmpeg 8](#prerequisite-ffmpeg) |

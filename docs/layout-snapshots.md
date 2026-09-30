@@ -124,6 +124,25 @@ Next to the reference you get `landing.failed.png`: your current page, with the
 rows that diverged boxed in red and a ribbon across the top when the block
 resized. The reference itself is never touched by a failure.
 
+In CI the machine that produced the capture is gone by the time anyone looks, so
+every failed capture is also embedded in the [run report](/ci-execution#run-report)'s
+`.twd/report/index.html`, next to the test that failed. One folder, one artifact,
+opens in any browser:
+
+```yaml
+- name: Upload the run report
+  if: failure()
+  uses: actions/upload-artifact@v4
+  with:
+    name: layout-snapshots
+    path: .twd/report
+```
+
+The bundled [GitHub Action](/ci-execution#github-action-recommended) already
+uploads that folder as `twd-report`. Captures from earlier runs are cleared
+before each run, so the report only shows failures from the run you are looking
+at.
+
 If the change was intended, accept it with `npx twd-cli --update-snapshots`.
 Accepting is never silent: updated snapshots are reported separately from
 passing ones, because a flag left on by accident rewrites every reference and

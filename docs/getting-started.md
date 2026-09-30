@@ -123,6 +123,25 @@ You should now see the TWD sidebar in your browser automatically in development 
   <img src="/images/twd_side_bar_success.png" alt="TWD Sidebar showing test execution" width="800">
 </p>
 
+### 5. Run Headlessly (Optional)
+
+The same tests run without a browser tab through [twd-cli](/ci-execution), the runner
+that CI and [AI agents](/ai-overview) use. Keep the dev server running, then:
+
+```bash
+npm install --save-dev twd-cli
+npx twd-cli run
+```
+
+Every run writes a [report folder](/ci-execution#run-report), `.twd/report/`, with a
+`run.json` for scripts and agents and an `index.html` to open in a browser. It is
+rewritten on every run, so add it to your `.gitignore`:
+
+```
+# .gitignore
+.twd/
+```
+
 
 ## Manual setup for non-Vite projects
 

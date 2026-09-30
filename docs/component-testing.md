@@ -276,6 +276,8 @@ Code coverage data written to .nyc_output/out.json
 --- Run complete ---
   Passed: 14 | Failed: 0 | Skipped: 0
   Duration: 6.9s
+
+  Report: .twd/report/index.html
 ```
 
 One coverage file comes out, covering both styles. There is nothing to merge,

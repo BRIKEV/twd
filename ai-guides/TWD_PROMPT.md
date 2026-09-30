@@ -648,6 +648,23 @@ export default { fetchData };
 | Stub module | `Sinon.stub(moduleDefault, 'method').returns(value)` |
 | Restore stubs | `Sinon.restore()` |
 
+## Running Tests Headlessly
+
+`twd-cli` runs the tests in a headless browser against the running dev server. Only the dev server has to be up.
+
+```bash
+npx twd-cli run --test "Checkout"   # substring of "Suite > test", repeatable
+npx twd-cli run                     # the whole suite
+```
+
+Every run writes `.twd/report/`. Read `.twd/report/run.json` for the result instead of parsing console output:
+
+- `outcome`: `"passed"`, `"failed"` or `"interrupted"` (agrees with the exit code). For `interrupted`, `error.message` says why the run never finished.
+- `tests[]`: each test's `path`, `status`, `attempts` and, for a failure, `error`. A passing test with `attempts` > 1 only passed on a retry. Treat it as a finding.
+- `summary`: pass/fail/skip counts, and contract `errors` and `warnings`.
+
+Each run replaces the folder. `.twd/` is generated output and belongs in `.gitignore`.
+
 ## Setup (for reference)
 
 **Bundled setup (recommended for all frameworks):**

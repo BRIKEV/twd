@@ -24,7 +24,6 @@ contracts/
 ```json
 {
   "url": "http://localhost:5173",
-  "contractReportPath": ".twd/contract-report.md",
   "contracts": [
     {
       "source": "./contracts/users-3.0.json",
@@ -90,14 +89,23 @@ Strict mode (`additionalProperties: false`) can conflict with `allOf` schemas. W
 
 ## PR Reports
 
-When `contractReportPath` is set and you use the [GitHub Action](/ci-execution#github-action-recommended) with `contract-report: 'true'`, a summary table is posted as a PR comment:
+Contract results are part of every [run report](/ci-execution#run-report). With the
+[GitHub Action](/ci-execution#github-action-recommended) and `contract-report: 'true'`,
+the report's `summary.md` is posted as a PR comment, with a link to the full CI run.
+The contract counts sit in its table:
 
-| Spec | Passed | Failed | Warnings | Mode |
-|------|--------|--------|----------|------|
-| `users-3.0.json` | 2 | 3 | 1 | `error` |
-| `posts-3.1.json` | 2 | 2 | 0 | `warn` |
+| Passed | Failed | Skipped | Contracts | Duration |
+|---|---|---|---|---|
+| 41 | 0 | 0 | 4 ✓ · 3 ✕ · 1 ⚠ | 38.2s |
 
-Failed validations are included in a collapsible details section with a link to the full CI log.
+Every mock that failed a spec in `error` mode is listed under "Needs attention" with
+the field that broke and the test that registered it. Failures in `warn` mode and
+undocumented statuses go in a collapsed warnings section. `index.html` in the same
+folder groups every result by spec.
+
+`contractReportPath` is deprecated: it still writes its own markdown file, with a
+warning on every run, and the PR comment no longer reads it. Remove it from
+`twd.config.json`.
 
 ```yaml
 - name: Run TWD tests
@@ -110,10 +118,9 @@ See [CI Execution](/ci-execution#github-action-recommended) for the full workflo
 
 ### With a sharded run
 
-A [sharded run](/sharding) deliberately writes no contract markdown per shard,
-because each would overwrite the others with a fraction of the mocks.
-`twd-cli merge` writes it instead, so the PR comment step belongs in the merge
-job rather than in the shard jobs:
+Each shard of a [sharded run](/sharding) validates only a fraction of the mocks.
+`twd-cli merge` writes the joined report, so the PR comment step belongs in the
+merge job rather than in the shard jobs:
 
 ```yaml
   merge:
@@ -125,11 +132,11 @@ job rather than in the shard jobs:
       - name: Merge the shard reports
         run: npx twd-cli merge .twd/shards
 
-      - name: Post contract report to PR
-        if: github.event_name == 'pull_request' && hashFiles('.twd/contract-report.md') != ''
+      - name: Post the report to PR
+        if: github.event_name == 'pull_request' && hashFiles('.twd/report/summary.md') != ''
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh pr comment "${{ github.event.pull_request.number }}" --body-file .twd/contract-report.md
+        run: gh pr comment "${{ github.event.pull_request.number }}" --body-file .twd/report/summary.md
 ```
 
 ## Next Steps

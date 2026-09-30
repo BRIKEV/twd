@@ -29,7 +29,7 @@ Puppeteer is **not** used as a testing framework — it simply provides a headle
 2. Navigates to your dev server URL
 3. Waits for the app and TWD sidebar to be ready
 4. TWD's in-browser test runner executes all tests against the real DOM
-5. Collects and reports test results
+5. Collects the results and writes the [run report](#run-report)
 6. Validates collected mocks against OpenAPI contracts (if [configured](/contract-testing))
 7. Optionally collects code coverage data
 8. Exits with appropriate code (0 for success, 1 for failures)
@@ -53,7 +53,7 @@ Create `twd.config.json` in your repo to customize the runner:
   "maxFailures": 10,
   "chunkSize": 10,
   "contracts": [],
-  "contractReportPath": ".twd/contract-report.md"
+  "report": { "dir": ".twd/report", "formats": ["html", "markdown"] }
 }
 ```
 
@@ -72,8 +72,118 @@ Create `twd.config.json` in your repo to customize the runner:
 | `maxFailures` | number | `10` | Stop the run once this many tests have failed in total. The CLI prints the results gathered so far and exits non-zero. Set `0` to disable and always run every test. Note this limit is **per shard** when [sharding](/sharding). |
 | `chunkSize` | number | `10` | How many tests run per browser call. Smaller values make the failure limit and timeouts more granular (less work lost if one chunk hangs), larger values reduce overhead. `0` runs everything in one call. |
 | `contracts` | object[] | `[]` | OpenAPI contract validation specs. See [Contract Testing](/contract-testing) |
-| `contractReportPath` | string | — | Path to write a markdown report for CI/PR integration |
+| `report` | object \| `false` | `{ "dir": ".twd/report", "formats": ["html", "markdown"] }` | The [run report](#run-report) folder and the views written next to `run.json`. `false` disables it |
 | `record` | object | see [Recording Runs](/recording) | Video recording settings |
+
+## Run report
+
+Every `npx twd-cli run` writes a report folder, `.twd/report/` by default, and the
+last line of the run points at it:
+
+```
+  Report: .twd/report/index.html
+```
+
+```
+.twd/report/
+  run.json       # the machine-readable result
+  index.html     # open in a browser: failures, recordings, layout snapshot diffs
+  summary.md     # only what broke, sized for a PR comment or a job summary
+  recordings/    # video clips, when --record is set
+  snapshots/     # layout snapshot captures, for a run with a failure
+```
+
+The folder is rewritten on every run, so add it to your `.gitignore`:
+
+```
+# .gitignore
+.twd/
+```
+
+### `index.html` and `summary.md`
+
+`index.html` is for a person. It opens on the verdict, then one "Needs attention"
+list with the failed tests, layout snapshot diffs and contract errors, each with
+its evidence inline. Every test, the contract results by spec, and the artifacts
+follow in collapsed sections. It is a single file that works offline.
+
+`summary.md` lists only what broke, capped at 20 entries, so it fits in a pull
+request comment. A green run is a heading and a counts table.
+
+### `run.json`
+
+An AI agent or a script reads `run.json` rather than parsing the console output.
+
+```json
+{
+  "outcome": "failed",
+  "summary": {
+    "passed": 41, "failed": 1, "skipped": 0, "notRun": 0, "stoppedEarly": false,
+    "contracts": { "passed": 12, "errors": 0, "warnings": 1, "skipped": 0 }
+  },
+  "error": null,
+  "tests": [
+    {
+      "path": "Todo list > should create a todo",
+      "status": "fail",
+      "attempts": 3,
+      "error": "AssertionError: expected 3 rows to have length 4 (at http://localhost:5173/todos)"
+    },
+    { "path": "Todo list > should filter completed", "status": "pass", "attempts": 2 }
+  ]
+}
+```
+
+- **`outcome`** is `passed`, `failed` or `interrupted`, and it always agrees with
+  the exit code. A contract error in `error` mode makes a run `failed` even when
+  every test passed, so a dashboard cannot read green on a red build.
+- **`interrupted`** means the run never finished: the dev server was unreachable,
+  the sidebar never appeared, a `--test` filter matched nothing, or the run
+  crashed. `error.message` says what happened, `error.diagnostic` names the fix
+  when there is one, and `tests` holds whatever finished first.
+- **`tests[]`** carries each test's `path` (the `"Suite > test"` string `--test`
+  matches), `status`, `attempts` and, for a failure, its `error`. A passing test
+  with `attempts` above 1 passed on a retry.
+- **`summary`** holds the precomputed counts, contracts included.
+
+### Printing a saved report
+
+`twd-cli report` prints a report to stdout, for example into a GitHub job summary:
+
+```bash
+npx twd-cli report --format markdown >> "$GITHUB_STEP_SUMMARY"
+```
+
+It reads `.twd/report` unless you pass another folder or a `run.json` path.
+`--format` takes `markdown` (the default), `html` or `json`. It exits `1` only
+when the report is missing or unreadable, never because the run it describes
+failed.
+
+### Configuring the report
+
+```json
+{
+  "report": {
+    "dir": ".twd/report",
+    "formats": ["html", "markdown"]
+  }
+}
+```
+
+`run.json` is always written; `formats` picks the views written next to it. Set
+`"report": false` to turn the folder off. Two flags override the config for one
+run:
+
+```bash
+npx twd-cli run --report-dir ./ci-report   # write it somewhere else
+npx twd-cli run --no-report                # skip it this time
+```
+
+Each run replaces the folder. To keep one run's report while you run others, give
+it its own `--report-dir`. Cleaning only removes the files twd-cli writes, and
+only in a folder that already holds a `run.json`, so pointing `report.dir` at a
+folder of your own is safe. Writing the report never changes the exit code: a
+failure there is a warning.
 
 ## Filtering tests
 
@@ -97,6 +207,7 @@ Two things to know:
 
 - If no test matches any filter, the run exits with code `1` and prints
   `No tests matched filter(s): ...`, so a typo will not silently look like a pass.
+  Its report has `outcome: "interrupted"`.
 - Code coverage collection is skipped while a `--test` filter is active, since a
   filtered run is a partial (debug) run.
 
@@ -133,7 +244,8 @@ What it selects, precisely:
   when you run it locally.
 - Resolved titles are OR'd with any `--test` filters you pass alongside.
 
-**A branch that changed no tests prints one line and exits `0`.**
+**A branch that changed no tests prints one line and exits `0`**, with a
+`passed` report holding zero tests.
 `--changed-since` is a query, and an empty result is a normal CI outcome —
 unlike `--test`, which is an assertion you typed and still exits `1` when it
 matches nothing, so a typo cannot look like a pass. That is decided before the
@@ -149,7 +261,7 @@ reviewer actually wants. See [Recording in CI](/recording#recording-in-ci).
 
 ## GitHub Action (Recommended)
 
-The easiest way to run TWD tests in CI. The composite action handles Puppeteer caching, Chrome installation, and optional contract report posting in a single step:
+The easiest way to run TWD tests in CI. The composite action handles Puppeteer caching, Chrome installation, the [run report](#run-report) and optional contract report posting in a single step. It writes the report's `summary.md` to the job summary and uploads the folder as the `twd-report` artifact, both even when the run is red:
 
 ```yaml
 name: TWD Tests
@@ -199,8 +311,8 @@ jobs:
 | `working-directory` | `.` | Directory where `twd.config.json` lives |
 | `contract-report` | `false` | Post contract validation summary as a PR comment |
 | `shard` | (empty) | Run one shard of the suite, as `<index>/<total>` (e.g. `2/4`). Leave empty to run everything in one job. See [Sharding](/sharding) |
-| `report-dir` | `.twd/run` | Where the shard report is written. Only used when `shard` is set |
-| `upload-report` | `true` | Upload the shard report as an artifact named `twd-run-<index>`, the layout `twd-cli merge` expects. Only used when `shard` is set |
+| `report-dir` | (empty) | Where the run report folder is written. Empty uses `report.dir` from `twd.config.json`, or `.twd/report` if that isn't set either |
+| `upload-report` | `true` | Upload the report folder as an artifact named `twd-report` (`twd-report-<index>` for a shard, the layout `twd-cli merge` expects) |
 
 ### With code coverage
 
@@ -238,6 +350,19 @@ If you prefer full control over each CI step, or your CI isn't GitHub Actions, s
 
 - name: Run TWD tests
   run: npx twd-cli run
+
+# The two steps the action does for you. if: always() so a red run still
+# surfaces its report.
+- name: TWD job summary
+  if: always()
+  run: npx twd-cli report --format markdown >> "$GITHUB_STEP_SUMMARY"
+
+- name: Upload TWD report
+  if: always()
+  uses: actions/upload-artifact@v4
+  with:
+    name: twd-report
+    path: .twd/report
 ```
 
 > **Tip:** Puppeteer 24+ no longer downloads Chrome automatically. Either run `npx puppeteer browsers install chrome` in CI or cache `~/.cache/puppeteer` between runs to avoid repeated downloads.

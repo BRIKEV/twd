@@ -74,8 +74,7 @@ You can configure the output folders used by the CLI in a `twd.config.json` file
   "headless": true,
   "puppeteerArgs": ["--no-sandbox", "--disable-setuid-sandbox"],
   "retryCount": 2,
-  "contracts": [],
-  "contractReportPath": ".twd/contract-report.md"
+  "contracts": []
 }
 ```
 
@@ -90,7 +89,6 @@ You can configure the output folders used by the CLI in a `twd.config.json` file
 | `puppeteerArgs` | string[] | `["--no-sandbox", "--disable-setuid-sandbox"]` | Extra arguments for Puppeteer |
 | `retryCount` | number | `2` | Number of times to attempt each test before reporting failure. Default is 2 (one normal attempt + one retry). Set to 1 to disable retries. |
 | `contracts` | object[] | `[]` | OpenAPI contract validation specs. See [Contract Testing](/contract-testing) |
-| `contractReportPath` | string | — | Path to write a markdown report for CI/PR integration |
 
 ## Updating package.json Scripts
 

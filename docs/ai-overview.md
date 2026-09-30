@@ -47,7 +47,8 @@ own. Other agents get the same skills through the
 
 It detects your framework, dev server and state libraries, asks what it can't detect
 (auth, third-party modules to mock), then installs `twd-js` and `twd-cli`, wires the
-Vite plugin, writes `twd.config.json` and a `test:ci` script, and generates
+Vite plugin, writes `twd.config.json` and a `test:ci` script, adds `.twd/` (the run
+report folder) to `.gitignore`, and generates
 `.claude/twd-patterns.md` — the file every future test is written against.
 [What setup does in detail](/twd-ai/setup)
 
