@@ -77,6 +77,12 @@ TWD is an in-browser test runner. Tests run in the browser (not Node.js). Syntax
    - Common: "have.text", "contain.text", "be.visible", "have.value", "have.class", "be.disabled", "have.attr".
    - Use Chai expect for non-element assertions.
 
+5. Running tests headlessly:
+   - npx twd-cli run --test "Suite name" runs a subset; npx twd-cli run runs everything.
+   - Read .twd/report/run.json for the result, not the console: outcome ("passed" | "failed" |
+     "interrupted"), tests[] with path, status, attempts and error. attempts > 1 on a pass = a retry.
+   - .twd/ is rewritten on every run and belongs in .gitignore.
+
 ## Common Patterns
 
 ### Basic test structure

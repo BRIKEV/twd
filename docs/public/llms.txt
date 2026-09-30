@@ -7,28 +7,28 @@ Full documentation as a single file: https://twd.dev/llms-full.txt
 How it fits together:
 - twd-js: the sidebar and test API. Tests live in your app and run against its real routes, providers and component tree.
 - twd-ai: skills for AI agents. Claude Code plugin (`claude plugin install twd@twd-ai`) or any agent via `npx skills add BRIKEV/twd-ai`. The agent probes the dev server, writes tests, runs them with twd-cli, fixes failures and closes with a full-suite run.
-- twd-cli: the headless runner. The agent loop, CI, sharding, coverage, `--record` video clips and contract validation all use it. Only the dev server has to be running.
+- twd-cli: the headless runner. The agent loop, CI, sharding, coverage, `--record` video clips and contract validation all use it. Only the dev server has to be running. Every run writes `.twd/report/` (`run.json` for agents and scripts, `index.html` for people); add `.twd/` to `.gitignore`.
 - twd-relay (optional): watch an agent's test runs live in your own browser tab.
 
 Key features:
 - In-browser test execution with a sidebar UI, against the real app
 - API mocking via a built-in service worker; component and module mocking
 - Testing Library queries, and component tests via Testing Library render() in the same session
-- Token-efficient agent loop: one structured summary per run, no screenshots, no Playwright
+- Token-efficient agent loop: every run writes a JSON run report the agent reads, no screenshots, no Playwright
 - CI with twd-cli: coverage, sharding, layout snapshots (beta)
 - Pull-request recordings: label a PR `record`, get one video per test the branch added
 - Contract testing: every mock validated against your OpenAPI spec
 
 ## Core Concepts
 
-- [Getting Started](https://twd.dev/getting-started): Installation, setup (bundled vs standard), first test, troubleshooting
+- [Getting Started](https://twd.dev/getting-started): Installation, setup (bundled vs standard), first test, headless run with twd-cli, troubleshooting
 - [Writing Tests](https://twd.dev/writing-tests): Test structure, element selection (TWD native + Testing Library), assertions, user interactions, navigation
 - [API Mocking](https://twd.dev/api-mocking): Service worker setup, request mocking patterns, dynamic responses, error handling
 - [Component Testing](https://twd.dev/component-testing): Render a single component with Testing Library in a real browser, and choosing between component and flow tests
 - [Component Mocking](https://twd.dev/component-mocking): MockedComponent wrapper, conditional mocking, error states
 - [Module Mocking](https://twd.dev/module-mocking): Sinon-based module mocking for ESM
 - [Theming](https://twd.dev/theming): Customizing the TWD sidebar
-- [CI Execution](https://twd.dev/ci-execution): twd-cli setup, filtering with --test and --changed-since, GitHub Actions
+- [CI Execution](https://twd.dev/ci-execution): twd-cli setup, the .twd/report run report (run.json, summary.md, index.html), filtering with --test and --changed-since, GitHub Actions
 - [Recording Runs](https://twd.dev/recording): Record tests to video with twd-cli, and the record action for pull requests
 - [Coverage](https://twd.dev/coverage): Code coverage reporting
 - [Contract Testing Setup](https://twd.dev/contract-testing-setup): OpenAPI validation setup, contract options, supported validations, PR reports
@@ -40,7 +40,7 @@ Key features:
 ## AI agents
 
 - [Get started with AI agents](https://twd.dev/ai-overview): Install the skills (Claude Code plugin or npx skills add), run /twd:setup, ask for tests, add CI
-- [Project Setup](https://twd.dev/twd-ai/setup): /twd:setup installs twd-js and twd-cli, wires the Vite plugin, writes twd.config.json and .claude/twd-patterns.md
+- [Project Setup](https://twd.dev/twd-ai/setup): /twd:setup installs twd-js and twd-cli, wires the Vite plugin, writes twd.config.json and .claude/twd-patterns.md, ignores .twd/
 - [Writing & Running Tests](https://twd.dev/twd-ai/writing-tests): The headless loop — probe, scoped run, fix, branch check, full suite, recording offer
 - [CI Setup](https://twd.dev/twd-ai/ci-setup): /twd:ci-setup generates GitHub Actions workflows with coverage, contract validation and PR recordings
 - [Test Gap Analysis](https://twd.dev/twd-ai/test-gaps): Find untested routes and classify risk with /twd:test-gaps

@@ -20,9 +20,12 @@ server. Only the dev server has to be up; there is no tab for you to keep open.
 5. **Checks your branch** with `npx twd-cli run --changed-since origin/main`.
 6. **Closes with the full suite**, `npx twd-cli run`, and reports.
 
-The token usage stays low: twd-cli prints one structured summary block — passed, failed,
-retried — and that is all the agent reads. No screenshots or DOM dumps. A test that only
-passed on a retry is reported as a finding, not hidden in a green run.
+The token usage stays low: every run writes a [run report](/ci-execution#run-report),
+and the agent reads its `run.json` — the outcome, each failed test with its error and
+mock diagnostics, and every retry. No screenshots, no DOM dumps, no scraping console
+output. A test that only passed on a retry is reported as a finding, not hidden in a
+green run. When the agent is done, it points you at the closing run's
+`.twd/report/index.html` to open in a browser.
 
 When it's done, the agent offers to **record** the tests it wrote, so you can watch them
 instead of reading them:

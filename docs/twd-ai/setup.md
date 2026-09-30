@@ -72,6 +72,7 @@ This file becomes the **source of truth** for how tests should be written in you
 - Generates a project-specific testing config
 - Installs `twd-js` and `twd-cli` as dev dependencies and wires the `twd()` Vite plugin
 - Writes a two-key `twd.config.json` (your app URL, coverage off) and a `test:ci` script
+- Adds `.twd/` to `.gitignore`: every `twd-cli` run writes its [run report](/ci-execution#run-report) there
 - On a project that already has TWD, installs only what is missing and leaves your existing wiring alone
 
 Nothing else to install: the agent runs tests headlessly with `twd-cli`, so there is no

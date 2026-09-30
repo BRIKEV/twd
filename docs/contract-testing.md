@@ -40,7 +40,6 @@ npm install --save-dev twd-cli
 // twd.config.json
 {
   "url": "http://localhost:5173",
-  "contractReportPath": ".twd/contract-report.md",
   "contracts": [
     {
       "source": "./contracts/users-3.0.json",
@@ -78,10 +77,10 @@ Source: ./contracts/users-3.0.json   ERROR
   ⚠ GET /users/{userId} (404) — mock "getUserNotFound"
     Status 404 not documented for GET /users/{userId}
 
-Contract report written to .twd/contract-report.md
+  Report: .twd/report/index.html
 ```
 
-With the GitHub Action, the same summary is posted as a PR comment so failed validations surface in the reviewer's queue, not just the CI log.
+The same results land in the run report, and with the GitHub Action its summary is posted as a PR comment so failed validations surface in the reviewer's queue, not just the CI log.
 
 [Full setup, options, validations, and PR reports →](/contract-testing-setup)
 

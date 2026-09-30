@@ -38,6 +38,8 @@ It will ask about the dependencies to install, then generate all CI workflow fil
   and development never disagree about how tests run
 - Optional coverage collection and reporting
 - Optional contract validation of your mocks against your OpenAPI specs, posted as a PR comment
+- The [run report](/ci-execution#run-report) of every CI run in the job summary, and the
+  full folder as a `twd-report` artifact
 - The environment variables and mock-API steps your app needs to start in CI
 - Configuration based on your detected dev server port and base path
 
