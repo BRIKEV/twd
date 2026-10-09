@@ -163,7 +163,7 @@ if (errorMessage) {
 
 // Check for absence
 const modal = screenDom.queryByRole("dialog");
-expect(modal).toBeNull(); // Modal should not be present
+expect(modal).to.be.null; // Modal should not be present
 ```
 
 #### findBy* Methods (Async, waits for element)
@@ -192,7 +192,7 @@ twd.should(buttons[0], "be.visible");
 ### Complete Example
 
 ```ts
-import { screenDom, screenDomGlobal, userEvent, twd } from "twd-js";
+import { screenDom, screenDomGlobal, userEvent, twd, expect } from "twd-js";
 import { describe, it } from "twd-js/runner";
 
 describe("User Profile", () => {
@@ -226,7 +226,7 @@ describe("User Profile", () => {
       twd.should(adminPanel, "be.visible");
     } else {
       // User is not admin
-      expect(adminPanel).toBeNull();
+      expect(adminPanel).to.be.null;
     }
   });
 
