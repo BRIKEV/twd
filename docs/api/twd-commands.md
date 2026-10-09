@@ -183,7 +183,7 @@ await twd.url().should("contain.url", "localhost");
 await twd.url().should("not.contain.url", "/admin");
 
 // After navigation
-twd.visit("/login");
+await twd.visit("/login");
 await twd.url().should("contain.url", "/login");
 
 const loginButton = await twd.get("button[type='submit']");
@@ -592,7 +592,13 @@ await twd.notExists('.non-existent');
 const el = document.createElement('div');
 el.className = 'maybe';
 document.body.appendChild(el);
-await expect(twd.notExists('.maybe')).rejects.toThrow();
+let error: unknown;
+try {
+  await twd.notExists('.maybe');
+} catch (e) {
+  error = e;
+}
+expect(error).to.be.an.instanceOf(Error);
 ```
 
 ### twd.should(element, assertion, ...args)
@@ -681,7 +687,7 @@ All assertions available on `.should()` method are also available with `twd.shou
 - `"be.checked"` - Checkbox/radio state
 - `"be.selected"` - Option element state
 - `"be.focused"` - Element has focus
-- `"be.visible"` - Element is visible
+- `"be.visible"` / `"be.hidden"` - Element visibility
 
 All assertions can be negated with `"not."` prefix (e.g., `"not.be.visible"`).
 
@@ -728,7 +734,7 @@ Mocks an HTTP request with specified response.
 #### Syntax
 
 ```ts
-await twd.mockRequest(alias: string, options: Options): void
+await twd.mockRequest(alias: string, options: Options): Promise<void>
 ```
 
 #### Parameters
@@ -744,7 +750,9 @@ interface Options {
   url: string | RegExp;     // URL to match
   response: unknown;        // Response body
   status?: number;          // HTTP status code (default: 200)
-  headers?: Record<string, string>; // Response headers
+  responseHeaders?: Record<string, string>; // Response headers
+  urlRegex?: boolean;       // Treat `url` as a regex pattern
+  delay?: number;           // Delay in ms before responding
 }
 ```
 
@@ -774,7 +782,7 @@ await twd.mockRequest("createUser", {
   url: "/api/users",
   response: { id: 456, created: true },
   status: 201,
-  headers: {
+  responseHeaders: {
     "Content-Type": "application/json",
     "Location": "/api/users/456"
   }

@@ -19,12 +19,11 @@ Complete reference documentation for all TWD functions, methods, and types.
 ## Import Reference
 
 ```ts
-// Main imports
+// Test structure
+import { describe, it, beforeEach, afterEach } from "twd-js/runner";
+
+// Commands, user events, queries and assertions
 import { 
-  describe, 
-  it, 
-  beforeEach, 
-  afterEach,
   twd, 
   userEvent,
   screenDom,
@@ -45,7 +44,7 @@ import { TWDSidebar } from "twd-js";
 import { removeMockServiceWorker } from "twd-js/vite-plugin";
 
 // CI Integration (for test execution)
-import { reportResults } from "twd-js";
+import { executeTests, reportResults } from "twd-js/runner-ci";
 
 // twd() plugin options:
 //   testFilePattern?: string          // Glob for discovering test files (default: '/**/*.twd.test.ts')
@@ -262,6 +261,7 @@ type AssertionName =
   | "be.selected"
   | "be.focused"
   | "be.visible"
+  | "be.hidden"
   | "have.class";
 
 type AnyAssertion = AssertionName | `not.${AssertionName}`;
@@ -275,7 +275,9 @@ interface Options {
   url: string | RegExp;
   response: unknown;
   status?: number;
-  headers?: Record<string, string>;
+  responseHeaders?: Record<string, string>;
+  urlRegex?: boolean;
+  delay?: number;
 }
 
 interface Rule {
@@ -286,7 +288,10 @@ interface Rule {
   executed?: boolean;
   request?: unknown;
   status?: number;
-  headers?: Record<string, string>;
+  responseHeaders?: Record<string, string>;
+  urlRegex?: boolean;
+  delay?: number;
+  hitCount?: number;
 }
 ```
 
@@ -471,7 +476,7 @@ Vite plugin that removes the mock service worker file from production builds. Th
 #### Syntax
 
 ```ts
-import { removeMockServiceWorker } from "twd-js";
+import { removeMockServiceWorker } from "twd-js/vite-plugin";
 ```
 
 #### Usage
@@ -479,7 +484,7 @@ import { removeMockServiceWorker } from "twd-js";
 ```ts
 // vite.config.ts
 import { defineConfig } from 'vite';
-import { removeMockServiceWorker } from 'twd-js';
+import { removeMockServiceWorker } from 'twd-js/vite-plugin';
 
 export default defineConfig({
   plugins: [
@@ -528,7 +533,7 @@ reportResults(handlers: Handler[], testStatus: TestResult[]): void
 #### Usage
 
 ```ts
-import { executeTests, reportResults } from "twd-js";
+import { executeTests, reportResults } from "twd-js/runner-ci";
 
 // Complete CI workflow
 const { handlers, testStatus } = await executeTests();

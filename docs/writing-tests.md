@@ -434,8 +434,9 @@ await user.type(input.el, "john_doe");
 await user.clear(input.el);
 await user.type(input.el, "new_username");
 
-// Type special characters
-await user.keyboard(input.el, "Hello{Enter}World{Tab}");
+// Type special characters (keyboard types into the focused element)
+await user.click(input.el);
+await user.keyboard("Hello{Enter}World{Tab}");
 ```
 
 ### Form Interactions
