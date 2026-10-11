@@ -48,15 +48,15 @@ export default [
 
 ## What it catches
 
-| Rule | Reports | `--fix` |
+| Rule | Reports | Fixed by `--fix` |
 |---|---|---|
-| [`twd/no-missing-await`](https://github.com/BRIKEV/twd-lint/blob/main/docs/rules/no-missing-await.md) | An async TWD call that is not awaited: `twd.visit`, `twd.mockRequest`, `userEvent.click`, `screenDom.findBy*`, `twd.url().should`, … | ✅ |
-| [`twd/runner-imports`](https://github.com/BRIKEV/twd-lint/blob/main/docs/rules/runner-imports.md) | `describe`, `it`, hooks or `expect` imported from Vitest, Jest, Mocha, `node:test` or `chai`, or from the wrong TWD module | ✅ |
-| [`twd/no-request-body`](https://github.com/BRIKEV/twd-lint/blob/main/docs/rules/no-request-body.md) | `rule.request.body` on a `waitForRequest` result. `rule.request` already is the parsed body | |
-| [`twd/no-focused-tests`](https://github.com/BRIKEV/twd-lint/blob/main/docs/rules/no-focused-tests.md) | `it.only` / `describe.only` left behind | |
+| [`twd/no-missing-await`](https://github.com/BRIKEV/twd-lint/blob/main/docs/rules/no-missing-await.md) | An async TWD call that is not awaited: `twd.visit`, `twd.mockRequest`, `userEvent.click`, `screenDom.findBy*`, `twd.url().should`, … | Yes |
+| [`twd/runner-imports`](https://github.com/BRIKEV/twd-lint/blob/main/docs/rules/runner-imports.md) | `describe`, `it`, hooks or `expect` imported from Vitest, Jest, Mocha, `node:test` or `chai`, or from the wrong TWD module | Yes |
+| [`twd/no-request-body`](https://github.com/BRIKEV/twd-lint/blob/main/docs/rules/no-request-body.md) | `rule.request.body` on a `waitForRequest` result. `rule.request` already is the parsed body | No |
+| [`twd/no-focused-tests`](https://github.com/BRIKEV/twd-lint/blob/main/docs/rules/no-focused-tests.md) | `it.only` / `describe.only` left behind | No |
 
 ```ts
-// ❌ reported
+// Reported by twd-lint
 import { describe, it, expect } from 'vitest'          // runner-imports
 import { twd } from 'twd-js'
 
@@ -70,7 +70,7 @@ describe('Todos', () => {
 ```
 
 ```ts
-// ✅ clean
+// Clean
 import { twd, expect } from 'twd-js'
 import { describe, it } from 'twd-js/runner'
 
