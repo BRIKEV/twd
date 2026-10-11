@@ -152,14 +152,14 @@ it("should load user data", async () => {
 
 ---
 
-## itOnly(name, fn)
+## it.only(name, fn)
 
 Runs only this test, skipping all others in the suite. Useful for debugging specific tests.
 
 ### Syntax
 
 ```ts
-itOnly(name: string, fn: () => Promise<void> | void): void
+it.only(name: string, fn: () => Promise<void> | void): void
 ```
 
 ### Parameters
@@ -171,7 +171,7 @@ itOnly(name: string, fn: () => Promise<void> | void): void
 
 ```ts
 describe("User Management", () => {
-  itOnly("should create new user", async () => {
+  it.only("should create new user", async () => {
     // Only this test will run
     await twd.visit("/users/new");
     // Test implementation...
@@ -194,25 +194,25 @@ describe("User Management", () => {
 - **Troubleshooting** - Isolate problematic tests
 
 ::: warning
-Remember to remove `itOnly` before committing code, as it will skip other tests in CI/CD.
+Remember to remove `it.only` before committing code, as it will skip other tests in CI/CD.
 :::
 
 ---
 
-## itSkip(name, fn)
+## it.skip(name, fn)
 
 Skips this test. Useful for temporarily disabling broken or incomplete tests.
 
 ### Syntax
 
 ```ts
-itSkip(name: string, fn: () => Promise<void> | void): void
+it.skip(name: string, fn?: () => Promise<void> | void): void
 ```
 
 ### Parameters
 
 - **name** (`string`) - Descriptive name for the test
-- **fn** (`function`) - Test implementation (will not be executed)
+- **fn** (`function`, optional) - Test implementation (will not be executed)
 
 ### Examples
 
@@ -222,7 +222,7 @@ describe("Payment Processing", () => {
     // This test runs normally
   });
 
-  itSkip("should process PayPal payment", async () => {
+  it.skip("should process PayPal payment", async () => {
     // This test is skipped - maybe PayPal integration isn't ready
     throw new Error("This won't run");
   });
@@ -304,7 +304,7 @@ describe("E-commerce Tests", () => {
   });
 
   describe("Shopping Cart", () => {
-    beforeEach(() => {
+    beforeEach(async () => {
       // Runs before cart tests (after parent beforeEach)
       await twd.visit("/cart");
     });
@@ -420,7 +420,7 @@ describe("Authentication Flow", () => {
 ```ts
 describe("E-commerce Application", () => {
   describe("Authentication", () => {
-    beforeEach(() => {
+    beforeEach(async () => {
       await twd.visit("/login");
     });
 
@@ -430,7 +430,7 @@ describe("E-commerce Application", () => {
   });
 
   describe("Product Catalog", () => {
-    beforeEach(() => {
+    beforeEach(async () => {
       await twd.visit("/products");
     });
 
@@ -440,7 +440,7 @@ describe("E-commerce Application", () => {
   });
 
   describe("Shopping Cart", () => {
-    beforeEach(() => {
+    beforeEach(async () => {
       localStorage.setItem("user", JSON.stringify({ id: 1 }));
       await twd.visit("/cart");
     });
@@ -463,7 +463,7 @@ describe("Feature Tests", () => {
       // Test new feature
     });
   } else {
-    itSkip("should show new feature", async () => {
+    it.skip("should show new feature", async () => {
       // Feature not enabled, skip test
     });
   }
@@ -475,7 +475,7 @@ describe("Feature Tests", () => {
 ```ts
 describe("Debug Session", () => {
   // Focus on the failing test
-  itOnly("should handle complex user workflow", async () => {
+  it.only("should handle complex user workflow", async () => {
     await twd.visit("/complex-page");
     
     // Add debug logging
@@ -488,7 +488,7 @@ describe("Debug Session", () => {
   });
 
   // Skip other tests to focus
-  itSkip("should handle simple workflow", async () => {
+  it.skip("should handle simple workflow", async () => {
     // Skip during debugging
   });
 });

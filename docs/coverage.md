@@ -62,33 +62,23 @@ This plugin automatically adds coverage data to `window.__coverage__`. When you 
 
 ### Configure (optional)
 
-You can configure the output folders used by the CLI in a `twd.config.json` file:
+You can configure coverage collection and its output folders in a `twd.config.json` file:
 
 ```json
 {
-  "url": "http://localhost:5173",
-  "timeout": 10000,
   "coverage": true,
   "coverageDir": "./coverage",
-  "nycOutputDir": "./.nyc_output",
-  "headless": true,
-  "puppeteerArgs": ["--no-sandbox", "--disable-setuid-sandbox"],
-  "retryCount": 2,
-  "contracts": []
+  "nycOutputDir": "./.nyc_output"
 }
 ```
 
 | Option | Type | Default | Description |
 |--------|------|---------|-------------|
-| `url` | string | `"http://localhost:5173"` | Dev server URL to open before running tests |
-| `timeout` | number | `10000` | Milliseconds to wait for the page/sidebar |
 | `coverage` | boolean | `true` | Toggle code coverage collection |
 | `coverageDir` | string | `"./coverage"` | Output folder for coverage reports |
 | `nycOutputDir` | string | `"./.nyc_output"` | NYC temp folder |
-| `headless` | boolean | `true` | Run Chrome in headless mode |
-| `puppeteerArgs` | string[] | `["--no-sandbox", "--disable-setuid-sandbox"]` | Extra arguments for Puppeteer |
-| `retryCount` | number | `2` | Number of times to attempt each test before reporting failure. Default is 2 (one normal attempt + one retry). Set to 1 to disable retries. |
-| `contracts` | object[] | `[]` | OpenAPI contract validation specs. See [Contract Testing](/contract-testing) |
+
+For every other runner option (`url`, `timeout`, `viewport`, `retryCount`, `report`, `record`…), see the [full `twd.config.json` reference](/ci-execution#configure-optional).
 
 ## Updating package.json Scripts
 
@@ -188,7 +178,7 @@ jobs:
         uses: actions/setup-node@v5
         with:
           node-version: 24
-          cache: ‘npm’
+          cache: 'npm'
 
       - name: Install dependencies
         run: npm ci
@@ -207,7 +197,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/.cache/puppeteer
-          key: ${{ runner.os }}-puppeteer-${{ hashFiles(‘package-lock.json’) }}
+          key: ${{ runner.os }}-puppeteer-${{ hashFiles('package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-puppeteer-
 

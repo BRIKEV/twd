@@ -68,28 +68,30 @@ export default defineConfig({
   plugins: [
     react(),
     twd(),         // sidebar + test discovery
-    twdRemote(),   // adds /__twd/ws to your dev server
+    twdRemote(),   // adds /__twd/ws and auto-injects the browser client
   ],
 });
 ```
 
-Then connect the browser client in your app entry:
+That's it — no entry-file code needed. `twdRemote()` injects the browser client into `index.html` during development (`autoConnect` defaults to `true`), and the WebSocket URL is derived from your dev server, so there's nothing to configure.
+
+To forward options to the injected client, pass an object:
 
 ```ts
-// main.ts
-import { createBrowserClient } from 'twd-relay/browser';
-
-if (import.meta.env.DEV) {
-  const client = createBrowserClient();
-  client.connect();
-}
+twdRemote({
+  autoConnect: { maxTestDurationMs: 20000, log: true },
+});
 ```
 
-When using the Vite plugin the URL is auto-detected — no configuration needed.
+If you'd rather wire the browser client yourself, set `autoConnect: false` and call `createBrowserClient` manually (see Option B).
 
-### Option B: Standalone Server
+::: warning Don't combine auto-connect with a manual client
+If `autoConnect` is on **and** your app also calls `createBrowserClient().connect()`, two browser clients connect — visible in the relay logs as a duplicate browser. Either remove the manual call, or set `twdRemote({ autoConnect: false })`.
+:::
 
-For non-Vite projects, run the relay as a separate process:
+### Option B: Standalone Server (non-Vite)
+
+For non-Vite projects (Webpack, Angular CLI, Rollup, esbuild, Rspack…), run the relay as a separate process:
 
 ```bash
 npx twd-relay --port 9876
@@ -212,9 +214,13 @@ npx twd-relay run --max-test-duration 20000
 npx twd-relay run --max-test-duration 0
 ```
 
-Or per-project via the browser client option:
+Or per-project via the browser client option — through the Vite plugin, or on a manual client:
 
 ```ts
+// Vite plugin (auto-injected client)
+twdRemote({ autoConnect: { maxTestDurationMs: 20000 } });
+
+// Manual client (non-Vite, or autoConnect: false)
 createBrowserClient({ maxTestDurationMs: 20000 });
 ```
 
@@ -258,7 +264,7 @@ All messages are JSON over WebSocket. The `twd-relay run` CLI handles this proto
 | `{ type: "hello", role: "client" }` | Identify as an external client |
 | `{ type: "run", scope: "all" }` | Run all tests |
 | `{ type: "run", scope: "all", testNames: ["..."] }` | Run tests matching names (substring, case-insensitive) |
-| `{ type: "run", scope: "all", maxTestDurationMs: 15000 }` | Run all tests with a custom per-test abort threshold (ms). `0` disables detection. Omit to use the browser client's default (5000). |
+| `{ type: "run", scope: "all", maxTestDurationMs: 15000 }` | Run all tests with a custom per-test abort threshold (ms). `0` disables detection. Omit to use the browser client's default (10000). |
 
 ### Browser → Relay
 

@@ -23,7 +23,8 @@ This installs TWD skills directly into your AI agent. Works with Cursor, Codex, 
 For **Claude Code**, use the plugin instead for the full autonomous agent experience:
 
 ```bash
-claude plugin install BRIKEV/twd-ai
+claude plugin marketplace add BRIKEV/twd-ai
+claude plugin install twd@twd-ai
 ```
 
 See [Get started with AI agents](/ai-overview) for details.

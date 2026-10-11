@@ -806,8 +806,8 @@ await twd.mockRequest("getUserProfile", { /* ... */ });
 await twd.mockRequest("updateUserSettings", { /* ... */ });
 
 // Bad ❌
-twd.mockRequest("req1", { /* ... */ });
-twd.mockRequest("api2", { /* ... */ });
+await twd.mockRequest("req1", { /* ... */ });
+await twd.mockRequest("api2", { /* ... */ });
 ```
 
 ### 2. Mock Realistic Data
@@ -828,7 +828,7 @@ await twd.mockRequest("getUser", {
 });
 
 // Bad ❌ - Minimal/unrealistic data
-twd.mockRequest("getUser", {
+await twd.mockRequest("getUser", {
   method: "GET", 
   url: "/api/user/123",
   response: { name: "test" }
@@ -867,7 +867,7 @@ await user.type(await screenDom.findByLabelText("Name"), "John Doe");
 await user.type(await screenDom.findByLabelText("Email"), "john.doe@example.com");
 await user.click(await screenDom.findByRole("button", { name: "Submit" }));
 // Bad ❌ - mock after request event is fired
-twd.mockRequest("saveUser", {
+await twd.mockRequest("saveUser", {
   method: "POST",
   url: "/api/users",
   response: { id: 1 }
@@ -896,7 +896,7 @@ describe("API Tests", () => {
 ```ts
 describe("Error Handling", () => {
   it("should handle network errors", async () => {
-    twd.mockRequest("networkError", {
+    await twd.mockRequest("networkError", {
       method: "GET",
       url: "/api/data",
       response: { error: "Network error" },
@@ -907,7 +907,7 @@ describe("Error Handling", () => {
   });
 
   it("should handle server errors", async () => {
-    twd.mockRequest("serverError", {
+    await twd.mockRequest("serverError", {
       method: "GET",
       url: "/api/data", 
       response: { error: "Internal server error" },

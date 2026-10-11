@@ -244,11 +244,6 @@ so raise it freely, or set `0` to remove the bound.
 
 Re-running overwrites the files.
 
-::: warning Changed in 1.8.0
-A run matching several tests used to write a single `run.<ext>`. Anything that
-globs `run.mp4`, or expects exactly one file, needs updating.
-:::
-
 Pace a scoped run rather than a whole suite. A 50 test suite averaging 10 actions
 per test gains roughly 2.5 minutes at 300ms, and about 4 minutes at 500ms.
 
@@ -266,12 +261,6 @@ a clip that is not there.
 An **empty** clip is only a warning, though. A run where nothing on the page ever
 redraws has nothing to capture, and that is a legitimate outcome rather than a
 failure.
-
-::: warning Changed in 1.7.0
-A failed recording used to pass silently, and an ffmpeg older than 8 could hang
-the job. Both now fail up front instead. Install ffmpeg 8 — there is no flag that
-brings the old behaviour back.
-:::
 
 ## Recording in CI
 
@@ -336,7 +325,7 @@ jobs:
 
       - name: Record the tests this branch added
         id: rec
-        uses: BRIKEV/twd-cli/.github/actions/record@v1.8.0
+        uses: BRIKEV/twd-cli/.github/actions/record@v1.10.0
         with:
           changed-since: ${{ github.event.pull_request.base.sha }}
           artifact-name: twd-recording-pr-${{ github.event.pull_request.number }}
@@ -366,7 +355,7 @@ produce an unchanged video.
 | Input | Default | Description |
 |-------|---------|-------------|
 | `working-directory` | `.` | Directory where `twd.config.json` lives |
-| `cli-version` | pinned per action release | `twd-cli` version to run, pinned so the same workflow keeps producing the same recording |
+| `cli-version` | `1.10.0` (pinned per action release) | `twd-cli` version to run, pinned so the same workflow keeps producing the same recording |
 | `changed-since` | (empty) | Record only the tests this branch added or changed since this ref. Needs history, so set `fetch-depth: 0`. Mutually exclusive with `tests` |
 | `tests` | (empty) | Newline-separated test titles. Each becomes one `--test` filter, and filters are OR'd. Mutually exclusive with `changed-since` |
 | `pace` | (empty) | Milliseconds held after each command, passed to `--record-pace`. Empty uses the CLI default of 300; `0` disables pacing |

@@ -278,8 +278,8 @@ conditionalButton.should("be.disabled");
 
 // After form validation fails
 const user = userEvent.setup();
-const form = await twd.get("form");
-await user.click(await twd.get("button[type='submit']"));
+const submitButton = await twd.get("button[type='submit']");
+await user.click(submitButton.el);
 submitButton.should("be.disabled");
 ```
 
@@ -314,7 +314,8 @@ submitButton.should("be.enabled");
 
 // After enabling conditionally
 const user = userEvent.setup();
-await user.type(await twd.get("#email"), "test@example.com");
+const emailInput = await twd.get("#email");
+await user.type(emailInput.el, "test@example.com");
 const conditionalButton = await twd.get("#conditional-btn");
 conditionalButton.should("be.enabled");
 ```
@@ -441,8 +442,8 @@ const secondInput = await twd.get("#second-input");
 secondInput.should("be.focused");
 
 // After clicking
-await user.click(await twd.get("#clickable-input"));
 const clickedInput = await twd.get("#clickable-input");
+await user.click(clickedInput.el);
 clickedInput.should("be.focused");
 
 // Focus management in modals
@@ -570,14 +571,14 @@ await twd.url().should("eq", expectedUrl: string, retries?: number): Promise<str
 
 ```ts
 // Exact URL matching
-twd.visit("/");
+await twd.visit("/");
 await twd.url().should("eq", "http://localhost:3000/");
 
-twd.visit("/products");
+await twd.visit("/products");
 await twd.url().should("eq", "http://localhost:3000/products");
 
 // With query parameters
-twd.visit("/search?q=laptop&sort=price");
+await twd.visit("/search?q=laptop&sort=price");
 await twd
   .url()
   .should("eq", "http://localhost:3000/search?q=laptop&sort=price");
@@ -611,7 +612,7 @@ await twd.url().should("contain.url", substring: string, retries?: number): Prom
 
 ```ts
 // Path matching
-twd.visit("/products/category/electronics");
+await twd.visit("/products/category/electronics");
 await twd.url().should("contain.url", "/products");
 await twd.url().should("contain.url", "electronics");
 await twd.url().should("contain.url", "category");
@@ -621,7 +622,7 @@ await twd.url().should("contain.url", "localhost");
 await twd.url().should("contain.url", "3000");
 
 // Query parameters
-twd.visit("/search?q=laptop");
+await twd.visit("/search?q=laptop");
 await twd.url().should("contain.url", "q=laptop");
 await twd.url().should("contain.url", "search");
 
