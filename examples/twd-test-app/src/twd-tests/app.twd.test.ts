@@ -19,7 +19,7 @@ describe("App interactions", () => {
       it("clicks the button", async () => {
         await twd.visit("/");
         const btn = await twd.get("button");
-        userEvent.click(btn.el);
+        await userEvent.click(btn.el);
       });
     });
   });
@@ -100,7 +100,7 @@ describe("App interactions", () => {
   });
 
   it("visit contact page", async () => {
-    twd.visit("/contact");
+    await twd.visit("/contact");
     const user = userEvent.setup();
     await twd.mockRequest("contactSubmit", {
       method: "POST",
