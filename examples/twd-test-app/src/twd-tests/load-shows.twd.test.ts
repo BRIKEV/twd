@@ -14,7 +14,7 @@ describe("App shows", () => {
       url: "https://api.tvmaze.com/search/shows?q=",
       response: shows,
     });
-    twd.visit('/shows');
+    await twd.visit('/shows');
     await twd.waitForRequest("getShows");
     const showCards = await twd.getAll('[data-testid="show-card"]');
     expect(showCards).to.have.length(2);
