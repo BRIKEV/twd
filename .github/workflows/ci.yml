@@ -92,7 +92,9 @@ jobs:
           done
 
       - name: Pack tarball
-        run: npm pack --pack-destination packed
+        run: |
+          mkdir packed
+          npm pack --pack-destination packed
 
       - name: Upload tarball
         uses: actions/upload-artifact@v4
