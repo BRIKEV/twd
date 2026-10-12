@@ -14,7 +14,7 @@
 
 A sidebar in your dev server runs component and flow tests against your real app: the same DOM, routes and state you are building. Your AI agent can drive the same loop headlessly, and every mock gets checked against the real API before you merge.
 
-Open source under the MIT license. Free for companies, with no paid tier.
+Open source under the MIT license.
 
 ## Why TWD
 
@@ -30,12 +30,20 @@ TWD complements end-to-end tools like Playwright and Cypress: TWD gives fast, de
 
 ### With an AI agent
 
+Install the TWD skills in your agent:
+
+```bash
+npx skills add BRIKEV/twd-ai   # Cursor, Copilot, Windsurf, Codex and other agents
+```
+
+On Claude Code, install the plugin instead to also get the slash commands:
+
 ```bash
 claude plugin marketplace add BRIKEV/twd-ai
 claude plugin install twd@twd-ai
 ```
 
-Then run `/twd:setup` in Claude Code. It detects your stack, installs `twd-js` and `twd-cli`, and wires the Vite plugin. Start `npm run dev` and ask for tests: *"Write tests for the checkout page"*.
+Then ask your agent to set up TWD (`/twd:setup` in Claude Code). It detects your stack, installs `twd-js` and `twd-cli`, and wires the Vite plugin. Start `npm run dev` and ask for tests: *"Write tests for the checkout page"*.
 
 → **[Get started with AI agents](https://twd.dev/ai-overview)**
 
@@ -88,7 +96,7 @@ Start with `twd-js`. Add the rest when you need it. Everything is MIT licensed.
 | **[twd-js](https://twd.dev/twd-js)** | The core: the in-browser runner and sidebar, request mocking and assertions. |
 | **[twd-cli](https://twd.dev/ci-execution)** | Headless runs for CI and AI agents, with coverage, [OpenAPI contract validation](https://twd.dev/contract-testing) and [per-test video recording](https://twd.dev/recording). |
 | **[twd-lint](https://twd.dev/linting)** | Catches TWD test mistakes in the editor and in CI before a browser run. Works with `npx twd-lint` or as an ESLint plugin. |
-| **[twd-ai](https://twd.dev/twd-ai/setup)** | Claude Code plugin that sets TWD up, writes and runs tests, and finds gaps in your coverage. |
+| **[twd-ai](https://twd.dev/ai-overview)** | Agent skills (and a Claude Code plugin) that set TWD up, write and run tests, and find gaps in your coverage. |
 | **[twd-relay](https://twd.dev/twd-relay)** | Optional: watch your agent's test runs live in your own browser tab. |
 
 ## Examples
