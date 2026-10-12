@@ -1,3 +1,20 @@
+## <small>1.11.0 (2026-10-12)</small>
+
+* ci: minimum supported Node is now 20, `engines.node` raised from `>=16` to `>=20` (#385) ([325152d](https://github.com/BRIKEV/twd/commit/325152d56afce554bbcea3b6f7603cdd53f89927)), closes [#385](https://github.com/BRIKEV/twd/issues/385)
+* chore(deps): bump preact from 10.29.8 to 11.0.0 (#372) ([a271782](https://github.com/BRIKEV/twd/commit/a271782810cf0c3c1878af0b2b7ee495c2599a52)), closes [#372](https://github.com/BRIKEV/twd/issues/372)
+* chore(deps): bump chai from 6.2.2 to 6.3.0 (#389) ([6cbcd92](https://github.com/BRIKEV/twd/commit/6cbcd925062f7781a3c0b2d20fee51e96b17a6cf)), closes [#389](https://github.com/BRIKEV/twd/issues/389)
+* chore(deps): bump @testing-library/dom from 10.4.1 to 10.4.2 (#388) ([49a5449](https://github.com/BRIKEV/twd/commit/49a5449de5d8a87afc7439396b2cb0b07bc7feb5)), closes [#388](https://github.com/BRIKEV/twd/issues/388)
+* docs: add a Linting page for twd-lint (#381) ([2e1094b](https://github.com/BRIKEV/twd/commit/2e1094bf47116156236ee371a29832e7448ef4c1)), closes [#381](https://github.com/BRIKEV/twd/issues/381)
+* docs: AI agents section, headless twd-cli loop by default, relay as opt-in (#363) ([a018387](https://github.com/BRIKEV/twd/commit/a018387fed9d3746432c2e5962eb576016422fff)), closes [#363](https://github.com/BRIKEV/twd/issues/363)
+* docs: refresh the README for the current TWD positioning (#390) ([35cddbf](https://github.com/BRIKEV/twd/commit/35cddbfb03009843178711eab5399e59e2cbf600)), closes [#390](https://github.com/BRIKEV/twd/issues/390)
+* docs: fix inconsistencies across the guides and API reference (#379) ([94dfae2](https://github.com/BRIKEV/twd/commit/94dfae2812e227207e5731daf17704efc12de01b)), closes [#379](https://github.com/BRIKEV/twd/issues/379)
+* ci: test on Node 22/24/26, add a Node 20 consumer smoke job, group Dependabot updates (#385) ([325152d](https://github.com/BRIKEV/twd/commit/325152d56afce554bbcea3b6f7603cdd53f89927)), closes [#385](https://github.com/BRIKEV/twd/issues/385)
+* chore(deps-dev): dev dependency bumps, including vitest 5, jsdom 30, prettier 3.9.9, typescript-eslint 8.70, vitepress 2.0.0-alpha.20 and @testing-library/react 16.3.3 (#360, #366, #369, #370, #377, #382, #383, #386, #387)
+
+**Minimum Node is now 20.** `engines.node` moves from `>=16` to `>=20`. The CLI (`npx twd-js init`) and the Vite plugin are now checked on Node 20 in CI, by installing the packed tarball on that version. The test suite itself runs on Node 22, 24 and 26, because the Vitest and jsdom toolchain needs Node 22 or newer. Older Node versions will probably still work, but they are no longer tested. npm and pnpm only warn when the engines range does not match. Yarn 1 users on Node below 20 need `--ignore-engines`.
+
+**Preact 11 in the bundle.** `twd-js/bundled` ships Preact, which renders the sidebar for Vue, Angular, Solid and other non-React setups. That bundle moves from Preact 10 to Preact 11. There is no API change for TWD users.
+
 ## <small>1.10.1 (2026-09-20)</small>
 
 * fix(vite-plugin): pre-bundle the deps Vite's scanner cannot reach (#354) ([25f13dd](https://github.com/BRIKEV/twd/commit/25f13dd)), closes [#354](https://github.com/BRIKEV/twd/issues/354)

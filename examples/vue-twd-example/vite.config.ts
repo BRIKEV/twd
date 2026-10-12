@@ -48,7 +48,7 @@ const darkTheme = {
 export default defineConfig({
   plugins: [
     vue(),
-    twd({ theme: darkTheme, search: true }),
+    twd({ theme: darkTheme, search: true, pace: true }),
   ],
   resolve: {
     alias: {
