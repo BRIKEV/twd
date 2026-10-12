@@ -4,3 +4,13 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
+    groups:
+      # coverage-v8 peers on the exact vitest version, so they must move together
+      vitest:
+        patterns:
+          - "vitest"
+          - "@vitest/*"
+    ignore:
+      # TypeScript 7 (native compiler) breaks the declaration build; migrate deliberately
+      - dependency-name: "typescript"
+        update-types: ["version-update:semver-major"]
