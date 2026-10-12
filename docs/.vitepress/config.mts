@@ -89,11 +89,11 @@ export default defineConfig({
         items: [
           { text: 'Getting Started', link: '/getting-started' },
           { text: 'Writing Tests', link: '/writing-tests' },
-          { text: 'Linting', link: '/linting' },
           { text: 'API Mocking', link: '/api-mocking' },
           { text: 'Component Testing', link: '/component-testing' },
           { text: 'Component Mocking', link: '/component-mocking' },
           { text: 'Module Mocking', link: '/module-mocking' },
+          { text: 'Linting', link: '/linting' },
           { text: 'Theming', link: '/theming' },
           { text: 'CI Execution', link: '/ci-execution' },
           { text: 'Recording Runs', link: '/recording' },

@@ -14,8 +14,8 @@ const OUT = join(DOCS, 'public', 'llms-full.txt');
 // not listed here are appended afterwards in alphabetical order.
 const ORDER = [
   // Core Concepts
-  'getting-started.md', 'writing-tests.md', 'linting.md', 'api-mocking.md', 'component-testing.md',
-  'component-mocking.md', 'module-mocking.md', 'theming.md', 'ci-execution.md',
+  'getting-started.md', 'writing-tests.md', 'api-mocking.md', 'component-testing.md',
+  'component-mocking.md', 'module-mocking.md', 'linting.md', 'theming.md', 'ci-execution.md',
   'recording.md', 'coverage.md', 'contract-testing-setup.md', 'frameworks.md',
   'testing-library.md', 'sharding.md', 'layout-snapshots.md',
   // AI agents
