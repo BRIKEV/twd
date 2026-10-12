@@ -2,7 +2,7 @@
 
 [![CI](https://github.com/BRIKEV/twd/actions/workflows/ci.yml/badge.svg)](https://github.com/BRIKEV/twd/actions/workflows/ci.yml)
 [![npm version](https://img.shields.io/npm/v/twd-js.svg)](https://www.npmjs.com/package/twd-js)
-[![license](https://img.shields.io/github/license/brikev/twd.svg)](./LICENSE)
+[![license](https://img.shields.io/github/license/brikev/twd.svg)](https://github.com/BRIKEV/twd/blob/main/LICENSE)
 [![Maintainability](https://qlty.sh/gh/BRIKEV/projects/twd/maintainability.svg)](https://qlty.sh/gh/BRIKEV/projects/twd)
 [![Code Coverage](https://qlty.sh/gh/BRIKEV/projects/twd/coverage.svg)](https://qlty.sh/gh/BRIKEV/projects/twd)
 
@@ -10,31 +10,42 @@
   <img src="https://raw.githubusercontent.com/BRIKEV/twd/main/images/twd-skill.gif" alt="TWD running with an AI agent: tests written and executed in a real browser sidebar" width="800">
 </p>
 
-> **Frontend tests that run in your real browser.** Same DOM, same routes, same state as your dev server. Works with React, Vue, Angular, Solid, Astro, Nuxt, HTMX, and vanilla JS, on Vite, Webpack, or a CDN.
+> **Frontend tests that run in the browser you develop in.**
 
-## The problem
+A sidebar in your dev server runs component and flow tests against your real app: the same DOM, routes and state you are building. Your AI agent can drive the same loop headlessly, and every mock gets checked against the real API before you merge.
 
-Testing gets pushed to next week, and next week never comes. When it does happen, tests usually run in a different environment from where you're building, so testing feels like overhead the moment you finish a feature.
+Open source under the MIT license. Free for companies, with no paid tier.
 
-The tooling pushes you the same way. You end up writing more code for the tests than for the feature itself, between setup, mocks, and helpers. Adding tests starts to feel like shipping a second app on top of the one you already finished.
+## Why TWD
 
-As AI writes more of your code, the gap widens. Agents generate test files that look correct but never actually execute in a real browser. The mocks those tests rely on quietly drift from the real API over time. Fields get renamed, mocks stay frozen, tests pass, production breaks.
+- **Tests live where you build.** No second browser to keep open and no separate harness. Write a test next to your code and press play in the sidebar.
+- **Built for AI agents.** The agent writes a test, runs it headlessly against your real app, reads the failure, fixes it and re-runs until green. Results come back as structured text, not screenshots, so the loop stays cheap in tokens.
+- **Review AI pull requests with your eyes.** Put a `record` label on a pull request and CI posts one video per test the branch added, from the same run that turned the check green. No extra tokens, and it cannot drift from the code.
+- **Mocks that can't drift.** `twd-cli` validates every mocked response against your OpenAPI spec and points at the exact field that broke, so a renamed field shows up in CI instead of in production.
+- **Mistakes caught before the run.** `twd-lint` flags a missing `await`, a wrong runner import or a forgotten `it.only` in your editor and in CI.
 
-## The solution
-
-TWD puts tests inside your dev server. A sidebar appears in your real browser, runs tests against the same DOM your users see, and updates as you code. When you're ready, plug in an AI agent that writes tests, runs them via a WebSocket bridge, and iterates until they pass. When you ship, validate every mock against your OpenAPI spec to catch drift before a user does.
-
-> **Test what you own. Mock what you don't.**
-
-Full pitch and docs at **[twd.dev](https://twd.dev)**.
+TWD complements end-to-end tools like Playwright and Cypress: TWD gives fast, deterministic feedback on your UI with mocked boundaries while you develop, and end-to-end tests check that your systems work together.
 
 ## Quick start
+
+### With an AI agent
+
+```bash
+claude plugin marketplace add BRIKEV/twd-ai
+claude plugin install twd@twd-ai
+```
+
+Then run `/twd:setup` in Claude Code. It detects your stack, installs `twd-js` and `twd-cli`, and wires the Vite plugin. Start `npm run dev` and ask for tests: *"Write tests for the checkout page"*.
+
+→ **[Get started with AI agents](https://twd.dev/ai-overview)**
+
+### By hand
 
 ```bash
 npm install --save-dev twd-js
 ```
 
-Add the Vite plugin (auto-loads the sidebar and discovers your test files):
+Add the Vite plugin (it loads the sidebar and discovers your test files):
 
 ```ts
 // vite.config.ts
@@ -62,21 +73,25 @@ describe('App', () => {
 })
 ```
 
-Run `npm run dev` and open the app. The TWD sidebar appears in your browser; click play to run the test.
+Run `npm run dev` and open the app. The sidebar appears next to it; press play on any test and watch it run against the page you are building.
 
-→ **[Full setup guide](https://twd.dev/getting-started)** · **[Framework integration](https://twd.dev/frameworks)** (Angular, non-Vite, Astro, React Router)
+Works with React, Vue, Angular, Solid, Astro, Nuxt, HTMX and vanilla JS, on Vite, Webpack or a CDN. TWD code is guarded by `import.meta.env.DEV`, so nothing reaches your production bundle.
+
+→ **[Full setup guide](https://twd.dev/getting-started)** · **[Framework integration](https://twd.dev/frameworks)**
 
 ## The TWD ecosystem
 
-One package today. The rest when you need it.
+Start with `twd-js`. Add the rest when you need it. Everything is MIT licensed.
 
-| Tool | What it does |
+| Package | What it does |
 | --- | --- |
-| **[twd-js](https://twd.dev/twd-js)** | The core sidebar. Frontend tests that run in your real browser. |
-| **[twd-relay](https://twd.dev/twd-relay)** | Token-efficient browser testing for AI agents. Structured pass/fail over WebSocket. No Playwright, no screenshots. |
-| **[twd-cli](https://twd.dev/contract-testing)** | Headless CI runs with coverage and OpenAPI contract validation. |
+| **[twd-js](https://twd.dev/twd-js)** | The core: the in-browser runner and sidebar, request mocking and assertions. |
+| **[twd-cli](https://twd.dev/ci-execution)** | Headless runs for CI and AI agents, with coverage, [OpenAPI contract validation](https://twd.dev/contract-testing) and [per-test video recording](https://twd.dev/recording). |
+| **[twd-lint](https://twd.dev/linting)** | Catches TWD test mistakes in the editor and in CI before a browser run. Works with `npx twd-lint` or as an ESLint plugin. |
+| **[twd-ai](https://twd.dev/twd-ai/setup)** | Claude Code plugin that sets TWD up, writes and runs tests, and finds gaps in your coverage. |
+| **[twd-relay](https://twd.dev/twd-relay)** | Optional: watch your agent's test runs live in your own browser tab. |
 
-## Examples & showcase
+## Examples
 
 - **[twd-shadcn](https://github.com/BRIKEV/twd-shadcn)**: React + shadcn/ui with a [live demo](https://brikev.github.io/twd-shadcn/) you can interact with
 - **[twd-react-router](https://github.com/BRIKEV/twd-react-router)**: React Router (Framework Mode) with `createRoutesStub` and loader mocking
@@ -92,9 +107,16 @@ One package today. The rest when you need it.
 - **[Getting Started](https://twd.dev/getting-started)**: Install, set up, write your first test
 - **[Writing Tests](https://twd.dev/writing-tests)**: Selectors, assertions, interactions, navigation
 - **[API Mocking](https://twd.dev/api-mocking)**: Built-in request mocking via service worker
-- **[AI Integration](https://twd.dev/ai-overview)**: Connect Claude Code (or any agent) via twd-relay
+- **[Linting](https://twd.dev/linting)**: Catch test mistakes before a browser run with twd-lint
+- **[CI Execution](https://twd.dev/ci-execution)**: Headless runs with twd-cli and the run report
+- **[Recording Runs](https://twd.dev/recording)**: One video per test, and the `record` label for pull requests
 - **[Contract Testing Setup](https://twd.dev/contract-testing-setup)**: Validate mocks against OpenAPI specs in CI
+- **[AI agents](https://twd.dev/ai-overview)**: Let your agent set up, write and run tests
 - **[API Reference](https://twd.dev/api/)**: Test functions, commands, assertions
+
+## Bringing TWD to your team?
+
+TWD is open source and stays that way. If you would rather not do the adoption work alone, [book a working session with the maintainer](https://calendly.com/kevinccbsg/30min): we set TWD up in your repo, wire the agent loop and the record job into your CI, and leave you with tests your team wrote together.
 
 ## Contributing
 
@@ -126,4 +148,4 @@ This project follows the [all-contributors](https://github.com/all-contributors/
 
 ## License
 
-[MIT](./LICENSE)
+[MIT](https://github.com/BRIKEV/twd/blob/main/LICENSE)
