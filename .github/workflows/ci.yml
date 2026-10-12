@@ -18,7 +18,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [20.x, 22.x, 24.x]
+        node-version: [22.x, 24.x, 26.x]
     steps:
       - name: Checkout repo
         uses: actions/checkout@v5
@@ -90,6 +90,59 @@ jobs:
             fi
             echo "OK: $f"
           done
+
+      - name: Pack tarball
+        run: npm pack --pack-destination packed
+
+      - name: Upload tarball
+        uses: actions/upload-artifact@v4
+        with:
+          name: twd-js-tarball
+          path: packed/*.tgz
+
+  # The test matrix covers the dev toolchain (Vitest, jsdom), which needs Node 22+.
+  # Consumers only run the CLI and the Vite plugin in Node, so this job installs
+  # the packed tarball on the oldest Node in package.json "engines" and checks those.
+  node-compat:
+    runs-on: ubuntu-latest
+    needs: build
+    strategy:
+      matrix:
+        node-version: [20.x]
+    steps:
+      - name: Setup Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Download tarball
+        uses: actions/download-artifact@v4
+        with:
+          name: twd-js-tarball
+          path: packed
+
+      - name: Install tarball in an empty project
+        run: |
+          mkdir consumer && cd consumer
+          npm init -y > /dev/null
+          npm install ../packed/*.tgz --ignore-scripts --no-audit --no-fund
+
+      - name: Run the CLI
+        working-directory: consumer
+        run: |
+          npx twd-js init public
+          test -f public/mock-sw.js
+
+      - name: Import the Vite plugin
+        working-directory: consumer
+        run: |
+          node --input-type=module -e "
+            import { twd, twdHmr, removeMockServiceWorker } from 'twd-js/vite-plugin';
+            for (const fn of [twd, twdHmr, removeMockServiceWorker]) {
+              if (typeof fn !== 'function') throw new Error('vite-plugin export is not a function');
+            }
+            console.log('vite-plugin OK on', process.version);
+          "
 
   coverage:
     runs-on: ubuntu-latest
