@@ -1,6 +1,6 @@
 # Contributing to twd-js
 
-Thanks for your interest in twd-js. TWD (Testing Web Development) is a library designed to seamlessly integrate testing into your web development workflow. It streamlines the process of writing, running, and managing tests directly in your application, with a modern UI and powerful mocking capabilities.
+Thanks for your interest in twd-js. TWD (Test While Developing) is a library designed to seamlessly integrate testing into your web development workflow. It streamlines the process of writing, running, and managing tests directly in your application, with a modern UI and powerful mocking capabilities.
 
 ## Contributions
 

@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-TWD (Testing Web Development) is an in-browser testing library that runs tests directly in the browser with a sidebar UI for instant visual feedback. It's designed for SPAs with deterministic, client-side UI testing - not suitable for SSR-first architectures (Next.js App Router, server-side features).
+TWD (Test While Developing) is an in-browser testing library that runs tests directly in the browser with a sidebar UI for instant visual feedback. It's designed for SPAs with deterministic, client-side UI testing - not suitable for SSR-first architectures (Next.js App Router, server-side features).
 
 ## Common Commands
 

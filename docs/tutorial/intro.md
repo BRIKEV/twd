@@ -5,7 +5,7 @@ description: Introduction to TWD concepts, features, and what you will learn in 
 
 # Welcome to TWD
 
-Welcome to the TWD (Testing While Developing) tutorial! This comprehensive guide will walk you through everything you need to know to start testing your applications with TWD. While the examples use React, TWD works with React, Vue, Angular, Solid.js, and other Vite-based frameworks.
+Welcome to the TWD (Test While Developing) tutorial! This comprehensive guide will walk you through everything you need to know to start testing your applications with TWD. While the examples use React, TWD works with React, Vue, Angular, Solid.js, and other Vite-based frameworks.
 
 ## What is TWD?
 

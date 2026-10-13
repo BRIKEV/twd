@@ -14,7 +14,7 @@ However, automating these tests is tricky.
 - With Vitest, you need to mock data, but your tests still only return a simple pass/fail in the terminal.
 - You also need real users created and validated
 
-TWD (Testing While Developing) takes a different approach: it encourages testing **behavior**, not infrastructure. That means you don't need to test the auth provider itself — you just need to simulate the authentication behavior your app depends on.
+TWD (Test While Developing) takes a different approach: it encourages testing **behavior**, not infrastructure. That means you don't need to test the auth provider itself — you just need to simulate the authentication behavior your app depends on.
 
 For React apps using Auth0 with PKCE flow, it's a bit more complicated, because we rely on the hook rather than simple requests. Let's see how we can fully control authentication in our tests.
 
