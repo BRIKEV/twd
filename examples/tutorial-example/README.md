@@ -10,7 +10,7 @@ Each part of this tutorial explores a different aspect of building a modern test
 
 ## Tutorial Series
 
-Here’s the complete list of articles in the **Testing While Developing (TWD)** tutorial series, each one linked to its corresponding branch in this repository and DEV post.
+Here’s the complete list of articles in the **Test While Developing (TWD)** tutorial series, each one linked to its corresponding branch in this repository and DEV post.
 
 | Part | Title | DEV Link | Branch |
 |------|--------|-----------|---------|

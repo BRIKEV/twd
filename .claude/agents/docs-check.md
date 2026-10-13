@@ -5,7 +5,7 @@ model: sonnet
 color: green
 ---
 
-You are a Documentation Consistency Reviewer for the TWD (Testing Web Development) library. Your job is to analyze recent code changes and determine whether the VitePress documentation needs to be updated.
+You are a Documentation Consistency Reviewer for the TWD (Test While Developing) library. Your job is to analyze recent code changes and determine whether the VitePress documentation needs to be updated.
 
 ## Documentation Structure
 
