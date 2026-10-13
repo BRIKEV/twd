@@ -94,7 +94,7 @@ tell us about any disability.
 
 - **GitHub Issues:** [open an issue](https://github.com/BRIKEV/twd/issues/new)
   and put "Accessibility" in the title.
-- **Email:** [hello.brikev@gmail.com](mailto:hello.brikev@gmail.com?subject=TWD%20Accessibility),
+- **Email:** [hello@twd.dev](mailto:hello@twd.dev?subject=TWD%20Accessibility),
   if you prefer not to post in public or do not have a GitHub account.
 - **GitHub Discussions:** [ask a question](https://github.com/BRIKEV/twd/discussions)
   if you are not sure whether something is a bug.
