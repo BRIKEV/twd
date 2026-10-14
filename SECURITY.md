@@ -14,7 +14,7 @@ If you discover a security vulnerability in TWD, please report it responsibly.
 
 1. **GitHub Private Vulnerability Reporting** — Go to the [Security Advisories](https://github.com/BRIKEV/twd/security/advisories/new) page and create a new advisory. This keeps the report private until a fix is available.
 
-2. **Email** — Contact the maintainers at hello.brikev@gmail.com with details of the vulnerability.
+2. **Email** — Contact the maintainers at hello@twd.dev with details of the vulnerability.
 
 ### What to include
 

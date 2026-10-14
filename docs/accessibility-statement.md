@@ -143,7 +143,7 @@ updated.
 If you experience any difficulty accessing any part of TWD, identify an
 accessibility issue, or have suggestions for improvement, please let us know:
 
-- **Email:** [hello.brikev@gmail.com](mailto:hello.brikev@gmail.com?subject=TWD%20Accessibility)
+- **Email:** [hello@twd.dev](mailto:hello@twd.dev?subject=TWD%20Accessibility)
 - **GitHub Issues:** [github.com/BRIKEV/twd/issues](https://github.com/BRIKEV/twd/issues)
 - **GitHub Discussions:** [github.com/BRIKEV/twd/discussions](https://github.com/BRIKEV/twd/discussions)
 
