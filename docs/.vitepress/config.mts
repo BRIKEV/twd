@@ -160,7 +160,8 @@ export default defineConfig({
 
     socialLinks: [
       { icon: 'github', link: 'https://github.com/BRIKEV/twd' },
-      { icon: 'npm', link: 'https://www.npmjs.com/package/twd-js' }
+      { icon: 'npm', link: 'https://www.npmjs.com/package/twd-js' },
+      { icon: 'youtube', link: 'https://www.youtube.com/@twd-dev/videos' }
     ],
 
     footer: {
