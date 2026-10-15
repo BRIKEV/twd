@@ -186,10 +186,10 @@ describe("Add Component", () => {
     restorePage();
   });
 
-  it("renders the Add component", () => {
+  it("renders the Add component", async () => {
     render(<AppProvider><Add /></AppProvider>, { container: componentHost() });
 
-    twd.should(screen.getByText("Add Item"), "be.visible");
+    twd.should(await screen.findByText("Add Item"), "be.visible");
   });
 });
 ```
@@ -221,11 +221,11 @@ Use one of these instead:
 
 ```ts
 // Works: render() mounted into document.body
-screen.getByText("Add Item");
-screenDomGlobal.getByRole("button", { name: "Add Item" });
+await screen.findByText("Add Item");
+await screenDomGlobal.findByRole("button", { name: "Add Item" });
 
 // Does not work: scoped to the app root, which is not where render() mounted
-screenDom.getByText("Add Item");
+await screenDom.findByText("Add Item");
 ```
 
 ## Mocking

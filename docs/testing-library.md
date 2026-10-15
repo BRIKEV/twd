@@ -11,10 +11,10 @@ TWD fully supports Testing Library's query methods and user event utilities, giv
 
 TWD provides two ways to select elements:
 
-1. **TWD's native selectors** (`twd.get()`, `twd.getAll()`) - Simple CSS selector-based queries
-2. **Testing Library** (`screenDom`, `userEvent`) - Accessible, semantic queries that follow testing best practices
+1. **Testing Library** (`screenDom`, `userEvent`) - Accessible, semantic queries that follow testing best practices. **This is the default.**
+2. **TWD's native selectors** (`twd.get()`, `twd.getAll()`) - CSS selector-based queries, the last resort when no Testing Library query reaches the element
 
-Both approaches work seamlessly together, and you can choose the one that best fits your needs.
+Both work together in the same test, but they are not equal choices. TWD tests run against a real app that renders asynchronously, so the query you pick decides whether a test is stable or flaky. Default to `await screenDom.findBy*(...)` for every lookup. See [When to Use Each Approach](#when-to-use-each-approach) for the full priority order.
 
 ## Rendering components directly
 
@@ -99,7 +99,7 @@ If `screenDom` queries fail unexpectedly:
 **When to use `screenDomGlobal` instead:**
 - You need to query portal-rendered elements (modals, dialogs)
 
-⚠️ **Remember:** When using `screenDomGlobal`, make your queries specific (e.g., `getByRole('button', { name: 'Submit' })`) to avoid accidentally matching elements in the TWD sidebar.
+⚠️ **Remember:** When using `screenDomGlobal`, make your queries specific (e.g., `findByRole('button', { name: 'Submit' })`) to avoid accidentally matching elements in the TWD sidebar.
 
 ### screenDomGlobal (Global Queries)
 
@@ -110,84 +110,96 @@ If `screenDom` queries fail unexpectedly:
 - You need to search outside the root container
 - Working with elements rendered via React portals or similar mechanisms
 
-⚠️ **WARNING:** `screenDomGlobal` may also match elements inside the TWD sidebar if your selectors are not specific enough. Always use specific queries (e.g., `getByRole` with `name` option) to avoid matching sidebar elements.
+⚠️ **WARNING:** `screenDomGlobal` may also match elements inside the TWD sidebar if your selectors are not specific enough. Always use specific queries (e.g., `findByRole` with `name` option) to avoid matching sidebar elements.
 
 **Example:**
 ```ts
 // ✅ Good - Specific query that won't match sidebar
-const modal = screenDomGlobal.getByRole('dialog', { name: 'Confirm Action' });
-const modalTitle = screenDomGlobal.getByText('Are you sure?');
+const modal = await screenDomGlobal.findByRole('dialog', { name: 'Confirm Action' });
+const modalTitle = await screenDomGlobal.findByText('Are you sure?');
 
 // ❌ Avoid - Too generic, might match sidebar elements
-const button = screenDomGlobal.getByRole('button'); // Could match sidebar buttons!
-const text = screenDomGlobal.getByText('Submit'); // Could match sidebar text!
+const button = await screenDomGlobal.findByRole('button'); // Could match sidebar buttons!
+const text = await screenDomGlobal.findByText('Submit'); // Could match sidebar text!
 ```
 
 ### Query Methods
 
-All Testing Library query methods are available for both `screenDom` and `screenDomGlobal`:
+All Testing Library query methods are available for both `screenDom` and `screenDomGlobal`. They come in three families, listed here **in the order you should reach for them**.
 
-#### getBy* Methods (Throws if not found)
+#### findBy* Methods (Default: async, waits for the element)
+
+`findBy*` returns a promise that resolves once the element is in the DOM. TWD configures the async utility timeout at **3000ms** (instead of RTL's default 1000ms) to accommodate CI rendering delays after network requests.
+
+When the element is already rendered, `findBy*` resolves on its first check, so it costs nothing to use it everywhere. Use it for **every lookup**, not only the first one after `twd.visit()`.
 
 ```ts
-// Get by role (recommended)
-const button = screenDom.getByRole("button", { name: /submit/i });
-const heading = screenDom.getByRole("heading", { name: "Welcome", level: 1 });
+// By role (recommended)
+const button = await screenDom.findByRole("button", { name: /submit/i });
+const heading = await screenDom.findByRole("heading", { name: "Welcome", level: 1 });
 
-// Get by text
-const title = screenDom.getByText("Welcome to TWD");
-const partialText = screenDom.getByText(/welcome/i);
+// By label
+const emailInput = await screenDom.findByLabelText("Email Address:");
 
-// Get by label
-const emailInput = screenDom.getByLabelText("Email Address:");
-const searchInput = screenDom.getByLabelText(/search/i);
+// By text
+const title = await screenDom.findByText("Welcome to TWD");
+const partialText = await screenDom.findByText(/welcome/i);
 
-// Get by placeholder
-const input = screenDom.getByPlaceholderText("Enter your email");
+// By placeholder
+const input = await screenDom.findByPlaceholderText("Enter your email");
 
-// Get by test ID
-const card = screenDom.getByTestId("user-card");
+// By alt text
+const logo = await screenDom.findByAltText("Company Logo");
 
-// Get by alt text
-const logo = screenDom.getByAltText("Company Logo");
+// By test ID
+const card = await screenDom.findByTestId("user-card");
+
+// Multiple elements: waits until at least one matches
+const items = await screenDom.findAllByRole("listitem");
+expect(items).to.have.length(3);
 ```
 
-#### queryBy* Methods (Returns null if not found)
+#### queryBy* Methods (Only to assert absence)
+
+`queryBy*` returns `null` (or `[]` for `queryAllBy*`) instead of throwing. Its only job is to assert that something is **not** on the page.
 
 ```ts
-// Use queryBy when element might not exist
-const errorMessage = screenDom.queryByText("Error occurred");
-if (errorMessage) {
-  // Handle error message
-}
-
 // Check for absence
 const modal = screenDom.queryByRole("dialog");
-expect(modal).to.be.null; // Modal should not be present
+expect(modal).to.be.null;
+
+const errors = screenDom.queryAllByRole("alert");
+expect(errors).to.have.length(0);
 ```
 
-#### findBy* Methods (Async, waits for element)
-
-TWD configures the async utility timeout at **3000ms** (instead of RTL's default 1000ms) to accommodate CI rendering delays after network requests.
+::: tip Waiting for something to disappear
+`queryBy*` checks once. If the element is still on its way out (a closing modal, a loading spinner), wrap the check in `twd.waitFor`:
 
 ```ts
-// Wait for element to appear (waits up to 3s)
-const successMessage = await screenDom.findByText("Success!");
-const loadingSpinner = await screenDom.findByRole("status");
+await twd.waitFor(() => {
+  expect(screenDom.queryByRole("progressbar")).to.be.null;
+});
 ```
+:::
 
-#### getAllBy* / queryAllBy* / findAllBy* Methods
+#### getBy* Methods (Only inside `twd.waitFor`)
+
+`getBy*` is synchronous and throws **immediately** if the element is not in the DOM yet. In a real app the element is often still rendering after a navigation, a mocked request or a click, so a bare `getBy*` passes on your machine and fails in CI. Use it only inside a `twd.waitFor` callback, where the retry loop makes up for it:
 
 ```ts
-// Get multiple elements
-const buttons = screenDom.getAllByRole("button");
-const links = screenDom.queryAllByRole("link");
-const items = await screenDom.findAllByTestId("list-item");
+// ✅ getBy inside waitFor: retried until the state matches
+await twd.waitFor(() => {
+  expect(screenDom.getByRole("button", { name: /save/i }).getAttribute("aria-busy")).to.equal("false");
+});
 
-// Check count
-expect(buttons).to.have.length(3);
-twd.should(buttons[0], "be.visible");
+// ❌ Flaky: throws if the heading has not rendered yet
+const heading = screenDom.getByRole("heading", { name: "Welcome" });
+
+// ✅ Same lookup, stable
+const heading = await screenDom.findByRole("heading", { name: "Welcome" });
 ```
+
+If all you want is to wait for an element to appear, `findBy*` already does that. `twd.waitFor(() => screenDom.getByRole(...))` is just a hand-written `findByRole`.
 
 ### Complete Example
 
@@ -200,62 +212,50 @@ describe("User Profile", () => {
     await twd.visit("/profile");
 
     // Query by role (most accessible) - using screenDom for regular content
-    const heading = screenDom.getByRole("heading", { name: "User Profile" });
-    expect(heading).to.exist;
+    const heading = await screenDom.findByRole("heading", { name: "User Profile" });
+    twd.should(heading, "be.visible");
 
     // Query by label
-    const emailInput = screenDom.getByLabelText("Email:");
+    const emailInput = await screenDom.findByLabelText("Email:");
     twd.should(emailInput, "have.value", "user@example.com");
 
-    // Query by text
-    const saveButton = screenDom.getByRole("button", { name: /save/i });
-    
     // Interact with userEvent
+    const saveButton = await screenDom.findByRole("button", { name: /save/i });
     const user = userEvent.setup();
     await user.click(saveButton);
   });
 
-  it("should handle conditional elements", async () => {
+  it("should hide the admin panel for regular users", async () => {
     await twd.visit("/dashboard");
 
-    // Use queryBy for optional elements
-    const adminPanel = screenDom.queryByTestId("admin-panel");
-    
-    // Check if element exists
-    if (adminPanel) {
-      twd.should(adminPanel, "be.visible");
-    } else {
-      // User is not admin
-      expect(adminPanel).to.be.null;
-    }
+    // Wait for the page to render first, then assert absence
+    await screenDom.findByRole("heading", { name: "Dashboard" });
+    expect(screenDom.queryByTestId("admin-panel")).to.be.null;
   });
 
   it("should wait for async content", async () => {
     await twd.visit("/posts");
-    
-    // Wait for content to load
-    const firstPost = await screenDom.findByTestId("post-1");
-    twd.should(firstPost, "be.visible");
-    
-    // Get all posts once loaded
-    const posts = screenDom.getAllByTestId(/^post-/);
+
+    // findAllBy waits for the posts to load
+    const posts = await screenDom.findAllByTestId(/^post-/);
     expect(posts.length).to.be.greaterThan(0);
+    twd.should(posts[0], "be.visible");
   });
 
   it("should interact with modal dialog", async () => {
     await twd.visit("/settings");
-    
+
     // Open modal using screenDom (regular button in app)
-    const deleteButton = screenDom.getByRole("button", { name: /delete account/i });
+    const deleteButton = await screenDom.findByRole("button", { name: /delete account/i });
     const user = userEvent.setup();
     await user.click(deleteButton);
-    
+
     // Query modal using screenDomGlobal (modal is rendered via portal)
     const confirmModal = await screenDomGlobal.findByRole("dialog", { name: "Confirm Deletion" });
     twd.should(confirmModal, "be.visible");
-    
+
     // Use specific queries to avoid matching sidebar
-    const confirmButton = screenDomGlobal.getByRole("button", { name: "Yes, Delete" });
+    const confirmButton = await screenDomGlobal.findByRole("button", { name: "Yes, Delete" });
     await user.click(confirmButton);
   });
 });
@@ -287,9 +287,9 @@ describe("Form Interactions", () => {
     const user = userEvent.setup();
 
     // Find elements using screenDom
-    const emailInput = screenDom.getByLabelText("Email:");
-    const passwordInput = screenDom.getByLabelText("Password:");
-    const submitButton = screenDom.getByRole("button", { name: /submit/i });
+    const emailInput = await screenDom.findByLabelText("Email:");
+    const passwordInput = await screenDom.findByLabelText("Password:");
+    const submitButton = await screenDom.findByRole("button", { name: /submit/i });
 
     // Type into inputs
     await user.type(emailInput, "user@example.com");
@@ -306,23 +306,23 @@ describe("Form Interactions", () => {
   it("should handle dropdown selection", async () => {
     const user = userEvent.setup();
 
-    const countrySelect = screenDom.getByLabelText("Country:");
+    const countrySelect = await screenDom.findByLabelText("Country:");
     await user.selectOptions(countrySelect, "US");
 
-    const selectedOption = screenDom.getByRole("option", { name: "United States", selected: true });
-    expect(selectedOption).to.exist;
+    const selectedOption = await screenDom.findByRole("option", { name: "United States", selected: true });
+    twd.should(selectedOption, "be.selected");
   });
 
   it("should handle keyboard navigation", async () => {
     const user = userEvent.setup();
 
-    const firstInput = screenDom.getByLabelText("First Name:");
+    const firstInput = await screenDom.findByLabelText("First Name:");
     await user.type(firstInput, "John");
     
     // Tab to next input
     await user.tab();
     
-    const secondInput = screenDom.getByLabelText("Last Name:");
+    const secondInput = await screenDom.findByLabelText("Last Name:");
     twd.should(secondInput, "be.focused");
     await user.type(secondInput, "Doe");
   });
@@ -347,65 +347,72 @@ All `@testing-library/user-event` methods are supported:
 
 ## Combining TWD and Testing Library
 
-You can mix and match TWD's native selectors with Testing Library queries:
+You can mix TWD's native selectors with Testing Library queries in the same test. Keep `twd.get()` for the elements no query can reach:
 
 ```ts
-import { twd, screenDom, userEvent } from "twd-js";
+import { twd, screenDom, userEvent, expect } from "twd-js";
 
 describe("Mixed Approach", () => {
   it("should use both selector types", async () => {
     await twd.visit("/dashboard");
 
-    // Use TWD for simple CSS selectors
-    const container = await twd.get(".dashboard-container");
-    container.should("be.visible");
+    // Testing Library first: semantic queries for anything a user can see or name
+    const heading = await screenDom.findByRole("heading", { name: "Dashboard" });
+    twd.should(heading, "be.visible");
 
-    // Use screenDom for semantic queries
-    const heading = screenDom.getByRole("heading", { name: "Dashboard" });
-    expect(heading).to.exist;
-
-    // Use screenDom for form elements
     const user = userEvent.setup();
-    const searchInput = screenDom.getByLabelText("Search:");
+    const searchInput = await screenDom.findByLabelText("Search:");
     await user.type(searchInput, "query");
 
-    // Use TWD for complex selectors
-    const results = await twd.getAll(".search-result");
+    const results = await screenDom.findAllByRole("listitem");
     expect(results.length).to.be.greaterThan(0);
+
+    // twd.get as a last resort: a third-party chart with no accessible markup
+    const chart = await twd.get(".vendor-chart canvas");
+    chart.should("be.visible");
   });
 });
 ```
 
 ## When to Use Each Approach
 
-### Use TWD Selectors (`twd.get`, `twd.getAll`) When:
+TWD follows [Testing Library's query priority](https://testing-library.com/docs/queries/about#priority) for *which* query to use: role first, then label, placeholder, text, display value, alt text, title, and test ID last. On top of that, TWD has a rule for *which variant* to use, because tests run against a real app where rendering is asynchronous. In order:
 
-- You need complex CSS selectors
-- You're selecting by data attributes
-- You want simple, direct element access
-- You prefer CSS selector syntax
+| Priority | Use | For |
+|---|---|---|
+| 1 | `await screenDom.findBy*()` / `findAllBy*()` | **Every lookup.** Waits for the element, resolves at once if it is already there |
+| 2 | `screenDom.queryBy*()` / `queryAllBy*()` | Only to assert an element is **absent** |
+| 3 | `screenDom.getBy*()` / `getAllBy*()` | Only **inside `twd.waitFor(() => ...)`**, which retries it |
+| 4 | `await twd.get()` / `twd.getAll()` | **Last resort**, when no Testing Library query reaches the element |
+
+Swap `screenDom` for `screenDomGlobal` when the element lives in a portal (modals, dialogs, tooltips).
+
+### Why `findBy*` and not `getBy*`
+
+A TWD test drives your real app: `twd.visit()` mounts a route, mocked requests resolve, state updates and components re-render. The DOM keeps changing after each step, and how long it takes depends on the machine. A `getBy*` right after a visit or a click reads the DOM once, so it passes when your laptop is fast and fails in CI when it is not.
+
+`findBy*` removes that race. It retries until the element appears (up to 3000ms), and when the element is already there it returns on the first check. You don't need to decide whether something "has rendered yet", so the safe default is to use it for every lookup.
 
 ```ts
-// Complex selectors
-const item = await twd.get("ul > li:nth-child(3) button");
-const cards = await twd.getAll("[data-testid='product-card']");
+// ✅ Stable: waits for each element
+const button = await screenDom.findByRole("button", { name: /submit/i });
+const email = await screenDom.findByLabelText("Email:");
+const modal = await screenDomGlobal.findByRole("dialog", { name: "Confirm" });
+
+// ❌ Flaky: each line throws if the element has not rendered yet
+const button = screenDom.getByRole("button", { name: /submit/i });
+const email = screenDom.getByLabelText("Email:");
+const modal = screenDomGlobal.getByRole("dialog", { name: "Confirm" });
 ```
 
-### Use Testing Library (`screenDom` or `screenDomGlobal`) When:
+### When `twd.get()` is the right call
 
-- You want accessible, semantic queries
-- You're following Testing Library best practices
-- You want queries that match how users interact with your app
-- You need role-based queries (recommended for accessibility)
+Only when no Testing Library query reaches the element: a third-party widget that renders bare `<div>`s or a `<canvas>`, or markup you don't own and can't add a role, label or `data-testid` to. If you are reaching for `twd.get()` on your own components, that usually means they are missing an accessible name, which is worth fixing in the component.
 
 ```ts
-// Semantic, accessible queries - use screenDom for regular content
-const button = screenDom.getByRole("button", { name: /submit/i });
-const form = screenDom.getByLabelText("Email:");
-
-// Use screenDomGlobal for portal-rendered elements (modals, dialogs)
-const modal = screenDomGlobal.getByRole("dialog", { name: "Confirm" });
-const tooltip = screenDomGlobal.getByRole("tooltip");
+// Last resort: no role, label or text to query by
+const chart = await twd.get(".vendor-chart canvas");
+const cells = await twd.getAll(".vendor-grid .cell");
 ```
 
 ## Best Practices
@@ -414,33 +421,30 @@ const tooltip = screenDomGlobal.getByRole("tooltip");
 
 ```ts
 // ✅ Good - Accessible and semantic
-const button = screenDom.getByRole("button", { name: "Submit" });
+const button = await screenDom.findByRole("button", { name: "Submit" });
 
 // ❌ Avoid - Less accessible
-const button = screenDom.getByText("Submit");
+const button = await screenDom.findByText("Submit");
 ```
 
-### 2. Use Appropriate Query Types
+### 2. Use `findBy*` for Every Lookup
 
 ```ts
-// Use getBy when element must exist
-const heading = screenDom.getByRole("heading");
+// ✅ Element must exist: findBy waits for it
+const heading = await screenDom.findByRole("heading", { name: "Orders" });
 
-// Use queryBy when element might not exist
-const error = screenDom.queryByText("Error");
-if (error) {
-  // Handle error
-}
+// ✅ Element must NOT exist: queryBy returns null
+expect(screenDom.queryByText("Error")).to.be.null;
 
-// Use findBy when waiting for async content
-const data = await screenDom.findByTestId("async-data");
+// ❌ Avoid: getBy outside waitFor throws if the element is still rendering
+const heading = screenDom.getByRole("heading", { name: "Orders" });
 ```
 
 ### 3. Combine with TWD Assertions
 
 ```ts
 // Use screenDom for queries
-const input = screenDom.getByLabelText("Email:");
+const input = await screenDom.findByLabelText("Email:");
 
 // Use TWD's should() function for assertions (not method on element)
 twd.should(input, "have.value", "user@example.com");
@@ -451,7 +455,7 @@ twd.should(input, "be.visible");
 
 All Testing Library queries and user events are automatically logged in the TWD sidebar, making it easy to see what your tests are doing:
 
-- Query operations show as `query: getByRole("button")`
+- Query operations show as `query: findByRole("button")`
 - User events show as `Event fired: Clicked element`
 - All operations are visible in the test sidebar
 

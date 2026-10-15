@@ -75,25 +75,33 @@ If you render a component in isolation with Testing Library's `render()`, use
 
 ### Recommended: `findBy*` queries
 
-> **Always reach for `findBy*` first.**
+> **Always reach for `findBy*` first, for every lookup.**
 >
-> - **`findBy*` (recommended)**: returns a promise and **waits** for the element to appear. Because UI in a real app renders asynchronously (after navigation, data fetches, state updates, or re-renders), `findBy*` is the most reliable choice and avoids flaky tests.
-> - **`getBy*`**: synchronous; throws immediately if the element isn't already in the DOM. Only use it when you're certain the element is already rendered.
-> - **`queryBy*`**: synchronous; returns `null` if not found. Use it **only** when you intentionally want to assert that an element is *absent*.
+> UI in a real app renders asynchronously (after navigation, data fetches, state updates, or re-renders). TWD runs in that real app, so an element that is "there" on your machine may still be rendering in CI. Pick queries in this order:
 >
-> Default to `findBy*`. Use `findBy*` over `twd.get()` too, since Testing Library's semantic queries are more accessible and resilient than CSS selectors.
+> 1. **`findBy*` / `findAllBy*`**: returns a promise and **waits** for the element (up to 3000 ms). When the element is already there it resolves on the first check, so there is no cost to using it everywhere, not just for the first query in a test.
+> 2. **`queryBy*`**: synchronous; returns `null` if not found. Use it **only** to assert that an element is *absent*.
+> 3. **`getBy*`**: synchronous; throws immediately if the element isn't in the DOM yet. Use it only inside a `twd.waitFor(() => ...)` callback, where the retry loop makes up for it.
+> 4. **`twd.get()`**: CSS selectors. Last resort, only when no Testing Library query reaches the element.
+>
+> See [Choosing a Query](/testing-library#when-to-use-each-approach) for the full reasoning.
 
 ```ts
-// ✅ Recommended: waits for the element to appear
+// ✅ 1. Waits for the element to appear
 const successMessage = await screenDom.findByText("Login successful!");
 const submitButton = await screenDom.findByRole("button", { name: /sign in/i });
 
-// ⚠️ Synchronous: throws if not already in the DOM
-const heading = screenDom.getByRole("heading", { name: "Welcome" });
-
-// ⚠️ Only to assert absence
+// ✅ 2. Only to assert absence
 const error = screenDom.queryByText("Error");
 expect(error).to.equal(null);
+
+// ⚠️ 3. getBy only inside waitFor, which retries it
+await twd.waitFor(() => {
+  expect(screenDom.getByRole("status").getAttribute("data-state")).to.equal("done");
+});
+
+// ❌ Flaky: throws if the element has not rendered yet
+const heading = screenDom.getByRole("heading", { name: "Welcome" });
 ```
 
 ### Testing Library Queries
@@ -119,7 +127,7 @@ import { screenDom, screenDomGlobal } from "twd-js";
 **Use `screenDomGlobal`:**
 - For portal-rendered elements (modals, dialogs, tooltips)
 - When you need to search outside the root container
-- ⚠️ **Important:** Use specific selectors (e.g., `getByRole` with `name`) to avoid matching sidebar elements
+- ⚠️ **Important:** Use specific selectors (e.g., `findByRole` with `name`) to avoid matching sidebar elements
 
 #### Query by Role (Recommended)
 
@@ -158,25 +166,28 @@ const userCard = await screenDom.findByTestId("user-card");
 
 #### Query Methods
 
-- **findBy*** *(recommended)* - Returns a promise, **waits** for the element to appear. Use this by default.
-- **getBy*** - Returns element or throws immediately if not found. Use only when the element is already rendered.
-- **queryBy*** - Returns element or `null` if not found. Use only to assert an element is absent.
-- **findAllBy*** *(recommended for lists)* / **getAllBy*** / **queryAllBy*** - Returns an array of elements.
+In priority order:
+
+- **findBy*** / **findAllBy*** *(default)* - Return a promise and **wait** for the element(s) to appear. Use these for every lookup.
+- **queryBy*** / **queryAllBy*** - Return `null` (or `[]`) if not found. Use only to assert an element is absent.
+- **getBy*** / **getAllBy*** - Throw immediately if not found. Use only inside `twd.waitFor(() => ...)`.
 
 ```ts
-// ✅ findBy waits for element to appear (recommended)
+// ✅ findBy waits for the element to appear
 const successMessage = await screenDom.findByText("Success!");
 
-// findAllBy waits and returns an array
+// ✅ findAllBy waits and returns an array
 const buttons = await screenDom.findAllByRole("button");
 expect(buttons).to.have.length(3);
 
-// getBy throws if element doesn't exist (must already be rendered)
-const button = screenDom.getByRole("button");
-
-// queryBy returns null if element doesn't exist (use to assert absence)
+// ✅ queryBy returns null if the element doesn't exist (use to assert absence)
 const error = screenDom.queryByText("Error");
 expect(error).to.equal(null);
+
+// ⚠️ getBy throws at once, so only use it inside waitFor
+await twd.waitFor(() => {
+  expect(screenDom.getAllByRole("listitem")).to.have.length(3);
+});
 ```
 
 #### Complete Example with screenDom
@@ -231,7 +242,7 @@ describe("Login Form", () => {
 
 ### TWD Native Selectors
 
-TWD's native selectors use CSS selectors for simple, direct element access. Prefer Testing Library's `findBy*` queries above; reach for these only when a CSS selector is genuinely the simplest option (for example, selecting by a non-semantic class or a complex structural selector).
+TWD's native selectors use CSS selectors for direct element access. They are the **last resort**: prefer Testing Library's `findBy*` queries above, and reach for `twd.get()` only when no role, label, text or test ID query reaches the element (for example, a third-party widget that renders only non-semantic markup).
 
 #### Single Element Selection
 
@@ -300,7 +311,7 @@ Use `twd.should()` for elements from Testing Library queries or any raw DOM elem
 import { twd, screenDom } from "twd-js";
 
 // With Testing Library queries
-const button = screenDom.getByRole("button");
+const button = await screenDom.findByRole("button");
 twd.should(button, "be.visible");
 twd.should(button, "have.text", "Submit");
 
@@ -319,7 +330,7 @@ element.should("contain.text", "Welcome");
 element.should("be.empty");
 
 // Function style (Testing Library or raw elements)
-const heading = screenDom.getByRole("heading");
+const heading = await screenDom.findByRole("heading");
 twd.should(heading, "have.text", "Welcome to TWD");
 twd.should(heading, "contain.text", "Welcome");
 
@@ -338,7 +349,7 @@ input.should("have.value", "user@example.com");
 input.should("have.class", "form-control");
 
 // Function style
-const emailInput = screenDom.getByLabelText("Email:");
+const emailInput = await screenDom.findByLabelText("Email:");
 twd.should(emailInput, "have.attr", "type", "email");
 twd.should(emailInput, "have.value", "user@example.com");
 twd.should(emailInput, "have.class", "form-control");
@@ -353,20 +364,20 @@ button.should("be.disabled");
 button.should("be.visible");
 
 // Function style
-const submitButton = screenDom.getByRole("button", { name: /submit/i });
+const submitButton = await screenDom.findByRole("button", { name: /submit/i });
 twd.should(submitButton, "be.enabled");
 twd.should(submitButton, "be.visible");
 
 // Checked state
-const checkbox = screenDom.getByRole("checkbox");
+const checkbox = await screenDom.findByRole("checkbox");
 twd.should(checkbox, "be.checked");
 
 // Selected state
-const option = screenDom.getByRole("option", { selected: true });
+const option = await screenDom.findByRole("option", { selected: true });
 twd.should(option, "be.selected");
 
 // Focus state
-const input = screenDom.getByLabelText("Username:");
+const input = await screenDom.findByLabelText("Username:");
 input.focus();
 twd.should(input, "be.focused");
 ```

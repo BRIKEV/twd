@@ -99,13 +99,16 @@ TWD is an in-browser test runner. Tests run in the browser (not Node.js). Syntax
    });
 
 ### Selecting elements
-   Preferred: screenDom (Testing Library)
-     const heading = screenDom.getByRole("heading", { name: "Welcome" });
-     const submitBtn = screenDom.getByRole("button", { name: "Submit" });
-     const emailInput = screenDom.getByLabelText("Email Address");
+   Query priority (avoids flaky tests, the UI renders asynchronously):
+   1. findBy* / findAllBy* for every lookup, not just the first one in a test
+     const heading = await screenDom.findByRole("heading", { name: "Welcome" });
+     const submitBtn = await screenDom.findByRole("button", { name: "Submit" });
+     const emailInput = await screenDom.findByLabelText("Email Address");
      // For modals/portals: use screenDomGlobal instead
-
-   Fallback: twd.get() with CSS selectors
+   2. queryBy* only to assert absence
+     expect(screenDom.queryByText("Error")).to.equal(null);
+   3. getBy* only inside twd.waitFor(() => ...), never on its own
+   4. twd.get() with CSS selectors, last resort when no query above reaches the element
      const container = await twd.get(".custom-container");
 
 ### Interactions (userEvent)
@@ -144,7 +147,7 @@ TWD is an in-browser test runner. Tests run in the browser (not Node.js). Syntax
    import { componentHost, restorePage } from "./support/componentHost";
    afterEach(() => { cleanup(); restorePage(); });   // browser DOM is not torn down between tests
    render(<AppProvider><Add /></AppProvider>, { container: componentHost() });
-   twd.should(screen.getByText("Add Item"), "be.visible");
+   twd.should(await screen.findByText("Add Item"), "be.visible");
    componentHost() detaches the app root and returns a blank div at the top of the page,
    so screen only sees what the test rendered; restorePage() puts the app back.
    Write that helper into the project if it is missing: see https://twd.dev/component-testing

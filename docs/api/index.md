@@ -330,12 +330,12 @@ const elements = await twd.getAll("selector");
 
 // Testing Library queries (also available)
 // screenDom - for regular content (excludes sidebar)
-const button = screenDom.getByRole("button", { name: /submit/i });
-const input = screenDom.getByLabelText("Email:");
+const button = await screenDom.findByRole("button", { name: /submit/i });
+const input = await screenDom.findByLabelText("Email:");
 
 // screenDomGlobal - for portal-rendered elements (modals, dialogs)
 // ⚠️ Use specific queries to avoid matching sidebar elements
-const modal = screenDomGlobal.getByRole("dialog", { name: "Confirm" });
+const modal = await screenDomGlobal.findByRole("dialog", { name: "Confirm" });
 
 // Make assertions
 element.should("assertion", ...args); // For twd.get() elements
@@ -451,14 +451,14 @@ expect(screen.getByTestId('message')).toHaveTextContent('Success');
 import { screenDom, screenDomGlobal, userEvent, twd } from 'twd-js';
 
 // screenDom - for regular content (excludes sidebar)
-const button = screenDom.getByTestId('button');
+const button = await screenDom.findByTestId('button');
 await userEvent.click(button);
-const message = screenDom.getByTestId('message');
+const message = await screenDom.findByTestId('message');
 twd.should(message, 'contain.text', 'Success');
 
 // screenDomGlobal - for portal-rendered elements (modals, dialogs)
 // ⚠️ Use specific queries to avoid matching sidebar elements
-const modal = screenDomGlobal.getByRole('dialog', { name: 'Confirm' });
+const modal = await screenDomGlobal.findByRole('dialog', { name: 'Confirm' });
 
 // Or use TWD's native selectors
 const button = await twd.get('[data-testid="button"]');

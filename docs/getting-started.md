@@ -90,7 +90,7 @@ describe("App Component", () => {
     await twd.visit("/");
     
     // Use screenDom for testing library queries
-    const heading = screenDom.getByRole("heading", { level: 1 });
+    const heading = await screenDom.findByRole("heading", { level: 1 });
     twd.should(heading, "be.visible");
   });
 
@@ -98,12 +98,12 @@ describe("App Component", () => {
     await twd.visit("/");
     
     const user = userEvent.setup();
-    const button = screenDom.getByRole("button");
+    const button = await screenDom.findByRole("button");
     
     await user.click(button);
     
     // Add your assertions here
-    const result = screenDom.getByText("Button clicked!");
+    const result = await screenDom.findByText("Button clicked!");
     twd.should(result, "be.visible");
   });
 });
