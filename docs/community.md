@@ -52,6 +52,10 @@ The main TWD repository also includes working examples:
 
 ## Videos
 
+Demos, tutorials and short concept videos are on the **[TWD YouTube channel](https://www.youtube.com/@twd-dev/videos)**.
+
+Talks:
+
 - [TWD: Una nueva forma de testear el frontend](https://www.youtube.com/watch?v=F0b63Cl6_Mo) (Commit Conf, Spanish)
 - [Testing while developing: una nueva forma de testear en frontend](https://www.youtube.com/watch?v=qsHowBWgJn8) (Spanish)
 

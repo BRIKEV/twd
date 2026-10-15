@@ -490,6 +490,7 @@ claude plugin install twd@twd-ai</code></pre>
           <a href="/accessibility-statement" class="hp-footer-link">Accessibility Statement</a>
           <a href="https://github.com/BRIKEV/twd" target="_blank" rel="noopener" class="hp-footer-link">GitHub<span class="visually-hidden"> (opens in new tab)</span></a>
           <a href="https://www.npmjs.com/package/twd-js" target="_blank" rel="noopener" class="hp-footer-link">npm<span class="visually-hidden"> (opens in new tab)</span></a>
+          <a href="https://www.youtube.com/@twd-dev/videos" target="_blank" rel="noopener" class="hp-footer-link">YouTube<span class="visually-hidden"> (opens in new tab)</span></a>
         </nav>
         <p class="hp-footer-meta">Released under the MIT License. Copyright © 2026 BRIKEV.</p>
       </footer>
