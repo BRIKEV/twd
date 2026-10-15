@@ -503,9 +503,11 @@ Last error: expected undefined to exist
 #### Examples
 
 ```ts
-// Return an element — single expression
-const heading = await twd.waitFor(() => screenDom.getByRole("heading", { name: /checkout/i }));
-twd.should(heading, "be.visible");
+// Wait for an element's state, not just its presence
+// (to wait for an element to appear, use findBy* instead)
+await twd.waitFor(() => {
+  expect(screenDom.getByRole("button", { name: /pay/i }).getAttribute("aria-busy")).to.equal("false");
+});
 
 // Return a value with assertions inside
 const event = await twd.waitFor(() => {
@@ -517,7 +519,8 @@ expect(event.customer_type).to.equal("b2c");
 
 // Fire-and-forget (void) — works exactly as before
 await twd.waitFor(() => {
-  expect(heading).to.have.attribute("data-loaded", "true");
+  const heading = screenDom.getByRole("heading", { name: /checkout/i });
+  expect(heading.getAttribute("data-loaded")).to.equal("true");
 });
 
 // Custom timeout for slow operations
@@ -527,7 +530,7 @@ await twd.waitFor(() => {
 }, { timeout: 5000 });
 
 // UI state change after action
-const submitButton = screenDom.getByRole("button", { name: /submit/i });
+const submitButton = await screenDom.findByRole("button", { name: /submit/i });
 await userEvent.click(submitButton);
 await twd.waitFor(() => {
   expect(submitButton.disabled).to.be.false;
@@ -548,14 +551,14 @@ await twd.waitFor(() => {
 `waitFor` is a polling utility — it retries the callback repeatedly until it passes. Don't use it as a general-purpose wrapper. If you already have the element or value and just need to assert on it, assert directly.
 
 ```ts
-// DON'T — no retry needed, getByRole throws synchronously if not found
-const heading = await twd.waitFor(() => screenDom.getByRole("heading"));
-
-// DO — use waitFor when the element might not exist yet (async rendering, delayed state)
+// DON'T: waitFor around getBy just to wait for an element is a hand-written findBy
 const heading = await twd.waitFor(() => screenDom.getByRole("heading", { name: /loaded/i }));
+
+// DO: findBy already waits for the element to appear
+const heading = await screenDom.findByRole("heading", { name: /loaded/i });
 ```
 
-Use `waitFor` for: analytics events that fire asynchronously, DOM attributes that update after an async operation, elements that appear after a delay.
+Use `waitFor` for: analytics events that fire asynchronously, DOM attributes or state that update after an async operation. Inside the callback, `getBy*` is the right query, because `waitFor` supplies the retry.
 :::
 
 ::: tip Prefer waitFor over twd.wait
@@ -632,7 +635,7 @@ twd.should(element: Element, assertion: string, ...args: any[]): void
 import { twd, screenDom } from "twd-js";
 
 // With Testing Library queries
-const button = screenDom.getByRole("button", { name: /submit/i });
+const button = await screenDom.findByRole("button", { name: /submit/i });
 twd.should(button, "be.visible");
 twd.should(button, "have.text", "Submit");
 
@@ -647,16 +650,16 @@ twd.should(input.el, "have.value", "user@example.com");
 // Or use the method: input.should("have.value", "user@example.com");
 
 // All assertion types are supported
-const heading = screenDom.getByRole("heading");
+const heading = await screenDom.findByRole("heading");
 twd.should(heading, "have.text", "Welcome");
 twd.should(heading, "be.visible");
 twd.should(heading, "have.class", "main-title");
 
-const checkbox = screenDom.getByRole("checkbox");
+const checkbox = await screenDom.findByRole("checkbox");
 twd.should(checkbox, "be.checked");
 
-const select = screenDom.getByRole("combobox");
-const option = screenDom.getByRole("option", { selected: true });
+const select = await screenDom.findByRole("combobox");
+const option = await screenDom.findByRole("option", { selected: true });
 twd.should(option, "be.selected");
 ```
 
@@ -668,7 +671,7 @@ const button = await twd.get("button");
 button.should("be.visible").should("have.text", "Click me");
 
 // Function style (for any element, especially screenDom)
-const button = screenDom.getByRole("button");
+const button = await screenDom.findByRole("button");
 twd.should(button, "be.visible");
 twd.should(button, "have.text", "Click me");
 ```

@@ -710,7 +710,7 @@ import { describe, it } from 'twd-js/runner';
 
 describe('Counter', () => {
   it('increments on click', async () => {
-    const button = screenDom.getByRole('button', { name: /clicks:/i });
+    const button = await screenDom.findByRole('button', { name: /clicks:/i });
     await userEvent.setup().click(button);
     twd.should(button, 'have.text', 'Clicks: 1');
   });
