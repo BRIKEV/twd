@@ -5,6 +5,7 @@
 [![license](https://img.shields.io/github/license/brikev/twd.svg)](https://github.com/BRIKEV/twd/blob/main/LICENSE)
 [![Maintainability](https://qlty.sh/gh/BRIKEV/projects/twd/maintainability.svg)](https://qlty.sh/gh/BRIKEV/projects/twd)
 [![Code Coverage](https://qlty.sh/gh/BRIKEV/projects/twd/coverage.svg)](https://qlty.sh/gh/BRIKEV/projects/twd)
+[![OSAF: TWD (Test While Developing)](https://img.shields.io/badge/Accessibility%20Framework-TWD%20(Test%20While%20Developing)-F143AB?logo=github&logoColor=000000)](https://github.com/open-source-accessibility/Open-Source-Accessibility-Framework/issues/39)
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/BRIKEV/twd/main/images/twd-skill.gif" alt="TWD running with an AI agent: tests written and executed in a real browser sidebar" width="800">
