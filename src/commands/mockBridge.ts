@@ -27,6 +27,11 @@ export type Rule = {
   delay?: number;
   /** Number of times this rule has been matched. Updated automatically by the service worker. */
   hitCount?: number;
+  /**
+   * Identifies this `mockRequest` call. A rule replaced under the same alias gets a new id,
+   * so a late hit on the old rule cannot mark the new one as executed.
+   */
+  id?: string;
 };
 
 export interface Options {
@@ -49,6 +54,14 @@ export interface Options {
 interface MockState {
   rules: Rule[];
   counts: Record<string, number>;
+  /** Pending `waitForRequest` calls by alias, resolved when the worker reports a hit. */
+  waiters?: Map<string, Set<Waiter>>;
+}
+
+interface Waiter {
+  resolve: (rule: Rule) => void;
+  /** Stops the waiter's timers without settling it. */
+  cancel: () => void;
 }
 
 const getMockState = (): MockState => {
@@ -70,6 +83,11 @@ const getMockState = (): MockState => {
 
 const state = getMockState();
 const rules = state.rules;
+// Kept in the shared state so a listener registered before an HMR reload still resolves them
+if (!state.waiters) state.waiters = new Map();
+const waiters = state.waiters;
+let ruleSeq = 0;
+const newRuleId = () => `${Date.now().toString(36)}-${++ruleSeq}`;
 /**
  * How long `mockRequest` waits for the service worker to confirm a rule was
  * stored. An up-to-date worker answers in one message round trip; only a
@@ -144,12 +162,16 @@ export const initRequestMocking = async (path?: string) => {
     }
     navigator.serviceWorker.addEventListener('message', (event) => {
       if (event.data?.type === 'EXECUTED') {
-        const { alias, request, hitCount } = event.data;
+        const { alias, ruleId, request, hitCount } = event.data;
         const rule = rules.find((r) => r.alias === alias);
-        if (rule) {
+        // Workers older than the rule id send none; then any hit on the alias counts
+        const isCurrentRule = rule && (ruleId === undefined || ruleId === rule.id);
+        if (rule && isCurrentRule) {
           rule.executed = true;
           rule.request = request;
           rule.hitCount = hitCount;
+          waiters.get(alias)?.forEach((waiter) => waiter.resolve(rule));
+          waiters.delete(alias);
         }
         state.counts[alias] = hitCount ?? (state.counts[alias] ?? 0) + 1;
       }
@@ -182,7 +204,7 @@ export const initRequestMocking = async (path?: string) => {
  * ```
  */
 export const mockRequest = async (alias: string, options: Options) => {
-  const rule: Rule = { alias, ...options, executed: false };
+  const rule: Rule = { alias, ...options, executed: false, id: newRuleId() };
   const idx = rules.findIndex((r) => r.alias === alias);
   if (idx !== -1) rules[idx] = rule;
   else rules.push(rule);
@@ -223,35 +245,7 @@ export const waitForRequests = async (aliases: string[]): Promise<Rule[]> => {
   return rules;
 };
 
-/**
- * Wait for a mocked request to be made.
- * @param alias The alias of the mock rule to wait for
- * @param retries The number of retries to make
- * @param retryDelay The delay between retries
- * @returns The matched rule (with body if applicable)
- */
-export const waitForRequest = async (
-  alias: string,
-  retries = 10,
-  retryDelay = 100,
-): Promise<Rule> => {
-  // First, check if the rule exists at all
-  const ruleExists = rules.find((r) => r.alias === alias);
-  if (!ruleExists) {
-    throw new Error(`Rule ${alias} not found`);
-  }
-  // Poll for execution with retries
-  for (let i = 0; i < retries; i++) {
-    const rule = rules.find((r) => r.alias === alias && r.executed);
-    if (rule) {
-      return Promise.resolve(rule);
-    }
-    // Wait before next retry (except on last iteration)
-    if (i < retries - 1) {
-      await new Promise((resolve) => setTimeout(resolve, retryDelay));
-    }
-  }
-  const timeout = retries * retryDelay;
+const buildNotExecutedMessage = (alias: string, expected: Rule, timeout: number) => {
   const executedRules = rules
     .filter((r) => r.executed)
     .map((r) => `${r.alias} (${r.method} ${r.url})`)
@@ -260,15 +254,61 @@ export const waitForRequest = async (
     .filter((r) => !r.executed)
     .map((r) => `${r.alias} (${r.method} ${r.url})`)
     .join(', ');
-  const message = [
+  return [
     `Rule "${alias}" was not executed within ${timeout}ms.`,
-    `  Expected: ${ruleExists.method} ${ruleExists.url}`,
+    `  Expected: ${expected.method} ${expected.url}`,
     `  Executed rules: ${executedRules || 'none'}`,
     `  Not executed rules: ${notExecutedRules || 'none'}`,
   ].join('\n');
-  console.log(message);
-  // If we get here, the rule was never executed
-  throw new Error(message);
+};
+
+/**
+ * Wait for a mocked request to be made.
+ * Resolves as soon as the service worker reports the hit.
+ * @param alias The alias of the mock rule to wait for
+ * @param retries Together with `retryDelay`, sets the timeout: `retries * retryDelay` ms
+ * @param retryDelay Together with `retries`, sets the timeout: `retries * retryDelay` ms
+ * @returns The matched rule (with body if applicable)
+ */
+export const waitForRequest = async (
+  alias: string,
+  retries = 10,
+  retryDelay = 100,
+): Promise<Rule> => {
+  const ruleExists = rules.find((r) => r.alias === alias);
+  if (!ruleExists) {
+    throw new Error(`Rule ${alias} not found`);
+  }
+  if (ruleExists.executed) return ruleExists;
+  const timeout = retries * retryDelay;
+  return new Promise<Rule>((resolve, reject) => {
+    const waiter: Waiter = {
+      resolve: (rule) => {
+        waiter.cancel();
+        resolve(rule);
+      },
+      cancel: () => {
+        clearTimeout(timer);
+        clearInterval(backstop);
+        waiters.get(alias)?.delete(waiter);
+      },
+    };
+    const timer = setTimeout(() => {
+      waiter.cancel();
+      const expected = rules.find((r) => r.alias === alias) ?? ruleExists;
+      const message = buildNotExecutedMessage(alias, expected, timeout);
+      console.log(message);
+      reject(new Error(message));
+    }, timeout);
+    // The worker's EXECUTED message resolves the wait. This check only covers a rule marked
+    // executed some other way, so the wait is never slower than the old polling loop.
+    const backstop = setInterval(() => {
+      const rule = rules.find((r) => r.alias === alias && r.executed);
+      if (rule) waiter.resolve(rule);
+    }, 100);
+    if (!waiters.has(alias)) waiters.set(alias, new Set());
+    waiters.get(alias)!.add(waiter);
+  });
 };
 
 /**
@@ -287,6 +327,10 @@ export const clearRequestMockRules = () => {
     version: TWD_VERSION,
   });
   rules.length = 0;
+  // Drop pending waits so one from a previous test cannot resolve into the next one.
+  // They stay pending instead of rejecting, which would surface in the next test.
+  waiters.forEach((set) => set.forEach((waiter) => waiter.cancel()));
+  waiters.clear();
   // Reset all hit counters
   for (const key in state.counts) {
     delete state.counts[key];

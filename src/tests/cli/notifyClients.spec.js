@@ -17,4 +17,14 @@ describe('notifyClients', () => {
       });
     }
   });
+
+  it('should send the rule id so the page can ignore hits on a replaced rule', () => {
+    const client = { postMessage: vi.fn() };
+
+    notifyClients([client], { alias: 'foo', id: 'rule-2' }, null, 1);
+
+    expect(client.postMessage).toHaveBeenCalledWith(
+      expect.objectContaining({ alias: 'foo', ruleId: 'rule-2', hitCount: 1 }),
+    );
+  });
 });

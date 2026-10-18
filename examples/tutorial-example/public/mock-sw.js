@@ -149,6 +149,7 @@
 	* @property {Record<string, string>} [responseHeaders] - Headers to include in the response.
 	* @property {boolean} [urlRegex] - Whether the URL is a regex pattern.
 	* @property {number} [delay] - Delay in ms before returning the response.
+	* @property {string} [id] - Identifies the mockRequest call that created the rule.
 	*/
 	/**
 	* Notifies all connected clients about the execution of a rule.
@@ -165,6 +166,7 @@
 		clients.forEach((client) => client.postMessage({
 			type: "EXECUTED",
 			alias: rule.alias,
+			ruleId: rule.id,
 			request: body,
 			hitCount
 		}));
