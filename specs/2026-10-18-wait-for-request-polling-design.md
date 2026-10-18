@@ -161,3 +161,33 @@ retry. Independent of the rest; can ship as a patch.
   100ms polling. Every wait resolved with the new rule's hit.
 - `examples/twd-test-app` e2e: 55 pass / 1 skip; test time 10.6s, against
   11.1s with the mockRequest ack alone and 14.3s before both.
+
+## Follow-up: resolve after the response has rendered
+
+Running the example apps against the beta broke a test in the Angular and
+Solid examples: re-mock the list, click Delete, `await waitForRequest(...)`,
+then a synchronous `getAllByText(...)` found nothing.
+
+The worker posts `EXECUTED` **before** it returns the mocked response. The old
+polling resolved on the next 100ms tick after the hit, which by luck left time
+for the response to arrive and render (and failed when the hit landed just
+before a tick). Resolving on the message itself removed that slack every time.
+
+Fix: after the hit, `waitForRequest` waits two animation frames (`settle()` in
+`src/utils/wait.ts`, a 16ms timer per frame when the tab is hidden, since
+`requestAnimationFrame` does not fire there) before it resolves, also when the
+hit happened before the call. That is enough for the response to arrive and
+the framework to render it, and it costs ~30ms instead of the old ~50ms
+average. Anything the app does after that (a follow-up request, a lazy chunk)
+still needs `findBy*`.
+
+Results with the fix, against `main` before both changes:
+
+- `examples/twd-test-app`: 55/55 in 5 out of 5 runs, ~10.8s (14.3s on `main`).
+- `twd-vue-example` 7/7, `twd-angular-example` 4/4, `twd-solid-example` 4/4,
+  2 runs each; `twd-react-router` 5/5, 2 runs.
+
+A faster `twd.visit()` (two frames instead of 100ms) was tried in the same
+round and dropped: in `twd-test-app` it made a test click a button from the
+screen that was about to be replaced, in 4 out of 5 runs. `visit` keeps its
+fixed 100ms.
