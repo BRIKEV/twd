@@ -446,6 +446,14 @@ it("should call the API exactly twice", async () => {
 });
 ```
 
+::: tip The count can lag one hit behind the UI
+The service worker reports each hit with a message, and that message can reach the page after the mocked response it belongs to has already rendered. When you assert a count right after the UI changed, check it inside `twd.waitFor`:
+
+```ts
+await twd.waitFor(() => expect(twd.getRequestCount("getUser")).to.equal(2));
+```
+:::
+
 ### `getRequestCounts()`
 
 Returns a snapshot of all mock rule hit counts as an object.

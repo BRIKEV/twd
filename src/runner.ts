@@ -370,21 +370,30 @@ export class TestRunner {
     let lastError: Error | null = null;
 
     for (let attempt = 1; attempt <= this.retryCount; attempt++) {
+      let attemptError: Error | null = null;
       try {
         for (const hook of hooks.before) await hook();
         test.logs = [];
         test.diagnostics = undefined;
         await test.handler();
+      } catch (err) {
+        attemptError = err as Error;
+        // Before the afterEach hooks: one calling clearRequestMockRules()
+        // resets the counts this reads.
+        test.diagnostics = collectDiagnostics();
+      }
+      // A throwing afterEach fails this test instead of escaping and ending the
+      // whole run. The test's own error, when there is one, is the one reported.
+      try {
+        for (const hook of hooks.after) await hook();
+      } catch (err) {
+        attemptError ??= err as Error;
+      }
+      if (!attemptError) {
         this.events.onPass(test, attempt > 1 ? attempt : undefined);
         return;
-      } catch (err) {
-        lastError = err as Error;
-        // Inside `catch`, never after `finally`: an `afterEach` calling
-        // clearRequestMockRules() resets the counts this reads.
-        test.diagnostics = collectDiagnostics();
-      } finally {
-        for (const hook of hooks.after) await hook();
       }
+      lastError = attemptError;
     }
 
     this.events.onFail(test, lastError!);

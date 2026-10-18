@@ -482,3 +482,91 @@ describe('twd runner', () => {
     });
   });
 });
+
+describe('twd runner hook failures', () => {
+  const events = () => ({
+    onStart: vi.fn(),
+    onPass: vi.fn(),
+    onFail: vi.fn(),
+    onSkip: vi.fn(),
+  });
+
+  beforeEach(() => {
+    twd.clearTests();
+    vi.clearAllMocks();
+  });
+
+  it('fails the test and keeps running the next ones when an afterEach throws', async () => {
+    const nextTest = vi.fn();
+    twd.describe('Suite with a broken afterEach', () => {
+      twd.afterEach(() => {
+        throw new Error('afterEach broke');
+      });
+      twd.it('first test', () => {});
+    });
+    twd.describe('Next suite', () => {
+      twd.it('next test', nextTest);
+    });
+
+    const mockEvents = events();
+    const runner = new twd.TestRunner(mockEvents);
+    await expect(runner.runAll()).resolves.toBeDefined();
+
+    expect(mockEvents.onFail).toHaveBeenCalledWith(
+      expect.objectContaining({ name: 'first test' }),
+      expect.objectContaining({ message: 'afterEach broke' }),
+    );
+    expect(nextTest).toHaveBeenCalledTimes(1);
+  });
+
+  it('does not report a test as passed when its afterEach throws', async () => {
+    twd.describe('Suite with a broken afterEach', () => {
+      twd.afterEach(() => {
+        throw new Error('afterEach broke');
+      });
+      twd.it('passing test', () => {});
+    });
+
+    const mockEvents = events();
+    await new twd.TestRunner(mockEvents).runAll();
+
+    expect(mockEvents.onPass).not.toHaveBeenCalled();
+    expect(mockEvents.onFail).toHaveBeenCalledTimes(1);
+  });
+
+  it('keeps the test error when both the test and its afterEach throw', async () => {
+    twd.describe('Suite with a broken afterEach', () => {
+      twd.afterEach(() => {
+        throw new Error('afterEach broke');
+      });
+      twd.it('failing test', () => {
+        throw new Error('test broke');
+      });
+    });
+
+    const mockEvents = events();
+    await new twd.TestRunner(mockEvents).runAll();
+
+    expect(mockEvents.onFail).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({ message: 'test broke' }),
+    );
+  });
+
+  it('retries a test whose afterEach failed on the first attempt', async () => {
+    let afterCalls = 0;
+    twd.describe('Suite with a flaky afterEach', () => {
+      twd.afterEach(() => {
+        afterCalls++;
+        if (afterCalls === 1) throw new Error('afterEach broke');
+      });
+      twd.it('test', () => {});
+    });
+
+    const mockEvents = events();
+    await new twd.TestRunner(mockEvents, { retryCount: 2 }).runAll();
+
+    expect(mockEvents.onPass).toHaveBeenCalledTimes(1);
+    expect(mockEvents.onFail).not.toHaveBeenCalled();
+  });
+});

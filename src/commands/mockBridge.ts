@@ -310,21 +310,22 @@ const waitForHit = async (alias: string, retries: number, retryDelay: number): P
 
 /**
  * Wait for a mocked request to be made.
- * Resolves once the service worker reports the hit and the app has had time to
- * receive and render the mocked response.
+ * Resolves once the service worker reports the hit, plus two frames for the
+ * response to reach the app. It guarantees the request happened, not that the
+ * UI has updated: wait for that with findBy* or `twd.waitFor`.
  * @param alias The alias of the mock rule to wait for
- * @param retries Together with `retryDelay`, sets the timeout: `retries * retryDelay` ms
+ * @param retries Together with `retryDelay`, sets the timeout: `retries * retryDelay` ms (3000ms by default, like findBy*)
  * @param retryDelay Together with `retries`, sets the timeout: `retries * retryDelay` ms
  * @returns The matched rule (with body if applicable)
  */
 export const waitForRequest = async (
   alias: string,
-  retries = 10,
+  retries = 30,
   retryDelay = 100,
 ): Promise<Rule> => {
   const rule = await waitForHit(alias, retries, retryDelay);
-  // The worker reports the hit before it returns the response, so let the
-  // response arrive and render before the test goes on
+  // The worker reports the hit before it returns the response, so give the
+  // response a moment to reach the app before the test goes on
   await settle();
   return rule;
 };
