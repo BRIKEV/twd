@@ -14,6 +14,8 @@
 
 **Faster mocking.** `mockRequest` no longer sleeps 100ms after every call: it resolves as soon as the service worker confirms the rule is stored, which is also safer on a slow CPU. `waitForRequest` resolves when the request happens instead of on the next 100ms polling tick, then waits two frames so the mocked response has rendered.
 
+**If a test turns flaky with this release, look for un-awaited async code.** `mockRequest` used to sleep 100ms, which by luck gave async work the test did not await (a `logout()` or storage cleanup in `beforeEach`, a helper at the end of a test) time to finish. Without that sleep the work can land in the middle of the next steps. Await it (`beforeEach(async () => { await logout(); })`); `@typescript-eslint/no-floating-promises` on your test files catches it.
+
 **Re-mocking an alias is reliable.** A request for a rule that was replaced under the same alias can no longer mark the new rule as executed.
 
 **`twd.url().should()` retries work.** An assertion that failed on the first attempt and passed on a retry used to throw anyway.
