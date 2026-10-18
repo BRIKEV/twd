@@ -1,3 +1,25 @@
+## <small>1.12.0-beta.0 (2026-10-18)</small>
+
+* feat(mocking): wait for the service worker ack instead of a fixed 100ms ([ad61698](https://github.com/BRIKEV/twd/commit/ad61698746e0d79a7fb0f4453a1afc6a3ab6ca86))
+* feat(mocking): resolve waitForRequest on the hit, ignore hits on replaced rules (#399) ([eab8ec1](https://github.com/BRIKEV/twd/commit/eab8ec16abdae46a79252717adc56ea9ab55cb30)), closes [#399](https://github.com/BRIKEV/twd/issues/399)
+* fix(mocking): wait for a busy worker, let the response render after waitForRequest (#401) ([7ef7dfd](https://github.com/BRIKEV/twd/commit/7ef7dfd2ed274c5f41dacff98ed44c8f957ded68)), closes [#401](https://github.com/BRIKEV/twd/issues/401)
+* fix(url): pass url().should() when a retry passes (#400) ([df25a47](https://github.com/BRIKEV/twd/commit/df25a476dd3573174a4bd501f05b9768a41d51b7)), closes [#400](https://github.com/BRIKEV/twd/issues/400)
+* docs: make findBy the default query and getBy waitFor-only (#395) ([5e7f076](https://github.com/BRIKEV/twd/commit/5e7f076f4da35429d3a02ebb653e1ab76297898b)), closes [#395](https://github.com/BRIKEV/twd/issues/395)
+* docs: link the TWD YouTube channel (#394) ([4f5637a](https://github.com/BRIKEV/twd/commit/4f5637ac79c983bb7a429c760e3f832bf3b98ade)), closes [#394](https://github.com/BRIKEV/twd/issues/394)
+* docs: use hello@twd.dev as the contact email (#393) ([05f47e1](https://github.com/BRIKEV/twd/commit/05f47e131d6cc60c57aa24355962010d466eab3a)), closes [#393](https://github.com/BRIKEV/twd/issues/393)
+* docs: use "Test While Developing" consistently (#392) ([a9e4998](https://github.com/BRIKEV/twd/commit/a9e49981e0d64285fb3663b06c50307396d7f579)), closes [#392](https://github.com/BRIKEV/twd/issues/392)
+* docs: add Open Source Accessibility Framework badge to README ([c6c8a33](https://github.com/BRIKEV/twd/commit/c6c8a331dd8c371619a73b10226f71a7878bd595))
+
+**Update your service worker: `npx twd-js init public`.** The speedups in this release need the new `mock-sw.js`. With an outdated one everything keeps working as before, without the speedup, and the page warns once.
+
+**Faster mocking.** `mockRequest` no longer sleeps 100ms after every call: it resolves as soon as the service worker confirms the rule is stored, which is also safer on a slow CPU. `waitForRequest` resolves when the request happens instead of on the next 100ms polling tick, then waits two frames so the mocked response has rendered.
+
+**Re-mocking an alias is reliable.** A request for a rule that was replaced under the same alias can no longer mark the new rule as executed.
+
+**`twd.url().should()` retries work.** An assertion that failed on the first attempt and passed on a retry used to throw anyway.
+
+**`mock-sw.js` is now readable.** It is built unminified, with a header naming the version and how to regenerate it.
+
 ## <small>1.11.0 (2026-10-12)</small>
 
 * ci: minimum supported Node is now 20, `engines.node` raised from `>=16` to `>=20` (#385) ([325152d](https://github.com/BRIKEV/twd/commit/325152d56afce554bbcea3b6f7603cdd53f89927)), closes [#385](https://github.com/BRIKEV/twd/issues/385)
