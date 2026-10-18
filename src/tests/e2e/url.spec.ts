@@ -84,10 +84,20 @@ describe('twd url command', () => {
     ).rejects.toThrow('Unknown assertion: invalid.assertion');
   });
 
-  it('should retry assertion when it fails', () => {
+  it('should pass when a retry passes after a failed attempt', async () => {
     const urlCmd = twd.url();
-    // this should not fail as it retries
-    void urlCmd.should('eq', 'http://localhost:3000/about');
-    window.location.href = 'http://localhost:3000/about';
+    // The app navigates after the first attempt has already failed
+    setTimeout(() => {
+      window.location.href = 'http://localhost:3000/about';
+    }, 150);
+    const result = await urlCmd.should('eq', 'http://localhost:3000/about');
+    expect(result).toContain('Assertion passed');
+  });
+
+  it('should throw the last failure when no retry passes', async () => {
+    const urlCmd = twd.url();
+    await expect(urlCmd.should('contain.url', '/about', 2)).rejects.toThrow(
+      'Expected URL to contain /about',
+    );
   });
 });
