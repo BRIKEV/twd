@@ -1,8 +1,9 @@
-import { describe, expect, it, vi, beforeEach } from 'vitest';
+import { describe, expect, it, vi, beforeEach, afterEach } from 'vitest';
 import {
   clearRequestMockRules,
   getRequestMockRules,
   mockRequest,
+  resetMockingState,
 } from '../../../commands/mockBridge';
 import { TWD_VERSION } from '../../../constants/version';
 
@@ -50,34 +51,42 @@ describe('mockBridge mock request methods', () => {
       urlRegex: true,
     });
 
-    expect(postMessageMock).toHaveBeenNthCalledWith(1, {
-      type: 'ADD_RULE',
-      rule: expect.objectContaining({
-        alias,
-        url: mockUrl,
-        status: 200,
-        method: 'GET',
-        response: mockResponse,
-        responseHeaders: { 'Content-Type': 'application/json' },
-        executed: false,
-      }),
-      version: TWD_VERSION,
-    });
+    expect(postMessageMock).toHaveBeenNthCalledWith(
+      1,
+      {
+        type: 'ADD_RULE',
+        rule: expect.objectContaining({
+          alias,
+          url: mockUrl,
+          status: 200,
+          method: 'GET',
+          response: mockResponse,
+          responseHeaders: { 'Content-Type': 'application/json' },
+          executed: false,
+        }),
+        version: TWD_VERSION,
+      },
+      [expect.any(MessagePort)],
+    );
 
-    expect(postMessageMock).toHaveBeenNthCalledWith(2, {
-      type: 'ADD_RULE',
-      rule: expect.objectContaining({
-        alias,
-        url: mockUrl,
-        status: 200,
-        method: 'GET',
-        response: mockResponse,
-        responseHeaders: { 'Content-Type': 'application/json' },
-        executed: false,
-        urlRegex: true,
-      }),
-      version: TWD_VERSION,
-    });
+    expect(postMessageMock).toHaveBeenNthCalledWith(
+      2,
+      {
+        type: 'ADD_RULE',
+        rule: expect.objectContaining({
+          alias,
+          url: mockUrl,
+          status: 200,
+          method: 'GET',
+          response: mockResponse,
+          responseHeaders: { 'Content-Type': 'application/json' },
+          executed: false,
+          urlRegex: true,
+        }),
+        version: TWD_VERSION,
+      },
+      [expect.any(MessagePort)],
+    );
 
     expect(getRequestMockRules().length).toBe(1);
     expect(getRequestMockRules()[0].alias).toBe(alias);
@@ -91,15 +100,18 @@ describe('mockBridge mock request methods', () => {
       delay: 500,
     });
 
-    expect(postMessageMock).toHaveBeenCalledWith({
-      type: 'ADD_RULE',
-      rule: expect.objectContaining({
-        alias: 'delayedRequest',
-        delay: 500,
-        executed: false,
-      }),
-      version: TWD_VERSION,
-    });
+    expect(postMessageMock).toHaveBeenCalledWith(
+      {
+        type: 'ADD_RULE',
+        rule: expect.objectContaining({
+          alias: 'delayedRequest',
+          delay: 500,
+          executed: false,
+        }),
+        version: TWD_VERSION,
+      },
+      [expect.any(MessagePort)],
+    );
 
     // clear rules
     clearRequestMockRules();
@@ -319,5 +331,105 @@ describe('mockBridge mock request methods', () => {
 
     delete window.__twdCollectMock;
     if (originalState) window.__TWD_STATE__ = originalState;
+  });
+});
+
+describe('mockBridge mockRequest service worker ack', () => {
+  const originalController = navigator.serviceWorker?.controller;
+  const options = { method: 'GET', url: '/api/ack', response: {} };
+
+  const setController = (controller: unknown) => {
+    Object.defineProperty(navigator.serviceWorker, 'controller', {
+      configurable: true,
+      get: () => controller,
+    });
+  };
+
+  // Behaves like an up-to-date mock-sw.js: answers on the port it was given
+  const ackingWorker = (version = TWD_VERSION) => ({
+    postMessage: vi.fn((_message: unknown, transfer?: MessagePort[]) => {
+      transfer?.[0]?.postMessage({ type: 'ACK', version });
+    }),
+  });
+
+  beforeEach(() => {
+    resetMockingState();
+    vi.restoreAllMocks();
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+    setController(originalController);
+  });
+
+  it('resolves as soon as the worker acks, without waiting for the timeout', async () => {
+    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    setController(ackingWorker());
+
+    const start = performance.now();
+    await mockRequest('ack', options);
+
+    expect(performance.now() - start).toBeLessThan(50);
+    expect(warnSpy).not.toHaveBeenCalled();
+  });
+
+  it('does not resolve before the worker acks', async () => {
+    let ack: () => void = () => {};
+    setController({
+      postMessage: vi.fn((_message: unknown, transfer?: MessagePort[]) => {
+        ack = () => transfer?.[0]?.postMessage({ type: 'ACK', version: TWD_VERSION });
+      }),
+    });
+
+    let resolved = false;
+    const pending = mockRequest('slowAck', options).then(() => {
+      resolved = true;
+    });
+    await new Promise((resolve) => setTimeout(resolve, 20));
+    expect(resolved).toBe(false);
+
+    ack();
+    await pending;
+    expect(resolved).toBe(true);
+  });
+
+  it('resolves after the timeout and warns once when the worker never acks', async () => {
+    vi.useFakeTimers();
+    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    setController({ postMessage: vi.fn() });
+
+    const first = mockRequest('noAck1', options);
+    await vi.advanceTimersByTimeAsync(100);
+    await first;
+    const second = mockRequest('noAck2', options);
+    await vi.advanceTimersByTimeAsync(100);
+    await second;
+
+    expect(warnSpy).toHaveBeenCalledTimes(1);
+    expect(warnSpy).toHaveBeenCalledWith(expect.stringContaining('npx twd-js init public'));
+  });
+
+  it('warns once when the worker acks with a different version', async () => {
+    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    setController(ackingWorker('0.0.0'));
+
+    await mockRequest('oldVersion1', options);
+    await mockRequest('oldVersion2', options);
+
+    expect(warnSpy).toHaveBeenCalledTimes(1);
+    expect(warnSpy).toHaveBeenCalledWith(expect.stringContaining('0.0.0'));
+  });
+
+  it('resolves immediately when there is no controlling worker', async () => {
+    vi.useFakeTimers();
+    setController(null);
+
+    let resolved = false;
+    void mockRequest('noWorker', options).then(() => {
+      resolved = true;
+    });
+    await vi.advanceTimersByTimeAsync(0);
+
+    expect(resolved).toBe(true);
   });
 });

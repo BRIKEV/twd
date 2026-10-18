@@ -289,4 +289,28 @@ describe('Service Worker', () => {
     // (without needing an extra await Promise.resolve())
     expect(notifyClients).toHaveBeenCalledWith(expect.any(Array), rule, { test: 'data' }, 1);
   });
+
+  it('acks on the given port after adding a rule', () => {
+    const port = { postMessage: vi.fn() };
+    const rule = { alias: 'acked', method: 'GET', url: '/foo' };
+    handleMessage({ data: { type: 'ADD_RULE', rule, version: TWD_VERSION }, ports: [port] });
+    expect(rules).toContainEqual(rule);
+    expect(port.postMessage).toHaveBeenCalledWith({ type: 'ACK', version: TWD_VERSION });
+  });
+
+  it('acks on the given port after clearing rules', () => {
+    const port = { postMessage: vi.fn() };
+    handleMessage({ data: { type: 'CLEAR_RULES', version: TWD_VERSION }, ports: [port] });
+    expect(port.postMessage).toHaveBeenCalledWith({ type: 'ACK', version: TWD_VERSION });
+  });
+
+  it('does not throw when the page sends no port (pages older than the ack)', () => {
+    const rule = { alias: 'noPort', method: 'GET', url: '/foo' };
+    expect(() =>
+      handleMessage({ data: { type: 'ADD_RULE', rule, version: TWD_VERSION }, ports: [] }),
+    ).not.toThrow();
+    expect(() =>
+      handleMessage({ data: { type: 'ADD_RULE', rule, version: TWD_VERSION } }),
+    ).not.toThrow();
+  });
 });

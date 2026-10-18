@@ -1,4 +1,3 @@
-import { wait } from '../utils/wait';
 import { TWD_VERSION } from '../constants/version';
 
 export type Rule = {
@@ -71,8 +70,57 @@ const getMockState = (): MockState => {
 
 const state = getMockState();
 const rules = state.rules;
-const SW_DELAY = 100;
+/**
+ * How long `mockRequest` waits for the service worker to confirm a rule was
+ * stored. An up-to-date worker answers in one message round trip; only a
+ * worker from before the ack existed runs into this, and for it the wait is
+ * the same fixed delay `mockRequest` always used.
+ */
+const ACK_TIMEOUT = 100;
 let initialized = false;
+let warnedOutdatedWorker = false;
+let warnedVersionMismatch = false;
+
+const warnOutdatedWorker = () => {
+  if (warnedOutdatedWorker) return;
+  warnedOutdatedWorker = true;
+  console.warn(
+    `[TWD] Your mock-sw.js is outdated (no ack from the service worker).
+Mocks still work, but each mockRequest waits ${ACK_TIMEOUT}ms instead of resolving as soon as the rule is stored.
+Update it: npx twd-js init public`,
+  );
+};
+
+const checkWorkerVersion = (version: unknown) => {
+  if (version === TWD_VERSION || warnedVersionMismatch) return;
+  warnedVersionMismatch = true;
+  console.warn(
+    `[TWD] mock-sw.js version (${String(version)}) does not match twd-js (${TWD_VERSION}).
+Update it: npx twd-js init public`,
+  );
+};
+
+/**
+ * Send a message to the service worker and wait until it confirms it handled
+ * it, or until `ACK_TIMEOUT` for workers that never answer.
+ */
+const postToWorker = (message: object): Promise<'ack' | 'timeout'> =>
+  new Promise((resolve) => {
+    const controller = navigator.serviceWorker?.controller;
+    if (!controller) return resolve('ack');
+    const channel = new MessageChannel();
+    const timer = setTimeout(() => {
+      channel.port1.close();
+      resolve('timeout');
+    }, ACK_TIMEOUT);
+    channel.port1.onmessage = (event) => {
+      clearTimeout(timer);
+      channel.port1.close();
+      checkWorkerVersion(event.data?.version);
+      resolve('ack');
+    };
+    controller.postMessage(message, [channel.port2]);
+  });
 
 /**
  * Initialize the mocking service worker.
@@ -155,14 +203,10 @@ export const mockRequest = async (alias: string, options: Options) => {
       });
     }
   }
-  // Push to SW
-  navigator.serviceWorker.controller?.postMessage({
-    type: 'ADD_RULE',
-    rule,
-    version: TWD_VERSION,
-  });
-  await wait(SW_DELAY);
-  await Promise.resolve();
+  // Push to SW and wait until it has stored the rule, so a request fired
+  // right after this call cannot reach the worker before the rule does
+  const result = await postToWorker({ type: 'ADD_RULE', rule, version: TWD_VERSION });
+  if (result === 'timeout') warnOutdatedWorker();
 };
 
 /**
@@ -272,4 +316,6 @@ export const getRequestCounts = (): Record<string, number> => {
  */
 export const resetMockingState = () => {
   initialized = false;
+  warnedOutdatedWorker = false;
+  warnedVersionMismatch = false;
 };

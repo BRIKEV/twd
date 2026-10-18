@@ -110,6 +110,8 @@ export const handleMessage = (event) => {
     ruleHitCount = {};
     console.log('[TWD] All rules cleared');
   }
+  // Tell the page the message was handled. Pages older than the ack send no port.
+  event.ports?.[0]?.postMessage({ type: 'ACK', version: TWD_VERSION });
 };
 
 self.addEventListener('install', () => {
