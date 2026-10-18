@@ -1,3 +1,16 @@
+## <small>1.12.0-beta.1 (2026-10-19)</small>
+
+* fix: 3s defaults for waitForRequest and url().should(), a throwing afterEach no longer ends the run (#402) ([5d88af5](https://github.com/BRIKEV/twd/commit/5d88af5f02b6e6ae4e295cb029d137609930d5d4)), closes [#402](https://github.com/BRIKEV/twd/issues/402)
+* docs: note un-awaited async code in tests as the likely cause of flakiness with 1.12.0-beta.0 ([1f9fb87](https://github.com/BRIKEV/twd/commit/1f9fb87fad7d42aa7b9afa40176bd1170e5feec6))
+
+**Update your service worker: `npx twd-js init public`.** As in beta.0, the speedups need the new `mock-sw.js`; with an outdated one each `mockRequest` waits 100ms and the page warns once.
+
+**3000ms defaults, like `findBy*`.** `twd.waitForRequest()` now waits up to 3000ms by default (was 1000ms) and `twd.url().should()` up to 3000ms (was 500ms). Both were too short for a slow CI runner. Tests that pass are not slower, and explicit `retries` / `retryDelay` are respected.
+
+**A throwing `afterEach` no longer ends the run.** It fails that test, which is retried like any failure, and the run continues. A passing test whose `afterEach` throws is no longer reported as passed.
+
+**`waitForRequest` waits for the request, not for the UI.** Correcting the beta.0 notes: it resolves once the request happened, plus two frames for the response to reach the app. If the app processes the response asynchronously, the screen can update later. Wait for the UI with `findBy*` or `twd.waitFor`, put the expected state in the query (`findByRole("button", { name: "2", current: "page" })`), and check `getRequestCount` inside `twd.waitFor` right after a UI change, since the count can lag one hit behind.
+
 ## <small>1.12.0-beta.0 (2026-10-18)</small>
 
 * feat(mocking): wait for the service worker ack instead of a fixed 100ms ([ad61698](https://github.com/BRIKEV/twd/commit/ad61698746e0d79a7fb0f4453a1afc6a3ab6ca86))
