@@ -432,4 +432,58 @@ describe('mockBridge mockRequest service worker ack', () => {
 
     expect(resolved).toBe(true);
   });
+
+  // Answers each message after its own delay in ms; null means it never answers
+  const workerAnsweringAfter = (...delays: (number | null)[]) => {
+    let call = 0;
+    return {
+      postMessage: vi.fn((_message: unknown, transfer?: MessagePort[]) => {
+        const delay = delays[call++];
+        if (delay === null || delay === undefined) return;
+        setTimeout(() => transfer?.[0]?.postMessage({ type: 'ACK', version: TWD_VERSION }), delay);
+      }),
+    };
+  };
+
+  it('keeps waiting for a worker that has acked before when it is busy', async () => {
+    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    setController(workerAnsweringAfter(0, 300));
+    await mockRequest('first', options);
+
+    const start = performance.now();
+    await mockRequest('busy', options);
+
+    // Giving up after 100ms would let the app's request reach the worker before the rule
+    expect(performance.now() - start).toBeGreaterThanOrEqual(290);
+    expect(warnSpy).not.toHaveBeenCalled();
+  });
+
+  it('learns that the worker acks from an ack that arrives after the first timeout', async () => {
+    vi.spyOn(console, 'warn').mockImplementation(() => {});
+    setController(workerAnsweringAfter(150, 300));
+    await mockRequest('slowFirst', options);
+    await new Promise((resolve) => setTimeout(resolve, 100)); // the late ack arrives
+
+    const start = performance.now();
+    await mockRequest('busy', options);
+
+    expect(performance.now() - start).toBeGreaterThanOrEqual(290);
+  });
+
+  it('stops waiting for a worker that acked before after 2s', async () => {
+    vi.spyOn(console, 'warn').mockImplementation(() => {});
+    setController(workerAnsweringAfter(0, null));
+    await mockRequest('first', options);
+
+    vi.useFakeTimers();
+    let resolved = false;
+    const pending = mockRequest('stuck', options).then(() => {
+      resolved = true;
+    });
+    await vi.advanceTimersByTimeAsync(1999);
+    expect(resolved).toBe(false);
+    await vi.advanceTimersByTimeAsync(1);
+    await pending;
+    expect(resolved).toBe(true);
+  });
 });

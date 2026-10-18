@@ -192,3 +192,25 @@ the one this change introduces. Separate change.
 
 The same loop posting `ADD_RULE` without waiting at all missed 113/200 (x1)
 and 55/200 (x6): the race is real, and the ack closes it without the sleep.
+
+## Follow-up: a busy worker is not an outdated worker
+
+Running the example apps against the beta showed the first version of this
+change gave up too early. `mockRequest` waited for the ack for 100ms and then
+assumed an outdated worker. But an up-to-date worker that is busy for a moment
+(serving the dev server's modules while a page renders) can take longer than
+that. `mockRequest` then carried on before the rule was stored, the app's
+request reached the worker first and went to the network, and the page printed
+a wrong "outdated" warning.
+
+Fix: once the worker has answered at least once in this page load, it is
+known to ack, so a missing answer means "busy", not "outdated". `mockRequest`
+then waits up to 2000ms for it. Until the first answer the 100ms fallback stays,
+so an outdated worker behaves exactly as before. The page keeps listening on
+the channel after a timeout, so a late ack still teaches it that the worker
+acks. The "outdated" warning is only printed while no ack has been seen.
+
+Tests: a worker that acked before and then takes 300ms is waited for, with no
+warning; a first ack arriving after the 100ms timeout still switches to the
+longer wait; a worker that acked before and then never answers is given up on
+after 2000ms.

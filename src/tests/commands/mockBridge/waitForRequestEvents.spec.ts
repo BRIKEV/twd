@@ -50,6 +50,7 @@ describe('waitForRequest driven by EXECUTED messages', () => {
   });
 
   afterEach(() => {
+    document.body.innerHTML = '';
     vi.useRealTimers();
     vi.restoreAllMocks();
     clearRequestMockRules();
@@ -67,6 +68,38 @@ describe('waitForRequest driven by EXECUTED messages', () => {
     expect(performance.now() - start).toBeLessThan(50);
     expect(rule.executed).toBe(true);
     expect(rule.request).toEqual({ page: 1 });
+  });
+
+  it('lets the app render the response before resolving', async () => {
+    await mockRequest('users', { method: 'GET', url: '/users', response: [] });
+    const pending = waitForRequest('users');
+
+    // The worker reports the hit before it returns the response, so the app
+    // receives and renders it in a later task
+    fakeSW.hit({ alias: 'users', ruleId: ruleId('users'), hitCount: 1 });
+    setTimeout(() => {
+      const item = document.createElement('li');
+      item.textContent = 'Rendered user';
+      document.body.append(item);
+    }, 0);
+    await pending;
+
+    // A synchronous query right after waitForRequest must see the rendered response
+    expect(document.body.textContent).toContain('Rendered user');
+  });
+
+  it('lets the app render when the hit arrived before the wait started', async () => {
+    await mockRequest('users', { method: 'GET', url: '/users', response: [] });
+    fakeSW.hit({ alias: 'users', ruleId: ruleId('users'), hitCount: 1 });
+    setTimeout(() => {
+      const item = document.createElement('li');
+      item.textContent = 'Rendered user';
+      document.body.append(item);
+    }, 0);
+
+    await waitForRequest('users');
+
+    expect(document.body.textContent).toContain('Rendered user');
   });
 
   it('ignores a late hit on a rule that was replaced under the same alias', async () => {

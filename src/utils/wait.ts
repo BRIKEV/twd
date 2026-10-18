@@ -42,3 +42,19 @@ export const waitForElements = (
 
 export const wait = (time: number): Promise<void> =>
   new Promise((resolve) => setTimeout(resolve, time));
+
+// requestAnimationFrame never fires in a hidden tab (e.g. a relay run in a
+// background tab), so fall back to a frame-length timer there.
+const nextFrame = (): Promise<void> =>
+  document.hidden ? wait(16) : new Promise((resolve) => requestAnimationFrame(() => resolve()));
+
+/**
+ * Waits two frames: enough for the app to handle what just happened (a
+ * navigation, a mocked response) and for the framework to render it.
+ * Anything the app loads first (lazy chunks, loaders, follow-up requests) can
+ * still be pending, so query that with findBy*.
+ */
+export const settle = async (): Promise<void> => {
+  await nextFrame();
+  await nextFrame();
+};

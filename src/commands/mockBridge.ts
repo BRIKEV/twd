@@ -1,4 +1,5 @@
 import { TWD_VERSION } from '../constants/version';
+import { settle } from '../utils/wait';
 
 export type Rule = {
   /** HTTP method to match (e.g. `"GET"`, `"POST"`). */
@@ -90,11 +91,15 @@ let ruleSeq = 0;
 const newRuleId = () => `${Date.now().toString(36)}-${++ruleSeq}`;
 /**
  * How long `mockRequest` waits for the service worker to confirm a rule was
- * stored. An up-to-date worker answers in one message round trip; only a
- * worker from before the ack existed runs into this, and for it the wait is
- * the same fixed delay `mockRequest` always used.
+ * stored. Until the worker has answered once it may be a worker from before
+ * the ack, which never answers, so the wait is the fixed delay `mockRequest`
+ * always used. A worker that has answered before is only busy, so it gets the
+ * longer timeout: giving up early would let the app's request reach the
+ * worker before the rule does.
  */
-const ACK_TIMEOUT = 100;
+const OLD_WORKER_TIMEOUT = 100;
+const BUSY_WORKER_TIMEOUT = 2000;
+let workerAcks = false;
 let initialized = false;
 let warnedOutdatedWorker = false;
 let warnedVersionMismatch = false;
@@ -103,8 +108,8 @@ const warnOutdatedWorker = () => {
   if (warnedOutdatedWorker) return;
   warnedOutdatedWorker = true;
   console.warn(
-    `[TWD] Your mock-sw.js is outdated (no ack from the service worker).
-Mocks still work, but each mockRequest waits ${ACK_TIMEOUT}ms instead of resolving as soon as the rule is stored.
+    `[TWD] The mock service worker did not confirm a rule within ${OLD_WORKER_TIMEOUT}ms. Your mock-sw.js is probably outdated.
+Mocks still work, but each mockRequest waits ${OLD_WORKER_TIMEOUT}ms instead of resolving as soon as the rule is stored.
 Update it: npx twd-js init public`,
   );
 };
@@ -120,19 +125,23 @@ Update it: npx twd-js init public`,
 
 /**
  * Send a message to the service worker and wait until it confirms it handled
- * it, or until `ACK_TIMEOUT` for workers that never answer.
+ * it, or until the timeout for the kind of worker we know it is.
  */
 const postToWorker = (message: object): Promise<'ack' | 'timeout'> =>
   new Promise((resolve) => {
     const controller = navigator.serviceWorker?.controller;
     if (!controller) return resolve('ack');
     const channel = new MessageChannel();
-    const timer = setTimeout(() => {
-      channel.port1.close();
-      resolve('timeout');
-    }, ACK_TIMEOUT);
+    const timer = setTimeout(
+      () => resolve('timeout'),
+      workerAcks ? BUSY_WORKER_TIMEOUT : OLD_WORKER_TIMEOUT,
+    );
+    // Keep listening past a timeout: a late ack still tells us this worker acks
+    const stopListening = setTimeout(() => channel.port1.close(), BUSY_WORKER_TIMEOUT);
     channel.port1.onmessage = (event) => {
+      workerAcks = true;
       clearTimeout(timer);
+      clearTimeout(stopListening);
       channel.port1.close();
       checkWorkerVersion(event.data?.version);
       resolve('ack');
@@ -228,7 +237,7 @@ export const mockRequest = async (alias: string, options: Options) => {
   // Push to SW and wait until it has stored the rule, so a request fired
   // right after this call cannot reach the worker before the rule does
   const result = await postToWorker({ type: 'ADD_RULE', rule, version: TWD_VERSION });
-  if (result === 'timeout') warnOutdatedWorker();
+  if (result === 'timeout' && !workerAcks) warnOutdatedWorker();
 };
 
 /**
@@ -262,19 +271,7 @@ const buildNotExecutedMessage = (alias: string, expected: Rule, timeout: number)
   ].join('\n');
 };
 
-/**
- * Wait for a mocked request to be made.
- * Resolves as soon as the service worker reports the hit.
- * @param alias The alias of the mock rule to wait for
- * @param retries Together with `retryDelay`, sets the timeout: `retries * retryDelay` ms
- * @param retryDelay Together with `retries`, sets the timeout: `retries * retryDelay` ms
- * @returns The matched rule (with body if applicable)
- */
-export const waitForRequest = async (
-  alias: string,
-  retries = 10,
-  retryDelay = 100,
-): Promise<Rule> => {
+const waitForHit = async (alias: string, retries: number, retryDelay: number): Promise<Rule> => {
   const ruleExists = rules.find((r) => r.alias === alias);
   if (!ruleExists) {
     throw new Error(`Rule ${alias} not found`);
@@ -309,6 +306,27 @@ export const waitForRequest = async (
     if (!waiters.has(alias)) waiters.set(alias, new Set());
     waiters.get(alias)!.add(waiter);
   });
+};
+
+/**
+ * Wait for a mocked request to be made.
+ * Resolves once the service worker reports the hit and the app has had time to
+ * receive and render the mocked response.
+ * @param alias The alias of the mock rule to wait for
+ * @param retries Together with `retryDelay`, sets the timeout: `retries * retryDelay` ms
+ * @param retryDelay Together with `retries`, sets the timeout: `retries * retryDelay` ms
+ * @returns The matched rule (with body if applicable)
+ */
+export const waitForRequest = async (
+  alias: string,
+  retries = 10,
+  retryDelay = 100,
+): Promise<Rule> => {
+  const rule = await waitForHit(alias, retries, retryDelay);
+  // The worker reports the hit before it returns the response, so let the
+  // response arrive and render before the test goes on
+  await settle();
+  return rule;
 };
 
 /**
@@ -362,4 +380,5 @@ export const resetMockingState = () => {
   initialized = false;
   warnedOutdatedWorker = false;
   warnedVersionMismatch = false;
+  workerAcks = false;
 };
