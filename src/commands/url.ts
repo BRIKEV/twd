@@ -63,7 +63,7 @@ const should = (name: AnyURLAssertion, value: string) => {
 const urlCommand = (): URLCommandAPI => {
   return {
     location: window.location,
-    should: async (name: AnyURLAssertion, value: string, retries = 5) => {
+    should: async (name: AnyURLAssertion, value: string, retries = 30) => {
       let error: Error | undefined;
       for (let i = 0; i < retries; i++) {
         try {

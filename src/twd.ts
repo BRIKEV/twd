@@ -100,9 +100,11 @@ interface TWDAPI {
   mockRequest: (alias: string, options: Options) => Promise<void>;
   /**
    * Wait for a mocked request to be made.
+   * It guarantees the request happened, not that the UI has updated: wait for
+   * that with findBy* or `twd.waitFor`.
    * @param alias The alias of the mock rule to wait for
-   * @param retries The number of retries to make
-   * @param retryDelay The delay between retries
+   * @param retries With `retryDelay`, sets the timeout: `retries * retryDelay` ms (default 30, so 3000ms like findBy*)
+   * @param retryDelay With `retries`, sets the timeout (default 100ms)
    * @return The matched rule (with body if applicable)
    *
    * @example

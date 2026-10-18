@@ -183,6 +183,26 @@ describe('waitForRequest driven by EXECUTED messages', () => {
     await assertion;
   });
 
+  it('waits 3000ms by default, like findBy*', async () => {
+    await mockRequest('users', { method: 'GET', url: '/users', response: [] });
+    vi.useFakeTimers();
+    let settled = false;
+    const pending = waitForRequest('users');
+    pending
+      .catch(() => {})
+      .finally(() => {
+        settled = true;
+      });
+
+    await vi.advanceTimersByTimeAsync(2999);
+    expect(settled).toBe(false);
+    const assertion = expect(pending).rejects.toThrow(
+      'Rule "users" was not executed within 3000ms.',
+    );
+    await vi.advanceTimersByTimeAsync(1);
+    await assertion;
+  });
+
   it('drops pending waits on clearRequestMockRules so they never settle into the next test', async () => {
     await mockRequest('users', { method: 'GET', url: '/users', response: [] });
     vi.useFakeTimers();

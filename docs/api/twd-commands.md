@@ -167,7 +167,7 @@ twd.url(): URLCommandAPI
 
 #### Methods
 
-- `should(assertion, value, retries?)` - Make URL assertions (async, retries with 100ms delay between attempts, default: 5 retries)
+- `should(assertion, value, retries?)` - Make URL assertions (async, retries with 100ms delay between attempts, default: 30 retries, so up to 3000ms)
 
 #### Examples
 
@@ -822,8 +822,22 @@ twd.waitForRequest(alias: string, retries?: number, retryDelay?: number): Promis
 #### Parameters
 
 - **alias** (`string`) - The alias of the mock to wait for
-- **retries** (`number`, optional) - Maximum number of retry attempts (default: `10`)
-- **retryDelay** (`number`, optional) - Delay between retries in milliseconds (default: `100`)
+- **retries** (`number`, optional) - Together with `retryDelay`, sets the timeout: `retries * retryDelay` ms (default: `30`, so 3000ms, the same as `findBy*`)
+- **retryDelay** (`number`, optional) - See `retries` (default: `100`)
+
+#### What it waits for
+
+It resolves as soon as the service worker reports the request, plus two animation frames for the mocked response to reach the app. It guarantees the request **happened**, not that the UI has updated: if your app processes the response asynchronously (a data-fetching library, derived state), the screen can change a moment later. Wait for the UI with `findBy*` or `twd.waitFor`:
+
+```ts
+await twd.waitForRequest("filtered");
+
+// ❌ May run before the filtered list has rendered
+expect(screenDom.queryAllByText("old.csv").length).to.equal(0);
+
+// ✅ Retries until the UI reflects the response
+await twd.waitFor(() => expect(screenDom.queryAllByText("old.csv").length).to.equal(0));
+```
 
 #### Returns
 

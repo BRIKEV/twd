@@ -191,3 +191,12 @@ A faster `twd.visit()` (two frames instead of 100ms) was tried in the same
 round and dropped: in `twd-test-app` it made a test click a button from the
 screen that was about to be replaced, in 4 out of 5 runs. `visit` keeps its
 fixed 100ms.
+
+## Follow-up: 3000ms defaults, like findBy*
+
+Running a 550-test app on a CPU-throttled machine showed two defaults were too
+short for a 2-vCPU CI runner: `waitForRequest` (1000ms) and
+`twd.url().should()` (500ms), while `findBy*` already waits up to 3000ms. Both
+now default to 3000ms (30 attempts 100ms apart). Tests that pass are not
+slower; a failing one takes longer to be reported. Explicit `retries` and
+`retryDelay` are respected as before.

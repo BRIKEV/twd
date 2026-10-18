@@ -55,6 +55,7 @@ describe('waitForRequests', () => {
     const secondAlias = 'secondAlias';
     await mockRequest(alias, { method: 'GET', url: '/bar', response: {} });
     await mockRequest(secondAlias, { method: 'POST', url: '/foo', response: {} });
+    vi.useFakeTimers();
     setTimeout(() => {
       const rules = getRequestMockRules();
       rules[0].executed = true;
@@ -62,8 +63,11 @@ describe('waitForRequests', () => {
       // Simulate waiter callback (directly resolve the promise by marking executed)
       // The waitFor promise will resolve on next tick after executed is set
     }, 50);
-    await expect(waitForRequests([alias, secondAlias])).rejects.toThrow(
-      `Rule "${secondAlias}" was not executed within 1000ms.`,
+    const assertion = expect(waitForRequests([alias, secondAlias])).rejects.toThrow(
+      `Rule "${secondAlias}" was not executed within 3000ms.`,
     );
+    await vi.advanceTimersByTimeAsync(3000);
+    await assertion;
+    vi.useRealTimers();
   });
 });
