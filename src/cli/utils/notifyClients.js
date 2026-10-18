@@ -10,6 +10,7 @@
  * @property {Record<string, string>} [responseHeaders] - Headers to include in the response.
  * @property {boolean} [urlRegex] - Whether the URL is a regex pattern.
  * @property {number} [delay] - Delay in ms before returning the response.
+ * @property {string} [id] - Identifies the mockRequest call that created the rule.
  */
 
 /**
@@ -28,6 +29,7 @@ export function notifyClients(clients, rule, body, hitCount) {
     client.postMessage({
       type: 'EXECUTED',
       alias: rule.alias,
+      ruleId: rule.id,
       request: body,
       hitCount,
     }),
