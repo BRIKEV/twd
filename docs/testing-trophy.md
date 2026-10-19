@@ -5,7 +5,7 @@ description: TWD mapped onto Kent C. Dodds' Testing Trophy. TWD covers the integ
 
 # Where TWD Fits: The Testing Trophy
 
-[Kent C. Dodds](https://kentcdodds.com/) describes a testing strategy as a trophy, not a pyramid. Static checks form the base, unit tests sit above them, end-to-end tests are the small cup on top, and the largest part of the trophy is **integration**. That is where most of your confidence comes from for the effort you put in.
+[Kent C. Dodds](https://kentcdodds.com/) describes a testing strategy as a trophy, not a pyramid. Static checks form the base, unit tests sit above them, end-to-end tests are the small top piece, and the largest part of the trophy is **integration**. That is where most of your confidence comes from for the effort you put in.
 
 TWD is built for that middle layer on the frontend.
 
