@@ -53,6 +53,8 @@ But here's the catch — to make that work, we need to **stop treating testing a
 
 That's your test. That's the mindset.
 
+Once those tests exist, they still land somewhere on the map. If you want to see where, [Where TWD Fits](/testing-trophy) places them on Kent C. Dodds' Testing Trophy: mostly in the integration layer.
+
 ## Example: Building an API Endpoint
 
 Let's say you're developing an API endpoint that inserts in a database and returns the inserted data.

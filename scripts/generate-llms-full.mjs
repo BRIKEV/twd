@@ -23,7 +23,7 @@ const ORDER = [
   'twd-ai/test-gaps.md', 'twd-ai/test-quality.md', 'twd-ai/flow-gallery.md',
   'ai-remote-testing.md', 'agents.md',
   // Philosophy, Community
-  'twd-manifesto.md', 'motivation.md', 'community.md', 'accessibility-statement.md',
+  'twd-manifesto.md', 'motivation.md', 'testing-trophy.md', 'community.md', 'accessibility-statement.md',
   // Tutorial
   'tutorial/index.md', 'tutorial/intro.md', 'tutorial/installation.md', 'tutorial/first-test.md',
   'tutorial/api-mocking.md', 'tutorial/ci-integration.md', 'tutorial/coverage.md',

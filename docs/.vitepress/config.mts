@@ -125,6 +125,7 @@ export default defineConfig({
         items: [
           { text: 'TWD Manifesto', link: '/twd-manifesto' },
           { text: 'Why Test While Developing', link: '/motivation' },
+          { text: 'Where TWD Fits', link: '/testing-trophy' },
         ]
       },
       {
