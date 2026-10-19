@@ -557,6 +557,8 @@ visibleDiv.should("not.be.hidden");
 
 ## URL Assertions
 
+`twd.url().should()` retries until the assertion passes: by default 30 attempts 100ms apart, so up to 3000ms, the same as `findBy*`. Pass `retries` to change it.
+
 ### eq (URL)
 
 Verifies that the current URL matches exactly.

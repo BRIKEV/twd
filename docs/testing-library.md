@@ -405,6 +405,20 @@ const email = screenDom.getByLabelText("Email:");
 const modal = screenDomGlobal.getByRole("dialog", { name: "Confirm" });
 ```
 
+#### Put the expected state in the query
+
+`findBy*` returns as soon as a matching element exists, and that includes an element that was already on screen before your action. When an action changes the state of an element that is already there (a pagination button becoming current, a tab becoming selected), query for the new state, so the lookup waits for it:
+
+```ts
+await userEvent.click(await screenDom.findByRole("button", { name: "2" }));
+
+// ❌ Finds the "2" button that was already there, before the page changed
+const page = await screenDom.findByRole("button", { name: "2" });
+
+// ✅ Waits until "2" is the current page
+const page = await screenDom.findByRole("button", { name: "2", current: "page" });
+```
+
 ### When `twd.get()` is the right call
 
 Only when no Testing Library query reaches the element: a third-party widget that renders bare `<div>`s or a `<canvas>`, or markup you don't own and can't add a role, label or `data-testid` to. If you are reaching for `twd.get()` on your own components, that usually means they are missing an accessible name, which is worth fixing in the component.

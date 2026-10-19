@@ -194,7 +194,7 @@ The new command here is:
 await twd.waitForRequest("getTodoList");
 ```
 
-It waits until the mocked request is triggered — useful when you need to ensure data is rendered before asserting UI state.
+It waits until the mocked request is triggered (up to 3 seconds by default). That tells you the request happened, not that the UI has updated, so assert on the result with `findBy*`.
 
 > Always define `mockRequest` before triggering the request (clicks, submits, or navigation).
 > If you mock it too late, it might not intercept properly.

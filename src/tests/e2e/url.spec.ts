@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi, afterAll } from 'vitest';
+import { beforeEach, describe, expect, it, vi, afterAll, afterEach } from 'vitest';
 import { twd } from '../..';
 
 describe('twd url command', () => {
@@ -23,6 +23,10 @@ describe('twd url command', () => {
       search: '',
       hash: '',
     };
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
   });
 
   afterAll(() => {
@@ -64,7 +68,7 @@ describe('twd url command', () => {
 
   it('should fail equality assertion with incorrect URL', async () => {
     const urlCmd = twd.url();
-    await expect(urlCmd.should('eq', 'http://localhost:3000/about')).rejects.toThrow(
+    await expect(urlCmd.should('eq', 'http://localhost:3000/about', 1)).rejects.toThrow(
       'Assertion failed: Expected URL to be http://localhost:3000/about, but got http://localhost:3000/home',
     );
   });
@@ -84,10 +88,52 @@ describe('twd url command', () => {
     ).rejects.toThrow('Unknown assertion: invalid.assertion');
   });
 
-  it('should retry assertion when it fails', () => {
+  it('should pass when a retry passes after a failed attempt', async () => {
     const urlCmd = twd.url();
-    // this should not fail as it retries
-    void urlCmd.should('eq', 'http://localhost:3000/about');
-    window.location.href = 'http://localhost:3000/about';
+    // The app navigates after the first attempt has already failed
+    setTimeout(() => {
+      window.location.href = 'http://localhost:3000/about';
+    }, 150);
+    const result = await urlCmd.should('eq', 'http://localhost:3000/about');
+    expect(result).toContain('Assertion passed');
+  });
+
+  it('should keep retrying for 3000ms by default, like findBy*', async () => {
+    vi.useFakeTimers();
+    const urlCmd = twd.url();
+    // The app navigates 2s after the action, which is slow but normal on a busy CI runner
+    setTimeout(() => {
+      window.location.href = 'http://localhost:3000/about';
+    }, 2000);
+    const pending = urlCmd.should('eq', 'http://localhost:3000/about');
+    await vi.advanceTimersByTimeAsync(2100);
+    await expect(pending).resolves.toContain('Assertion passed');
+    vi.useRealTimers();
+  });
+
+  it('should give up after 3000ms by default', async () => {
+    vi.useFakeTimers();
+    let settled = false;
+    const pending = twd.url().should('eq', 'http://localhost:3000/never');
+    pending
+      .catch(() => {})
+      .finally(() => {
+        settled = true;
+      });
+    await vi.advanceTimersByTimeAsync(2899);
+    expect(settled).toBe(false);
+    const assertion = expect(pending).rejects.toThrow(
+      'Expected URL to be http://localhost:3000/never',
+    );
+    await vi.advanceTimersByTimeAsync(200);
+    await assertion;
+    vi.useRealTimers();
+  });
+
+  it('should throw the last failure when no retry passes', async () => {
+    const urlCmd = twd.url();
+    await expect(urlCmd.should('contain.url', '/about', 2)).rejects.toThrow(
+      'Expected URL to contain /about',
+    );
   });
 });

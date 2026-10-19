@@ -163,9 +163,10 @@ afterEach(() => {
 });
 ```
 
-Use `afterEach`, not `beforeEach`. TWD runs after-hooks in a `finally`, so this
-still runs when a test fails, and it puts the app back before your flow tests need
-it. If you also mock requests, `twd.clearRequestMockRules()` belongs in
+Use `afterEach`, not `beforeEach`. TWD runs after-hooks even when a test fails,
+so this always puts the app back before your flow tests need it. If an `afterEach`
+itself throws, that test fails (and is retried like any failure) and the run goes
+on. If you also mock requests, `twd.clearRequestMockRules()` belongs in
 `beforeEach` as usual.
 
 That is the whole setup.

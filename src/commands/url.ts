@@ -63,21 +63,21 @@ const should = (name: AnyURLAssertion, value: string) => {
 const urlCommand = (): URLCommandAPI => {
   return {
     location: window.location,
-    should: async (name: AnyURLAssertion, value: string, retries = 5) => {
-      let result = '';
+    should: async (name: AnyURLAssertion, value: string, retries = 30) => {
       let error: Error | undefined;
       for (let i = 0; i < retries; i++) {
         try {
-          result = should(name, value);
+          const result = should(name, value);
           log(result);
-          break;
+          // Return here: a retry that passes must not throw the earlier failure
+          return result;
         } catch (e) {
           await new Promise((resolve) => setTimeout(resolve, 100));
           error = e as Error;
         }
       }
       if (error) throw error;
-      return result;
+      return '';
     },
   };
 };

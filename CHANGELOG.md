@@ -1,3 +1,35 @@
+## <small>1.12.0 (2026-10-19)</small>
+
+* feat(mocking): wait for the service worker ack instead of a fixed 100ms (#398) ([ad61698](https://github.com/BRIKEV/twd/commit/ad61698746e0d79a7fb0f4453a1afc6a3ab6ca86)), closes [#398](https://github.com/BRIKEV/twd/issues/398)
+* feat(mocking): resolve waitForRequest on the hit, ignore hits on replaced rules (#399) ([eab8ec1](https://github.com/BRIKEV/twd/commit/eab8ec16abdae46a79252717adc56ea9ab55cb30)), closes [#399](https://github.com/BRIKEV/twd/issues/399)
+* fix(mocking): wait for a busy worker, let the response render after waitForRequest (#401) ([7ef7dfd](https://github.com/BRIKEV/twd/commit/7ef7dfd2ed274c5f41dacff98ed44c8f957ded68)), closes [#401](https://github.com/BRIKEV/twd/issues/401)
+* fix: 3s defaults for waitForRequest and url().should(), a throwing afterEach no longer ends the run (#402) ([5d88af5](https://github.com/BRIKEV/twd/commit/5d88af5f02b6e6ae4e295cb029d137609930d5d4)), closes [#402](https://github.com/BRIKEV/twd/issues/402)
+* fix(url): pass url().should() when a retry passes (#400) ([df25a47](https://github.com/BRIKEV/twd/commit/df25a476dd3573174a4bd501f05b9768a41d51b7)), closes [#400](https://github.com/BRIKEV/twd/issues/400)
+* docs: make findBy the default query and getBy waitFor-only (#395) ([5e7f076](https://github.com/BRIKEV/twd/commit/5e7f076f4da35429d3a02ebb653e1ab76297898b)), closes [#395](https://github.com/BRIKEV/twd/issues/395)
+* docs: link the TWD YouTube channel (#394) ([4f5637a](https://github.com/BRIKEV/twd/commit/4f5637ac79c983bb7a429c760e3f832bf3b98ade)), closes [#394](https://github.com/BRIKEV/twd/issues/394)
+* docs: use hello@twd.dev as the contact email (#393) ([05f47e1](https://github.com/BRIKEV/twd/commit/05f47e131d6cc60c57aa24355962010d466eab3a)), closes [#393](https://github.com/BRIKEV/twd/issues/393)
+* docs: use "Test While Developing" consistently (#392) ([a9e4998](https://github.com/BRIKEV/twd/commit/a9e49981e0d64285fb3663b06c50307396d7f579)), closes [#392](https://github.com/BRIKEV/twd/issues/392)
+* docs: add Open Source Accessibility Framework badge to README ([c6c8a33](https://github.com/BRIKEV/twd/commit/c6c8a331dd8c371619a73b10226f71a7878bd595))
+* docs: note un-awaited async code in tests as the likely cause of flakiness ([1f9fb87](https://github.com/BRIKEV/twd/commit/1f9fb87fad7d42aa7b9afa40176bd1170e5feec6))
+
+**Update your service worker: `npx twd-js init public`.** The speedups in this release need the new `mock-sw.js`. With an outdated one everything keeps working as before, without the speedup: each `mockRequest` waits 100ms and the page warns once.
+
+**Faster mocking.** `mockRequest` no longer sleeps 100ms after every call: it resolves as soon as the service worker confirms the rule is stored, and keeps waiting while the worker is busy instead of guessing. `waitForRequest` resolves when the request happens instead of on the next 100ms polling tick. On real suites this cut test time by about 20% and removed retries in CI.
+
+**`waitForRequest` waits for the request, not for the UI.** It resolves once the request happened, plus two frames for the response to reach the app. If the app processes the response asynchronously, the screen can update later. Wait for the UI with `findBy*` or `twd.waitFor`, put the expected state in the query (`findByRole("button", { name: "2", current: "page" })`), and check `getRequestCount` inside `twd.waitFor` right after a UI change, since the count can lag one hit behind.
+
+**3000ms defaults, like `findBy*`.** `twd.waitForRequest()` now waits up to 3000ms by default (was 1000ms) and `twd.url().should()` up to 3000ms (was 500ms). Tests that pass are not slower, and explicit `retries` / `retryDelay` are respected.
+
+**If a test turns flaky after upgrading, look for un-awaited async code.** The old 100ms sleep in `mockRequest` gave async work the test did not await (a `logout()` or storage cleanup in `beforeEach`, a helper at the end of a test) time to finish by luck. Await it (`beforeEach(async () => { await logout(); })`); `@typescript-eslint/no-floating-promises` on your test files catches it.
+
+**A throwing `afterEach` no longer ends the run.** It fails that test, which is retried like any failure, and the run continues. A passing test whose `afterEach` throws is no longer reported as passed.
+
+**Re-mocking an alias is reliable.** A request for a rule that was replaced under the same alias can no longer mark the new rule as executed.
+
+**`twd.url().should()` retries work.** An assertion that failed on the first attempt and passed on a retry used to throw anyway.
+
+**`mock-sw.js` is now readable.** It is built unminified, with a header naming the version and how to regenerate it.
+
 ## <small>1.11.0 (2026-10-12)</small>
 
 * ci: minimum supported Node is now 20, `engines.node` raised from `>=16` to `>=20` (#385) ([325152d](https://github.com/BRIKEV/twd/commit/325152d56afce554bbcea3b6f7603cdd53f89927)), closes [#385](https://github.com/BRIKEV/twd/issues/385)
