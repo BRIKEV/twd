@@ -1,16 +1,21 @@
 ## <small>1.12.0 (2026-10-19)</small>
 
-* feat(mocking): wait for the service worker ack instead of a fixed 100ms (#398) ([ad61698](https://github.com/BRIKEV/twd/commit/ad61698746e0d79a7fb0f4453a1afc6a3ab6ca86)), closes [#398](https://github.com/BRIKEV/twd/issues/398)
-* feat(mocking): resolve waitForRequest on the hit, ignore hits on replaced rules (#399) ([eab8ec1](https://github.com/BRIKEV/twd/commit/eab8ec16abdae46a79252717adc56ea9ab55cb30)), closes [#399](https://github.com/BRIKEV/twd/issues/399)
-* fix(mocking): wait for a busy worker, let the response render after waitForRequest (#401) ([7ef7dfd](https://github.com/BRIKEV/twd/commit/7ef7dfd2ed274c5f41dacff98ed44c8f957ded68)), closes [#401](https://github.com/BRIKEV/twd/issues/401)
-* fix: 3s defaults for waitForRequest and url().should(), a throwing afterEach no longer ends the run (#402) ([5d88af5](https://github.com/BRIKEV/twd/commit/5d88af5f02b6e6ae4e295cb029d137609930d5d4)), closes [#402](https://github.com/BRIKEV/twd/issues/402)
-* fix(url): pass url().should() when a retry passes (#400) ([df25a47](https://github.com/BRIKEV/twd/commit/df25a476dd3573174a4bd501f05b9768a41d51b7)), closes [#400](https://github.com/BRIKEV/twd/issues/400)
+* feat(mocking): wait for the service worker ack instead of a fixed 100ms (#398) ([7d09420](https://github.com/BRIKEV/twd/commit/7d094204e73d2730e11a10742cdc8aa1b19be541)), closes [#398](https://github.com/BRIKEV/twd/issues/398)
+* feat(mocking): resolve waitForRequest on the hit, ignore hits on replaced rules (#399) ([7d09420](https://github.com/BRIKEV/twd/commit/7d094204e73d2730e11a10742cdc8aa1b19be541)), closes [#399](https://github.com/BRIKEV/twd/issues/399)
+* fix(mocking): wait for a busy worker, let the response render after waitForRequest (#401) ([7d09420](https://github.com/BRIKEV/twd/commit/7d094204e73d2730e11a10742cdc8aa1b19be541)), closes [#401](https://github.com/BRIKEV/twd/issues/401)
+* fix: 3s defaults for waitForRequest and url().should(), a throwing afterEach no longer ends the run (#402) ([7d09420](https://github.com/BRIKEV/twd/commit/7d094204e73d2730e11a10742cdc8aa1b19be541)), closes [#402](https://github.com/BRIKEV/twd/issues/402)
+* fix(url): pass url().should() when a retry passes (#400) ([7d09420](https://github.com/BRIKEV/twd/commit/7d094204e73d2730e11a10742cdc8aa1b19be541)), closes [#400](https://github.com/BRIKEV/twd/issues/400)
 * docs: make findBy the default query and getBy waitFor-only (#395) ([5e7f076](https://github.com/BRIKEV/twd/commit/5e7f076f4da35429d3a02ebb653e1ab76297898b)), closes [#395](https://github.com/BRIKEV/twd/issues/395)
 * docs: link the TWD YouTube channel (#394) ([4f5637a](https://github.com/BRIKEV/twd/commit/4f5637ac79c983bb7a429c760e3f832bf3b98ade)), closes [#394](https://github.com/BRIKEV/twd/issues/394)
 * docs: use hello@twd.dev as the contact email (#393) ([05f47e1](https://github.com/BRIKEV/twd/commit/05f47e131d6cc60c57aa24355962010d466eab3a)), closes [#393](https://github.com/BRIKEV/twd/issues/393)
 * docs: use "Test While Developing" consistently (#392) ([a9e4998](https://github.com/BRIKEV/twd/commit/a9e49981e0d64285fb3663b06c50307396d7f579)), closes [#392](https://github.com/BRIKEV/twd/issues/392)
 * docs: add Open Source Accessibility Framework badge to README ([c6c8a33](https://github.com/BRIKEV/twd/commit/c6c8a331dd8c371619a73b10226f71a7878bd595))
-* docs: note un-awaited async code in tests as the likely cause of flakiness ([1f9fb87](https://github.com/BRIKEV/twd/commit/1f9fb87fad7d42aa7b9afa40176bd1170e5feec6))
+* docs: note un-awaited async code in tests as the likely cause of flakiness (#398) ([7d09420](https://github.com/BRIKEV/twd/commit/7d094204e73d2730e11a10742cdc8aa1b19be541)), closes [#398](https://github.com/BRIKEV/twd/issues/398)
+* chore(deps-dev): bump the vitest group with 2 updates (#407) ([c3d83d1](https://github.com/BRIKEV/twd/commit/c3d83d1eb5fd0b36d99b26ef0cd17f2258938f5c)), closes [#407](https://github.com/BRIKEV/twd/issues/407)
+* chore(deps-dev): bump jsdom from 30.1.2 to 30.1.3 (#406) ([1e5f877](https://github.com/BRIKEV/twd/commit/1e5f877babb42189369dca5d582a61faf8e7723b)), closes [#406](https://github.com/BRIKEV/twd/issues/406)
+* chore(deps-dev): bump @vitejs/plugin-react from 6.1.1 to 6.1.2 (#405) ([e7bb208](https://github.com/BRIKEV/twd/commit/e7bb20844e36b0b342383df9fdee0a65739b5588)), closes [#405](https://github.com/BRIKEV/twd/issues/405)
+* chore(deps-dev): bump typescript-eslint from 8.70.0 to 8.71.2 (#404) ([5bd4398](https://github.com/BRIKEV/twd/commit/5bd4398fbc5a61bf22fd91d63a41d2913d60b396)), closes [#404](https://github.com/BRIKEV/twd/issues/404)
+* chore(deps-dev): bump globals from 17.12.0 to 17.13.0 (#403) ([7c7fd41](https://github.com/BRIKEV/twd/commit/7c7fd413900f866b776d52b9e730284381c5e1f4)), closes [#403](https://github.com/BRIKEV/twd/issues/403)
 
 **Update your service worker: `npx twd-js init public`.** The speedups in this release need the new `mock-sw.js`. With an outdated one everything keeps working as before, without the speedup: each `mockRequest` waits 100ms and the page warns once.
 
