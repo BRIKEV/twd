@@ -19,14 +19,16 @@ People from the community who have shipped code, docs, or other improvements to 
 
 ## Live Showcase
 
-See TWD testing real shadcn/ui components with live code and tests running in the browser:
+Sites that ship the TWD sidebar on purpose, so you can run their tests yourself:
 
-**[TWD + shadcn/ui Showcase](https://brikev.github.io/twd-shadcn/)** — Interactive demo with component tests you can run yourself.
+- **[TWD live tour](https://try.twd.dev)** — A guided tour where every step is a test you run from the sidebar: your first test, pacing, API mocking with no backend, and a shop with its whole suite under Run All. Its pull requests show [what a recorded PR looks like](https://github.com/BRIKEV/twd-story/pull/1).
+- **[TWD + shadcn/ui Showcase](https://brikev.github.io/twd-shadcn/)** — Interactive demo with component tests you can run yourself.
 
 ## Example Repositories
 
 | Repository | Framework | What it demonstrates |
 |------------|-----------|----------------------|
+| [twd-story](https://github.com/BRIKEV/twd-story) | Vue + Vite+ | The [live tour](https://try.twd.dev): TWD shipped to production with `initTWD`, pages that react to the sidebar, and a PR recorded by CI |
 | [twd-shadcn](https://github.com/BRIKEV/twd-shadcn) | React + shadcn/ui | Testing shadcn components (forms, dialogs, tables) with [live demo](https://brikev.github.io/twd-shadcn/) |
 | [twd-react-router](https://github.com/BRIKEV/twd-react-router) | React Router (Framework Mode) | SSR-compatible setup with `createRoutesStub`, loader mocking |
 | [twd-tanstack-example](https://github.com/BRIKEV/twd-tanstack-example) | React + TanStack Router | TanStack Router integration with route + loader testing |

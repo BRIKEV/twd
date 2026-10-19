@@ -15,6 +15,8 @@
 
 A sidebar in your dev server runs component and flow tests against your real app: the same DOM, routes and state you are building. Your AI agent can drive the same loop headlessly, and every mock gets checked against the real API before you merge.
 
+**[Take the live tour →](https://try.twd.dev)** Run real TWD tests from the sidebar and watch them drive the page, in your browser, with nothing to install. Best on a laptop or desktop.
+
 Open source under the MIT license.
 
 ## Why TWD

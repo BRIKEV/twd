@@ -80,7 +80,8 @@ export default defineConfig({
       { text: 'Home', link: '/' },
       { text: 'Core Concepts', link: '/getting-started' },
       { text: 'AI agents', link: '/ai-overview' },
-      { text: 'API Reference', link: '/api/' }
+      { text: 'API Reference', link: '/api/' },
+      { text: 'Live tour', link: 'https://try.twd.dev' }
     ],
 
     sidebar: [
