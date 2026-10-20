@@ -5,6 +5,7 @@ import LandingHero from './components/LandingHero.vue'
 import LandingCrossLinks from './components/LandingCrossLinks.vue'
 import YouTubeEmbed from './components/YouTubeEmbed.vue'
 import DeferredVideo from './components/DeferredVideo.vue'
+import TestingTrophy from './components/TestingTrophy.vue'
 import './style.css'
 
 export default {
@@ -16,5 +17,6 @@ export default {
     app.component('LandingCrossLinks', LandingCrossLinks)
     app.component('YouTubeEmbed', YouTubeEmbed)
     app.component('DeferredVideo', DeferredVideo)
+    app.component('TestingTrophy', TestingTrophy)
   },
 }

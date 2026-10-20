@@ -54,6 +54,7 @@ Key features:
 
 - [TWD Manifesto](https://twd.dev/twd-manifesto): Core principles — test while building, test what you own, mock what you don't
 - [Why Test While Developing](https://twd.dev/motivation): Motivation, philosophy, and what changes in the AI era
+- [Where TWD Fits](https://twd.dev/testing-trophy): TWD on Kent C. Dodds' Testing Trophy, covering the frontend integration layer next to static, unit and end-to-end tests
 
 ## Community
 
