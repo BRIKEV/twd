@@ -58,7 +58,7 @@ const faqs = [
   },
   {
     q: 'Can AI actually write good tests?',
-    a: 'The twd-ai plugin does more than generate test files. It runs them, reads real failures, fixes them, checks quality and finds gaps. The tests execute in a real browser against your real app, so a pass means something. twd-cli runs them headlessly and prints one structured summary rather than screenshots or DOM snapshots, which keeps token usage well below tools like Playwright MCP.'
+    a: 'The twd-ai plugin does more than generate test files. It runs them, reads real failures and fixes them, and every skill is checked by evals that run it with and without the plugin. The tests execute in a real browser against your real app, so a pass means something. twd-cli runs them headlessly and prints one structured summary rather than screenshots or DOM snapshots, which keeps token usage well below tools like Playwright MCP.'
   },
   {
     q: 'How does the record label work?',

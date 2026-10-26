@@ -87,9 +87,9 @@ get one video per test the branch added. [CI setup](/twd-ai/ci-setup)
 | `/twd:setup` | Configures TWD for your project and generates `.claude/twd-patterns.md` |
 | `twd` skill | Writes tests, runs them headlessly with twd-cli, fixes failures, re-runs until green |
 | `/twd:ci-setup` | GitHub Actions workflow, coverage, contract validation, PR recordings |
-| `/twd:test-gaps` | Finds untested pages and ranks them by risk |
-| `/twd:test-quality` | Grades test files and suggests how to improve them |
-| `/twd:test-flow-gallery` | Turns tests into Mermaid flowcharts and plain-language summaries |
+
+Every one of them is guarded by an eval that runs it without a human in the loop.
+[How the skills are tested](/twd-ai/evals)
 
 ## Want to watch the agent work?
 
