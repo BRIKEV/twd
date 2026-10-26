@@ -113,9 +113,7 @@ export default defineConfig({
           { text: 'Project setup', link: '/twd-ai/setup' },
           { text: 'Writing & running tests', link: '/twd-ai/writing-tests' },
           { text: 'CI setup', link: '/twd-ai/ci-setup' },
-          { text: 'Test gap analysis', link: '/twd-ai/test-gaps' },
-          { text: 'Test quality', link: '/twd-ai/test-quality' },
-          { text: 'Test flow gallery', link: '/twd-ai/flow-gallery' },
+          { text: 'How the skills are tested', link: '/twd-ai/evals' },
           { text: 'Watch your agent live', link: '/ai-remote-testing' },
           { text: 'Context & prompts', link: '/agents' },
         ]

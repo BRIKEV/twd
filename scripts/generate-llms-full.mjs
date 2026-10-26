@@ -20,7 +20,7 @@ const ORDER = [
   'testing-library.md', 'sharding.md', 'layout-snapshots.md',
   // AI agents
   'ai-overview.md', 'twd-ai/setup.md', 'twd-ai/writing-tests.md', 'twd-ai/ci-setup.md',
-  'twd-ai/test-gaps.md', 'twd-ai/test-quality.md', 'twd-ai/flow-gallery.md',
+  'twd-ai/evals.md',
   'ai-remote-testing.md', 'agents.md',
   // Philosophy, Community
   'twd-manifesto.md', 'motivation.md', 'testing-trophy.md', 'community.md', 'accessibility-statement.md',

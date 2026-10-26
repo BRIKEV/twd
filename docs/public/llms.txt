@@ -44,9 +44,7 @@ Key features:
 - [Project Setup](https://twd.dev/twd-ai/setup): /twd:setup installs twd-js and twd-cli, wires the Vite plugin, writes twd.config.json and .claude/twd-patterns.md, ignores .twd/
 - [Writing & Running Tests](https://twd.dev/twd-ai/writing-tests): The headless loop — probe, scoped run, fix, branch check, full suite, recording offer
 - [CI Setup](https://twd.dev/twd-ai/ci-setup): /twd:ci-setup generates GitHub Actions workflows with coverage, contract validation and PR recordings
-- [Test Gap Analysis](https://twd.dev/twd-ai/test-gaps): Find untested routes and classify risk with /twd:test-gaps
-- [Test Quality](https://twd.dev/twd-ai/test-quality): Grade test quality across four dimensions with /twd:test-quality
-- [Test Flow Gallery](https://twd.dev/twd-ai/flow-gallery): Generate visual flowcharts of test coverage with /twd:test-flow-gallery
+- [How the Skills Are Tested](https://twd.dev/twd-ai/evals): Plugin evals per scenario, scores with and without the plugin per model
 - [Watch Your Agent Live](https://twd.dev/ai-remote-testing): Optional twd-relay setup to see the agent's runs in your own browser tab
 - [Context & Prompts](https://twd.dev/agents): A TWD context prompt for tools without skills support
 

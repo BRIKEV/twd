@@ -63,10 +63,10 @@ the pull request. You need to create a `record` label in the repository once.
 
 ## What's Next
 
-With CI running, you now have a safety net. Next, let's find out what you're missing with test gap analysis.
+With CI running, you now have a safety net for your app. The skills have one too: see how each of them is tested.
 
 <div style="text-align: right; margin-top: 2rem;">
 
-[Test Gap Analysis →](./test-gaps)
+[How the skills are tested →](./evals)
 
 </div>
