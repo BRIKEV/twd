@@ -494,21 +494,27 @@ export default defineConfig({
 });
 ```
 
+#### Options
+
+| Option | Type | Default | Description |
+|---|---|---|---|
+| `fileName` | `string` | `'mock-sw.js'` | Path of the worker relative to the build output. Match it to `serviceWorkerUrl` if you serve the worker from a custom path. |
+
 #### What it does
 
-- **Build-time cleanup**: Automatically removes `mock-sw.js` from the `dist` folder
+- **Build-time cleanup**: Removes `mock-sw.js` from the output directory of each build, so a custom `build.outDir` or React Router's `build/client` works without extra configuration
 - **Production-safe**: Only runs during build (`apply: 'build'`)
-- **Zero configuration**: Works out of the box with standard Vite setups
-- **Logging**: Provides feedback about file removal
+- **Server builds**: Skipped silently, since Vite only copies `public/` into the client output
+- **Logging**: Reports the removal, and warns when the client build did not contain the worker
 
 #### Example Output
 
 ```bash
-# During build
-🧹 Removed mock-sw.js from build
+# Worker removed
+🧹 twd: removed mock-sw.js from build/client
 
-# If no mock file found
-🧹 No mock-sw.js found in build
+# Worker not found in the client build
+⚠️  twd: mock-sw.js was not found in dist, nothing was removed. If your framework copies public/ outside the Vite build (e.g. Nuxt), remove it from that output instead.
 ```
 
 ---

@@ -4,7 +4,7 @@ import react from '@vitejs/plugin-react';
 import istanbul from 'vite-plugin-istanbul';
 import { twdRemote } from 'twd-relay/vite';
 import type { PluginOption } from 'vite';
-import { twd } from '../../src/vite-plugin';
+import { twd, removeMockServiceWorker } from '../../src/vite-plugin';
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -18,6 +18,7 @@ export default defineConfig({
     }),
     twdRemote() as PluginOption,
     twd({ testFilePattern: '/**/*.twd.test.{ts,tsx}', open: false, search: true, pace: true }),
+    removeMockServiceWorker(),
   ],
   resolve: {
     alias: {

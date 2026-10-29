@@ -54,10 +54,12 @@ export default defineConfig({
   plugins: [
     react(),
     twd(),                     // dev: sidebar + tests + service worker registration
-    removeMockServiceWorker(), // build: strips mock-sw.js from dist
+    removeMockServiceWorker(), // build: removes mock-sw.js from the build output
   ],
 });
 ```
+
+If you serve the worker from a custom `serviceWorkerUrl`, pass the same path: `removeMockServiceWorker({ fileName: 'workers/mock-sw.js' })`.
 
 ### What the Plugin Does
 
@@ -66,21 +68,33 @@ export default defineConfig({
 npm run build
 
 # Plugin output
-🧹 Removed mock-sw.js from build
+🧹 twd: removed mock-sw.js from dist
 
-# Or if no mock file found
-🧹 No mock-sw.js found in build
+# Or, if the client build did not contain the worker
+⚠️  twd: mock-sw.js was not found in dist, nothing was removed. ...
 ```
 
 The plugin:
 - Only runs during build (`apply: 'build'`)
-- Removes `dist/mock-sw.js` after build completes
-- Provides feedback about the removal
-- Fails gracefully if no mock file exists
+- Removes the worker from the output directory of each build, so a custom `build.outDir` or React Router v7's `build/client` works without extra configuration
+- Skips server builds silently, since Vite only copies `public/` into the client output
+- Warns when the client build did not contain the worker, instead of reporting success
+
+### Nuxt
+
+Nuxt copies `public/` into `.output/public` outside the Vite build, so the plugin cannot see the file there and prints the warning above. Remove it after the build instead:
+
+```json
+{
+  "scripts": {
+    "build": "nuxt build && rm -f .output/public/mock-sw.js"
+  }
+}
+```
 
 ### Manual Removal (Alternative)
 
-If you can't use the Vite plugin, remove the file manually:
+If you can't use the Vite plugin, remove the file manually from your build output:
 
 ```json
 {
@@ -121,7 +135,7 @@ If `mock-sw.js` appears in your production build:
    ```bash
    # Look for plugin messages during build
    npm run build
-   # Should see: 🧹 Removed mock-sw.js from build
+   # Should see: 🧹 twd: removed mock-sw.js from dist
    ```
 
 ## Best Practices
