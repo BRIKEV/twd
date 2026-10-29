@@ -87,6 +87,19 @@ twd-js/ui        → UI components (includes MockedComponent)
 
 Tests use Vitest with jsdom environment. Test files are in `src/tests/` mirroring the source structure. Setup file at `src/tests/setup.ts` configures Testing Library jest-dom matchers.
 
+### Write the tests first
+
+For every feature and bug fix, write the tests **before** the implementation:
+
+1. Write the tests that describe the new behavior (or reproduce the bug).
+2. Run them and confirm they **fail**, and fail for the expected reason.
+3. Only then write the implementation, and run them until they pass.
+
+A test written after the code tends to describe what the code does rather
+than what it should do, and is never seen failing, so nothing proves it can
+catch a regression. If an existing test turns out to be wrong for the new
+behavior, update it in the first step too, before touching the code.
+
 ## Development Workflow
 
 For testing changes in a real app context, use `examples/twd-test-app/`:
