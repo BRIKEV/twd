@@ -55,6 +55,16 @@ describe('removeMockServiceWorker', () => {
     expect(consoleWarnSpy).not.toHaveBeenCalled();
   });
 
+  it('should log the absolute path when the output dir is outside the project', () => {
+    const outDir = join(tmp, 'out');
+    mkdirSync(outDir, { recursive: true });
+    writeFileSync(join(outDir, 'mock-sw.js'), '// worker');
+
+    runWriteBundle(removeMockServiceWorker(), outDir);
+
+    expect(consoleLogSpy).toHaveBeenCalledWith(`🧹 twd: removed mock-sw.js from ${outDir}`);
+  });
+
   it('should remove a worker with a custom file name', () => {
     const outDir = join(tmp, 'dist');
     mkdirSync(join(outDir, 'workers'), { recursive: true });

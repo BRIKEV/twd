@@ -1,5 +1,5 @@
 import { existsSync, rmSync } from 'fs';
-import { dirname, relative, resolve } from 'path';
+import { dirname, isAbsolute, relative, resolve } from 'path';
 import type { Plugin } from 'vite';
 
 /**
@@ -53,16 +53,23 @@ export function removeMockServiceWorker(options: RemoveMockServiceWorkerOptions 
       const outDir = outputOptions.dir ?? (outputOptions.file && dirname(outputOptions.file));
       if (!outDir) return;
 
+      // Show paths inside the project relative to it, anything else in full.
+      const relativeOut = relative(process.cwd(), resolve(outDir));
+      const shownDir =
+        relativeOut.startsWith('..') || isAbsolute(relativeOut)
+          ? resolve(outDir)
+          : relativeOut || '.';
+
       const target = resolve(outDir, fileName);
       if (existsSync(target)) {
         rmSync(target);
-        console.log(`🧹 twd: removed ${fileName} from ${relative(process.cwd(), outDir) || '.'}`);
+        console.log(`🧹 twd: removed ${fileName} from ${shownDir}`);
         return;
       }
 
       if (isServer) return;
       console.warn(
-        `⚠️  twd: ${fileName} was not found in ${relative(process.cwd(), outDir) || '.'}, nothing was removed. ` +
+        `⚠️  twd: ${fileName} was not found in ${shownDir}, nothing was removed. ` +
           'If your framework copies public/ outside the Vite build (e.g. Nuxt), remove it from that output instead.',
       );
     },
