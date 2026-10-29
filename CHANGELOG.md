@@ -1,3 +1,26 @@
+## <small>1.12.1 (2026-10-29)</small>
+
+* fix: remove mock-sw.js from the real build output in removeMockServiceWorker (#419) ([577b089](https://github.com/BRIKEV/twd/commit/577b0891112efdd124993cedc84f6e7a4cf7aa73)), closes [#419](https://github.com/BRIKEV/twd/issues/419)
+* docs: replace the three analysis skill pages with how the skills are tested (#417) ([fad5e52](https://github.com/BRIKEV/twd/commit/fad5e525f42adefc145f9b6b2a7087aae18698f5)), closes [#417](https://github.com/BRIKEV/twd/issues/417)
+* docs: add Where TWD Fits page with the Testing Trophy (#409) ([cfc6dbe](https://github.com/BRIKEV/twd/commit/cfc6dbe3882b11670d22bc33ddaaa503718f18ae)), closes [#409](https://github.com/BRIKEV/twd/issues/409)
+* docs: link the live tour at try.twd.dev (#408) ([0da1f75](https://github.com/BRIKEV/twd/commit/0da1f75df229098e9c64248c11d75e7432190018)), closes [#408](https://github.com/BRIKEV/twd/issues/408)
+* chore(deps-dev): bump lint-staged from 17.2.0 to 17.6.0 (#416) ([ea4280e](https://github.com/BRIKEV/twd/commit/ea4280e7bb8844bd0327d31a1520ec929de9b6c3)), closes [#416](https://github.com/BRIKEV/twd/issues/416)
+* chore(deps): bump @testing-library/user-event from 14.6.6 to 14.6.8 (#415) ([0c0ddc9](https://github.com/BRIKEV/twd/commit/0c0ddc9bb814cb81e773812c6dfe72198dd02676)), closes [#415](https://github.com/BRIKEV/twd/issues/415)
+* chore(deps-dev): bump vite-plugin-dts from 5.0.3 to 5.1.2 (#414) ([62855b0](https://github.com/BRIKEV/twd/commit/62855b0026dbf779a7f02e03fae721b2d9c4d8be)), closes [#414](https://github.com/BRIKEV/twd/issues/414)
+* chore(deps-dev): bump prettier from 3.9.9 to 3.9.10 (#413) ([4789bc3](https://github.com/BRIKEV/twd/commit/4789bc3ff5d5e98bc9791b6e3dc1b043bb8328f1)), closes [#413](https://github.com/BRIKEV/twd/issues/413)
+* chore(deps-dev): bump vite in /examples/vue-twd-example (#411) ([62287d6](https://github.com/BRIKEV/twd/commit/62287d6a56934c8c328e74d45d66f9e789a05a04)), closes [#411](https://github.com/BRIKEV/twd/issues/411)
+* chore(deps-dev): bump vite from 8.2.1 to 8.3.4 (#410) ([e491da9](https://github.com/BRIKEV/twd/commit/e491da9655bbd58c3615482f87e5356582f468dd)), closes [#410](https://github.com/BRIKEV/twd/issues/410)
+
+**Re-run `npx twd-js init public` after upgrading.** The worker itself did not change, but it carries the version number, so a 1.12.0 `mock-sw.js` logs a version mismatch warning with 1.12.1.
+
+**`removeMockServiceWorker()` removes the worker from the real build output.** It used to delete a hardcoded `dist/mock-sw.js` relative to the working directory, so a custom `build.outDir`, React Router v7 framework mode (`build/client`), or a build run from another directory shipped the worker to production while logging `🧹 No mock-sw.js found in build`. It now removes the file from the output directory of each build, skips server builds silently, and warns when a client build has no worker instead of reporting success.
+
+**Custom worker paths.** If you serve the worker from a custom `serviceWorkerUrl`, pass the same path: `removeMockServiceWorker({ fileName: 'workers/mock-sw.js' })`.
+
+**Nuxt** copies `public/` outside the Vite build, so the plugin cannot see the file there and prints a warning. Remove it in the build script instead: `nuxt build && rm -f .output/public/mock-sw.js`.
+
+**Commit or gitignore `mock-sw.js`.** Getting started now explains both options. Committing it, with `removeMockServiceWorker()` in your Vite config, is the recommended one.
+
 ## <small>1.12.0 (2026-10-19)</small>
 
 * feat(mocking): wait for the service worker ack instead of a fixed 100ms (#398) ([7d09420](https://github.com/BRIKEV/twd/commit/7d094204e73d2730e11a10742cdc8aa1b19be541)), closes [#398](https://github.com/BRIKEV/twd/issues/398)
