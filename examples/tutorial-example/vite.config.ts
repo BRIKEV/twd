@@ -8,6 +8,7 @@ import istanbul from 'vite-plugin-istanbul';
 // TWD HMR plugin to prevent test duplication on hot reload
 import { twdHmr } from '../../src/plugin/twdHmr';
 import { twd } from '../../src/plugin/twd';
+import { removeMockServiceWorker } from '../../src/plugin/removeMockServiceWorker';
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -24,6 +25,7 @@ export default defineConfig({
       requireEnv: process.env.CI ? true : false,
     }),
     twd({ testFilePattern: '/**/*.twd.test.{ts,tsx}', open: false, search: true }),
+    removeMockServiceWorker(),
   ],
   resolve: {
     alias: {
