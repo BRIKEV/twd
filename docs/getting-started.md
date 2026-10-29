@@ -80,6 +80,29 @@ npx twd-js init public --save
 
 This copies the required `mock-sw.js` file to your public directory.
 
+The worker is only needed in development, so decide how your project handles the file. Pick one:
+
+- **Commit it (recommended)** so every clone and CI run has it, and strip it from production builds with `removeMockServiceWorker()`:
+
+  ```ts
+  // vite.config.ts
+  import { twd, removeMockServiceWorker } from 'twd-js/vite-plugin';
+
+  export default defineConfig({
+    plugins: [
+      react(),
+      twd(),                     // dev: sidebar, tests, service worker registration
+      removeMockServiceWorker(), // build: removes mock-sw.js from the build output
+    ],
+  });
+  ```
+
+  Re-run `npx twd-js init public` after upgrading `twd-js` so the committed worker stays current.
+
+- **Gitignore it** by adding `public/mock-sw.js` to `.gitignore`. Every clone and CI job then has to run `npx twd-js init public` before starting the app, otherwise request mocks silently do not apply. Make sure your production build does not pick up a local copy, for example by still adding `removeMockServiceWorker()`.
+
+See [Production Builds](/tutorial/production-builds) for framework-specific notes.
+
 ### 3. Write Your First Test
 
 Create your first test file:
