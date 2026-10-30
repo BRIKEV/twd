@@ -1,4 +1,4 @@
-## <small>1.12.1 (2026-10-29)</small>
+## <small>1.12.1 (2026-10-30)</small>
 
 * fix: remove mock-sw.js from the real build output in removeMockServiceWorker (#419) ([577b089](https://github.com/BRIKEV/twd/commit/577b0891112efdd124993cedc84f6e7a4cf7aa73)), closes [#419](https://github.com/BRIKEV/twd/issues/419)
 * docs: replace the three analysis skill pages with how the skills are tested (#417) ([fad5e52](https://github.com/BRIKEV/twd/commit/fad5e525f42adefc145f9b6b2a7087aae18698f5)), closes [#417](https://github.com/BRIKEV/twd/issues/417)
