@@ -130,6 +130,7 @@ export default defineConfig({
         text: 'Community',
         items: [
           { text: 'Community & Examples', link: '/community' },
+          { text: 'Support', link: '/support' },
           { text: 'Accessibility Statement', link: '/accessibility-statement' },
         ]
       },

@@ -57,6 +57,7 @@ Key features:
 ## Community
 
 - [Community & Examples](https://twd.dev/community): Example apps and community links
+- [Support](https://twd.dev/support): Where to ask, response targets, supported versions (latest 1.x, semver, beta features), and support options for teams
 - [Accessibility Statement](https://twd.dev/accessibility-statement): WCAG 2.2 AA conformance
 
 ## Tutorial
