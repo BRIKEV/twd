@@ -29,12 +29,12 @@ onMounted(() => {
 })
 
 const youtubeWatchUrl = 'https://www.youtube.com/watch?v=0G6xunet-HI'
-const calendlyUrl = 'https://calendly.com/kevinccbsg/30min'
+const contactUrl = 'mailto:hello@twd.dev'
 
 const faqs = [
   {
     q: 'What does TWD cost?',
-    a: 'Nothing. twd-js, twd-relay, twd-cli and the twd-ai plugin are MIT licensed and free to use, for individuals and for companies, with no paid tier and no usage limits. If your team wants a hand adopting it, book a session above.'
+    a: 'Nothing. twd-js, twd-relay, twd-cli and the twd-ai plugin are MIT licensed and free to use, for individuals and for companies, with no paid features and no usage limits. If your team wants a hand adopting it, or support with agreed response times, write to hello@twd.dev.'
   },
   {
     q: 'How is this different from Playwright or Cypress?',
@@ -444,17 +444,16 @@ claude plugin install twd@twd-ai</code></pre>
             <h2 id="teams-heading" class="section-title teams-title">Bringing TWD to your team?</h2>
             <p class="teams-text">
               TWD is open source and stays that way. If you would rather not do the adoption work
-              alone, book a working session with the maintainer. We set TWD up in your repo, wire
-              the agent loop and the record job into your CI, and leave you with tests your team
-              wrote together.
+              alone, write to us and we set aside as much time as your team needs. We set TWD up in
+              your repo, wire the agent loop and the record job into your CI, and leave you with
+              tests your team wrote together.
             </p>
           </div>
           <div class="teams-cta">
-            <a :href="calendlyUrl" target="_blank" rel="noopener" class="btn btn-light" data-umami-event="home_teams_book_call">
-              <span>Book a 30 minute call</span>
-              <span class="visually-hidden">(opens in new tab)</span>
+            <a :href="contactUrl" class="btn btn-light" data-umami-event="home_teams_contact">
+              <span>Email hello@twd.dev</span>
             </a>
-            <p class="teams-note">MIT licensed. Free for companies, with no paid tier.</p>
+            <p class="teams-note">MIT licensed and free for companies. See <a href="/support">support</a> for response times and versions.</p>
           </div>
         </div>
       </section>
@@ -1065,6 +1064,11 @@ claude plugin install twd@twd-ai</code></pre>
   margin: 0;
   font-size: 0.875rem;
   color: var(--hp-band-muted);
+}
+
+.teams-note a {
+  color: var(--hp-band-text);
+  text-decoration: underline;
 }
 
 /* The site-wide focus ring is text-1, which is dark on light and would vanish

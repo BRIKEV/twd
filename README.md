@@ -127,7 +127,7 @@ Start with `twd-js`. Add the rest when you need it. Everything is MIT licensed.
 
 ## Bringing TWD to your team?
 
-TWD is open source and stays that way. If you would rather not do the adoption work alone, [book a working session with the maintainer](https://calendly.com/kevinccbsg/30min): we set TWD up in your repo, wire the agent loop and the record job into your CI, and leave you with tests your team wrote together.
+TWD is open source and stays that way. If you would rather not do the adoption work alone, write to hello@twd.dev and we set aside as much time as your team needs: we set TWD up in your repo, wire the agent loop and the record job into your CI, and leave you with tests your team wrote together. For response targets, supported versions and support options for teams, see the [support page](https://twd.dev/support).
 
 ## Contributing
 
