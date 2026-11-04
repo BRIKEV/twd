@@ -177,13 +177,13 @@ const faqs = [
               </button>
             </div>
 
-            <ol
+            <div
               v-show="quickStartTab === 'claude'"
               id="qs-panel-claude"
-              class="steps"
               role="tabpanel"
               aria-labelledby="qs-tab-claude"
             >
+              <ol class="steps">
                 <li class="step">
                   <div class="step-marker" aria-hidden="true">
                     <span class="step-number">1</span>
@@ -193,7 +193,7 @@ const faqs = [
                     <h3 class="step-title">Install the plugin</h3>
                     <div class="code-block">
                       <div class="code-header"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span><span class="code-filename">terminal</span></div>
-                      <pre><code>claude plugin marketplace add BRIKEV/twd-ai
+                      <pre tabindex="0"><code>claude plugin marketplace add BRIKEV/twd-ai
 claude plugin install twd@twd-ai</code></pre>
                     </div>
                   </div>
@@ -207,7 +207,7 @@ claude plugin install twd@twd-ai</code></pre>
                     <h3 class="step-title">Set up your project</h3>
                     <div class="code-block code-block--compact">
                       <div class="code-header"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span><span class="code-filename">claude code</span></div>
-                      <pre><code>/twd:setup</code></pre>
+                      <pre tabindex="0"><code>/twd:setup</code></pre>
                     </div>
                     <p class="step-desc">
                       Detects your stack, installs twd-js and twd-cli, and wires the Vite plugin.
@@ -222,11 +222,11 @@ claude plugin install twd@twd-ai</code></pre>
                     <h3 class="step-title">Ask for tests</h3>
                     <div class="code-block code-block--compact">
                       <div class="code-header"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span><span class="code-filename">terminal</span></div>
-                      <pre><code>npm run dev</code></pre>
+                      <pre tabindex="0"><code>npm run dev</code></pre>
                     </div>
                     <div class="code-block code-block--compact">
                       <div class="code-header"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span><span class="code-filename">your agent</span></div>
-                      <pre><code>Write tests for the checkout page</code></pre>
+                      <pre tabindex="0"><code>Write tests for the checkout page</code></pre>
                     </div>
                     <p class="step-desc">
                       The agent writes the tests, runs them headlessly with twd-cli against your
@@ -234,15 +234,16 @@ claude plugin install twd@twd-ai</code></pre>
                     </p>
                   </div>
                 </li>
-            </ol>
+              </ol>
+            </div>
 
-            <ol
+            <div
               v-show="quickStartTab === 'agents'"
               id="qs-panel-agents"
-              class="steps"
               role="tabpanel"
               aria-labelledby="qs-tab-agents"
             >
+              <ol class="steps">
                 <li class="step">
                   <div class="step-marker" aria-hidden="true">
                     <span class="step-number">1</span>
@@ -252,7 +253,7 @@ claude plugin install twd@twd-ai</code></pre>
                     <h3 class="step-title">Add the skills</h3>
                     <div class="code-block code-block--compact">
                       <div class="code-header"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span><span class="code-filename">terminal</span></div>
-                      <pre><code>npx skills add BRIKEV/twd-ai</code></pre>
+                      <pre tabindex="0"><code>npx skills add BRIKEV/twd-ai</code></pre>
                     </div>
                     <p class="step-desc">
                       Cursor, Copilot, Windsurf, Codex and any agent that reads Agent Skills.
@@ -268,7 +269,7 @@ claude plugin install twd@twd-ai</code></pre>
                     <h3 class="step-title">Run the setup skill</h3>
                     <div class="code-block code-block--compact">
                       <div class="code-header"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span><span class="code-filename">your agent</span></div>
-                      <pre><code>Set up TWD for this project</code></pre>
+                      <pre tabindex="0"><code>Set up TWD for this project</code></pre>
                     </div>
                     <p class="step-desc">
                       Detects your stack, installs twd-js and twd-cli, and wires the Vite plugin.
@@ -283,11 +284,11 @@ claude plugin install twd@twd-ai</code></pre>
                     <h3 class="step-title">Ask for tests</h3>
                     <div class="code-block code-block--compact">
                       <div class="code-header"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span><span class="code-filename">terminal</span></div>
-                      <pre><code>npm run dev</code></pre>
+                      <pre tabindex="0"><code>npm run dev</code></pre>
                     </div>
                     <div class="code-block code-block--compact">
                       <div class="code-header"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span><span class="code-filename">your agent</span></div>
-                      <pre><code>Write tests for the checkout page</code></pre>
+                      <pre tabindex="0"><code>Write tests for the checkout page</code></pre>
                     </div>
                     <p class="step-desc">
                       The agent writes the tests, runs them headlessly with twd-cli against your
@@ -295,15 +296,16 @@ claude plugin install twd@twd-ai</code></pre>
                     </p>
                   </div>
                 </li>
-            </ol>
+              </ol>
+            </div>
 
-              <ol
+              <div
                 v-show="quickStartTab === 'manual'"
                 id="qs-panel-manual"
-                class="steps"
                 role="tabpanel"
                 aria-labelledby="qs-tab-manual"
               >
+              <ol class="steps">
               <li class="step">
                 <div class="step-marker" aria-hidden="true">
                   <span class="step-number">1</span>
@@ -313,11 +315,11 @@ claude plugin install twd@twd-ai</code></pre>
                   <h3 class="step-title">Install and add the Vite plugin</h3>
                   <div class="code-block">
                     <div class="code-header"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span><span class="code-filename">terminal</span></div>
-                    <pre><code>npm install twd-js</code></pre>
+                    <pre tabindex="0"><code>npm install twd-js</code></pre>
                   </div>
                   <div class="code-block">
                     <div class="code-header"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span><span class="code-filename">vite.config.ts</span></div>
-                    <pre><code><span class="hl-keyword">import</span> { defineConfig } <span class="hl-keyword">from</span> <span class="hl-string">'vite'</span>;
+                    <pre tabindex="0"><code><span class="hl-keyword">import</span> { defineConfig } <span class="hl-keyword">from</span> <span class="hl-string">'vite'</span>;
   <span class="hl-keyword">import</span> { twd } <span class="hl-keyword">from</span> <span class="hl-string">'twd-js/vite-plugin'</span>;
 
   <span class="hl-keyword">export default</span> <span class="hl-func">defineConfig</span>({
@@ -336,7 +338,7 @@ claude plugin install twd@twd-ai</code></pre>
                   <h3 class="step-title">Write a test</h3>
                   <div class="code-block">
                     <div class="code-header"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span><span class="code-filename">src/App.twd.test.ts</span></div>
-                    <pre><code><span class="hl-keyword">import</span> { twd, userEvent, screenDom } <span class="hl-keyword">from</span> <span class="hl-string">"twd-js"</span>;
+                    <pre tabindex="0"><code><span class="hl-keyword">import</span> { twd, userEvent, screenDom } <span class="hl-keyword">from</span> <span class="hl-string">"twd-js"</span>;
   <span class="hl-keyword">import</span> { describe, it } <span class="hl-keyword">from</span> <span class="hl-string">"twd-js/runner"</span>;
 
   <span class="hl-func">describe</span>(<span class="hl-string">"App"</span>, () => {
@@ -358,7 +360,7 @@ claude plugin install twd@twd-ai</code></pre>
                   <h3 class="step-title">Run your dev server</h3>
                   <div class="code-block code-block--compact">
                     <div class="code-header"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span><span class="code-filename">terminal</span></div>
-                    <pre><code>npm run dev</code></pre>
+                    <pre tabindex="0"><code>npm run dev</code></pre>
                   </div>
                   <p class="step-desc">
                     The sidebar appears next to your app. Press play on any test and watch it run
@@ -366,7 +368,8 @@ claude plugin install twd@twd-ai</code></pre>
                   </p>
                 </div>
               </li>
-            </ol>
+              </ol>
+            </div>
           </div>
         </div>
       </section>
@@ -487,17 +490,17 @@ claude plugin install twd@twd-ai</code></pre>
           </a>
         </div>
       </section>
-
-      <footer class="hp-footer hp-container">
-        <nav class="hp-footer-links" aria-label="Footer">
-          <a href="/accessibility-statement" class="hp-footer-link">Accessibility Statement</a>
-          <a href="https://github.com/BRIKEV/twd" target="_blank" rel="noopener" class="hp-footer-link">GitHub<span class="visually-hidden"> (opens in new tab)</span></a>
-          <a href="https://www.npmjs.com/package/twd-js" target="_blank" rel="noopener" class="hp-footer-link">npm<span class="visually-hidden"> (opens in new tab)</span></a>
-          <a href="https://www.youtube.com/@twd-dev/videos" target="_blank" rel="noopener" class="hp-footer-link">YouTube<span class="visually-hidden"> (opens in new tab)</span></a>
-        </nav>
-        <p class="hp-footer-meta">Released under the MIT License. Copyright © 2026 BRIKEV.</p>
-      </footer>
     </main>
+
+    <footer class="hp-footer hp-container">
+      <nav class="hp-footer-links" aria-label="Footer">
+        <a href="/accessibility-statement" class="hp-footer-link">Accessibility Statement</a>
+        <a href="https://github.com/BRIKEV/twd" target="_blank" rel="noopener" class="hp-footer-link">GitHub<span class="visually-hidden"> (opens in new tab)</span></a>
+        <a href="https://www.npmjs.com/package/twd-js" target="_blank" rel="noopener" class="hp-footer-link">npm<span class="visually-hidden"> (opens in new tab)</span></a>
+        <a href="https://www.youtube.com/@twd-dev/videos" target="_blank" rel="noopener" class="hp-footer-link">YouTube<span class="visually-hidden"> (opens in new tab)</span></a>
+      </nav>
+      <p class="hp-footer-meta">Released under the MIT License. Copyright © 2026 BRIKEV.</p>
+    </footer>
   </div>
 </template>
 
@@ -837,6 +840,11 @@ claude plugin install twd@twd-ai</code></pre>
 .qs-tab.is-active {
   background: var(--vp-c-brand-soft);
   color: var(--vp-c-brand-1);
+}
+
+/* brand-1 on brand-soft lands at 4.44:1 on the dark surface; brand-2 clears AA. */
+html.dark .qs-tab.is-active {
+  color: var(--vp-c-brand-2);
 }
 
 .qs-tab:focus-visible {
