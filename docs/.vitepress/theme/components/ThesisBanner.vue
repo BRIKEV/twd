@@ -5,13 +5,15 @@ defineProps({
 </script>
 
 <template>
-  <div class="thesis-banner" :class="`thesis-banner--${size}`" aria-label="The TWD philosophy">
-    <p class="thesis-line">
-      <span class="thesis-text">Test what you </span><span class="thesis-accent">own</span><span class="thesis-text">.</span>
-    </p>
-    <p class="thesis-line">
-      <span class="thesis-text">Mock what you </span><span class="thesis-accent">don't</span><span class="thesis-text">.</span>
-    </p>
+  <div class="thesis-banner" :class="`thesis-banner--${size}`">
+    <h2 class="thesis-heading">
+      <span class="thesis-line">
+        <span class="thesis-text">Test what you </span><span class="thesis-accent">own</span><span class="thesis-text">.</span>
+      </span>
+      <span class="thesis-line">
+        <span class="thesis-text">Mock what you </span><span class="thesis-accent">don't</span><span class="thesis-text">.</span>
+      </span>
+    </h2>
   </div>
 </template>
 
@@ -23,7 +25,16 @@ defineProps({
   max-width: 880px;
 }
 
+.thesis-heading {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-size: inherit;
+  line-height: inherit;
+}
+
 .thesis-line {
+  display: block;
   font-weight: 800;
   letter-spacing: -0.03em;
   line-height: 1.1;

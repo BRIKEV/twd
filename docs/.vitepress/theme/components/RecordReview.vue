@@ -19,7 +19,7 @@ const clips = [
   <div
     class="pr"
     role="figure"
-    aria-label="A pull request timeline. The record label is added, and a minute later a bot comments with a link to four clips, one per test the branch added. The first clip plays a recorded test filling a todo form."
+    aria-label="Example pull request with a record job comment"
   >
     <div class="pr-event">
       <span class="pr-event-icon" aria-hidden="true">

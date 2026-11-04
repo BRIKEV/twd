@@ -1,5 +1,21 @@
 import { defineConfig } from 'vitepress'
 
+// Structured data (VideoObject) for the AI agent-loop walkthrough. Emitted only
+// on the page that embeds the video (see transformHead), not site-wide, so Google
+// does not report it on pages where the video is not the main content.
+const agentLoopVideoLd = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'VideoObject',
+  name: 'TWD: the AI agent testing loop',
+  description: 'An AI agent writes a TWD test, runs it against the real app, reads the failure, fixes it, and re-runs until green. Results come back as structured text, not screenshots.',
+  thumbnailUrl: 'https://twd.dev/images/twd-agent-loop-poster.jpg',
+  uploadDate: '2026-07-24T00:00:00+02:00',
+  duration: 'PT1M11S',
+  contentUrl: 'https://www.youtube.com/watch?v=0G6xunet-HI',
+  embedUrl: 'https://www.youtube.com/embed/0G6xunet-HI',
+  publisher: { '@type': 'Organization', name: 'BRIKEV', url: 'https://github.com/BRIKEV' }
+})
+
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
   title: "TWD",
@@ -58,22 +74,13 @@ export default defineConfig({
       author: { '@type': 'Organization', name: 'BRIKEV', url: 'https://github.com/BRIKEV' },
       license: 'https://opensource.org/licenses/MIT',
       offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' }
-    })],
-
-    // Structured data (VideoObject) for the AI agent-loop walkthrough.
-    ['script', { type: 'application/ld+json' }, JSON.stringify({
-      '@context': 'https://schema.org',
-      '@type': 'VideoObject',
-      name: 'TWD: the AI agent testing loop',
-      description: 'An AI agent writes a TWD test, runs it against the real app, reads the failure, fixes it, and re-runs until green. Results come back as structured text, not screenshots.',
-      thumbnailUrl: 'https://twd.dev/images/twd-agent-loop-poster.jpg',
-      uploadDate: '2026-07-24',
-      duration: 'PT1M11S',
-      contentUrl: 'https://www.youtube.com/watch?v=0G6xunet-HI',
-      embedUrl: 'https://www.youtube.com/embed/0G6xunet-HI',
-      publisher: { '@type': 'Organization', name: 'BRIKEV', url: 'https://github.com/BRIKEV' }
     })]
   ],
+  transformHead({ pageData }) {
+    if (pageData.relativePath === 'ai-overview.md') {
+      return [['script', { type: 'application/ld+json' }, agentLoopVideoLd]]
+    }
+  },
   themeConfig: {
     // https://vitepress.dev/reference/default-theme-config
     nav: [
