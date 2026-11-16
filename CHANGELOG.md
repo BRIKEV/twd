@@ -1,3 +1,25 @@
+## <small>1.12.2 (2026-11-16)</small>
+
+* fix: publish type declarations that resolve under node16/nodenext (#436) ([e1ab3b4](https://github.com/BRIKEV/twd/commit/e1ab3b46a0e8854e98baba6c42cc1e433b1c79e9)), closes [#434](https://github.com/BRIKEV/twd/issues/434)
+* docs(twd-ai): setup eval now checks the mock service worker (#435) ([bfd26ee](https://github.com/BRIKEV/twd/commit/bfd26ee27eb7402c5404f06525a558414e0cc640)), closes [#435](https://github.com/BRIKEV/twd/issues/435)
+* docs: fix landing accessibility issues and VideoObject structured data (#425) ([38cf9e6](https://github.com/BRIKEV/twd/commit/38cf9e6b59aeb77d9c4dd0f34b9afc99373aa82a)), closes [#425](https://github.com/BRIKEV/twd/issues/425)
+* docs: add a support page and replace the Calendly booking with hello@twd.dev (#420) ([ab885ca](https://github.com/BRIKEV/twd/commit/ab885ca9546bb485e8bc7a67fceafa6984077a6f)), closes [#420](https://github.com/BRIKEV/twd/issues/420)
+* chore: upgrade TypeScript to 6.0.3 (#437) ([3988883](https://github.com/BRIKEV/twd/commit/3988883b6a90555af981884f12b25a671a5c5519)), closes [#437](https://github.com/BRIKEV/twd/issues/437)
+* chore(deps): bump preact from 11.0.0 to 11.1.0 (#422) ([1483b3e](https://github.com/BRIKEV/twd/commit/1483b3eba0ce5be5fa407e94fbe838c8ddb8ccca)), closes [#422](https://github.com/BRIKEV/twd/issues/422)
+* chore(deps-dev): bump jsdom from 30.1.3 to 31.0.1 (#438) ([ef8ce09](https://github.com/BRIKEV/twd/commit/ef8ce095581255c692dab9fa433e197c14b72fd4)), closes [#438](https://github.com/BRIKEV/twd/issues/438)
+* chore(deps-dev): bump the vitest group across 1 directory with 3 updates (#430) ([64f686b](https://github.com/BRIKEV/twd/commit/64f686bbe05f80be3e0a404391ddce6b274694d7)), closes [#430](https://github.com/BRIKEV/twd/issues/430)
+* chore(deps-dev): bump vite from 8.3.5 to 8.3.8 (#432) ([b75f53e](https://github.com/BRIKEV/twd/commit/b75f53e2db63f63f1852f6c544fd8f5ad6900249)), closes [#432](https://github.com/BRIKEV/twd/issues/432)
+* chore(deps-dev): bump typescript-eslint from 8.72.1 to 8.72.2 (#433) ([9cbde9e](https://github.com/BRIKEV/twd/commit/9cbde9e9f63d20dd0abd54b9e08709228ff3fd8f)), closes [#433](https://github.com/BRIKEV/twd/issues/433)
+* chore(deps-dev): bump @vitejs/plugin-react from 6.2.1 to 6.3.0 (#431) ([cf9deb5](https://github.com/BRIKEV/twd/commit/cf9deb5a0c5cfeacd2ecb18c1e4b4293f300fb52)), closes [#431](https://github.com/BRIKEV/twd/issues/431)
+* chore(deps-dev): bump vitepress from 2.0.0-alpha.20 to 2.0.0-alpha.21 (#429) ([5e258d3](https://github.com/BRIKEV/twd/commit/5e258d3a0a0909d7fece30ef3267a4ae7e2366d1)), closes [#429](https://github.com/BRIKEV/twd/issues/429)
+* chore(deps-dev): bump @vitejs/plugin-react from 6.1.2 to 6.2.1 (#427) ([7fd9afa](https://github.com/BRIKEV/twd/commit/7fd9afa350a0152452961cb4ffc018f5d7a14a4b)), closes [#427](https://github.com/BRIKEV/twd/issues/427)
+* chore(deps-dev): bump eslint from 10.13.0 to 10.14.0 (#426) ([e0251ac](https://github.com/BRIKEV/twd/commit/e0251ac20d2976aa3f6d9b703c20a21e26a4ee47)), closes [#426](https://github.com/BRIKEV/twd/issues/426)
+* chore(deps-dev): bump vite from 8.3.4 to 8.3.5 (#424) ([b46c0dc](https://github.com/BRIKEV/twd/commit/b46c0dc37e182466ca63cf8d03e709c47fce4f59)), closes [#424](https://github.com/BRIKEV/twd/issues/424)
+* chore(deps-dev): bump typescript-eslint from 8.71.2 to 8.72.1 (#423) ([773b476](https://github.com/BRIKEV/twd/commit/773b4760cf435cafba8ab055acbf57b728f8fb2d)), closes [#423](https://github.com/BRIKEV/twd/issues/423)
+* chore(deps-dev): bump eslint from 10.9.1 to 10.13.0 (#421) ([68ddc33](https://github.com/BRIKEV/twd/commit/68ddc3336d6c3dae23bea8f5ab5c5d128ed5c4f7)), closes [#421](https://github.com/BRIKEV/twd/issues/421)
+
+**Types under `node16` and `nodenext`.** Most exports (`twd`, `screenDom`, `userEvent`, the vite-plugin exports, `MockedComponent`, and others) resolved to `any` under `moduleResolution` `node16` or `nodenext`. This regressed in 1.7.3 and is fixed in this release. The `twd-js/bundled` types now ship as `dist/bundled.d.mts`. The `package.json` export is updated, so `import ... from 'twd-js/bundled'` needs no change.
+
 ## <small>1.12.1 (2026-10-30)</small>
 
 * fix: remove mock-sw.js from the real build output in removeMockServiceWorker (#419) ([577b089](https://github.com/BRIKEV/twd/commit/577b0891112efdd124993cedc84f6e7a4cf7aa73)), closes [#419](https://github.com/BRIKEV/twd/issues/419)
