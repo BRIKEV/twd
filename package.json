@@ -69,6 +69,7 @@
     "format": "prettier --write \"src/**/*.{ts,tsx,js,json,md}\"",
     "format:check": "prettier --check \"src/**/*.{ts,tsx,js,json,md}\"",
     "check:only": "scripts/check-only-tests.sh",
+    "check:types": "scripts/check-consumer-types.sh",
     "conventional-changelog": "conventional-changelog -i CHANGELOG.md",
     "dev": "vite",
     "docs:dev": "vitepress dev docs",

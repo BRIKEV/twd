@@ -96,6 +96,11 @@ jobs:
           mkdir packed
           npm pack --pack-destination packed
 
+      # Compiles a consumer file against the packed tarball under
+      # moduleResolution nodenext, node16 and bundler (issue #434).
+      - name: Type-check the package as a consumer
+        run: scripts/check-consumer-types.sh packed/*.tgz
+
       - name: Upload tarball
         uses: actions/upload-artifact@v4
         with:

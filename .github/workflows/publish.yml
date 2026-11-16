@@ -58,6 +58,9 @@ jobs:
             echo "OK: $f"
           done
 
+      - name: Type-check the package as a consumer
+        run: scripts/check-consumer-types.sh
+
       # No NODE_AUTH_TOKEN: the trusted publisher on npm authenticates this job
       # over OIDC, so the NPM_TOKEN secret can be deleted from the repository
       # once this has shipped one release.
