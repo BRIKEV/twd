@@ -46,7 +46,7 @@ jobs:
 
       - name: Verify type declarations are not empty
         run: |
-          for f in dist/index.d.ts dist/runner.d.ts dist/bundled.d.ts dist/vite-plugin.d.ts dist/runner-ci.d.ts dist/ui.d.ts; do
+          for f in dist/index.d.ts dist/runner.d.ts dist/bundled.d.mts dist/vite-plugin.d.ts dist/runner-ci.d.ts dist/ui.d.ts; do
             if [ ! -f "$f" ]; then
               echo "FAIL: $f does not exist"
               exit 1
