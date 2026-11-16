@@ -1,10 +1,16 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeAll, beforeEach } from 'vitest';
 import userEvent from '@testing-library/user-event';
 import { render, screen } from '@testing-library/react';
 import { TestListItem } from '../../ui/TestListItem';
 import { assertStyles } from '../../ui/utils/formatLogs';
+import { defaultTheme, injectTheme } from '../../ui/utils/theme';
 
 describe('TestListItem', () => {
+  // jsdom resolves var() in computed styles, so the theme variables must exist.
+  beforeAll(() => {
+    injectTheme();
+  });
+
   beforeEach(() => {
     sessionStorage.clear();
   });
@@ -112,7 +118,7 @@ describe('TestListItem', () => {
       );
       const listItem = screen.getByTestId(`test-list-item-${testId}`);
       expect(listItem).toBeInTheDocument();
-      expect(listItem).toHaveStyle('margin-left: calc(3 * var(--twd-spacing-sm))');
+      expect(listItem).toHaveStyle(`margin-left: ${3 * parseInt(defaultTheme.spacingSm)}px`);
     });
 
     it('should disable run button when test is running', () => {
@@ -173,14 +179,16 @@ describe('TestListItem', () => {
       );
       const log1 = screen.getByText('Assertion passed: Value is true');
       expect(log1).toBeInTheDocument();
-      expect(log1).toHaveStyle(
-        'color: var(--twd-success); font-weight: var(--twd-font-weight-bold);',
-      );
+      expect(log1).toHaveStyle({
+        color: defaultTheme.success,
+        fontWeight: defaultTheme.fontWeightBold,
+      });
       const log2 = screen.getByText('Test failed: Value is false');
       expect(log2).toBeInTheDocument();
-      expect(log2).toHaveStyle(
-        'color: var(--twd-error); font-weight: var(--twd-font-weight-bold);',
-      );
+      expect(log2).toHaveStyle({
+        color: defaultTheme.error,
+        fontWeight: defaultTheme.fontWeightBold,
+      });
     });
 
     it('should show dashed border when test name matches sessionStorage', () => {
