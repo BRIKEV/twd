@@ -24,7 +24,7 @@ zero is not a failure: the case still guards against a skill edit that breaks a 
 
 | Scenario | Skill | Verified |
 |---|---|---|
-| Vite + React app with TanStack Query and ESLint | `/twd:setup` | `twd()` Vite plugin, `twd.config.json`, `test:ci`, twd-lint in the ESLint config, query cache reset in `twd-patterns.md` |
+| Vite + React app with TanStack Query and ESLint | `/twd:setup` | `twd()` Vite plugin, `removeMockServiceWorker()` with `mock-sw.js` committed, `twd.config.json`, `test:ci`, twd-lint in the ESLint config, query cache reset in `twd-patterns.md` |
 | App with a mock API and a required env var | `/twd:ci-setup` | Test workflow on the `twd-cli` action, a separate label-triggered recording workflow, both starting the same app |
 | Page flow tests | `twd` | Runner imports, mocks before visit, every async call awaited, payload asserted on the request, type-checked and linted |
 | Component test with Testing Library | `twd` | Rendered into an isolated host, cleaned up between tests, network mocked rather than project code stubbed |
@@ -36,11 +36,12 @@ zero is not a failure: the case still guards against a skill edit that breaks a 
 ## Results per model
 
 Score with the plugin / Δ over the same model without it, from 0 to 1. Judge
-`claude-sonnet-5-5`, three runs per arm, plugin 1.3.7, 2026-10-25.
+`claude-sonnet-5-5`, three runs per arm, plugin 1.3.7, 2026-10-25. Project setup is
+newer: plugin 1.4.1, 2026-11-16, after it gained the mock service worker checks.
 
 | Scenario | Opus 5.5 | Sonnet 5.5 | Haiku 5.5 |
 |---|---|---|---|
-| Project setup | 1.00 / +0.90 | 1.00 / +0.90 | 1.00 / +0.90 |
+| Project setup | 1.00 / +0.85 | 1.00 / +0.85 | 1.00 / +0.85 |
 | CI setup with recording | 1.00 / +0.70 | 1.00 / +1.00 | 0.97 / +0.80 |
 | Component test | 1.00 / +0.50 | 1.00 / +0.54 | 1.00 / +0.63 |
 | Failing suite to green | 1.00 / +0.40 | 0.60 / 0.00 | 0.53 / -0.07 |
