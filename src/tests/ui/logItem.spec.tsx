@@ -1,10 +1,16 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeAll } from 'vitest';
 import { expect as chaiExpect } from 'chai';
 import { render, screen } from '@testing-library/react';
 import { LogItem } from '../../ui/LogItem';
 import { LogType } from '../../ui/utils/formatLogs';
+import { defaultTheme, injectTheme } from '../../ui/utils/theme';
 
 describe('LogItem', () => {
+  // jsdom resolves var() in computed styles, so the theme variables must exist.
+  beforeAll(() => {
+    injectTheme();
+  });
+
   describe('component', () => {
     it('should render plain text log', () => {
       const log = 'Assertion passed: Value is true';
@@ -115,8 +121,8 @@ describe('LogItem', () => {
 
       const logElement = screen.getByText(log);
       expect(logElement).toHaveStyle({
-        color: 'var(--twd-success)',
-        fontWeight: 'var(--twd-font-weight-bold)',
+        color: defaultTheme.success,
+        fontWeight: defaultTheme.fontWeightBold,
       });
     });
 
@@ -126,8 +132,8 @@ describe('LogItem', () => {
 
       const logElement = screen.getByText(log);
       expect(logElement).toHaveStyle({
-        color: 'var(--twd-error)',
-        fontWeight: 'var(--twd-font-weight-bold)',
+        color: defaultTheme.error,
+        fontWeight: defaultTheme.fontWeightBold,
       });
     });
 
