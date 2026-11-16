@@ -46,7 +46,7 @@ jobs:
 
       - name: Verify type declarations are not empty
         run: |
-          for f in dist/index.d.ts dist/runner.d.ts dist/bundled.d.ts dist/vite-plugin.d.ts dist/runner-ci.d.ts dist/ui.d.ts; do
+          for f in dist/index.d.ts dist/runner.d.ts dist/bundled.d.mts dist/vite-plugin.d.ts dist/runner-ci.d.ts dist/ui.d.ts; do
             if [ ! -f "$f" ]; then
               echo "FAIL: $f does not exist"
               exit 1
@@ -57,6 +57,9 @@ jobs:
             fi
             echo "OK: $f"
           done
+
+      - name: Type-check the package as a consumer
+        run: scripts/check-consumer-types.sh
 
       # No NODE_AUTH_TOKEN: the trusted publisher on npm authenticates this job
       # over OIDC, so the NPM_TOKEN secret can be deleted from the repository
