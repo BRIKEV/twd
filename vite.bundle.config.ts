@@ -10,8 +10,14 @@ export default defineConfig({
       devToolsEnabled: false,
     }),
     dts({
-      include: ["src/bundled.tsx", "src/global.d.ts"],
+      // theme.ts is the only module bundled.d.ts imports from.
+      include: ["src/bundled.tsx", "src/global.d.ts", "src/ui/utils/theme.ts"],
       insertTypesEntry: false, // We handle package.json manually
+      // Not bundleTypes: with a single entry it writes to package.json "types"
+      // (dist/index.d.ts) and would overwrite the main build's declarations.
+      // moduleFormat 'esm' emits .d.mts files whose relative imports carry an
+      // explicit .mjs extension, which node16/nodenext require.
+      outDirs: [{ dir: "dist", moduleFormat: "esm" }],
     }),
   ],
 
