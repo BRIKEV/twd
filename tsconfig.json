@@ -21,7 +21,6 @@
     "skipLibCheck": true,
 
     // Paths
-    "baseUrl": "./src",
     "outDir": "dist"
   },
   "include": ["src"],
