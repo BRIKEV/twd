@@ -717,6 +717,39 @@ describe('Counter', () => {
 });
 ```
 
+### Classic script tag (no import map, no modules)
+
+Some environments run classic scripts but block import maps and `<script type="module">`: sandboxed previews, chat attachments rendered as pages, some CMS pages. For those, TWD ships a browser global build, `dist/twd.global.js`, that puts the whole API on `window.TWD`:
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/twd-js@1.13.0/dist/twd.global.js"></script>
+
+<main id="app">
+  <!-- your app -->
+</main>
+
+<script>
+  const { initTWD, describe, it, twd, userEvent, screenDom } = window.TWD;
+
+  initTWD(
+    {
+      scenarios: async () => {
+        describe('Counter', () => {
+          it('increments on click', async () => {
+            const button = await screenDom.findByRole('button', { name: /clicks:/i });
+            await userEvent.setup().click(button);
+            twd.should(button, 'have.text', 'Clicks: 1');
+          });
+        });
+      },
+    },
+    { open: true, serviceWorker: false },
+  );
+</script>
+```
+
+`window.TWD` exposes `initTWD`, the test API (`twd`, `userEvent`, `screenDom`, `screenDomGlobal`, `expect`) and the runner (`describe`, `it`, `beforeEach`, `afterEach`). Tests are declared inline, inside the functions you pass to `initTWD`. This build is meant for prototypes and demos, so turn the service worker off: request mocking needs `mock-sw.js` served from your own origin, which these environments usually can't do.
+
 ### Notes for Vanilla JS
 
 - **Use esm.sh.** It resolves TWD's internal React dependency automatically, so the import map stays to three lines. Pin the version (`twd-js@1.8.2`) so loads stay deterministic.
