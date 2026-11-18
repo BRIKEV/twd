@@ -16,7 +16,7 @@ export default defineConfig({
   build: {
     emptyOutDir: false,
     lib: {
-      entry: "src/global.ts",
+      entry: "src/browser-global.ts",
       name: "TWD",
       fileName: () => "twd.global.js",
       formats: ["iife"],

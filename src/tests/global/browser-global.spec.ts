@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
-import * as TWD from '../../global';
+import * as TWD from '../../browser-global';
 
-// src/global.ts is the entry of dist/twd.global.js, the IIFE build that
+// src/browser-global.ts is the entry of dist/twd.global.js, the IIFE build that
 // exposes window.TWD for classic <script> tags. Everything a single-file
 // prototype needs must come from that one global.
 describe('global build entry', () => {
