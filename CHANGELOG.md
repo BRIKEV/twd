@@ -1,3 +1,10 @@
+## <small>1.13.0 (2026-11-18)</small>
+
+* feat: publish a browser global build loadable with a classic script tag (#441) ([d6eb60b](https://github.com/BRIKEV/twd/commit/d6eb60b7f654652d752b8c411aa919652fad3424)), closes [#440](https://github.com/BRIKEV/twd/issues/440)
+* chore: remove unused Claude Code agents (#442) ([217ce54](https://github.com/BRIKEV/twd/commit/217ce5464a8c1440e00fcafda29fd77a64d779a7)), closes [#442](https://github.com/BRIKEV/twd/issues/442)
+
+**Browser global build.** `dist/twd.global.js` is an IIFE that puts the API on `window.TWD` (`initTWD`, `twd`, `userEvent`, `screenDom`, `screenDomGlobal`, `expect`, `describe`, `it`, `beforeEach`, `afterEach`) and loads with a classic `<script>` tag, for pages that block import maps and module scripts. Request mocking is not supported in this build, so use `serviceWorker: false`. The bare unpkg and jsdelivr URLs now serve this file. The ESM and CJS outputs are unchanged.
+
 ## <small>1.12.2 (2026-11-16)</small>
 
 * fix: publish type declarations that resolve under node16/nodenext (#436) ([e1ab3b4](https://github.com/BRIKEV/twd/commit/e1ab3b46a0e8854e98baba6c42cc1e433b1c79e9)), closes [#434](https://github.com/BRIKEV/twd/issues/434)
