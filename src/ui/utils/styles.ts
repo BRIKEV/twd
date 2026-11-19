@@ -135,7 +135,7 @@ export const CSS_STYLES = `
 .twd-sidebar-version {
   color: var(--twd-text-secondary);
   font-size: var(--twd-font-size-sm);
-  align-self: center;
+  margin-left: auto;
 }
 
 /* ========================
@@ -232,10 +232,19 @@ export const CSS_STYLES = `
   color: var(--twd-text-secondary);
   white-space: nowrap;
 }
+.twd-pace-select-wrapper {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  display: flex;
+}
 .twd-pace-select {
   flex: 1;
   min-width: 0;
-  padding: var(--twd-spacing-sm) var(--twd-spacing-md);
+  appearance: none;
+  -webkit-appearance: none;
+  padding: var(--twd-spacing-sm) calc(var(--twd-spacing-md) + 22px) var(--twd-spacing-sm)
+    var(--twd-spacing-md);
   background: var(--twd-background);
   color: var(--twd-text);
   border: 1px solid var(--twd-border);
@@ -244,9 +253,87 @@ export const CSS_STYLES = `
   box-sizing: border-box;
   cursor: pointer;
 }
+.twd-pace-select-chevron {
+  position: absolute;
+  right: var(--twd-spacing-md);
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  pointer-events: none;
+}
 .twd-pace-select:focus-visible {
   outline: 2px solid var(--twd-primary);
   outline-offset: 2px;
+}
+
+/* ========================
+   Viewports
+   ======================== */
+.twd-sidebar-overlay {
+  /* Always leave a strip of the app visible next to the sidebar. */
+  width: min(var(--twd-sidebar-width), calc(100vw - 56px));
+  box-shadow: 0 0 16px rgba(0, 0, 0, 0.45);
+}
+.twd-sidebar-meta-row {
+  display: flex;
+  align-items: center;
+  gap: var(--twd-spacing-sm);
+  margin-bottom: var(--twd-spacing-md);
+}
+.twd-viewport-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--twd-spacing-sm);
+  background: var(--twd-describe-bg);
+  border: 1px solid var(--twd-border);
+  border-radius: 999px;
+  padding: 2px 10px;
+  font-size: var(--twd-font-size-sm);
+  color: var(--twd-text);
+}
+.twd-test-group-other .twd-test-group-toggle {
+  color: var(--twd-viewport-other-text);
+}
+.twd-test-group-other .twd-viewport-badge {
+  font-weight: var(--twd-font-weight-normal);
+  letter-spacing: normal;
+}
+.twd-test-item-other .twd-test-item-name {
+  color: var(--twd-viewport-other-text);
+}
+.twd-viewport-badge {
+  display: inline-block;
+  margin-left: var(--twd-spacing-sm);
+  padding: 0 var(--twd-spacing-sm);
+  border-radius: 4px;
+  background: var(--twd-viewport-badge-bg);
+  color: var(--twd-text-secondary);
+  font-size: var(--twd-font-size-xs);
+  white-space: nowrap;
+}
+.twd-run-pill {
+  position: fixed;
+  bottom: 16px;
+  z-index: var(--twd-z-index-sidebar);
+  display: flex;
+  align-items: center;
+  gap: var(--twd-spacing-md);
+  background: var(--twd-background);
+  color: var(--twd-text);
+  border: 1px solid var(--twd-border);
+  border-radius: 999px;
+  padding: var(--twd-spacing-sm) var(--twd-spacing-sm) var(--twd-spacing-sm) var(--twd-spacing-lg);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  font-size: var(--twd-font-size-sm);
+}
+.twd-run-pill-show {
+  background: var(--twd-button-secondary);
+  color: var(--twd-button-secondary-text);
+  border: 1px solid var(--twd-button-border);
+  border-radius: 999px;
+  padding: 2px 10px;
+  font-size: var(--twd-font-size-sm);
 }
 
 /* ========================

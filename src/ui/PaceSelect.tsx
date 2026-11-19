@@ -1,3 +1,5 @@
+import ChevronDown from './Icons/ChevronDown';
+
 /**
  * The speeds offered in the sidebar.
  *
@@ -22,18 +24,25 @@ export const PaceSelect = ({ value, onChange }: PaceSelectProps) => {
       <label className="twd-pace-label" htmlFor="twd-pace-select">
         Speed
       </label>
-      <select
-        id="twd-pace-select"
-        className="twd-pace-select"
-        value={value}
-        onChange={(e) => onChange(Number(e.currentTarget.value))}
-      >
-        {PACE_OPTIONS.map((option) => (
-          <option key={option.value} value={option.value}>
-            {option.label}
-          </option>
-        ))}
-      </select>
+      {/* The native arrow ignores padding and sits against the border, so it is
+          hidden and replaced by the chevron the suites use. */}
+      <span className="twd-pace-select-wrapper">
+        <select
+          id="twd-pace-select"
+          className="twd-pace-select"
+          value={value}
+          onChange={(e) => onChange(Number(e.currentTarget.value))}
+        >
+          {PACE_OPTIONS.map((option) => (
+            <option key={option.value} value={option.value}>
+              {option.label}
+            </option>
+          ))}
+        </select>
+        <span className="twd-pace-select-chevron" aria-hidden="true">
+          <ChevronDown />
+        </span>
+      </span>
     </div>
   );
 };

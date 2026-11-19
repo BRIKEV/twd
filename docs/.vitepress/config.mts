@@ -101,6 +101,7 @@ export default defineConfig({
           { text: 'Component Testing', link: '/component-testing' },
           { text: 'Component Mocking', link: '/component-mocking' },
           { text: 'Module Mocking', link: '/module-mocking' },
+          { text: 'Responsive Testing', link: '/responsive-testing' },
           { text: 'Linting', link: '/linting' },
           { text: 'Theming', link: '/theming' },
           { text: 'CI Execution', link: '/ci-execution' },

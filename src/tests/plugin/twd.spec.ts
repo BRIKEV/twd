@@ -79,6 +79,7 @@ describe('twd vite plugin', () => {
         position: 'right',
         search: true,
         pace: true,
+        mockRules: true,
         theme: { primary: '#ff0000' },
         rootSelector: '#my-app',
       });
@@ -87,8 +88,20 @@ describe('twd vite plugin', () => {
       expect(code).toContain(`"position":"right"`);
       expect(code).toContain(`"search":true`);
       expect(code).toContain(`"pace":true`);
+      expect(code).toContain(`"mockRules":true`);
       expect(code).toContain(`"theme":{"primary":"#ff0000"}`);
       expect(code).toContain(`"rootSelector":"#my-app"`);
+    });
+
+    it('serializes viewports and defaultViewport into initTWD args', () => {
+      const plugin = twd({
+        viewports: { mobile: { maxWidth: 767 }, desktop: { minWidth: 1024 } },
+        defaultViewport: 'desktop',
+      });
+      const load = plugin.load as (id: string) => string | null;
+      const code = load.call({}, '\0virtual:twd/init');
+      expect(code).toContain(`"viewports":{"mobile":{"maxWidth":767},"desktop":{"minWidth":1024}}`);
+      expect(code).toContain(`"defaultViewport":"desktop"`);
     });
 
     it('omits testFilePattern from the inlined initTWD options', () => {

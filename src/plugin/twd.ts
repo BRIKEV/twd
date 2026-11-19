@@ -43,9 +43,25 @@ export interface TwdPluginOptions {
    */
   pace?: boolean;
   /**
+   * Whether to show the mock rules button in the sidebar.
+   * @default false
+   */
+  mockRules?: boolean;
+  /**
    * CSS selector for the host element used to mount the sidebar.
    */
   rootSelector?: string;
+  /**
+   * Named viewports tests can target with `it('...', { viewport: 'mobile' }, fn)`.
+   * Optional: without it every test runs at every width.
+   * @example { mobile: { maxWidth: 767 }, desktop: { minWidth: 1024 } }
+   */
+  viewports?: Record<string, { minWidth?: number; maxWidth?: number }>;
+  /**
+   * Viewport given to tests that declare none, e.g. `'desktop'` for a
+   * desktop-first project. Must be one of `viewports`.
+   */
+  defaultViewport?: string;
 }
 
 const VIRTUAL_ID = 'virtual:twd/init';

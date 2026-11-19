@@ -56,7 +56,18 @@ export const reportResults = (handlers: Handler[], testResults: TestResult[]) =>
   for (const root of roots) printHandler(root);
 };
 
-export const executeTests = async (): Promise<{
+export interface ExecuteTestsOptions {
+  /**
+   * Run the tests of this named viewport (declared with defineViewports) instead
+   * of the ones matching the current page size. twd-cli sets the Puppeteer
+   * viewport first, then passes the same name here.
+   */
+  viewport?: string;
+}
+
+export const executeTests = async (
+  options: ExecuteTestsOptions = {},
+): Promise<{
   handlers: Handler[];
   testStatus: TestResult[];
 }> => {
@@ -81,6 +92,8 @@ export const executeTests = async (): Promise<{
       testStatus.push({ id: test.id, status: 'skip' });
     },
   });
-  const handlers = await runner.runAll();
+  const handlers = await runner.runAll(
+    options.viewport ? { viewport: options.viewport } : undefined,
+  );
   return { handlers: Array.from(handlers.values()), testStatus };
 };

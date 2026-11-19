@@ -64,4 +64,44 @@ describe("Contacts Page pagination tests", () => {
     }
     await twd.url().should("contain.url", "/contacts?page=2");
   });
+
+  // Tagged for mobile, between two untagged tests: at a mobile width it runs
+  // with them; at a desktop width it stays here, greyed, and Run All skips it.
+  it("renders the contacts list at a mobile width", { viewport: "mobile" }, async () => {
+    await twd.mockRequest("contactsList", {
+      method: "GET",
+      response: {
+        contacts: contactsResponse.slice(0, 2),
+        currentPage: 1,
+        totalPages: 2,
+      },
+      url: "/v1/contacts",
+    });
+
+    await twd.visit("/contacts");
+    await twd.waitForRequest("contactsList");
+
+    const heading = screenDom.getByRole("heading", { name: /contactos/i });
+    twd.should(heading, "be.visible");
+    for (const contact of contactsResponse.slice(0, 2)) {
+      twd.should(screenDom.getByText(contact.name), "be.visible");
+    }
+  });
+
+  it("shows the pagination links", async () => {
+    await twd.mockRequest("contactsList", {
+      method: "GET",
+      response: {
+        contacts: contactsResponse.slice(0, 2),
+        currentPage: 1,
+        totalPages: 2,
+      },
+      url: "/v1/contacts",
+    });
+
+    await twd.visit("/contacts");
+    await twd.waitForRequest("contactsList");
+
+    twd.should(screenDom.getByRole("link", { name: "2" }), "be.visible");
+  });
 });

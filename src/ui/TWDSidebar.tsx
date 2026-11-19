@@ -1,8 +1,9 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { TestList } from './TestList';
 import { ClosedSidebar } from './ClosedSidebar';
-import { useLayout } from './hooks/useLayout';
-import { handlers, TestRunner } from '../runner';
+import { useLayout, shouldOverlay } from './hooks/useLayout';
+import { useViewport, useWindowWidthValue } from './hooks/useViewport';
+import { handlers, TestRunner, type Handler } from '../runner';
 import { MockRulesButton } from './MockRulesButton';
 import { clearRequestMockRules } from '../commands/mockBridge';
 import { clearComponentMocks } from './componentMocks';
@@ -16,8 +17,17 @@ import { TWD_VERSION } from '../constants/version';
 import { SearchInput } from './SearchInput';
 import { filterTree } from './utils/filterTree';
 import { buildTreeFromHandlers, type Node } from './utils/buildTreeFromHandlers';
+import { markOtherViewports } from './utils/markOtherViewports';
 import { PaceSelect, PACE_OPTIONS } from './PaceSelect';
+import { ViewportChip } from './ViewportChip';
+import { RunPill } from './RunPill';
 import { setPace } from '../pace';
+import {
+  describeViewports,
+  getEffectiveViewport,
+  getViewportConfig,
+  isInCurrentViewport,
+} from '../viewports';
 
 interface TWDSidebarProps {
   /**
@@ -40,6 +50,11 @@ interface TWDSidebarProps {
    * Whether to show the execution speed selector
    */
   pace?: boolean;
+  /**
+   * Whether to show the mock rules button (triggered count, logs the rules)
+   * @default false
+   */
+  mockRules?: boolean;
 }
 
 const positionStyles = {
@@ -76,6 +91,9 @@ const getOpenState = (open: boolean) => {
   return sessionStorage.getItem('twd-sidebar-open') === 'true';
 };
 
+const collectTests = (nodes: Node[]): Node[] =>
+  nodes.flatMap((node) => (node.type === 'test' ? [node] : collectTests(node.childrenNodes ?? [])));
+
 const collectTestIds = (nodes: Node[]): string[] => {
   const ids: string[] = [];
   for (const node of nodes) {
@@ -85,13 +103,51 @@ const collectTestIds = (nodes: Node[]): string[] => {
   return ids;
 };
 
-export const TWDSidebar = ({ open, position = 'left', search, pace }: TWDSidebarProps) => {
+// The badge shown on a test for another viewport: what it was written for.
+const viewportBadgeFor = (handler: Handler | undefined) => {
+  if (!handler) return '';
+  const { viewports } = getViewportConfig();
+  return (getEffectiveViewport(handler) ?? [])
+    .map((name) => (viewports[name] ? name : `unknown: ${name}`))
+    .join(', ');
+};
+
+interface RunProgress {
+  total: number;
+  done: number;
+  passed: number;
+  failed: number;
+}
+
+export const TWDSidebar = ({
+  open,
+  position = 'left',
+  search,
+  pace,
+  mockRules = false,
+}: TWDSidebarProps) => {
   const [refreshKey, setRefresh] = useState(0);
   const [isOpen, setIsOpen] = useState(getOpenState(open));
-  useLayout({ isOpen, position });
+  const viewport = useViewport();
+  const [run, setRun] = useState<RunProgress | null>(null);
+  const [hiddenForRun, setHiddenForRun] = useState(false);
+  const [scrollToFailure, setScrollToFailure] = useState(false);
+  // The layout mode is locked while a run is in progress: switching between
+  // push and overlay reflows the page under test.
+  const wantsOverlay = useWindowWidthValue(shouldOverlay);
+  const [overlay, setOverlay] = useState(wantsOverlay);
+  const isRunning = run !== null;
+  useEffect(() => {
+    if (!isRunning) setOverlay(wantsOverlay);
+  }, [wantsOverlay, isRunning]);
+  useLayout({ isOpen, position, overlay });
   const [message, setMessage] = useState<string>('');
   const [searchQuery, setSearchQuery] = useState(getSearchQuery(search));
   const [paceMs, setPaceMs] = useState(getStoredPace(pace));
+
+  // Run listeners are registered once; they read the latest values from here.
+  const latest = useRef({ isOpen, overlay });
+  latest.current = { isOpen, overlay };
 
   // Pacing lives in module state so that every run picks it up, including the
   // ones twd-relay triggers from outside the tab. The sidebar only has to keep
@@ -105,6 +161,53 @@ export const TWDSidebar = ({ open, position = 'left', search, pace }: TWDSidebar
     window.addEventListener('twd:state-change', onStateChange);
     return () => window.removeEventListener('twd:state-change', onStateChange);
   }, []);
+
+  // Follow every run, whoever started it (this sidebar, twd-relay, a script),
+  // through the runner's window events.
+  useEffect(() => {
+    const onRunStart = (event: Event) => {
+      const { total } = (event as CustomEvent<{ total: number }>).detail;
+      setRun({ total, done: 0, passed: 0, failed: 0 });
+      // Hiding only ever happens in overlay mode, where it does not move the page.
+      if (latest.current.isOpen && latest.current.overlay) setHiddenForRun(true);
+    };
+    const onTestEnd = (event: Event) => {
+      const { status } = (event as CustomEvent<{ status: string }>).detail;
+      setRun(
+        (prev) =>
+          prev && {
+            ...prev,
+            done: prev.done + 1,
+            passed: prev.passed + (status === 'pass' ? 1 : 0),
+            failed: prev.failed + (status === 'fail' ? 1 : 0),
+          },
+      );
+    };
+    const onRunEnd = () => {
+      setRun(null);
+      setHiddenForRun((wasHidden) => {
+        if (wasHidden) setScrollToFailure(true);
+        return false;
+      });
+    };
+    window.addEventListener('twd:run-start', onRunStart);
+    window.addEventListener('twd:test-end', onTestEnd);
+    window.addEventListener('twd:run-end', onRunEnd);
+    return () => {
+      window.removeEventListener('twd:run-start', onRunStart);
+      window.removeEventListener('twd:test-end', onTestEnd);
+      window.removeEventListener('twd:run-end', onRunEnd);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!scrollToFailure) return;
+    setScrollToFailure(false);
+    const failed = document.querySelector<HTMLElement>(
+      '[data-testid="twd-sidebar"] .twd-status-fail',
+    );
+    failed?.scrollIntoView?.({ block: 'center' });
+  }, [scrollToFailure]);
 
   const runner = new TestRunner({
     onStart: (test) => {
@@ -185,20 +288,33 @@ export const TWDSidebar = ({ open, position = 'left', search, pace }: TWDSidebar
 
   const filteredRoots = useMemo(() => filterTree(roots, searchQuery), [roots, searchQuery]);
 
+  // With viewports declared, tests outside the current width stay in place,
+  // greyed and badged. Without them, nothing is marked.
+  const markedRoots = useMemo(() => {
+    if (!viewport.defined) return filteredRoots;
+    return markOtherViewports(
+      filteredRoots,
+      (node) => {
+        const handler = handlers.get(node.id);
+        return handler ? isInCurrentViewport(handler, viewport.matching) : true;
+      },
+      (node) => viewportBadgeFor(handlers.get(node.id)),
+    );
+  }, [filteredRoots, viewport.defined, viewport.matching, refreshKey]);
+
   const { filteredTestIds, displayTests } = useMemo(() => {
-    if (searchQuery) {
-      const ids = collectTestIds(filteredRoots);
-      const idSet = new Set(ids);
-      return {
-        filteredTestIds: ids,
-        displayTests: tests.filter((t) => t.type === 'test' && idSet.has(t.id)),
-      };
-    }
+    const matchingIds = new Set(
+      collectTests(markedRoots)
+        .filter((node) => node.viewportBadge === undefined)
+        .map((node) => node.id),
+    );
     return {
-      filteredTestIds: null as string[] | null,
-      displayTests: tests.filter((t) => t.type === 'test'),
+      // The runner narrows these to the current viewport on its own.
+      filteredTestIds: searchQuery ? collectTestIds(filteredRoots) : null,
+      // Totals describe the tests Run All would run here.
+      displayTests: tests.filter((t) => t.type === 'test' && matchingIds.has(t.id)),
     };
-  }, [filteredRoots, searchQuery, refreshKey]);
+  }, [markedRoots, filteredRoots, searchQuery, refreshKey]);
 
   const runAll = async () => {
     // Clear the last run test name when running all tests
@@ -221,7 +337,19 @@ export const TWDSidebar = ({ open, position = 'left', search, pace }: TWDSidebar
     // Save test name to session storage for scroll persistence
     setMessage('');
     sessionStorage.setItem('twd-last-run-test-name', test.name);
+    // Decided before the run: the width it ran at is the one that matters.
+    const width = window.innerWidth;
+    const offViewport = viewport.defined && !isInCurrentViewport(test);
     await runner.runSingle(test.id);
+    if (offViewport) {
+      test.logs.unshift(
+        JSON.stringify({
+          type: LogType.VIEWPORT_WARNING,
+          message: `Written for ${describeViewports(getEffectiveViewport(test) ?? [])}. Ran at ${width}px, so layout differences are expected.`,
+        }),
+      );
+      setRefresh((n) => n + 1);
+    }
     const srMessage = displaySRMessageSpecificTest(test);
     setMessage(srMessage);
   };
@@ -230,11 +358,24 @@ export const TWDSidebar = ({ open, position = 'left', search, pace }: TWDSidebar
     return <ClosedSidebar position={position} setOpen={handleSetIsOpen} />;
   }
 
+  if (hiddenForRun && run) {
+    return (
+      <RunPill
+        position={position}
+        done={run.done}
+        total={run.total}
+        passed={run.passed}
+        failed={run.failed}
+        onShow={() => setHiddenForRun(false)}
+      />
+    );
+  }
+
   const totalTests = displayTests.length;
 
   return (
     <div
-      className="twd-sidebar"
+      className={`twd-sidebar${overlay ? ' twd-sidebar-overlay' : ''}`}
       style={positionStyles[position]}
       data-testid="twd-sidebar"
       role="complementary"
@@ -277,7 +418,6 @@ export const TWDSidebar = ({ open, position = 'left', search, pace }: TWDSidebar
             >
               Clear mocks
             </button>
-            <span className="twd-sidebar-version">v{TWD_VERSION}</span>
           </div>
           <button
             aria-label="Close sidebar"
@@ -286,6 +426,10 @@ export const TWDSidebar = ({ open, position = 'left', search, pace }: TWDSidebar
           >
             ✖
           </button>
+        </div>
+        <div className="twd-sidebar-meta-row">
+          {viewport.defined && <ViewportChip matching={viewport.matching} />}
+          <span className="twd-sidebar-version">v{TWD_VERSION}</span>
         </div>
         <div className="twd-sidebar-stats">
           <span style={{ color: 'var(--twd-text)' }}>Total: {totalTests}</span>
@@ -299,11 +443,11 @@ export const TWDSidebar = ({ open, position = 'left', search, pace }: TWDSidebar
           </div>
         </div>
         {pace && <PaceSelect value={paceMs} onChange={handlePaceChange} />}
-        <MockRulesButton />
+        {mockRules && <MockRulesButton />}
         {search && <SearchInput value={searchQuery} onChange={handleSearchChange} />}
       </div>
       <div className="twd-sidebar-content">
-        <TestList roots={filteredRoots} runTest={runTest} searchQuery={searchQuery} />
+        <TestList roots={markedRoots} runTest={runTest} searchQuery={searchQuery} />
       </div>
     </div>
   );

@@ -7,6 +7,7 @@ import { TWDSidebar } from '../../ui/TWDSidebar';
 import * as mockBridge from '../../commands/mockBridge';
 import * as componentMocks from '../../ui/componentMocks';
 import { setPace, getKeyDelay } from '../../pace';
+import { TWD_VERSION } from '../../constants/version';
 
 describe('TWDSidebar', () => {
   beforeEach(() => {
@@ -14,6 +15,8 @@ describe('TWDSidebar', () => {
     twd.clearTests();
     vi.clearAllMocks();
     sessionStorage.clear();
+    // Wide enough for push mode: below ~1048px (280px sidebar + 768px) the sidebar overlays.
+    window.innerWidth = 1280;
   });
 
   describe('component', () => {
@@ -99,6 +102,23 @@ describe('TWDSidebar', () => {
       await user.click(runAllButton);
       expect(firstTest).not.toHaveBeenCalled();
       expect(secondTest).toHaveBeenCalled();
+    });
+
+    it('hides the mock rules button by default', () => {
+      render(<TWDSidebar open />);
+      expect(screen.queryByText(/Rules: \d+\/\d+ triggered/)).not.toBeInTheDocument();
+    });
+
+    it('shows the mock rules button with the mockRules option', () => {
+      render(<TWDSidebar open mockRules />);
+      expect(screen.getByText(/Rules: 0\/0 triggered/)).toBeInTheDocument();
+    });
+
+    it('shows the version on its own row, below the run buttons', () => {
+      render(<TWDSidebar open />);
+      const version = screen.getByText(`v${TWD_VERSION}`);
+      expect(version.closest('.twd-sidebar-header-buttons')).toBeNull();
+      expect(version.closest('.twd-sidebar-meta-row')).not.toBeNull();
     });
 
     it('should render the total number of tests', () => {

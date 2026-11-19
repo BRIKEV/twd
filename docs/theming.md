@@ -84,6 +84,16 @@ The theme object accepts the following properties (all optional):
 | `skip` | Color for skipped tests | `#f3f4f6` |
 | `skipBg` | Background for skipped tests | `#f3f4f6` |
 
+### Responsive Testing
+
+Used by tests written for another viewport (see [Responsive Testing](/responsive-testing)).
+Keep `viewportOtherText` at a contrast of at least 4.5:1 against `background`.
+
+| Property | Description | Default |
+|----------|-------------|----------|
+| `viewportOtherText` | Text of tests written for another viewport | `#94a3b8` |
+| `viewportBadgeBg` | Background of the viewport badge on those tests | `#334155` |
+
 ### Interactive Elements
 
 | Property | Description | Default |

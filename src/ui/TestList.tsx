@@ -9,14 +9,23 @@ interface TestListProps {
   roots: Node[];
   runTest: (id: string) => Promise<void>;
   searchQuery?: string;
+  listLabel?: string;
 }
 
-export const TestList = ({ roots, runTest, searchQuery = '' }: TestListProps) => {
+export const TestList = ({
+  roots,
+  runTest,
+  searchQuery = '',
+  listLabel = 'Test list',
+}: TestListProps) => {
   const [collapsed, setCollapsed] = useState<Record<string, boolean>>({});
   const listContainerRef = useRef<HTMLUListElement>(null);
   const hasScrolledRef = useRef(false);
 
-  const toggle = (id: string) => setCollapsed((prev) => ({ ...prev, [id]: !prev[id] }));
+  // A suite written entirely for another viewport starts collapsed.
+  const isCollapsed = (node: Node) => collapsed[node.id] ?? node.viewportBadge !== undefined;
+  const toggle = (node: Node) =>
+    setCollapsed((prev) => ({ ...prev, [node.id]: !(prev[node.id] ?? isCollapsed(node)) }));
 
   // Scroll to the last run test on first render
   useEffect(() => {
@@ -75,26 +84,30 @@ export const TestList = ({ roots, runTest, searchQuery = '' }: TestListProps) =>
       );
     }
 
-    const isCollapsed = collapsed[node.id];
+    const nodeCollapsed = isCollapsed(node);
+    const badge = node.viewportBadge;
 
     return (
       <li key={node.id} style={{ marginLeft: `calc(${depth} * var(--twd-spacing-lg))` }}>
-        <div className="twd-test-group">
+        <div className={`twd-test-group${badge !== undefined ? ' twd-test-group-other' : ''}`}>
           <span
             className="twd-test-group-toggle"
             data-testid={`test-group-${node.name}`}
             tabIndex={0}
             role="button"
-            aria-expanded={!isCollapsed}
-            aria-label={`${isCollapsed ? 'Expand' : 'Collapse'} test suite ${node.name}`}
-            onClick={() => toggle(node.id)}
+            aria-expanded={!nodeCollapsed}
+            aria-label={`${nodeCollapsed ? 'Expand' : 'Collapse'} test suite ${node.name}${badge ? `, written for ${badge}` : ''}`}
+            onClick={() => toggle(node)}
           >
-            <SkipOnlyName id={node.id} name={node.name} skip={node.skip} only={node.only} />
-            {isCollapsed ? <ChevronRight /> : <ChevronDown />}
+            <span className="twd-test-group-name">
+              <SkipOnlyName id={node.id} name={node.name} skip={node.skip} only={node.only} />
+              {badge && <span className="twd-viewport-badge">{badge}</span>}
+            </span>
+            {nodeCollapsed ? <ChevronRight /> : <ChevronDown />}
           </span>
         </div>
 
-        {!isCollapsed && node.childrenNodes && node.childrenNodes.length > 0 && (
+        {!nodeCollapsed && node.childrenNodes && node.childrenNodes.length > 0 && (
           <ul className="twd-test-list">
             {node.childrenNodes.map((child) => renderNode(child, depth + 1))}
           </ul>
@@ -104,7 +117,7 @@ export const TestList = ({ roots, runTest, searchQuery = '' }: TestListProps) =>
   };
 
   return (
-    <ul ref={listContainerRef} className="twd-test-list" role="list" aria-label="Test list">
+    <ul ref={listContainerRef} className="twd-test-list" role="list" aria-label={listLabel}>
       {roots.length === 0 && searchQuery ? (
         <li
           style={{

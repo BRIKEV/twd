@@ -38,6 +38,8 @@ describe('formatLogs', () => {
       const errorLog: any = { type: LogType.ERROR, message: 'error message' };
 
       expect(getDisplayText('original', messageLog)).toBe('test message');
+      const viewportLog: any = { type: LogType.VIEWPORT_WARNING, message: 'viewport message' };
+      expect(getDisplayText('original', viewportLog)).toBe('viewport message');
       expect(getDisplayText('original', errorLog)).toBe('error message');
     });
 

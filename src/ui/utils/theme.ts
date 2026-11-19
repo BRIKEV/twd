@@ -41,6 +41,10 @@ export interface TWDTheme {
   skip: string;
   skipBg: string;
 
+  // Tests for other viewports. Keep text at 4.5:1 or more against `background`.
+  viewportOtherText: string;
+  viewportBadgeBg: string;
+
   // Interactive elements
   buttonPrimary: string;
   buttonPrimaryText: string;
@@ -110,6 +114,10 @@ export const defaultTheme: TWDTheme = {
   warningBg: '#78350f',
   skip: '#475569',
   skipBg: '#334155',
+
+  // Tests for other viewports: muted but AA (about 5.6:1 on background), never opacity
+  viewportOtherText: '#94a3b8',
+  viewportBadgeBg: '#334155',
 
   // Interactive elements
   buttonPrimary: '#2563eb', // Darker blue for AA contrast with white text (4.5:1)

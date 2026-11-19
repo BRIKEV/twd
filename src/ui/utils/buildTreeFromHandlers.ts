@@ -8,6 +8,11 @@ interface Test {
   type: 'test' | 'suite';
   only?: boolean;
   skip?: boolean;
+  /**
+   * Set on a test written for another viewport, and on a suite whose tests all
+   * are: the viewport(s) they were written for.
+   */
+  viewportBadge?: string;
 }
 
 export type Node = Test & { childrenNodes?: Node[] };

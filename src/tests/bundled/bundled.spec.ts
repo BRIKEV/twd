@@ -22,9 +22,14 @@ vi.mock('../../proxies/screenDom', () => ({
   setRootSelector: vi.fn(),
 }));
 
+vi.mock('../../viewports', () => ({
+  defineViewports: vi.fn(),
+}));
+
 import { initTests } from '../../initializers/initTests';
 import { initRequestMocking } from '../../commands/mockBridge';
 import { setRootSelector } from '../../proxies/screenDom';
+import { defineViewports } from '../../viewports';
 
 describe('initTWD', () => {
   const mockInitRequestMocking = vi.mocked(initRequestMocking);
@@ -117,6 +122,15 @@ describe('initTWD', () => {
     expect(callArgs[1].props).toEqual({ open: true, position: 'left', pace: true });
   });
 
+  it('should forward mockRules option to TWDSidebar', () => {
+    const files = {};
+    initTWD(files, { mockRules: true });
+
+    expect(initTests).toHaveBeenCalled();
+    const callArgs = (initTests as any).mock.calls[0];
+    expect(callArgs[1].props).toEqual({ open: true, position: 'left', mockRules: true });
+  });
+
   it('should call setRootSelector when rootSelector option is provided', () => {
     const files = {};
     initTWD(files, { rootSelector: '#my-app' });
@@ -129,5 +143,21 @@ describe('initTWD', () => {
     initTWD(files);
 
     expect(setRootSelector).not.toHaveBeenCalled();
+  });
+  it('should define viewports and the default when the viewports option is provided', () => {
+    const viewports = { mobile: { maxWidth: 767 }, desktop: { minWidth: 1024 } };
+    initTWD({}, { viewports, defaultViewport: 'desktop' });
+
+    expect(defineViewports).toHaveBeenCalledWith(viewports, { default: 'desktop' });
+    // Registered before the tests load, so the first render already knows them.
+    expect(vi.mocked(defineViewports).mock.invocationCallOrder[0]).toBeLessThan(
+      vi.mocked(initTests).mock.invocationCallOrder[0],
+    );
+  });
+
+  it('should not define viewports when the option is omitted', () => {
+    initTWD({});
+
+    expect(defineViewports).not.toHaveBeenCalled();
   });
 });

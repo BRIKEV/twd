@@ -12,6 +12,11 @@ declare global {
      */
     __TWD_PACE__?: { paceMs: number; keyDelayMs: number; generation: number };
     __TWD_MOCK_STATE__?: any;
+    /** Viewport registry, shared by every copy of viewports.ts the page has loaded. */
+    __TWD_VIEWPORTS__?: {
+      viewports: Record<string, { minWidth?: number; maxWidth?: number }>;
+      defaultViewport?: string;
+    };
     __twdCollectMock?: (mock: {
       alias: string;
       url: string;
