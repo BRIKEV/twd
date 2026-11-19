@@ -122,6 +122,15 @@ describe('initTWD', () => {
     expect(callArgs[1].props).toEqual({ open: true, position: 'left', pace: true });
   });
 
+  it('should forward mockRules option to TWDSidebar', () => {
+    const files = {};
+    initTWD(files, { mockRules: true });
+
+    expect(initTests).toHaveBeenCalled();
+    const callArgs = (initTests as any).mock.calls[0];
+    expect(callArgs[1].props).toEqual({ open: true, position: 'left', mockRules: true });
+  });
+
   it('should call setRootSelector when rootSelector option is provided', () => {
     const files = {};
     initTWD(files, { rootSelector: '#my-app' });

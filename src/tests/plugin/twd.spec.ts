@@ -79,6 +79,7 @@ describe('twd vite plugin', () => {
         position: 'right',
         search: true,
         pace: true,
+        mockRules: true,
         theme: { primary: '#ff0000' },
         rootSelector: '#my-app',
       });
@@ -87,6 +88,7 @@ describe('twd vite plugin', () => {
       expect(code).toContain(`"position":"right"`);
       expect(code).toContain(`"search":true`);
       expect(code).toContain(`"pace":true`);
+      expect(code).toContain(`"mockRules":true`);
       expect(code).toContain(`"theme":{"primary":"#ff0000"}`);
       expect(code).toContain(`"rootSelector":"#my-app"`);
     });

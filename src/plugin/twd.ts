@@ -43,6 +43,11 @@ export interface TwdPluginOptions {
    */
   pace?: boolean;
   /**
+   * Whether to show the mock rules button in the sidebar.
+   * @default false
+   */
+  mockRules?: boolean;
+  /**
    * CSS selector for the host element used to mount the sidebar.
    */
   rootSelector?: string;

@@ -51,6 +51,7 @@ The `twd()` plugin accepts the following options:
 - **`theme`** (`Partial<TWDTheme>`, optional) - Custom theme configuration. See [Theming](/theming) for details.
 - **`search`** (`boolean`, optional) - Whether to show the search/filter input in the sidebar. Default: `false`
 - **`pace`** (`boolean`, optional) - Whether to show the execution speed selector in the sidebar, which slows a run down so you can watch it. Default: `false`
+- **`mockRules`** (`boolean`, optional) - Whether to show the mock rules button in the sidebar, which counts the triggered mock rules and logs them to the console. Default: `false`
 
 **Examples:**
 

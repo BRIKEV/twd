@@ -50,6 +50,11 @@ interface TWDSidebarProps {
    * Whether to show the execution speed selector
    */
   pace?: boolean;
+  /**
+   * Whether to show the mock rules button (triggered count, logs the rules)
+   * @default false
+   */
+  mockRules?: boolean;
 }
 
 const positionStyles = {
@@ -114,7 +119,13 @@ interface RunProgress {
   failed: number;
 }
 
-export const TWDSidebar = ({ open, position = 'left', search, pace }: TWDSidebarProps) => {
+export const TWDSidebar = ({
+  open,
+  position = 'left',
+  search,
+  pace,
+  mockRules = false,
+}: TWDSidebarProps) => {
   const [refreshKey, setRefresh] = useState(0);
   const [isOpen, setIsOpen] = useState(getOpenState(open));
   const viewport = useViewport();
@@ -412,7 +423,6 @@ export const TWDSidebar = ({ open, position = 'left', search, pace }: TWDSidebar
             >
               Clear mocks
             </button>
-            <span className="twd-sidebar-version">v{TWD_VERSION}</span>
           </div>
           <button
             aria-label="Close sidebar"
@@ -422,11 +432,10 @@ export const TWDSidebar = ({ open, position = 'left', search, pace }: TWDSidebar
             ✖
           </button>
         </div>
-        {viewport.defined && (
-          <div className="twd-viewport-row">
-            <ViewportChip matching={viewport.matching} />
-          </div>
-        )}
+        <div className="twd-sidebar-meta-row">
+          {viewport.defined && <ViewportChip matching={viewport.matching} />}
+          <span className="twd-sidebar-version">v{TWD_VERSION}</span>
+        </div>
         <div className="twd-sidebar-stats">
           <span style={{ color: 'var(--twd-text)' }}>Total: {totalTests}</span>
           <div className="twd-sidebar-stats-counts">
@@ -439,7 +448,7 @@ export const TWDSidebar = ({ open, position = 'left', search, pace }: TWDSidebar
           </div>
         </div>
         {pace && <PaceSelect value={paceMs} onChange={handlePaceChange} />}
-        <MockRulesButton />
+        {mockRules && <MockRulesButton />}
         {search && <SearchInput value={searchQuery} onChange={handleSearchChange} />}
       </div>
       <div className="twd-sidebar-content">

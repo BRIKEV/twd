@@ -192,12 +192,13 @@ https://claude.ai/artifact/1JpTV6xnicdocgXyyjCRsK
 ### 8.1 Viewport chip
 
 A chip on its own row, between the run buttons and the totals: icon +
-`mobile · 390px`.
+`mobile · 390px`. The row also holds the TWD version, aligned right, which
+frees room in the run-buttons row on narrow sidebars.
 
 - Updates live on resize. Shows the matching viewport name(s) and the current
   `innerWidth`. With no matching named viewport: `no viewport · 1100px`.
-- Hidden entirely when no viewports are defined, so projects that do not use
-  the feature see no change.
+- Hidden when no viewports are defined. The row stays, with only the
+  version.
 - Accessible name: `Current viewport: mobile, 390 pixels wide`.
 - It is a display, not a control. There is no manual selector: picking
   "mobile" in a 1400px window would only produce false failures.
@@ -287,6 +288,19 @@ Written for desktop (min 1024px). Ran at 390px, so layout differences are expect
   `--twd-viewport-badge-bg`, defaulting to the values above. The theme docs
   must state the contrast requirement.
 
+### 8.6 A lighter header
+
+Added during review: the header stacked run buttons, chip, totals, speed,
+mock rules and search, which was a lot on a 320px overlay.
+
+- The version moved from the run-buttons row to the chip row (8.1).
+- The mock rules button (`Rules: 0/0 triggered`) is hidden by default behind a
+  new `mockRules` option on `initTWD`, the `twd()` plugin and `TWDSidebar`,
+  like `search` and `pace`. Most test writing now happens through an AI agent,
+  which reads mocks from code and logs rather than from that button. This is a
+  visible change for current users, accepted on purpose: `mockRules: true`
+  brings it back.
+
 ## 9. Hook for `twd-cli` (built later)
 
 `twd` exposes what the CLI needs; the CLI loop itself is a later design.
@@ -325,8 +339,9 @@ executes. Fixing it belongs to the relay.
 1. **Overlay threshold.** Fixed 768px of remaining space, or a theme / init
    option? Starting fixed keeps the surface small.
 2. ~~**Header row at ~334px.**~~ Resolved: at 390px the overlay is
-   `min(320px, 334px)` = 320px, and "Run All · mobile", "Clear mocks", the
-   version and the close button fit on one line (checked in Chrome).
+   `min(320px, 334px)` = 320px, and "Run All · mobile", "Clear mocks" and
+   the close button fit on one line (checked in Chrome). The version has
+   since moved to the chip row (8.6).
 3. **Pill and the last-run marker.** After a single-test run in overlay mode,
    should the sidebar scroll to that test even when it passed? Probably yes, it
    matches the current `twd-last-run-test-name` behavior.

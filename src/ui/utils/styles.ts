@@ -135,7 +135,7 @@ export const CSS_STYLES = `
 .twd-sidebar-version {
   color: var(--twd-text-secondary);
   font-size: var(--twd-font-size-sm);
-  align-self: center;
+  margin-left: auto;
 }
 
 /* ========================
@@ -257,8 +257,10 @@ export const CSS_STYLES = `
   width: min(var(--twd-sidebar-width), calc(100vw - 56px));
   box-shadow: 0 0 16px rgba(0, 0, 0, 0.45);
 }
-.twd-viewport-row {
+.twd-sidebar-meta-row {
   display: flex;
+  align-items: center;
+  gap: var(--twd-spacing-sm);
   margin-bottom: var(--twd-spacing-md);
 }
 .twd-viewport-chip {

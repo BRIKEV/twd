@@ -61,6 +61,8 @@ describe('TWDSidebar - viewports', () => {
       render(<TWDSidebar open />);
       const chip = screen.getByTestId('twd-viewport-chip');
       expect(chip).toHaveTextContent('mobile · 390px');
+      // The chip shares its row with the version.
+      expect(chip.closest('.twd-sidebar-meta-row')).toHaveTextContent(/v\d+\.\d+\.\d+/);
       expect(chip).toHaveAccessibleName('Current viewport: mobile, 390 pixels wide');
 
       resizeTo(1280);

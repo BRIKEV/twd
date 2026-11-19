@@ -18,6 +18,8 @@ interface InitTWDOptions {
   theme?: Partial<TWDTheme>;
   search?: boolean;
   pace?: boolean;
+  /** Whether to show the mock rules button in the sidebar. Default: false */
+  mockRules?: boolean;
   rootSelector?: string;
   /**
    * Named viewports tests can target with `{ viewport: 'mobile' }`. Optional:
@@ -48,6 +50,7 @@ const createRoot = (el: HTMLElement) => ({
  * @param options.theme Optional theme customization
  * @param options.search Whether to show the search/filter input
  * @param options.pace Whether to show the execution speed selector
+ * @param options.mockRules Whether to show the mock rules button
  * @param options.viewports Named viewports tests can target, e.g. `{ mobile: { maxWidth: 767 } }`
  * @param options.defaultViewport Viewport given to tests that declare none
  * @returns void
@@ -78,6 +81,7 @@ export const initTWD = (files: TestModule, options?: InitTWDOptions) => {
     theme,
     search,
     pace,
+    mockRules,
     rootSelector,
     viewports,
     defaultViewport,
@@ -95,6 +99,7 @@ export const initTWD = (files: TestModule, options?: InitTWDOptions) => {
       position={position}
       {...(search !== undefined && { search })}
       {...(pace !== undefined && { pace })}
+      {...(mockRules !== undefined && { mockRules })}
     />,
     createRoot,
     theme,
