@@ -99,7 +99,7 @@ rule your app's CSS follows:
 
 | Action | What runs |
 |---|---|
-| **Run All** | Only the tests matching the current width. The button names the viewport: `Run All · mobile`. |
+| **Run All** | Only the tests matching the current width, which the viewport chip names. |
 | **Run Filtered** (search) | The matching tests that also match the search. |
 | **Play** on a test | That test, always, even when it was written for another width. |
 | `.only` | Applies among the matching tests. A `.only` written for another width does not stop the others. |

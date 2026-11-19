@@ -83,7 +83,7 @@ describe('TWDSidebar - viewports', () => {
   });
 
   describe('run buttons', () => {
-    it('names the active viewport on Run All and Run Filtered', async () => {
+    it('keeps the plain Run All and Run Filtered labels: the chip names the viewport', async () => {
       defineViewports(VIEWPORTS);
       window.innerWidth = 390;
       twd.describe('Group', () => {
@@ -91,9 +91,9 @@ describe('TWDSidebar - viewports', () => {
       });
       const user = userEvent.setup();
       render(<TWDSidebar open search />);
-      expect(screen.getByText('Run All · mobile')).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: 'Run All' })).toBeInTheDocument();
       await user.type(screen.getByRole('searchbox'), 'burger');
-      expect(screen.getByText('Run Filtered · mobile')).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: 'Run Filtered' })).toBeInTheDocument();
     });
 
     it('Run All only runs the tests matching the current width', async () => {
@@ -107,7 +107,7 @@ describe('TWDSidebar - viewports', () => {
       });
       const user = userEvent.setup();
       render(<TWDSidebar open />);
-      await user.click(screen.getByText('Run All · mobile'));
+      await user.click(screen.getByRole('button', { name: 'Run All' }));
       await waitFor(() => expect(mobileFn).toHaveBeenCalledTimes(1));
       expect(desktopFn).not.toHaveBeenCalled();
     });

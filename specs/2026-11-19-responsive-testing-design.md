@@ -155,15 +155,19 @@ the definition:
 
 | Action | Runs |
 |---|---|
-| Run All | Matching tests only. Button label names the active viewport(s): `Run All · mobile`. Unchanged label when no viewports are defined. |
+| Run All | Matching tests only. The label stays `Run All`: the viewport chip already names the active viewport(s). |
 | Run Filtered (search active) | Matching tests that also pass the search filter. |
 | Play on a matching test | The test, as today. |
 | Play on a non-matching test | The test, plus a warning log prepended to its logs (section 8.4). |
 | `.only` | Applies inside the matching set. A non-matching `.only` test does not run in Run All and does not suppress the matching tests. |
 | `.skip` | Unchanged. |
 
-When several viewports match at once (overlapping ranges), the label lists them
-in registry order: `Run All · tablet, desktop`.
+When several viewports match at once (overlapping ranges), the chip lists them
+in registry order: `tablet, desktop · 900px`.
+
+> Revised during review. The first version also named the viewport on the
+> button (`Run All · mobile`). It repeated the chip right below it and made the
+> button wrap on narrow sidebars, so the label went back to `Run All`.
 
 ## 7. Sidebar layout modes
 
@@ -215,8 +219,8 @@ frees room in the run-buttons row on narrow sidebars.
   suite is one grey line instead of a column of greyed tests. Expanding it is
   not persisted.
 - Search filters the tree as usual. The totals in the header count
-  **matching tests only**; together with the chip and the `Run All · mobile`
-  label, they explain why a greyed test is not run.
+  **matching tests only**; together with the chip, they explain why a greyed
+  test is not run.
 - With no viewports defined, nothing is greyed.
 
 > Revised during review. The first version moved non-matching tests to an
@@ -339,7 +343,7 @@ executes. Fixing it belongs to the relay.
 1. **Overlay threshold.** Fixed 768px of remaining space, or a theme / init
    option? Starting fixed keeps the surface small.
 2. ~~**Header row at ~334px.**~~ Resolved: at 390px the overlay is
-   `min(320px, 334px)` = 320px, and "Run All · mobile", "Clear mocks" and
+   `min(320px, 334px)` = 320px, and "Run All", "Clear mocks" and
    the close button fit on one line (checked in Chrome). The version has
    since moved to the chip row (8.6).
 3. **Pill and the last-run marker.** After a single-test run in overlay mode,
@@ -355,7 +359,7 @@ Tests first, per the repo rule. Vitest + jsdom, mocking `matchMedia`.
   invalid definitions throw; run set frozen at start.
 - Matching: query building from each definition shape; overlapping ranges.
 - Sidebar: chip text and hiding; greying in place, suite collapse, counts;
-  Run All label and the set it runs; non-matching play adds the warning log
+  the set Run All runs; non-matching play adds the warning log
   and leaves totals unchanged; push vs overlay selection by width; pill shown
   only in overlay mode, restores the sidebar at the end; mode locked during a
   run.

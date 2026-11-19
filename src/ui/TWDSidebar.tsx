@@ -372,8 +372,6 @@ export const TWDSidebar = ({
   }
 
   const totalTests = displayTests.length;
-  const viewportSuffix =
-    viewport.defined && viewport.matching.length ? ` · ${viewport.matching.join(', ')}` : '';
 
   return (
     <div
@@ -408,10 +406,7 @@ export const TWDSidebar = ({
               }}
               className="twd-btn twd-btn-primary"
             >
-              <span aria-live="polite">
-                {searchQuery ? 'Run Filtered' : 'Run All'}
-                {viewportSuffix}
-              </span>
+              <span aria-live="polite">{searchQuery ? 'Run Filtered' : 'Run All'}</span>
             </button>
             <button
               onClick={() => {
