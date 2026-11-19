@@ -42,7 +42,7 @@ describe('TWDSidebar - viewports', () => {
   });
 
   describe('without declared viewports', () => {
-    it('shows no chip, no other-viewports group and the plain Run All label', () => {
+    it('shows no chip, no badges and the plain Run All label', () => {
       twd.describe('Group', () => {
         twd.it('tagged but ignored', { viewport: 'mobile' }, () => {});
       });
@@ -111,7 +111,7 @@ describe('TWDSidebar - viewports', () => {
     });
   });
 
-  describe('other viewports group', () => {
+  describe('tests for other viewports', () => {
     const register = () => {
       defineViewports(VIEWPORTS, { default: 'desktop' });
       twd.describe('Header', () => {
@@ -121,74 +121,77 @@ describe('TWDSidebar - viewports', () => {
       });
     };
 
-    it('folds non-matching tests into a collapsed group with a hint', () => {
+    const item = (name: string) => screen.getByText(name).closest('.twd-test-item')!;
+
+    it('stay in place, greyed with a badge, and leave the totals', () => {
       vi.spyOn(console, 'warn').mockImplementation(() => {});
       register();
       window.innerWidth = 390;
       render(<TWDSidebar open />);
 
-      const toggle = screen.getByRole('button', { name: /Other viewports \(2\)/ });
-      expect(toggle).toHaveAttribute('aria-expanded', 'false');
-      expect(screen.getByText('Not in Run All at 390px. Play still works.')).toBeInTheDocument();
+      const names = screen.getAllByRole('listitem').map((li) => li.getAttribute('data-test-name'));
+      expect(names.filter(Boolean)).toEqual(['opens burger menu', 'shows nav links', 'has a typo']);
+
+      expect(item('opens burger menu')).not.toHaveClass('twd-test-item-other');
+      expect(item('shows nav links')).toHaveClass('twd-test-item-other');
       expect(
-        screen.getByRole('group', { name: 'Tests for other viewports, not run by Run All' }),
+        within(item('shows nav links') as HTMLElement).getByText('desktop'),
       ).toBeInTheDocument();
-      expect(screen.getByText('opens burger menu')).toBeInTheDocument();
-      expect(screen.queryByText('shows nav links')).not.toBeInTheDocument();
+      expect(
+        within(item('has a typo') as HTMLElement).getByText('unknown: deskop'),
+      ).toBeInTheDocument();
+      expect(
+        screen.getByRole('button', { name: 'Run shows nav links test, written for desktop' }),
+      ).toBeInTheDocument();
+      expect(screen.queryByText(/Other viewports/)).not.toBeInTheDocument();
       // Totals describe the matching set only.
       expect(screen.getByText('Total: 1')).toBeInTheDocument();
     });
 
-    it('expands to show badges, and remembers the choice', async () => {
-      vi.spyOn(console, 'warn').mockImplementation(() => {});
-      register();
-      window.innerWidth = 390;
-      const user = userEvent.setup();
-      const { unmount } = render(<TWDSidebar open />);
-
-      await user.click(screen.getByRole('button', { name: /Other viewports \(2\)/ }));
-      expect(screen.getByRole('button', { name: /Other viewports \(2\)/ })).toHaveAttribute(
-        'aria-expanded',
-        'true',
-      );
-      const group = screen.getByRole('group', {
-        name: 'Tests for other viewports, not run by Run All',
-      });
-      expect(within(group).getByText('shows nav links')).toBeInTheDocument();
-      expect(within(group).getByText('desktop')).toBeInTheDocument();
-      expect(within(group).getByText('unknown: deskop')).toBeInTheDocument();
-      expect(
-        within(group).getByRole('button', {
-          name: 'Run shows nav links test, written for desktop',
-        }),
-      ).toBeInTheDocument();
-      expect(sessionStorage.getItem('twd-other-viewports-open')).toBe('true');
-
-      unmount();
-      render(<TWDSidebar open />);
-      expect(screen.getByRole('button', { name: /Other viewports \(2\)/ })).toHaveAttribute(
-        'aria-expanded',
-        'true',
-      );
-    });
-
-    it('moves tests between sections when the window is resized', () => {
+    it('swap their badges when the window is resized', () => {
       register();
       vi.spyOn(console, 'warn').mockImplementation(() => {});
       window.innerWidth = 390;
       render(<TWDSidebar open />);
-      expect(screen.getByText('opens burger menu')).toBeInTheDocument();
-      expect(screen.queryByText('shows nav links')).not.toBeInTheDocument();
+      expect(item('shows nav links')).toHaveClass('twd-test-item-other');
 
       resizeTo(1280);
-      expect(screen.getByText('shows nav links')).toBeInTheDocument();
-      expect(screen.queryByText('opens burger menu')).not.toBeInTheDocument();
+      expect(item('shows nav links')).not.toHaveClass('twd-test-item-other');
+      expect(item('opens burger menu')).toHaveClass('twd-test-item-other');
+      expect(
+        within(item('opens burger menu') as HTMLElement).getByText('mobile'),
+      ).toBeInTheDocument();
+    });
+
+    it('collapse a suite written entirely for another viewport', async () => {
+      defineViewports(VIEWPORTS);
+      window.innerWidth = 1280;
+      twd.describe('Burger menu', { viewport: 'mobile' }, () => {
+        twd.it('opens', () => {});
+      });
+      twd.describe('Nav', () => {
+        twd.it('shows links', () => {});
+      });
+      const user = userEvent.setup();
+      render(<TWDSidebar open />);
+
+      const toggle = screen.getByRole('button', { name: /test suite Burger menu/ });
+      expect(toggle).toHaveAttribute('aria-expanded', 'false');
+      expect(toggle.closest('.twd-test-group')).toHaveClass('twd-test-group-other');
+      expect(within(toggle).getByText('mobile')).toBeInTheDocument();
+      expect(screen.queryByText('opens')).not.toBeInTheDocument();
+      expect(screen.getByRole('button', { name: /test suite Nav/ })).toHaveAttribute(
+        'aria-expanded',
+        'true',
+      );
+
+      await user.click(toggle);
+      expect(screen.getByText('opens')).toBeInTheDocument();
     });
 
     it('play on a non-matching test runs it and prepends a viewport warning', async () => {
       defineViewports(VIEWPORTS, { default: 'desktop' });
       window.innerWidth = 390;
-      sessionStorage.setItem('twd-other-viewports-open', 'true');
       const desktopFn = vi.fn();
       twd.describe('Header', () => {
         twd.it('opens burger menu', { viewport: 'mobile' }, () => {});

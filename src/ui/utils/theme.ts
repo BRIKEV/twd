@@ -115,7 +115,7 @@ export const defaultTheme: TWDTheme = {
   skip: '#475569',
   skipBg: '#334155',
 
-  // Other viewports: muted but AA (about 5.6:1 on background), never opacity
+  // Tests for other viewports: muted but AA (about 5.6:1 on background), never opacity
   viewportOtherText: '#94a3b8',
   viewportBadgeBg: '#334155',
 

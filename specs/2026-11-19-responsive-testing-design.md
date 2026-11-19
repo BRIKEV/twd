@@ -128,7 +128,7 @@ change to breakpoints takes effect without reloading tests.
 ### Unknown names
 
 Referencing a name that is not in the registry logs one `console.warn` per name
-and the test is treated as **never matching**. It shows in "Other viewports"
+and the test is treated as **never matching**. It stays in place, greyed,
 with the badge `unknown: <name>`, so the typo is visible in the sidebar without
 breaking the whole suite.
 
@@ -204,17 +204,26 @@ A chip on its own row, between the run buttons and the totals: icon +
 
 ### 8.2 Test list
 
-- Matching tests render first, in the normal tree.
-- Non-matching tests move to a single **"Other viewports (n)"** group at the
-  bottom. Inside it, they keep their `describe` tree.
-- The group is collapsible. Its open/closed state persists in
-  `sessionStorage` (`twd-other-viewports-open`), default **collapsed**.
-- The group shows a one-line hint: `Not in Run All at 390px. Play still works.`
-- Each test in the group carries a text badge with its viewport name(s):
-  `desktop`, `tablet, desktop`, or `unknown: deskop`.
-- Search filters both sections. The totals in the header count **matching
-  tests only**.
-- With no viewports defined, there is no group and nothing moves.
+- **Nothing moves.** Every test keeps its place in its `describe`, in the
+  order it was written. A test for another viewport is greyed and carries a
+  text badge with its viewport name(s): `desktop`, `tablet, desktop`, or
+  `unknown: deskop`. Its play button works as usual.
+- A `describe` whose tests are **all** for another viewport is greyed as a
+  whole, carries the union of their badges on its header, and starts
+  **collapsed**. On a phone with `defaultViewport: 'desktop'`, a large desktop
+  suite is one grey line instead of a column of greyed tests. Expanding it is
+  not persisted.
+- Search filters the tree as usual. The totals in the header count
+  **matching tests only**; together with the chip and the `Run All · mobile`
+  label, they explain why a greyed test is not run.
+- With no viewports defined, nothing is greyed.
+
+> Revised during review. The first version moved non-matching tests to an
+> "Other viewports (n)" group at the bottom of the list, keeping their
+> `describe` tree. In use it was confusing: a test written in the middle of a
+> suite showed up far from its siblings, and the suite's name appeared twice.
+> Greying in place keeps the author's structure, and collapsing all-other
+> suites keeps the noise down.
 
 ### 8.3 Running in overlay mode: the pill
 
@@ -265,14 +274,15 @@ Written for desktop (min 1024px). Ran at 390px, so layout differences are expect
 
 "Greyed" is a style, not a reduced-opacity layer:
 
-- Test names in the group use `--twd-text-muted` (`#94a3b8` on `#1e293b`,
+- Greyed test names and suite headers use `--twd-text-muted` (`#94a3b8` on `#1e293b`,
   about 5.6:1), above the 4.5:1 AA minimum. **No `opacity`**: it would drag
   text, badges and buttons under the minimum and is not themeable.
-- The state is never conveyed by color alone: dashed group border, a text
-  badge with the viewport name, and a group heading.
-- The group is `role="group"` with
-  `aria-label="Tests for other viewports, not run by Run All"`; its toggle is a
-  real `<button>` with `aria-expanded`.
+  On the suite header background (`#0f172a`) it is about 6.9:1. The muted
+  color only applies to a test with no pass, fail or skip background.
+- The state is never conveyed by color alone: a text badge names the viewport,
+  and the play button's accessible name says it (`written for desktop`), as
+  does the toggle of a greyed suite (`Expand test suite Header, written for
+  desktop`).
 - Theme authors get two new tokens, `--twd-viewport-other-text` and
   `--twd-viewport-badge-bg`, defaulting to the values above. The theme docs
   must state the contrast requirement.
@@ -329,7 +339,7 @@ Tests first, per the repo rule. Vitest + jsdom, mocking `matchMedia`.
   variants; inheritance and replacement; `defaultViewport`; unknown names;
   invalid definitions throw; run set frozen at start.
 - Matching: query building from each definition shape; overlapping ranges.
-- Sidebar: chip text and hiding; "Other viewports" grouping, counts, persistence;
+- Sidebar: chip text and hiding; greying in place, suite collapse, counts;
   Run All label and the set it runs; non-matching play adds the warning log
   and leaves totals unchanged; push vs overlay selection by width; pill shown
   only in overlay mode, restores the sidebar at the end; mode locked during a

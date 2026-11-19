@@ -17,10 +17,9 @@ import { TWD_VERSION } from '../constants/version';
 import { SearchInput } from './SearchInput';
 import { filterTree } from './utils/filterTree';
 import { buildTreeFromHandlers, type Node } from './utils/buildTreeFromHandlers';
-import { partitionTree } from './utils/partitionTree';
+import { markOtherViewports } from './utils/markOtherViewports';
 import { PaceSelect, PACE_OPTIONS } from './PaceSelect';
 import { ViewportChip } from './ViewportChip';
-import { OtherViewports } from './OtherViewports';
 import { RunPill } from './RunPill';
 import { setPace } from '../pace';
 import {
@@ -87,6 +86,9 @@ const getOpenState = (open: boolean) => {
   return sessionStorage.getItem('twd-sidebar-open') === 'true';
 };
 
+const collectTests = (nodes: Node[]): Node[] =>
+  nodes.flatMap((node) => (node.type === 'test' ? [node] : collectTests(node.childrenNodes ?? [])));
+
 const collectTestIds = (nodes: Node[]): string[] => {
   const ids: string[] = [];
   for (const node of nodes) {
@@ -96,7 +98,7 @@ const collectTestIds = (nodes: Node[]): string[] => {
   return ids;
 };
 
-// The badge shown on a test under "Other viewports": what it was written for.
+// The badge shown on a test for another viewport: what it was written for.
 const viewportBadgeFor = (handler: Handler | undefined) => {
   if (!handler) return '';
   const { viewports } = getViewportConfig();
@@ -104,13 +106,6 @@ const viewportBadgeFor = (handler: Handler | undefined) => {
     .map((name) => (viewports[name] ? name : `unknown: ${name}`))
     .join(', ');
 };
-
-const withViewportBadges = (nodes: Node[]): Node[] =>
-  nodes.map((node) =>
-    node.type === 'test'
-      ? { ...node, viewportBadge: viewportBadgeFor(handlers.get(node.id)) }
-      : { ...node, childrenNodes: withViewportBadges(node.childrenNodes ?? []) },
-  );
 
 interface RunProgress {
   total: number;
@@ -282,32 +277,33 @@ export const TWDSidebar = ({ open, position = 'left', search, pace }: TWDSidebar
 
   const filteredRoots = useMemo(() => filterTree(roots, searchQuery), [roots, searchQuery]);
 
-  // With viewports declared, tests outside the current width move to their own
-  // group. Without them, nothing moves.
-  const { matchingRoots, otherRoots, otherCount } = useMemo(() => {
-    if (!viewport.defined) {
-      return { matchingRoots: filteredRoots, otherRoots: [] as Node[], otherCount: 0 };
-    }
-    const { matching, other } = partitionTree(filteredRoots, (node) => {
-      const handler = handlers.get(node.id);
-      return handler ? isInCurrentViewport(handler, viewport.matching) : true;
-    });
-    return {
-      matchingRoots: matching,
-      otherRoots: withViewportBadges(other),
-      otherCount: collectTestIds(other).length,
-    };
+  // With viewports declared, tests outside the current width stay in place,
+  // greyed and badged. Without them, nothing is marked.
+  const markedRoots = useMemo(() => {
+    if (!viewport.defined) return filteredRoots;
+    return markOtherViewports(
+      filteredRoots,
+      (node) => {
+        const handler = handlers.get(node.id);
+        return handler ? isInCurrentViewport(handler, viewport.matching) : true;
+      },
+      (node) => viewportBadgeFor(handlers.get(node.id)),
+    );
   }, [filteredRoots, viewport.defined, viewport.matching, refreshKey]);
 
   const { filteredTestIds, displayTests } = useMemo(() => {
-    const visibleIds = new Set(collectTestIds(matchingRoots));
+    const matchingIds = new Set(
+      collectTests(markedRoots)
+        .filter((node) => node.viewportBadge === undefined)
+        .map((node) => node.id),
+    );
     return {
       // The runner narrows these to the current viewport on its own.
       filteredTestIds: searchQuery ? collectTestIds(filteredRoots) : null,
       // Totals describe the tests Run All would run here.
-      displayTests: tests.filter((t) => t.type === 'test' && visibleIds.has(t.id)),
+      displayTests: tests.filter((t) => t.type === 'test' && matchingIds.has(t.id)),
     };
-  }, [matchingRoots, filteredRoots, searchQuery, refreshKey]);
+  }, [markedRoots, filteredRoots, searchQuery, refreshKey]);
 
   const runAll = async () => {
     // Clear the last run test name when running all tests
@@ -447,15 +443,7 @@ export const TWDSidebar = ({ open, position = 'left', search, pace }: TWDSidebar
         {search && <SearchInput value={searchQuery} onChange={handleSearchChange} />}
       </div>
       <div className="twd-sidebar-content">
-        <TestList
-          roots={matchingRoots}
-          runTest={runTest}
-          // "No tests match" only when the other group has none either.
-          searchQuery={otherCount > 0 ? '' : searchQuery}
-        />
-        {otherCount > 0 && (
-          <OtherViewports roots={otherRoots} count={otherCount} runTest={runTest} />
-        )}
+        <TestList roots={markedRoots} runTest={runTest} searchQuery={searchQuery} />
       </div>
     </div>
   );

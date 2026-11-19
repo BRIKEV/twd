@@ -114,10 +114,11 @@ never runs in Run All.
 
 - **Viewport chip.** Under the run buttons, for example `mobile · 390px`. It
   updates as you resize. It is a display, not a control.
-- **Other viewports.** Tests written for another width move to a collapsed
-  "Other viewports" group at the bottom of the list, with a badge naming their
-  viewport. Search still finds them and their play button still works. When you
-  run one, its log starts with a warning such as
+- **Tests for other widths stay in place.** They are greyed, with a badge
+  naming their viewport, and keep their order in the `describe`. Search still
+  finds them and their play button still works. A `describe` whose tests are
+  all for another width is greyed as a whole and starts collapsed. When you run
+  one of these tests, its log starts with a warning such as
   `Written for desktop (min 1024px). Ran at 390px, so layout differences are expected.`
 - **Totals** count only the tests for the current width.
 
@@ -150,7 +151,7 @@ await executeTests({ viewport: 'mobile' });
 
 ## Theming
 
-Two theme tokens style the "Other viewports" group:
+Two theme tokens style the tests for other widths:
 `viewportOtherText` and `viewportBadgeBg`. See [Theming](/theming). Keep the
-text at a contrast of at least 4.5:1 against the sidebar background: the group
-is greyed with a muted color, never with opacity.
+text at a contrast of at least 4.5:1 against the sidebar background: they are
+greyed with a muted color, never with opacity.

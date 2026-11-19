@@ -272,35 +272,12 @@ export const CSS_STYLES = `
   font-size: var(--twd-font-size-sm);
   color: var(--twd-text);
 }
-.twd-other-viewports {
-  border: 1px dashed var(--twd-border-light);
-  border-radius: var(--twd-border-radius);
-  padding: var(--twd-spacing-sm) var(--twd-spacing-md);
-  margin-top: var(--twd-spacing-sm);
-}
-.twd-other-viewports-toggle {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-  background: none;
-  border: none;
-  padding: 2px 0;
-  cursor: pointer;
-  font-family: inherit;
-  font-size: var(--twd-font-size-md);
-  font-weight: var(--twd-font-weight-medium);
-  color: var(--twd-text-secondary);
-  text-align: left;
-}
-.twd-other-viewports-toggle:focus-visible {
-  outline: 2px solid var(--twd-primary);
-  outline-offset: 2px;
-}
-.twd-other-viewports-hint {
-  margin: 2px 0 var(--twd-spacing-sm);
-  font-size: var(--twd-font-size-sm);
+.twd-test-group-other .twd-test-group-toggle {
   color: var(--twd-viewport-other-text);
+}
+.twd-test-group-other .twd-viewport-badge {
+  font-weight: var(--twd-font-weight-normal);
+  letter-spacing: normal;
 }
 .twd-test-item-other .twd-test-item-name {
   color: var(--twd-viewport-other-text);

@@ -1,8 +1,8 @@
 import { twd, expect } from "../../../../src";
 import { describe, it } from "../../../../src/runner";
 
-// Resize the window (or use DevTools device mode) to move these tests between
-// the main list and "Other viewports" in the sidebar.
+// Resize the window (or use DevTools device mode): the tests for the other
+// width are greyed in place, and a suite written for it collapses.
 describe("Responsive", () => {
   describe("Mobile layout", { viewport: "mobile" }, () => {
     it("renders at a phone width", async () => {

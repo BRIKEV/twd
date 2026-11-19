@@ -86,7 +86,7 @@ The theme object accepts the following properties (all optional):
 
 ### Responsive Testing
 
-Used by the "Other viewports" group (see [Responsive Testing](/responsive-testing)).
+Used by tests written for another viewport (see [Responsive Testing](/responsive-testing)).
 Keep `viewportOtherText` at a contrast of at least 4.5:1 against `background`.
 
 | Property | Description | Default |

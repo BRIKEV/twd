@@ -3,13 +3,13 @@ import { render, screen, act } from '@testing-library/react';
 import * as twd from '../../runner';
 import { TWDSidebar } from '../../ui/TWDSidebar';
 import { defineViewports, resetViewports } from '../../viewports';
-import { partitionTree } from '../../ui/utils/partitionTree';
+import { markOtherViewports } from '../../ui/utils/markOtherViewports';
 
-// Wrap the real partition so the test can count how often the sidebar rebuilds
+// Wrap the real marking so the test can count how often the sidebar rebuilds
 // its tree: that is the expensive part of a sidebar render.
-vi.mock('../../ui/utils/partitionTree', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('../../ui/utils/partitionTree')>();
-  return { partitionTree: vi.fn(actual.partitionTree) };
+vi.mock('../../ui/utils/markOtherViewports', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('../../ui/utils/markOtherViewports')>();
+  return { markOtherViewports: vi.fn(actual.markOtherViewports) };
 });
 
 const resizeTo = (width: number) => {
@@ -34,29 +34,26 @@ describe('TWDSidebar - resize cost', () => {
 
   it('does not rebuild the test tree while resizing inside the same viewport', () => {
     render(<TWDSidebar open />);
-    const calls = vi.mocked(partitionTree).mock.calls.length;
+    const calls = vi.mocked(markOtherViewports).mock.calls.length;
 
     resizeTo(1250);
     resizeTo(1200);
     resizeTo(1100);
 
-    expect(vi.mocked(partitionTree).mock.calls.length).toBe(calls);
+    expect(vi.mocked(markOtherViewports).mock.calls.length).toBe(calls);
     // The chip still follows the width.
     expect(screen.getByTestId('twd-viewport-chip')).toHaveTextContent('desktop · 1100px');
-    expect(
-      screen.getByText('Not in Run All at 1100px. Play still works.', { exact: false }),
-    ).toBeInTheDocument();
   });
 
   it('rebuilds the test tree once when the resize crosses into another viewport', () => {
     render(<TWDSidebar open />);
-    const calls = vi.mocked(partitionTree).mock.calls.length;
+    const calls = vi.mocked(markOtherViewports).mock.calls.length;
 
     resizeTo(700);
     resizeTo(650);
     resizeTo(390);
 
-    expect(vi.mocked(partitionTree).mock.calls.length).toBe(calls + 1);
+    expect(vi.mocked(markOtherViewports).mock.calls.length).toBe(calls + 1);
     expect(screen.getByTestId('twd-viewport-chip')).toHaveTextContent('mobile · 390px');
   });
 });

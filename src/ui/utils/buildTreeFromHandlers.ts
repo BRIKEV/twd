@@ -8,7 +8,10 @@ interface Test {
   type: 'test' | 'suite';
   only?: boolean;
   skip?: boolean;
-  /** Set on tests shown under "Other viewports": the viewport(s) they were written for. */
+  /**
+   * Set on a test written for another viewport, and on a suite whose tests all
+   * are: the viewport(s) they were written for.
+   */
   viewportBadge?: string;
 }
 

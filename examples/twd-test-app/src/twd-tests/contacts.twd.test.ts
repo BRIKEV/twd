@@ -66,7 +66,7 @@ describe("Contacts Page pagination tests", () => {
   });
 
   // Tagged for mobile, between two untagged tests: at a mobile width it runs
-  // with them; at a desktop width it moves to "Other viewports".
+  // with them; at a desktop width it stays here, greyed, and Run All skips it.
   it("renders the contacts list at a mobile width", { viewport: "mobile" }, async () => {
     await twd.mockRequest("contactsList", {
       method: "GET",
