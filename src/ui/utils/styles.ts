@@ -232,10 +232,19 @@ export const CSS_STYLES = `
   color: var(--twd-text-secondary);
   white-space: nowrap;
 }
+.twd-pace-select-wrapper {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  display: flex;
+}
 .twd-pace-select {
   flex: 1;
   min-width: 0;
-  padding: var(--twd-spacing-sm) var(--twd-spacing-md);
+  appearance: none;
+  -webkit-appearance: none;
+  padding: var(--twd-spacing-sm) calc(var(--twd-spacing-md) + 22px) var(--twd-spacing-sm)
+    var(--twd-spacing-md);
   background: var(--twd-background);
   color: var(--twd-text);
   border: 1px solid var(--twd-border);
@@ -243,6 +252,14 @@ export const CSS_STYLES = `
   font-size: var(--twd-font-size-sm);
   box-sizing: border-box;
   cursor: pointer;
+}
+.twd-pace-select-chevron {
+  position: absolute;
+  right: var(--twd-spacing-md);
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  pointer-events: none;
 }
 .twd-pace-select:focus-visible {
   outline: 2px solid var(--twd-primary);
