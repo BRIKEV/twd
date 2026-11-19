@@ -17,7 +17,18 @@ export default defineConfig({
       requireEnv: process.env.CI ? true : false,
     }),
     twdRemote() as PluginOption,
-    twd({ testFilePattern: '/**/*.twd.test.{ts,tsx}', open: false, search: true, pace: true }),
+    twd({
+      testFilePattern: '/**/*.twd.test.{ts,tsx}',
+      open: false,
+      search: true,
+      pace: true,
+      // Responsive testing: tests tagged with a viewport only run in Run All when
+      // the window matches it. Untagged tests run at every width.
+      viewports: {
+        mobile: { maxWidth: 767 },
+        desktop: { minWidth: 1024 },
+      },
+    }),
     removeMockServiceWorker(),
   ],
   resolve: {
