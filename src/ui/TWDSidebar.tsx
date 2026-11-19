@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo, useRef } from 'react';
 import { TestList } from './TestList';
 import { ClosedSidebar } from './ClosedSidebar';
 import { useLayout, shouldOverlay } from './hooks/useLayout';
-import { useViewport } from './hooks/useViewport';
+import { useViewport, useWindowWidthValue } from './hooks/useViewport';
 import { handlers, TestRunner, type Handler } from '../runner';
 import { MockRulesButton } from './MockRulesButton';
 import { clearRequestMockRules } from '../commands/mockBridge';
@@ -128,11 +128,12 @@ export const TWDSidebar = ({ open, position = 'left', search, pace }: TWDSidebar
   const [scrollToFailure, setScrollToFailure] = useState(false);
   // The layout mode is locked while a run is in progress: switching between
   // push and overlay reflows the page under test.
-  const [overlay, setOverlay] = useState(() => shouldOverlay(viewport.width));
+  const wantsOverlay = useWindowWidthValue(shouldOverlay);
+  const [overlay, setOverlay] = useState(wantsOverlay);
   const isRunning = run !== null;
   useEffect(() => {
-    if (!isRunning) setOverlay(shouldOverlay(viewport.width));
-  }, [viewport.width, isRunning]);
+    if (!isRunning) setOverlay(wantsOverlay);
+  }, [wantsOverlay, isRunning]);
   useLayout({ isOpen, position, overlay });
   const [message, setMessage] = useState<string>('');
   const [searchQuery, setSearchQuery] = useState(getSearchQuery(search));
@@ -296,7 +297,7 @@ export const TWDSidebar = ({ open, position = 'left', search, pace }: TWDSidebar
       otherRoots: withViewportBadges(other),
       otherCount: collectTestIds(other).length,
     };
-  }, [filteredRoots, viewport, refreshKey]);
+  }, [filteredRoots, viewport.defined, viewport.matching, refreshKey]);
 
   const { filteredTestIds, displayTests } = useMemo(() => {
     const visibleIds = new Set(collectTestIds(matchingRoots));
@@ -427,7 +428,7 @@ export const TWDSidebar = ({ open, position = 'left', search, pace }: TWDSidebar
         </div>
         {viewport.defined && (
           <div className="twd-viewport-row">
-            <ViewportChip width={viewport.width} matching={viewport.matching} />
+            <ViewportChip matching={viewport.matching} />
           </div>
         )}
         <div className="twd-sidebar-stats">
@@ -453,12 +454,7 @@ export const TWDSidebar = ({ open, position = 'left', search, pace }: TWDSidebar
           searchQuery={otherCount > 0 ? '' : searchQuery}
         />
         {otherCount > 0 && (
-          <OtherViewports
-            roots={otherRoots}
-            count={otherCount}
-            width={viewport.width}
-            runTest={runTest}
-          />
+          <OtherViewports roots={otherRoots} count={otherCount} runTest={runTest} />
         )}
       </div>
     </div>

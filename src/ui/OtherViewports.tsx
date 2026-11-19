@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useWindowWidth } from './hooks/useViewport';
 import type { Node } from './utils/buildTreeFromHandlers';
 import { TestList } from './TestList';
 import ChevronDown from './Icons/ChevronDown';
@@ -9,7 +10,6 @@ const STORAGE_KEY = 'twd-other-viewports-open';
 interface OtherViewportsProps {
   roots: Node[];
   count: number;
-  width: number;
   runTest: (id: string) => Promise<void>;
 }
 
@@ -25,8 +25,9 @@ const readOpen = () => {
  * Tests that do not belong to the current width. Greyed, never hidden: search
  * still finds them and the play button still runs them.
  */
-export const OtherViewports = ({ roots, count, width, runTest }: OtherViewportsProps) => {
+export const OtherViewports = ({ roots, count, runTest }: OtherViewportsProps) => {
   const [open, setOpen] = useState(readOpen);
+  const width = useWindowWidth();
 
   const toggle = () => {
     const next = !open;

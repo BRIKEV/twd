@@ -1,5 +1,6 @@
+import { useWindowWidth } from './hooks/useViewport';
+
 interface ViewportChipProps {
-  width: number;
   matching: string[];
 }
 
@@ -36,7 +37,9 @@ const MonitorIcon = () => (
 );
 
 /** Read-only: the window is the selector. Resizing it is how you switch viewport. */
-export const ViewportChip = ({ width, matching }: ViewportChipProps) => {
+export const ViewportChip = ({ matching }: ViewportChipProps) => {
+  // Read here, not passed down: only the chip re-renders on every resize event.
+  const width = useWindowWidth();
   const names = matching.length ? matching.join(', ') : 'no viewport';
   return (
     <span
