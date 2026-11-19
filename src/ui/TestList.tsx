@@ -9,9 +9,15 @@ interface TestListProps {
   roots: Node[];
   runTest: (id: string) => Promise<void>;
   searchQuery?: string;
+  listLabel?: string;
 }
 
-export const TestList = ({ roots, runTest, searchQuery = '' }: TestListProps) => {
+export const TestList = ({
+  roots,
+  runTest,
+  searchQuery = '',
+  listLabel = 'Test list',
+}: TestListProps) => {
   const [collapsed, setCollapsed] = useState<Record<string, boolean>>({});
   const listContainerRef = useRef<HTMLUListElement>(null);
   const hasScrolledRef = useRef(false);
@@ -104,7 +110,7 @@ export const TestList = ({ roots, runTest, searchQuery = '' }: TestListProps) =>
   };
 
   return (
-    <ul ref={listContainerRef} className="twd-test-list" role="list" aria-label="Test list">
+    <ul ref={listContainerRef} className="twd-test-list" role="list" aria-label={listLabel}>
       {roots.length === 0 && searchQuery ? (
         <li
           style={{

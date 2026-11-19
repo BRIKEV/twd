@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { executeTests } from '../../../runner-ci';
 import * as twd from '../../../runner';
+import { defineViewports, resetViewports } from '../../../viewports';
 
 describe('twd Test Runner ci - executeTests', () => {
   beforeEach(() => {
@@ -110,5 +111,39 @@ describe('twd Test Runner ci - executeTests', () => {
     expect(testFn1).toHaveBeenCalledTimes(0);
     expect(testFn2).toHaveBeenCalledTimes(0);
     expect(testFn3).toHaveBeenCalledTimes(1);
+  });
+  describe('viewport selection', () => {
+    beforeEach(() => {
+      resetViewports();
+      window.innerWidth = 1280;
+    });
+
+    it('runs the tests matching the current window when no viewport is passed', async () => {
+      defineViewports({ mobile: { maxWidth: 767 }, desktop: { minWidth: 1024 } });
+      const mobileFn = vi.fn();
+      const desktopFn = vi.fn();
+      twd.describe('Group', () => {
+        twd.it('mobile', { viewport: 'mobile' }, mobileFn);
+        twd.it('desktop', { viewport: 'desktop' }, desktopFn);
+      });
+      const { testStatus } = await executeTests();
+      expect(testStatus).toHaveLength(1);
+      expect(mobileFn).not.toHaveBeenCalled();
+      expect(desktopFn).toHaveBeenCalledTimes(1);
+    });
+
+    it('runs the tests of the named viewport when one is passed', async () => {
+      defineViewports({ mobile: { maxWidth: 767 }, desktop: { minWidth: 1024 } });
+      const mobileFn = vi.fn();
+      const desktopFn = vi.fn();
+      twd.describe('Group', () => {
+        twd.it('mobile', { viewport: 'mobile' }, mobileFn);
+        twd.it('desktop', { viewport: 'desktop' }, desktopFn);
+      });
+      const { testStatus } = await executeTests({ viewport: 'mobile' });
+      expect(testStatus).toHaveLength(1);
+      expect(mobileFn).toHaveBeenCalledTimes(1);
+      expect(desktopFn).not.toHaveBeenCalled();
+    });
   });
 });

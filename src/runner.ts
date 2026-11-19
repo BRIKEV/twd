@@ -1,4 +1,5 @@
 import { collectDiagnostics, type TestDiagnostics } from './utils/diagnostics';
+import { hasViewports, isInCurrentViewport, isInViewport, getMatchingViewports } from './viewports';
 
 export interface Handler {
   id: string;
@@ -14,6 +15,8 @@ export interface Handler {
   depth: number;
   only?: boolean;
   skip?: boolean;
+  /** Viewport names as declared on this describe/it. Resolve with getEffectiveViewport(). */
+  viewport?: string[];
 }
 
 type HookFn = () => void | Promise<void>;
@@ -56,11 +59,45 @@ const stack = state.stack;
 const generateId = () => Math.random().toString(36).slice(2, 11);
 
 //
+// Options
+//
+export interface TestOptions {
+  /**
+   * Viewport name(s) declared with defineViewports(). The test only runs in
+   * Run All when the window matches one of them. On a describe, it applies to
+   * every test inside unless a test declares its own.
+   */
+  viewport?: string | string[];
+}
+
+type SuiteFn = () => void;
+type TestFn = () => void | Promise<void>;
+
+const toViewport = (options?: TestOptions): string[] | undefined => {
+  if (!options || options.viewport === undefined) return undefined;
+  return Array.isArray(options.viewport) ? [...options.viewport] : [options.viewport];
+};
+
+// Options are the second argument, the Playwright / Vitest convention. The
+// two-argument form keeps working.
+const splitArgs = <F extends (...args: never[]) => unknown>(
+  optionsOrFn?: TestOptions | F,
+  maybeFn?: F,
+): [TestOptions | undefined, F | undefined] =>
+  typeof optionsOrFn === 'function' ? [undefined, optionsOrFn] : [optionsOrFn, maybeFn];
+
+//
 // Suite definition
 //
-export const describe = (name: string, handler: () => void) => {
+const registerSuite = (
+  name: string,
+  handler: SuiteFn,
+  options: TestOptions | undefined,
+  flags: Pick<Handler, 'only' | 'skip'>,
+) => {
   const id = generateId();
   const parent = stack.at(-1);
+  const viewport = toViewport(options);
   handlers.set(id, {
     id,
     name,
@@ -70,67 +107,46 @@ export const describe = (name: string, handler: () => void) => {
     depth: stack.length,
     parent,
     handler,
+    ...flags,
+    ...(viewport && { viewport }),
   });
   if (parent) handlers.get(parent)!.children!.push(id);
 
+  // A skipped suite still builds its tree; the runner skips its descendants.
   stack.push(id);
   handler();
   stack.pop();
 };
 
-describe.only = (name: string, handler: () => void) => {
-  const id = generateId();
-  const parent = stack.at(-1);
+interface DescribeFn {
+  (name: string, handler: SuiteFn): void;
+  (name: string, options: TestOptions, handler: SuiteFn): void;
+}
 
-  handlers.set(id, {
-    id,
-    name,
-    type: 'suite',
-    children: [],
-    logs: [],
-    depth: stack.length,
-    parent,
-    handler,
-    only: true,
-  });
+const makeDescribe =
+  (flags: Pick<Handler, 'only' | 'skip'>): DescribeFn =>
+  (name: string, optionsOrFn: TestOptions | SuiteFn, maybeFn?: SuiteFn) => {
+    const [options, handler] = splitArgs<SuiteFn>(optionsOrFn, maybeFn);
+    registerSuite(name, handler!, options, flags);
+  };
 
-  if (parent) handlers.get(parent)!.children!.push(id);
-
-  stack.push(id);
-  handler();
-  stack.pop();
-};
-
-describe.skip = (name: string, handler: () => void) => {
-  const id = generateId();
-  const parent = stack.at(-1);
-
-  handlers.set(id, {
-    id,
-    name,
-    type: 'suite',
-    children: [],
-    logs: [],
-    depth: stack.length,
-    parent,
-    handler,
-    skip: true,
-  });
-
-  if (parent) handlers.get(parent)!.children!.push(id);
-
-  // still build tree but whole suite + descendants become skipped
-  stack.push(id);
-  handler();
-  stack.pop();
-};
+export const describe = Object.assign(makeDescribe({}), {
+  only: makeDescribe({ only: true }),
+  skip: makeDescribe({ skip: true }),
+});
 
 //
 // Test definition
 //
-export const it = (name: string, handler: () => void | Promise<void>) => {
+const registerTest = (
+  name: string,
+  handler: TestFn,
+  options: TestOptions | undefined,
+  flags: Pick<Handler, 'only' | 'skip'>,
+) => {
   const id = generateId();
   const parent = stack.at(-1);
+  const viewport = toViewport(options);
   const h: Handler = {
     id,
     name,
@@ -139,45 +155,39 @@ export const it = (name: string, handler: () => void | Promise<void>) => {
     handler,
     logs: [],
     parent,
+    ...flags,
+    ...(viewport && { viewport }),
   };
   if (parent) handlers.get(parent)!.children!.push(id);
   handlers.set(id, h);
 };
 
-// Aliases for it.only and it.skip
-it.only = (name: string, handler: () => void | Promise<void>) => {
-  const id = generateId();
-  const parent = stack.at(-1);
-  const h: Handler = {
-    id,
-    name,
-    type: 'test',
-    depth: stack.length,
-    handler,
-    logs: [],
-    parent,
-    only: true,
+interface ItFn {
+  (name: string, handler: TestFn): void;
+  (name: string, options: TestOptions, handler: TestFn): void;
+}
+
+interface ItSkipFn {
+  (name: string, handler?: TestFn): void;
+  (name: string, options: TestOptions, handler?: TestFn): void;
+}
+
+const makeIt =
+  (flags: Pick<Handler, 'only' | 'skip'>): ItFn =>
+  (name: string, optionsOrFn: TestOptions | TestFn, maybeFn?: TestFn) => {
+    const [options, handler] = splitArgs<TestFn>(optionsOrFn, maybeFn);
+    registerTest(name, handler!, options, flags);
   };
-  if (parent) handlers.get(parent)!.children!.push(id);
-  handlers.set(id, h);
+
+const itSkip: ItSkipFn = (name: string, optionsOrFn?: TestOptions | TestFn, maybeFn?: TestFn) => {
+  const [options, handler] = splitArgs<TestFn>(optionsOrFn, maybeFn);
+  registerTest(name, handler || (() => {}), options, { skip: true });
 };
 
-it.skip = (name: string, handler?: () => void | Promise<void>) => {
-  const id = generateId();
-  const parent = stack.at(-1);
-  const h: Handler = {
-    id,
-    name,
-    type: 'test',
-    depth: stack.length,
-    handler: handler || (() => {}),
-    logs: [],
-    parent,
-    skip: true,
-  };
-  if (parent) handlers.get(parent)!.children!.push(id);
-  handlers.set(id, h);
-};
+export const it = Object.assign(makeIt({}), {
+  only: makeIt({ only: true }),
+  skip: itSkip,
+});
 
 //
 // Hooks
@@ -258,6 +268,37 @@ export interface TestRunnerOptions {
   retryCount?: number;
 }
 
+export interface RunAllOptions {
+  /**
+   * Run the tests of this named viewport instead of the ones matching the
+   * window. Used by twd-cli after it sizes the page for that viewport.
+   */
+  viewport?: string;
+}
+
+export type RunTestStatus = 'pass' | 'fail' | 'skip';
+
+// Window events any listener can follow, whoever started the run (the sidebar,
+// twd-relay, twd-cli): `twd:run-start` { total }, `twd:test-end` { status },
+// `twd:run-end`.
+const emit = (type: string, detail?: unknown) => {
+  if (typeof window === 'undefined') return;
+  window.dispatchEvent(
+    detail === undefined ? new CustomEvent(type) : new CustomEvent(type, { detail }),
+  );
+};
+
+const countTests = (ids: Iterable<string>) => {
+  let total = 0;
+  for (const id of ids) if (handlers.get(id)?.type === 'test') total++;
+  return total;
+};
+
+// .only applies inside the run's scope: an out-of-scope .only must not
+// suppress the tests that are in it.
+const hasOnlyInScope = (scope: Set<string>) =>
+  Array.from(scope).some((id) => handlers.get(id)?.only || hasOnlyAbove(id));
+
 export class TestRunner {
   private events: RunnerEvents;
   private retryCount: number;
@@ -267,30 +308,71 @@ export class TestRunner {
     this.retryCount = options?.retryCount ?? 1;
   }
 
-  async runAll() {
-    const rootSuites = Array.from(handlers.values()).filter((h) => !h.parent && h.type === 'suite');
-    const hasOnly = Array.from(handlers.values()).some((h) => h.only);
-    for (const suite of rootSuites) {
-      await this.runSuite(suite, hasOnly);
+  /**
+   * Tests a run may execute, decided once at run start so a resize mid-run
+   * changes nothing. `null` means no viewport filtering at all.
+   */
+  private viewportScope(options?: RunAllOptions): Set<string> | null {
+    const tests = Array.from(handlers.values()).filter((h) => h.type === 'test');
+    if (options?.viewport) {
+      return new Set(tests.filter((h) => isInViewport(h, options.viewport!)).map((h) => h.id));
     }
-    return handlers;
+    if (!hasViewports()) return null;
+    const matching = getMatchingViewports();
+    return new Set(tests.filter((h) => isInCurrentViewport(h, matching)).map((h) => h.id));
+  }
+
+  private async withRunEvents<T>(total: number, run: () => Promise<T>): Promise<T> {
+    emit('twd:run-start', { total });
+    try {
+      return await run();
+    } finally {
+      emit('twd:run-end');
+    }
+  }
+
+  async runAll(options?: RunAllOptions) {
+    const scope = this.viewportScope(options);
+    const rootSuites = Array.from(handlers.values()).filter((h) => !h.parent && h.type === 'suite');
+    if (!scope) {
+      const hasOnly = Array.from(handlers.values()).some((h) => h.only);
+      return this.withRunEvents(countTests(handlers.keys()), async () => {
+        for (const suite of rootSuites) {
+          await this.runSuite(suite, hasOnly);
+        }
+        return handlers;
+      });
+    }
+    const hasOnly = hasOnlyInScope(scope);
+    return this.withRunEvents(scope.size, async () => {
+      for (const suite of rootSuites) {
+        await this.runSuiteByIds(suite, scope, hasOnly);
+      }
+      return handlers;
+    });
   }
 
   async runSingle(id: string) {
     const handler = handlers.get(id);
     if (!handler || handler.type !== 'test') return;
     const hasOnly = false; // Single run ignores .only logic
-    await this.runTest(handler, hasOnly);
+    // A single run ignores the viewport too: the play button always runs.
+    await this.withRunEvents(1, () => this.runTest(handler, hasOnly));
   }
 
   async runByIds(ids: string[]) {
-    const idSet = new Set(ids);
+    const scope = this.viewportScope();
+    const idSet = scope ? new Set(ids.filter((id) => scope.has(id))) : new Set(ids);
     const rootSuites = Array.from(handlers.values()).filter((h) => !h.parent && h.type === 'suite');
-    const hasOnly = Array.from(handlers.values()).some((h) => h.only);
-    for (const suite of rootSuites) {
-      await this.runSuiteByIds(suite, idSet, hasOnly);
-    }
-    return handlers;
+    const hasOnly = scope
+      ? hasOnlyInScope(idSet)
+      : Array.from(handlers.values()).some((h) => h.only);
+    return this.withRunEvents(countTests(idSet), async () => {
+      for (const suite of rootSuites) {
+        await this.runSuiteByIds(suite, idSet, hasOnly);
+      }
+      return handlers;
+    });
   }
 
   private async runSuiteByIds(suite: Handler, idSet: Set<string>, hasOnly: boolean) {
@@ -356,12 +438,14 @@ export class TestRunner {
     const testIsSkipped = isSuiteSkipped(test.id) || test.skip;
     if (testIsSkipped && !test.only) {
       this.events.onSkip(test);
+      emit('twd:test-end', { status: 'skip' });
       return;
     }
     // only logic
     const insideOnlySuite = hasOnlyAbove(test.id);
     if (hasOnly && !test.only && !insideOnlySuite) {
       this.events.onSkip(test);
+      emit('twd:test-end', { status: 'skip' });
       return;
     }
 
@@ -391,13 +475,28 @@ export class TestRunner {
       }
       if (!attemptError) {
         this.events.onPass(test, attempt > 1 ? attempt : undefined);
+        emit('twd:test-end', { status: 'pass' });
         return;
       }
       lastError = attemptError;
     }
 
     this.events.onFail(test, lastError!);
+    emit('twd:test-end', { status: 'fail' });
   }
 }
 
 window.__testRunner = TestRunner;
+
+export {
+  defineViewports,
+  getViewportConfig,
+  getEffectiveViewport,
+  getMatchingViewports,
+} from './viewports';
+export type {
+  ViewportDefinition,
+  Viewports,
+  DefineViewportsOptions,
+  ViewportConfig,
+} from './viewports';

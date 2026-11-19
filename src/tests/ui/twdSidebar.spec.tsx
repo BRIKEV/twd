@@ -14,6 +14,8 @@ describe('TWDSidebar', () => {
     twd.clearTests();
     vi.clearAllMocks();
     sessionStorage.clear();
+    // Wide enough for push mode: below ~1048px (280px sidebar + 768px) the sidebar overlays.
+    window.innerWidth = 1280;
   });
 
   describe('component', () => {

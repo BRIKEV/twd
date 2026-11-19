@@ -14,6 +14,7 @@ interface Test {
   type: 'test' | 'suite';
   only?: boolean;
   skip?: boolean;
+  viewportBadge?: string;
 }
 
 interface TestListItemProps {
@@ -81,6 +82,11 @@ export const TestListItem = ({ node, depth, id, runTest }: TestListItemProps) =>
     }
   };
 
+  const badge = node.viewportBadge;
+  // Muted only without a status background: muted text on the pass, fail or
+  // skip colors would drop under 4.5:1.
+  const muted = badge && (!node.status || node.status === 'idle');
+
   return (
     <li
       key={node.name}
@@ -94,15 +100,26 @@ export const TestListItem = ({ node, depth, id, runTest }: TestListItemProps) =>
       aria-label={`Test ${node.name}, status: ${getStatusLabel()}`}
     >
       <div
-        className={`twd-test-item ${statusClass(node.status)}`}
+        className={`twd-test-item ${statusClass(node.status)}${muted ? ' twd-test-item-other' : ''}`}
         style={isPreviouslyRunTest ? { border: '1px dashed var(--twd-border)' } : undefined}
       >
         <span className="twd-test-item-name">
-          <SkipOnlyName id={id} name={node.name} skip={node.skip} only={node.only} />
+          {badge ? (
+            <>
+              <span>
+                <SkipOnlyName id={id} name={node.name} skip={node.skip} only={node.only} />
+              </span>
+              <span className="twd-viewport-badge">{badge}</span>
+            </>
+          ) : (
+            <SkipOnlyName id={id} name={node.name} skip={node.skip} only={node.only} />
+          )}
         </span>
         <button
           onClick={() => runTest(id)}
-          aria-label={`Run ${node.name} test`}
+          aria-label={
+            badge ? `Run ${node.name} test, written for ${badge}` : `Run ${node.name} test`
+          }
           className="twd-btn twd-btn-icon"
           disabled={node.status === 'running'}
           data-testid={`run-test-button-${id}`}

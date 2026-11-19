@@ -21,6 +21,18 @@ describe('LogItem', () => {
       expect(logElement.tagName).toBe('LI');
     });
 
+    it('should render a viewport warning in the warning color', () => {
+      const log = JSON.stringify({
+        type: LogType.VIEWPORT_WARNING,
+        message:
+          'Written for desktop (min 1024px). Ran at 390px, so layout differences are expected.',
+      });
+      render(<LogItem log={log} index={0} />);
+
+      const logElement = screen.getByText(/Written for desktop/);
+      expect(logElement).toHaveStyle({ color: defaultTheme.warning });
+    });
+
     it('should render chai message error log', () => {
       const log = JSON.stringify({
         type: LogType.CHAI_MESSAGE,

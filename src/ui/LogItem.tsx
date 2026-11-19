@@ -112,7 +112,9 @@ export const LogItem = ({ log, index }: LogItemProps) => {
         padding: 'var(--twd-spacing-xs) var(--twd-spacing-sm)',
         borderBottom: '1px solid var(--twd-border-light)',
         color: 'var(--twd-text)',
-        ...assertStyles(displayText),
+        ...(parsedLog?.type === LogType.VIEWPORT_WARNING
+          ? { color: 'var(--twd-warning)' }
+          : assertStyles(displayText)),
       }}
     >
       {displayText}

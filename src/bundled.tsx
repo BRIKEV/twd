@@ -4,6 +4,7 @@ import { TWDSidebar } from './ui/TWDSidebar';
 import { initRequestMocking } from './commands/mockBridge';
 import { setRootSelector } from './proxies/screenDom';
 import type { TWDTheme } from './ui/utils/theme';
+import { defineViewports } from './viewports';
 
 interface TestModule {
   [key: string]: () => Promise<unknown>;
@@ -18,6 +19,15 @@ interface InitTWDOptions {
   search?: boolean;
   pace?: boolean;
   rootSelector?: string;
+  /**
+   * Named viewports tests can target with `{ viewport: 'mobile' }`. Optional:
+   * without it every test runs at every width, as before.
+   */
+  // Spelled out instead of importing Viewports: bundled.d.mts may only import
+  // from theme (see vite.bundle.config.ts).
+  viewports?: Record<string, { minWidth?: number; maxWidth?: number }>;
+  /** Viewport given to tests that declare none. Must be one of `viewports`. */
+  defaultViewport?: string;
 }
 
 // Create a compatibility wrapper for Preact's render to match React's createRoot API
@@ -38,6 +48,8 @@ const createRoot = (el: HTMLElement) => ({
  * @param options.theme Optional theme customization
  * @param options.search Whether to show the search/filter input
  * @param options.pace Whether to show the execution speed selector
+ * @param options.viewports Named viewports tests can target, e.g. `{ mobile: { maxWidth: 767 } }`
+ * @param options.defaultViewport Viewport given to tests that declare none
  * @returns void
  * @example
  * initTWD(testModules, { open: true, position: 'left' });
@@ -51,6 +63,11 @@ const createRoot = (el: HTMLElement) => ({
  * initTWD(testModules, { rootSelector: '#my-app' });
  * @example
  * initTWD(testModules, { pace: true });
+ * @example
+ * initTWD(testModules, {
+ *   viewports: { mobile: { maxWidth: 767 }, desktop: { minWidth: 1024 } },
+ *   defaultViewport: 'desktop',
+ * });
  */
 export const initTWD = (files: TestModule, options?: InitTWDOptions) => {
   const {
@@ -62,9 +79,14 @@ export const initTWD = (files: TestModule, options?: InitTWDOptions) => {
     search,
     pace,
     rootSelector,
+    viewports,
+    defaultViewport,
   } = options || {};
   if (rootSelector) {
     setRootSelector(rootSelector);
+  }
+  if (viewports) {
+    defineViewports(viewports, { default: defaultViewport });
   }
   void initTests(
     files,

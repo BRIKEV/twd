@@ -2,6 +2,7 @@ export enum LogType {
   CHAI_DIFF = 'chai-diff',
   CHAI_MESSAGE = 'chai-message',
   ERROR = 'error',
+  VIEWPORT_WARNING = 'viewport-warning',
 }
 
 interface ChaiDiffLog {
@@ -20,7 +21,12 @@ interface ErrorLog {
   message: string;
 }
 
-export type ParsedLog = ChaiDiffLog | ChaiMessageLog | ErrorLog;
+interface ViewportWarningLog {
+  type: LogType.VIEWPORT_WARNING;
+  message: string;
+}
+
+export type ParsedLog = ChaiDiffLog | ChaiMessageLog | ErrorLog | ViewportWarningLog;
 
 export const parseLogEntry = (log: string): ParsedLog | null => {
   try {
@@ -57,8 +63,12 @@ export const assertStyles = (text: string) => {
   return {};
 };
 
-const isMessageLog = (log: ParsedLog): log is ChaiMessageLog | ErrorLog => {
-  return log.type === LogType.CHAI_MESSAGE || log.type === LogType.ERROR;
+const isMessageLog = (log: ParsedLog): log is ChaiMessageLog | ErrorLog | ViewportWarningLog => {
+  return (
+    log.type === LogType.CHAI_MESSAGE ||
+    log.type === LogType.ERROR ||
+    log.type === LogType.VIEWPORT_WARNING
+  );
 };
 
 export const getDisplayText = (log: string, parsedLog: ParsedLog | null): string => {

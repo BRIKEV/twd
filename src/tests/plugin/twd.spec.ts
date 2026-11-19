@@ -91,6 +91,17 @@ describe('twd vite plugin', () => {
       expect(code).toContain(`"rootSelector":"#my-app"`);
     });
 
+    it('serializes viewports and defaultViewport into initTWD args', () => {
+      const plugin = twd({
+        viewports: { mobile: { maxWidth: 767 }, desktop: { minWidth: 1024 } },
+        defaultViewport: 'desktop',
+      });
+      const load = plugin.load as (id: string) => string | null;
+      const code = load.call({}, '\0virtual:twd/init');
+      expect(code).toContain(`"viewports":{"mobile":{"maxWidth":767},"desktop":{"minWidth":1024}}`);
+      expect(code).toContain(`"defaultViewport":"desktop"`);
+    });
+
     it('omits testFilePattern from the inlined initTWD options', () => {
       const plugin = twd({ testFilePattern: '/src/**/*.twd.test.ts' });
       const load = plugin.load as (id: string) => string | null;
