@@ -305,7 +305,7 @@ mock rules and search, which was a lot on a 320px overlay.
   visible change for current users, accepted on purpose: `mockRules: true`
   brings it back.
 
-## 9. Hook for `twd-cli` (built later)
+## 9. Hook for `twd-cli`
 
 `twd` exposes what the CLI needs; the CLI loop itself is a later design.
 
@@ -319,12 +319,19 @@ mock rules and search, which was a lot on a 320px overlay.
   - set: runs the tests whose effective viewport includes that name, plus
     untagged tests when no `defaultViewport` is set.
 
-The intended CLI flow: read the registry, and for each viewport set the
-Puppeteer viewport to a concrete size from `twd.config.json`
-(`viewports: { mobile: { width: 375, height: 812 } }`), reload, run
-`executeTests({ viewport })`, merge results. Because Puppeteer's `setViewport`
+- `TestRunner#viewportScope(options?)` is public: the ids of the tests in
+  scope at the current width, or for `{ viewport: name }` without resizing;
+  `null` when no viewports are declared. Reachable from the page as
+  `new window.__testRunner(events).viewportScope()`.
+
+The CLI flow, as refined for twd-cli: one page load, no reload (a reload mints
+new test ids). Run the tests in scope at the configured size, then for each
+remaining viewport resize with Puppeteer's `setViewport` and run the tests for
+that viewport that have not run yet. **Each test runs once**, so the report
+keeps one row per test. `viewportScope()` gives the plan up front and checks,
+after each resize, that the width really matches. Because `setViewport`
 changes what `matchMedia` reports, the matching rule is identical in both
-places.
+places. The details live in twd-cli's own design doc.
 
 Known gap: `twd-relay` reports `testCount` in `run:start` from all registered
 tests, so with viewports declared it can announce more tests than the run

@@ -309,10 +309,16 @@ export class TestRunner {
   }
 
   /**
-   * Tests a run may execute, decided once at run start so a resize mid-run
-   * changes nothing. `null` means no viewport filtering at all.
+   * Ids of the tests a run may execute: those matching the current window
+   * width, or those written for `options.viewport` when a name is given.
+   * `null` means no viewports are declared, so nothing is filtered.
+   *
+   * Runs call it once at start, so a resize mid-run changes nothing. It is
+   * public for headless runners such as twd-cli, which plan one pass per
+   * viewport from the page (`new window.__testRunner(events).viewportScope()`)
+   * instead of reimplementing the matching rules.
    */
-  private viewportScope(options?: RunAllOptions): Set<string> | null {
+  viewportScope(options?: RunAllOptions): Set<string> | null {
     const tests = Array.from(handlers.values()).filter((h) => h.type === 'test');
     if (options?.viewport) {
       return new Set(tests.filter((h) => isInViewport(h, options.viewport!)).map((h) => h.id));
