@@ -190,6 +190,67 @@ describe('twd runner - viewport options', () => {
     });
   });
 
+  describe('viewportScope (public, for twd-cli)', () => {
+    const register = () => {
+      twd.describe('Group', () => {
+        twd.it('burger', { viewport: 'mobile' }, () => {});
+        twd.it('nav', { viewport: 'desktop' }, () => {});
+        twd.it('plain', () => {});
+        twd.it('typo', { viewport: 'deskop' }, () => {});
+      });
+    };
+    const names = (scope: Set<string> | null) =>
+      scope
+        ? Array.from(scope)
+            .map((id) => twd.handlers.get(id)!.name)
+            .sort()
+        : scope;
+
+    it('returns null when no viewports are declared', () => {
+      register();
+      const { runner } = createRunner();
+      expect(runner.viewportScope()).toBeNull();
+    });
+
+    it('returns the tests in scope at the current width', () => {
+      vi.spyOn(console, 'warn').mockImplementation(() => {});
+      defineViewports(VIEWPORTS);
+      register();
+      const { runner } = createRunner();
+      expect(names(runner.viewportScope())).toEqual(['nav', 'plain']);
+      window.innerWidth = 390;
+      expect(names(runner.viewportScope())).toEqual(['burger', 'plain']);
+    });
+
+    it('returns the tests for a named viewport without resizing', () => {
+      vi.spyOn(console, 'warn').mockImplementation(() => {});
+      defineViewports(VIEWPORTS);
+      register();
+      const { runner } = createRunner();
+      expect(names(runner.viewportScope({ viewport: 'mobile' }))).toEqual(['burger', 'plain']);
+    });
+
+    it('leaves untagged tests to the default viewport', () => {
+      vi.spyOn(console, 'warn').mockImplementation(() => {});
+      defineViewports(VIEWPORTS, { default: 'desktop' });
+      register();
+      const { runner } = createRunner();
+      expect(names(runner.viewportScope({ viewport: 'mobile' }))).toEqual(['burger']);
+      expect(names(runner.viewportScope({ viewport: 'desktop' }))).toEqual(['nav', 'plain']);
+    });
+
+    it('is reachable from the page through window.__testRunner', () => {
+      defineViewports(VIEWPORTS);
+      register();
+      const runner = new window.__testRunner({
+        onStart: () => {},
+        onPass: () => {},
+        onFail: () => {},
+      });
+      expect(runner.viewportScope()).toBeInstanceOf(Set);
+    });
+  });
+
   describe('runByIds', () => {
     it('intersects the ids with the current viewport', async () => {
       defineViewports(VIEWPORTS);
