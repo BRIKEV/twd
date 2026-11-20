@@ -1,3 +1,14 @@
+## <small>1.14.0 (2026-11-20)</small>
+
+* feat: responsive testing with named viewports and an overlay sidebar (#445) ([17bdaac](https://github.com/BRIKEV/twd/commit/17bdaac54599edc30ed73092cf4a640e0279086c)), closes [#444](https://github.com/BRIKEV/twd/issues/444)
+* feat(runner): make TestRunner#viewportScope public for headless runners (#446) ([7f1877f](https://github.com/BRIKEV/twd/commit/7f1877f4a55611330a711e6da641a58523223f70)), closes [#446](https://github.com/BRIKEV/twd/issues/446)
+
+**Responsive testing.** Declare named viewports in the `twd()` plugin or `initTWD` (`viewports: { mobile: { maxWidth: 767 }, desktop: { minWidth: 1024 } }`) and tag a test or suite with `{ viewport: 'mobile' }`. Run All runs only the tests that match the current window width; the others stay in the list, greyed out with a badge, and still run from their own play button. The sidebar shows the current viewport in a chip and becomes an overlay on narrow windows, so the app keeps its real width. Apps without viewports behave as before. Docs: Responsive Testing.
+
+**Rules button hidden by default.** The mock rules button in the sidebar header is now behind a new `mockRules` option (default `false`) on `TWDSidebar`, `initTWD` and the `twd()` plugin. Pass `mockRules: true` to bring it back.
+
+**For headless runners.** `TestRunner#viewportScope(options?)` returns the ids a run would execute at the current width, or for a named viewport, so tools like twd-cli can run every viewport in one session.
+
 ## <small>1.13.0 (2026-11-18)</small>
 
 * feat: publish a browser global build loadable with a classic script tag (#441) ([d6eb60b](https://github.com/BRIKEV/twd/commit/d6eb60b7f654652d752b8c411aa919652fad3424)), closes [#440](https://github.com/BRIKEV/twd/issues/440)
